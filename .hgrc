@@ -1,0 +1,47 @@
+[defaults]
+revert = --all
+
+[diff]
+git = true
+
+[extdiff]
+cmd.ediff = sh
+opts.ediff = -c 'if [ -d $0 ]; then emacs --eval "(ediff-directories \"$0\" \"$1\" \"\")"; else emacs --eval "(ediff-files \"$0\" \"$1\")"; fi'
+
+[merge-tools]
+emacs.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil 'kill-emacs)"
+
+filemerge.executable=/Applications/Xcode.app/Contents/Applications/FileMerge.app/Contents/MacOS/FileMerge
+filemerge.args=-left $other -right $local -ancestor $base -merge $output
+filemerge.gui=True
+
+[extensions]
+bookmarks =
+hgext.convert =
+hgext.extdiff =
+hgext.highlight =
+hgext.fetch =
+hggit = 
+graphlog =
+purge =
+mq =
+eol =
+color =
+progress =
+prompt = ~/.hg-prompt/prompt.py
+record =
+rebase =
+
+[patch]
+eol = lf
+
+[eol]
+only-consistent = False
+
+[ui]
+username = Jimmy Yuen Ho Wong <wyuenho@gmail.com>
+merge = emacs
+ignore = ~/.hgignore_global
+
+[web]
+cacerts = /etc/hg-dummy-cert.pem
