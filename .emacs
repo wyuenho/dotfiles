@@ -12,20 +12,22 @@
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; Title bar with file name
+;; header-line with file name
 (add-hook 'window-configuration-change-hook
           (lambda ()
-            (setq frame-title-format
-                  (concat invocation-name "@" system-name
-                          (if buffer-file-name
-                              (concat ": " (replace-regexp-in-string
-                                            (expand-file-name "~") "~"
-                                            buffer-file-name)))))))
+            (if (window-header-line-height)
+                (setq header-line-format (abbreviate-file-name (or buffer-file-name ""))))))
+
+;; Remove buffer ID from mode-line
+(add-hook 'find-file-hook
+          (lambda ()
+            (setq mode-line-format
+                  (delq 'mode-line-buffer-identification mode-line-format))))
 
 ;; Maximize frame on startup and set up default font
 (when (window-system)
   (set-frame-font "DejaVu Sans Mono")
-  (set-frame-parameter nil 'fullscreen 'maximized))
+  (set-frame-parameter nil 'fullscreen 'fullboth))
 
 (defun comment-dwim-line (&optional arg)
   "Replacement for the comment-dwim command.

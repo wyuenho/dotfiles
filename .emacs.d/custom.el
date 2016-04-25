@@ -154,7 +154,7 @@
    (quote
     (2 4 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120)))
  '(tab-width 2)
- '(tool-bar-mode t)
+ '(tool-bar-mode nil)
  '(transient-mark-mode t)
  '(udev-cedet-dir "~/.emacs.d")
  '(udev-ecb-dir "~/.emacs.d")
