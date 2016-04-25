@@ -113,6 +113,7 @@
  '(recentf-auto-cleanup (quote never))
  '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/.recentf")
+ '(require-final-newline (quote ask))
  '(rst-indent-comment 2)
  '(rst-indent-field 2)
  '(rst-indent-literal-normal 2)
