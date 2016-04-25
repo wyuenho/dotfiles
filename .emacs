@@ -56,11 +56,7 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
-;; Turn on smooth-scrolling
-(when (require 'smooth-scrolling nil t)
-  (smooth-scrolling-mode t))
-
-;; Turn on evil-numbers
+;; Vim-like increment and decrement
 (when (require 'evil-numbers nil t)
   (global-set-key (kbd "C-c =") 'evil-numbers/inc-at-pt)
   (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt))

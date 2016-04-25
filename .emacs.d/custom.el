@@ -149,6 +149,7 @@
  '(server-mode t)
  '(show-paren-mode t)
  '(size-indication-mode t)
+ '(smooth-scrolling-mode t)
  '(standard-indent 2)
  '(tab-stop-list
    (quote
