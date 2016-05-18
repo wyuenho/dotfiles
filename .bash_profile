@@ -3,29 +3,16 @@ export LANG="en_US.UTF-8"
 
 PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
 
-PATH=".:${HOME}/Library/Python/2.7/bin:${HOME}/.rbenv/bin:${HOME}/packages/pypy/bin:$HOME/packages/elasticsearch/bin:$HOME/packages/kibana/bin:${HOME}/packages/sshuttle:${HOME}/packages/bin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/local/mysql/bin:${PATH}"
-export PATH
+export PATH=".:${HOME}/Library/Python/3.5/bin:${HOME}/Library/Python/2.7/bin:$HOME/packages/elasticsearch/bin:$HOME/packages/kibana/bin:${HOME}/packages/sshuttle:${HOME}/packages/bin:/opt/local/bin:/opt/local/sbin:/usr/local/mysql/bin:${PATH}"
 
-MANPATH="/opt/local/share/man:/usr/local/mysql/man:${MANPATH}"
-export MANPATH
-
-TERM="xterm-color"
-export TERM
- 
-EDITOR="emacs -Q -mm"
-export EDITOR
-
-CC="clang"
-export CC
-
-JAVA_HOME=`/usr/libexec/java_home -v 1.8`
-export JAVA_HOME
-
-MBOX="${HOME}/.mail/mbox"
-export MBOX
-
-PYTHONSTARTUP="${HOME}/.pythonrc"
-export PYTHONSTARTUP
+export MANPATH="/opt/local/share/man:/usr/local/mysql/man:${MANPATH}"
+export TERM="xterm-color"
+export EDITOR="emacs -Q -mm"
+export CC="cc"
+export CXX="c++"
+export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
+export MBOX="${HOME}/.mail/mbox"
+export PYTHONSTARTUP="${HOME}/.pythonrc"
 
 if [ -f ~/.bashrc ]; then . ~/.bashrc; fi
 
@@ -49,24 +36,25 @@ fi
 bind 'set match-hidden-files off'
 
 # pip bash completion
-if [ -f `which pip` ]; then eval "$(pip completion -b)"; fi
+if [ $(type -fp pip) ]; then eval "$(pip completion -b)"; fi
 
 # rbenv
-if [ -f `which rbenv` ]; then eval "$(rbenv init -)"; fi
+export PATH="$HOME/.rbenv/bin:$PATH"
+if [ $(type -fp rbenv) ]; then eval "$(rbenv init -)"; fi
 
 # grunt bash completion
-if [ -f `which grunt` ]; then eval "$(grunt --completion=bash)"; fi
-
-# NVM
-[[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh # This loads NVM
-[[ -r $NVM_DIR/bash_completion ]] && . $NVM_DIR/bash_completion
-
-export NODE_REPL_HISTORY="$HOME/.node_repl_history"
+if [ $(type -fp grunt) ]; then eval "$(grunt --completion=bash)"; fi
 
 # GVM
 [[ -s "${HOME}/.gvm/scripts/gvm" ]] && source "${HOME}/.gvm/scripts/gvm"
 
 # Docker
-source ~/.docker-completion.sh
-source ~/.docker-compose-completion.sh
-source ~/.docker-machine-completion.sh
+if [ -f ~/.docker.bash-completion ]; then source ~/.docker.bash-completion; fi
+if [ -f ~/.docker-compose.bash-completion ]; then source ~/.docker-compose.bash-completion; fi
+if [ -f ~/.docker-machine.bash-completion ]; then source ~/.docker-machine.bash-completion; fi
+
+# pyenv
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
