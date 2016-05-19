@@ -13,10 +13,13 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; header-line with file name
-(add-hook 'window-configuration-change-hook
-          (lambda ()
-            (if (window-header-line-height)
-                (setq header-line-format (abbreviate-file-name (or buffer-file-name ""))))))
+(dolist (hook (list
+               'window-configuration-change-hook
+               'after-change-major-mode-hook))
+  (add-hook hook
+            (lambda ()
+              (if (window-header-line-height)
+                  (setq header-line-format (abbreviate-file-name (or buffer-file-name "")))))))
 
 ;; Remove buffer ID from mode-line
 (add-hook 'find-file-hook
@@ -141,12 +144,10 @@
   (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
 
 ;; Python-mode
-(when (not (require 'pungi nil t))
-  (when (require 'jedi nil t)
-    (add-hook 'python-mode-hook 'jedi:setup)))
+(require 'pyenv-mode-auto nil t)
 
-(when (require 'pyvenv nil t)
-  (add-hook 'python-mode-hook (lambda () (pyvenv-mode t))))
+(when (require 'jedi nil t)
+  (add-hook 'python-mode-hook 'jedi:setup))
 
 (add-hook 'inferior-python-mode-hook
           (lambda ()
