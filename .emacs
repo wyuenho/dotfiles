@@ -64,6 +64,13 @@
   (global-set-key (kbd "C-c =") 'evil-numbers/inc-at-pt)
   (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt))
 
+;; Adjust frame-wide font size
+(when (require 'zoom-frm nil t)
+  (define-key ctl-x-map [(control ?+)] 'zoom-in/out)
+  (define-key ctl-x-map [(control ?-)] 'zoom-in/out)
+  (define-key ctl-x-map [(control ?=)] 'zoom-in/out)
+  (define-key ctl-x-map [(control ?0)] 'zoom-in/out))
+
 ;; Turn on iMenu for code outlines
 (dolist (hook (list
                'lisp-mode-hook
