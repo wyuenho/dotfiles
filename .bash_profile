@@ -43,18 +43,16 @@ export PATH="$HOME/.rbenv/bin:$PATH"
 if [ $(type -fp rbenv) ]; then eval "$(rbenv init -)"; fi
 
 # grunt bash completion
-if [ $(type -fp grunt) ]; then eval "$(grunt --completion=bash)"; fi
+#if [ $(type -fp grunt) ]; then eval "$(grunt --completion=bash)"; fi
 
 # GVM
 [[ -s "${HOME}/.gvm/scripts/gvm" ]] && source "${HOME}/.gvm/scripts/gvm"
 
-# Docker
-if [ -f ~/.docker.bash-completion ]; then source ~/.docker.bash-completion; fi
-if [ -f ~/.docker-compose.bash-completion ]; then source ~/.docker-compose.bash-completion; fi
-if [ -f ~/.docker-machine.bash-completion ]; then source ~/.docker-machine.bash-completion; fi
-
 # pyenv
+export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
