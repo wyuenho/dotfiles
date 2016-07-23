@@ -42,17 +42,17 @@
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
-(global-set-key "\M-;" 'comment-dwim-line)
+(global-set-key (kbd "M-;") 'comment-dwim-line)
 
 ;; emacs-lisp-mode
-(define-key emacs-lisp-mode-map (kbd "\C-cee") 'eval-last-sexp)
-(define-key emacs-lisp-mode-map (kbd "\C-cer") 'eval-region)
-(define-key emacs-lisp-mode-map (kbd "\C-ceb") 'eval-buffer)
-(define-key emacs-lisp-mode-map (kbd "\C-cec") 'emacs-lisp-byte-compile)
-(define-key emacs-lisp-mode-map (kbd "\C-cel") 'emacs-lisp-byte-compile-and-load)
-(define-key emacs-lisp-mode-map (kbd "\C-ced") 'byte-recompile-directory)
-(define-key emacs-lisp-mode-map (kbd "\C-cg") 'find-function-at-point)
-(global-set-key (kbd "\C-cef") 'byte-compile-file)
+(define-key emacs-lisp-mode-map (kbd "C-c e e") 'eval-last-sexp)
+(define-key emacs-lisp-mode-map (kbd "C-c e r") 'eval-region)
+(define-key emacs-lisp-mode-map (kbd "C-c e b") 'eval-buffer)
+(define-key emacs-lisp-mode-map (kbd "C-c e c") 'emacs-lisp-byte-compile)
+(define-key emacs-lisp-mode-map (kbd "C-c e l") 'emacs-lisp-byte-compile-and-load)
+(define-key emacs-lisp-mode-map (kbd "C-c e d") 'byte-recompile-directory)
+(define-key emacs-lisp-mode-map (kbd "C-c g") 'find-function-at-point)
+(global-set-key (kbd "C-c e f") 'byte-compile-file)
 (add-hook 'emacs-lisp-mode-hook (lambda () (eldoc-mode t)))
 
 ;; Tell Custom to write and find the custom settings elsewhere
@@ -174,8 +174,7 @@
             (lambda ()
               (define-key yas-minor-mode-map (kbd "TAB") nil)
               (define-key yas-minor-mode-map (kbd "<tab>") nil)
-              (define-key yas-minor-mode-map [(tab)] nil)
-              (define-key yas-minor-mode-map "\C-ci" 'yas-expand)))
+              (define-key yas-minor-mode-map (kbd "C-c i") 'yas-expand)))
   ;; Turn on yasnippet for these prog modes
   (dolist (hook (list
                  'lisp-mode-hook
