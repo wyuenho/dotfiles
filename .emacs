@@ -92,7 +92,9 @@
 ;; Turn on subword mode for these prog modes
 (dolist (hook (list
                'c-mode-common-hook
-               'js-mode-hook))
+               'web-mode-hook
+               'js-mode-hook
+               'js2-mode-hook))
   (add-hook hook (lambda () (subword-mode t))))
 
 ;; multiple cursors
@@ -133,10 +135,14 @@
   (add-hook 'nxml-mode-hook 'emmet-mode))
 
 ;; js-mode
-(add-hook 'js-mode-hook (lambda()
-                          (hs-minor-mode t)
-                          (tern-mode t)
-                          (tern-ac-setup)))
+(add-hook 'js-mode-hook
+          (lambda()
+            (hs-minor-mode t)
+            (when (and
+                   (require 'tern-mode nil t)
+                   (require 'tern-auto-complete nil t))
+              (tern-mode t)
+              (tern-ac-setup))))
 
 ;; FlyCheck
 (when (require 'flycheck nil t)
