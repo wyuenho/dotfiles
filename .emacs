@@ -115,7 +115,6 @@
   (add-hook 'web-mode-hook (lambda ()
                              (imenu-add-menubar-index))))
 
-
 ;; php-mode
 (when (require 'php-mode nil t)
   (dolist (hook (list
@@ -145,6 +144,8 @@
               (tern-ac-setup))))
 
 ;; FlyCheck
+(if (not (require 'flycheck-mypy nil t)
+         (require 'flycheck-mode nil t)))
 (when (require 'flycheck nil t)
   (add-hook 'python-mode-hook 'flycheck-mode)
   (add-hook 'html-mode-hook 'flycheck-mode)
@@ -157,11 +158,15 @@
   (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
 
 ;; Python-mode
+(when (require 'sphinx-doc nil t)
+  (add-hook 'python-mode-hook 'sphinx-doc-mode))
+(when (require 'python-docstring nil t)
+  (add-hook 'python-mode-hook 'python-docstring-mode))
 (require 'pyenv-mode-auto nil t)
-
-(when (require 'jedi nil t)
-  (add-hook 'python-mode-hook 'jedi:setup))
-
+(when (require 'anaconda-mode nil t)
+  (add-hook 'python-mode-hook 'anaconda-mode)
+  (add-hook 'python-mode-hook (lambda () (anaconda-eldoc-mode t)))
+  (add-hook 'python-mode-hook 'ac-anaconda-setup))
 (add-hook 'inferior-python-mode-hook
           (lambda ()
             (dolist (process (process-list))
