@@ -144,9 +144,8 @@
               (tern-ac-setup))))
 
 ;; FlyCheck
-(if (not (require 'flycheck-mypy nil t)
-         (require 'flycheck-mode nil t)))
-(when (require 'flycheck nil t)
+(when (or (require 'flycheck-mypy nil t)
+          (require 'flycheck nil t))
   (add-hook 'python-mode-hook 'flycheck-mode)
   (add-hook 'html-mode-hook 'flycheck-mode)
   (add-hook 'web-mode-hook 'flycheck-mode)
