@@ -160,8 +160,6 @@
 ;; Python-mode
 (when (require 'sphinx-doc nil t)
   (add-hook 'python-mode-hook 'sphinx-doc-mode))
-(when (require 'python-docstring nil t)
-  (add-hook 'python-mode-hook 'python-docstring-mode))
 (require 'pyenv-mode-auto nil t)
 (when (require 'anaconda-mode nil t)
   (add-hook 'python-mode-hook 'anaconda-mode)
