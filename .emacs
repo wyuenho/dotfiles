@@ -71,6 +71,24 @@
   (define-key ctl-x-map [(control ?=)] 'zoom-in/out)
   (define-key ctl-x-map [(control ?0)] 'zoom-in/out))
 
+;; Rebind hide/show mode's ridiculous keybindings
+(add-hook 'hs-minor-mode-hook
+          (lambda ()
+            (define-key hs-minor-mode-map (kbd "C-c @") nil)
+            (define-key hs-minor-mode-map (kbd "C-c @ ESC") nil)
+            (define-key hs-minor-mode-map (kbd "C-c @ C-h") nil)
+            (define-key hs-minor-mode-map (kbd "C-c @ C-s")	nil)
+            (define-key hs-minor-mode-map (kbd "C-c @ C-M-h") nil)
+            (define-key hs-minor-mode-map (kbd "C-c @ C-M-s") nil)
+            (define-key hs-minor-mode-map (kbd "C-c @ C-l") nil)
+            (define-key hs-minor-mode-map (kbd "C-c @ C-c") nil)
+
+            (define-key hs-minor-mode-map (kbd "C-x C-/") 'hs-toggle-hiding)
+            (define-key hs-minor-mode-map (kbd "C-x C-<") 'hs-hide-all)
+            (define-key hs-minor-mode-map (kbd "C-x C->") 'hs-show-all)
+            (define-key hs-minor-mode-map (kbd "C-x C-,") 'hs-hide-block)
+            (define-key hs-minor-mode-map (kbd "C-x C-.") 'hs-show-block)))
+
 ;; Turn on iMenu for code outlines
 (dolist (hook (list
                'lisp-mode-hook
@@ -136,12 +154,10 @@
 ;; js-mode
 (add-hook 'js-mode-hook
           (lambda()
-            (hs-minor-mode t)
-            (when (and
-                   (require 'tern-mode nil t)
-                   (require 'tern-auto-complete nil t))
-              (tern-mode t)
-              (tern-ac-setup))))
+            (when (require 'tern-mode nil t)
+              (eval-after-load "company"
+                '(add-to-list 'company-backends 'company-tern))
+              (tern-mode t))))
 
 ;; FlyCheck
 (when (or (require 'flycheck-mypy nil t)
@@ -157,13 +173,20 @@
   (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
 
 ;; Python-mode
-(when (require 'sphinx-doc nil t)
-  (add-hook 'python-mode-hook 'sphinx-doc-mode))
+(add-hook 'python-mode-hook
+          (lambda ()
+            (when (require 'py-isort nil t)
+              (define-key python-mode-map (kbd "C-c s") 'py-isort-buffer))
+            (hs-minor-mode t)))
+
 (require 'pyenv-mode-auto nil t)
+
 (when (require 'anaconda-mode nil t)
   (add-hook 'python-mode-hook 'anaconda-mode)
   (add-hook 'python-mode-hook (lambda () (anaconda-eldoc-mode t)))
-  (add-hook 'python-mode-hook 'ac-anaconda-setup))
+  (eval-after-load "company"
+    '(add-to-list 'company-backends '(company-anaconda :with company-capf))))
+
 (add-hook 'inferior-python-mode-hook
           (lambda ()
             (dolist (process (process-list))
@@ -202,7 +225,3 @@
     (add-hook hook (lambda ()
                      (yas-minor-mode t))))
   (yas-reload-all))
-
-;; Auto-complete
-(when (require 'auto-complete-config nil t)
-  (ac-config-default))
