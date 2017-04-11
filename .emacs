@@ -59,6 +59,9 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
+;; Renumber the current buffer after reverting the buffer
+(add-hook 'after-revert-hook 'linum-update-current)
+
 ;; Vim-like increment and decrement
 (when (require 'evil-numbers nil t)
   (global-set-key (kbd "C-c =") 'evil-numbers/inc-at-pt)
@@ -152,12 +155,7 @@
   (add-hook 'nxml-mode-hook 'emmet-mode))
 
 ;; js-mode
-(add-hook 'js-mode-hook
-          (lambda()
-            (when (require 'tern-mode nil t)
-              (eval-after-load "company"
-                '(add-to-list 'company-backends 'company-tern))
-              (tern-mode t))))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js-jsx-mode))
 
 ;; FlyCheck
 (when (or (require 'flycheck-mypy nil t)
@@ -165,7 +163,8 @@
   (add-hook 'python-mode-hook 'flycheck-mode)
   (add-hook 'html-mode-hook 'flycheck-mode)
   (add-hook 'web-mode-hook 'flycheck-mode)
-  (add-hook 'js-mode-hook 'flycheck-mode))
+  (add-hook 'js-mode-hook 'flycheck-mode)
+  (add-hook 'js2-mode-hook 'flycheck-mode))
 
 ;; Markdown mode
 (when (require 'markdown-mode nil t)
@@ -183,9 +182,7 @@
 
 (when (require 'anaconda-mode nil t)
   (add-hook 'python-mode-hook 'anaconda-mode)
-  (add-hook 'python-mode-hook (lambda () (anaconda-eldoc-mode t)))
-  (eval-after-load "company"
-    '(add-to-list 'company-backends '(company-anaconda :with company-capf))))
+  (add-hook 'python-mode-hook (lambda () (anaconda-eldoc-mode t))))
 
 (add-hook 'inferior-python-mode-hook
           (lambda ()
@@ -212,6 +209,7 @@
                  'emacs-lisp-mode-hook
                  'c-mode-common-hook
                  'js-mode-hook
+                 'js2-mode-hook
                  'sh-mode-hook
                  'sgml-mode-hook
                  'nxml-mode-hook
