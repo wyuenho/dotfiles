@@ -1,7 +1,7 @@
 ;; Emacs loads init file first and the packages last normally. Forcing the
 ;; packages to load first makes conifguring them in the init file possible.
 (package-initialize)
-(setq x-select-enable-clipboard t)
+(setq select-enable-clipboard t)
 (setq ring-bell-function 'ignore)
 (prefer-coding-system 'utf-8)
 
@@ -29,8 +29,8 @@
 
 ;; Maximize frame on startup and set up default font
 (when (window-system)
-  (set-frame-font "DejaVu Sans Mono")
-  (set-frame-parameter nil 'fullscreen 'fullboth))
+  (set-frame-font "DejaVu Sans Mono"))
+  ;; (set-frame-parameter nil 'fullscreen 'fullboth))
 
 (defun comment-dwim-line (&optional arg)
   "Replacement for the comment-dwim command.
@@ -137,16 +137,16 @@
                              (imenu-add-menubar-index))))
 
 ;; php-mode
-(when (require 'php-mode nil t)
-  (dolist (hook (list
-                 'php-mode-pear-hook
-                 'php-mode-psr2-hook
-                 'php-mode-drupal-hook
-                 'php-mode-symfony2-hook
-                 'php-mode-wordpress-hook))
-    (add-hook hook (lambda ()
-                     (setq c-basic-offset 4)
-                     (setq tab-width 4)))))
+;; (when (require 'php-mode nil t)
+;;   (dolist (hook (list
+;;                  'php-mode-pear-hook
+;;                  'php-mode-psr2-hook
+;;                  'php-mode-drupal-hook
+;;                  'php-mode-symfony2-hook
+;;                  'php-mode-wordpress-hook))
+;;     (add-hook hook (lambda ()
+;;                      (setq c-basic-offset 4)
+;;                      (setq tab-width 4)))))
 
 ;; emmet-mode
 (when (require 'emmet-mode nil t)
@@ -156,6 +156,12 @@
 
 ;; js-mode
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js-jsx-mode))
+(add-hook 'js-mode-hook
+          (lambda()
+            (when (require 'tern-mode nil t)
+              (tern-mode t)
+              (eval-after-load "company"
+                '(add-to-list 'company-backends 'company-tern)))))
 
 ;; FlyCheck
 (when (or (require 'flycheck-mypy nil t)
@@ -174,6 +180,10 @@
 ;; Python-mode
 (add-hook 'python-mode-hook
           (lambda ()
+            (when (require 'yapfify nil t)
+              (yapf-mode))
+            (when (require 'python-docstring nil t)
+              (python-docstring-mode t))
             (when (require 'py-isort nil t)
               (define-key python-mode-map (kbd "C-c s") 'py-isort-buffer))
             (hs-minor-mode t)))
@@ -182,7 +192,9 @@
 
 (when (require 'anaconda-mode nil t)
   (add-hook 'python-mode-hook 'anaconda-mode)
-  (add-hook 'python-mode-hook (lambda () (anaconda-eldoc-mode t))))
+  (add-hook 'python-mode-hook (lambda () (anaconda-eldoc-mode t)))
+  (eval-after-load "company"
+    '(add-to-list 'company-backends '(company-anaconda :with company-capf))))
 
 (add-hook 'inferior-python-mode-hook
           (lambda ()
