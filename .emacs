@@ -29,8 +29,8 @@
 
 ;; Maximize frame on startup and set up default font
 (when (window-system)
-  (set-frame-font "DejaVu Sans Mono"))
-  ;; (set-frame-parameter nil 'fullscreen 'fullboth))
+  (set-frame-font "DejaVu Sans Mono")
+  (set-frame-parameter nil 'fullscreen 'maximized))
 
 (defun comment-dwim-line (&optional arg)
   "Replacement for the comment-dwim command.
