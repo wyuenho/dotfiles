@@ -112,7 +112,7 @@
      ("melpa" . "http://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (all-the-icons all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring yapfify company-dict company-shell elm-mode elm-yasnippets zoom-frm yasnippet yaml-mode web-mode undo-tree sublimity sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors move-dup monky memory-usage markdown-mode magit json-mode js2-mode js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy flycheck-flow evil-numbers emmet-mode editorconfig dumb-jump dockerfile-mode docker csv-mode company-web company-tern company-anaconda auto-compile ag)))
+    (py-autopep8 all-the-icons all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell elm-mode elm-yasnippets zoom-frm yasnippet yaml-mode web-mode undo-tree sublimity sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors move-dup monky memory-usage markdown-mode magit json-mode js2-mode js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy flycheck-flow evil-numbers emmet-mode editorconfig dumb-jump dockerfile-mode docker csv-mode company-web company-tern company-anaconda auto-compile ag)))
  '(php-mode-warn-if-mumamo-off "Don't warn")
  '(php-template-compatibility nil)
  '(popcmp-completion-style (quote emacs-default))

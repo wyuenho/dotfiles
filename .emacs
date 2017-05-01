@@ -186,8 +186,8 @@
 ;; Python-mode
 (add-hook 'python-mode-hook
           (lambda ()
-            (when (require 'yapfify nil t)
-              (yapf-mode))
+            (when (require 'py-autopep8 nil t)
+              (py-autopep8-enable-on-save))
             (when (require 'python-docstring nil t)
               (python-docstring-mode t))
             (when (require 'py-isort nil t)
