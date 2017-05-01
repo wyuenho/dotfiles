@@ -44,7 +44,6 @@
  '(el-get-user-package-directory "~/.emacs.d/el-get-init-files/")
  '(emmet-indentation 2)
  '(ensime-default-server-root "~/.emacs.d/ensime")
- '(eval-expression-print-length 100)
  '(fill-column 80)
  '(flycheck-check-syntax-automatically (quote (save mode-enabled)))
  '(flycheck-checkers
@@ -52,6 +51,7 @@
     (ada-gnat asciidoc c/c++-clang c/c++-gcc c/c++-cppcheck cfengine chef-foodcritic coffee coffee-coffeelint coq css-csslint d-dmd emacs-lisp emacs-lisp-checkdoc erlang eruby-erubis fortran-gfortran go-gofmt go-golint go-vet go-build go-test go-errcheck groovy haml handlebars haskell-stack-ghc haskell-ghc haskell-hlint html-tidy jade javascript-eslint javascript-jshint javascript-gjslint javascript-jscs javascript-standard json-jsonlint json-python-json less luacheck lua perl perl-perlcritic php php-phpmd php-phpcs processing puppet-parser puppet-lint python-flake8 python-pylint python-pycompile r-lintr rpm-rpmlint rst-sphinx rst ruby-rubocop ruby-rubylint ruby ruby-jruby rust-cargo rust sass scala scala-scalastyle scss-lint scss sh-bash sh-posix-dash sh-posix-bash sh-zsh sh-shellcheck slim sql-sqlint tex-chktex tex-lacheck texinfo verilog-verilator xml-xmlstarlet xml-xmllint yaml-jsyaml yaml-ruby)))
  '(flymake-no-changes-timeout 1)
  '(global-auto-revert-mode t)
+ '(global-company-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(global-linum-mode t)
  '(global-move-dup-mode t)
@@ -81,6 +81,8 @@
  '(js-indent-level 2)
  '(js-switch-indent-offset 2)
  '(js2-basic-offset 2)
+ '(js2-include-jslint-globals nil)
+ '(js2-include-node-externs t)
  '(js2-strict-inconsistent-return-warning nil)
  '(kept-new-versions 10)
  '(kept-old-versions 10)
@@ -108,6 +110,9 @@
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "http://melpa.org/packages/"))))
+ '(package-selected-packages
+   (quote
+    (pyimport pyenv-mode-auto python python-docstring yapfify company-dict company-shell elm-mode elm-yasnippets zoom-frm yasnippet yaml-mode web-mode undo-tree sublimity sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors move-dup monky memory-usage markdown-mode magit json-mode js2-mode js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy flycheck-flow evil-numbers emmet-mode editorconfig dumb-jump dockerfile-mode docker csv-mode company-web company-tern company-anaconda auto-compile ag)))
  '(php-mode-warn-if-mumamo-off "Don't warn")
  '(php-template-compatibility nil)
  '(popcmp-completion-style (quote emacs-default))
@@ -186,4 +191,5 @@
  '(flycheck-fringe-info ((t (:background nil :foreground "#69B7F0" :weight bold))))
  '(flycheck-fringe-warning ((t (:background nil :foreground "#DEB542" :weight bold))))
  '(js2-warning ((t (:underline (:color "orange" :style wave)))))
- '(linum ((nil (:foreground "gray")))))
+ '(linum ((nil (:foreground "gray"))))
+ '(mouse ((t (:background "white")))))
