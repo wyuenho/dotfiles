@@ -59,6 +59,12 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
+;; Linum mode
+(dolist (hook (list
+               'prog-mode-hook
+               'text-mode-hook))
+  (add-hook hook (lambda () (linum-mode t))))
+
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
 

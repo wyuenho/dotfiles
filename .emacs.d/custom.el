@@ -53,7 +53,6 @@
  '(global-auto-revert-mode t)
  '(global-company-mode t)
  '(global-font-lock-mode t nil (font-lock))
- '(global-linum-mode t)
  '(global-move-dup-mode t)
  '(global-undo-tree-mode t)
  '(global-visual-line-mode t)
