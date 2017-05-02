@@ -164,7 +164,7 @@
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js-jsx-mode))
 (add-hook 'js-mode-hook
           (lambda()
-            (when (require 'eslintd-fix-mode nil t)
+            (when (require 'eslintd-fix nil t)
               (eslintd-fix-mode t))
             (when (require 'tern nil t)
               (tern-mode t)
