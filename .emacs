@@ -164,9 +164,10 @@
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js-jsx-mode))
 (add-hook 'js-mode-hook
           (lambda()
+            (when (require 'eslintd-fix-mode nil t)
+              (eslintd-fix-mode t))
             (when (require 'tern-mode nil t)
               (tern-mode t)
-              (eslintd-fix-mode t)
               (eval-after-load "company"
                 '(add-to-list 'company-backends 'company-tern)))))
 
