@@ -160,6 +160,10 @@
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(smooth-scrolling-mode t)
+ '(smtpmail-default-smtp-server "smtp.gmail.com")
+ '(smtpmail-smtp-service 465)
+ '(smtpmail-smtp-user "wyuenho")
+ '(smtpmail-stream-type (quote ssl))
  '(standard-indent 2)
  '(tab-stop-list
    (quote
