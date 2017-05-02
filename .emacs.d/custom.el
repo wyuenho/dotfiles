@@ -112,7 +112,7 @@
      ("melpa" . "http://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (py-autopep8 all-the-icons all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell elm-mode elm-yasnippets zoom-frm yasnippet yaml-mode web-mode undo-tree sublimity sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors move-dup monky memory-usage markdown-mode magit json-mode js2-mode js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy flycheck-flow evil-numbers emmet-mode editorconfig dumb-jump dockerfile-mode docker csv-mode company-web company-tern company-anaconda auto-compile ag)))
+    (string-inflection eslintd-fix py-autopep8 all-the-icons all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sublimity sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors move-dup monky memory-usage markdown-mode magit json-mode js2-mode js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode editorconfig dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
  '(php-mode-warn-if-mumamo-off "Don't warn")
  '(php-template-compatibility nil)
  '(popcmp-completion-style (quote emacs-default))
@@ -122,6 +122,7 @@
  '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/.recentf")
  '(require-final-newline (quote ask))
+ '(rst-adjust-hook (quote rst-toc-update))
  '(rst-indent-comment 2)
  '(rst-indent-field 2)
  '(rst-indent-literal-normal 2)

@@ -166,6 +166,7 @@
           (lambda()
             (when (require 'tern-mode nil t)
               (tern-mode t)
+              (eslintd-fix-mode t)
               (eval-after-load "company"
                 '(add-to-list 'company-backends 'company-tern)))))
 
@@ -207,12 +208,6 @@
             (dolist (process (process-list))
               (when (string-prefix-p "Python" (process-name process))
                 (set-process-query-on-exit-flag process nil)))))
-
-;; reStructuredText mode
-(when (require 'rst nil t)
-  (add-to-list 'auto-mode-alist '("\\.rst$" . rst-mode))
-  (add-to-list 'auto-mode-alist '("\\.rest$" . rst-mode))
-  (add-hook 'rst-adjust-hook 'rst-toc-update))
 
 ;; yasnippet
 (when (require 'yasnippet nil t)
