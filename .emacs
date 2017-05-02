@@ -166,7 +166,7 @@
           (lambda()
             (when (require 'eslintd-fix-mode nil t)
               (eslintd-fix-mode t))
-            (when (require 'tern-mode nil t)
+            (when (require 'tern nil t)
               (tern-mode t)
               (eval-after-load "company"
                 '(add-to-list 'company-backends 'company-tern)))))
