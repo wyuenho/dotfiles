@@ -1,8 +1,16 @@
 ;; Emacs loads init file first and the packages last normally. Forcing the
 ;; packages to load first makes conifguring them in the init file possible.
 (package-initialize)
-(setq select-enable-clipboard t)
-(setq ring-bell-function 'ignore)
+
+;; Tell Custom to write and find the custom settings elsewhere
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(load custom-file)
+
+;; Maximize frame on startup and set up default font
+(when (window-system)
+  (set-frame-font "DejaVu Sans Mono")
+  (toggle-frame-maximized))
+
 (prefer-coding-system 'utf-8)
 
 ;; Enable initially disabled keys
@@ -12,14 +20,14 @@
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; header-line with file name
+;; header-line with buffer name
 (dolist (hook (list
                'window-configuration-change-hook
                'after-change-major-mode-hook))
   (add-hook hook
             (lambda ()
               (if (window-header-line-height)
-                  (setq header-line-format (abbreviate-file-name (or buffer-file-name "")))))))
+                  (setq header-line-format (buffer-name))))))
 
 ;; Remove buffer ID from mode-line
 (add-hook 'find-file-hook
@@ -27,11 +35,7 @@
             (setq mode-line-format
                   (delq 'mode-line-buffer-identification mode-line-format))))
 
-;; Maximize frame on startup and set up default font
-(when (window-system)
-  (set-frame-font "DejaVu Sans Mono")
-  (set-frame-parameter nil 'fullscreen 'maximized))
-
+;; More sensible comment-dwim
 (defun comment-dwim-line (&optional arg)
   "Replacement for the comment-dwim command.
    If no region is selected then comment current line.
@@ -44,6 +48,9 @@
 
 (global-set-key (kbd "M-;") 'comment-dwim-line)
 
+;; Automatically wrap overly long lines for all text modes
+(add-hook 'text-mode-hook (lambda () (auto-fill-mode t)))
+
 ;; emacs-lisp-mode
 (define-key emacs-lisp-mode-map (kbd "C-c e e") 'eval-last-sexp)
 (define-key emacs-lisp-mode-map (kbd "C-c e r") 'eval-region)
@@ -54,10 +61,6 @@
 (define-key emacs-lisp-mode-map (kbd "C-c g") 'find-function-at-point)
 (global-set-key (kbd "C-c e f") 'byte-compile-file)
 (add-hook 'emacs-lisp-mode-hook (lambda () (eldoc-mode t)))
-
-;; Tell Custom to write and find the custom settings elsewhere
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file)
 
 ;; Linum mode
 (dolist (hook (list
@@ -161,7 +164,7 @@
   (add-hook 'nxml-mode-hook 'emmet-mode))
 
 ;; js-mode
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js-jsx-mode))
+(add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
 (add-hook 'js-mode-hook
           (lambda()
             (when (require 'eslintd-fix nil t)
@@ -185,7 +188,7 @@
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
   (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode)))
 
-;; Python-mode
+;; Python stuff
 (add-hook 'python-mode-hook
           (lambda ()
             (when (require 'py-autopep8 nil t)
