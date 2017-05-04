@@ -155,6 +155,7 @@
                (require
                 (quote package-build))))
            (package-build-minor-mode)))))
+ '(save-place-mode t)
  '(savehist-mode t nil (savehist))
  '(scss-compile-at-save nil)
  '(select-enable-clipboard t)
