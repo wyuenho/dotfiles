@@ -20,21 +20,6 @@
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; header-line with buffer name
-(dolist (hook (list
-               'window-configuration-change-hook
-               'after-change-major-mode-hook))
-  (add-hook hook
-            (lambda ()
-              (if (window-header-line-height)
-                  (setq header-line-format (buffer-name))))))
-
-;; Remove buffer ID from mode-line
-(add-hook 'find-file-hook
-          (lambda ()
-            (setq mode-line-format
-                  (delq 'mode-line-buffer-identification mode-line-format))))
-
 ;; More sensible comment-dwim
 (defun comment-dwim-line (&optional arg)
   "Replacement for the comment-dwim command.
@@ -71,6 +56,21 @@
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
 
+;; Replace isearch and query-replace functions with Anzu's equivalents
+(when (require 'anzu nil t)
+  (defalias 'query-replace 'anzu-query-replace)
+  (defalias 'query-replace-regexp 'anzu-query-replace-regexp)
+  (defalias 'isearch-query-replace 'anzu-isearch-query-replace)
+  (defalias 'isearch-query-replace-regexp 'anzu-isearch-query-replace-regexp))
+
+;; Expand region
+(when (require 'expand-region nil t)
+  (global-set-key (kbd "C-=") 'er/expand-region)
+  (global-set-key (kbd "C--") 'er/contract-region))
+
+;; smart parans
+(require 'smartparans-config nil t)
+
 ;; Vim-like increment and decrement
 (when (require 'evil-numbers nil t)
   (global-set-key (kbd "C-c =") 'evil-numbers/inc-at-pt)
@@ -100,6 +100,10 @@
             (define-key hs-minor-mode-map (kbd "C-x C->") 'hs-show-all)
             (define-key hs-minor-mode-map (kbd "C-x C-,") 'hs-hide-block)
             (define-key hs-minor-mode-map (kbd "C-x C-.") 'hs-show-block)))
+
+;; Turn on keyboard shortcut remainder
+(when (require 'which-key nil t)
+  (which-key-mode t))
 
 ;; Turn on iMenu for code outlines
 (dolist (hook (list
@@ -170,8 +174,7 @@
             (when (require 'eslintd-fix nil t)
               (eslintd-fix-mode t))
             (when (require 'tern nil t)
-              (tern-mode t)
-              (eval-after-load "company"
+              (eval-after-load 'company
                 '(add-to-list 'company-backends 'company-tern)))))
 
 ;; FlyCheck
@@ -204,7 +207,7 @@
 (when (require 'anaconda-mode nil t)
   (add-hook 'python-mode-hook 'anaconda-mode)
   (add-hook 'python-mode-hook (lambda () (anaconda-eldoc-mode t)))
-  (eval-after-load "company"
+  (eval-after-load 'company
     '(add-to-list 'company-backends '(company-anaconda :with company-capf))))
 
 (add-hook 'inferior-python-mode-hook
@@ -240,3 +243,41 @@
     (add-hook hook (lambda ()
                      (yas-minor-mode t))))
   (yas-reload-all))
+
+;; Auto-completion
+(eval-after-load 'company
+  ;; Bring help popup back to company
+  (company-quickhelp-mode t))
+
+;; Modern fancy mode line
+(when (require 'spaceline-config nil t)
+  (if (fboundp 'spaceline-all-the-icons-theme)
+      (progn
+        (spaceline-all-the-icons-theme)
+        (spaceline-all-the-icons--setup-anzu)
+        (spaceline-all-the-icons--setup-package-updates)
+        (spaceline-all-the-icons--setup-git-ahead)
+        (spaceline-all-the-icons--setup-neotree))
+    (progn
+      ;; header-line with buffer name
+      (dolist (hook (list
+                     'window-configuration-change-hook
+                     'after-change-major-mode-hook))
+        (add-hook hook
+                  (lambda ()
+                    (if (window-header-line-height)
+                        (setq header-line-format 'mode-line-buffer-identification)))))
+
+      ;; The buffer ID is removed from the mode line in customize.el, this sexp
+      ;; replace it with the icon
+      (add-hook 'after-change-major-mode-hook
+                (lambda ()
+                  (when (and (require 'all-the-icons nil t)
+                             (window-system))
+                    (let ((icon (all-the-icons-icon-for-mode major-mode)))
+                      (when (and icon
+                                 (not (string= major-mode icon)))
+                        (setq mode-name icon))))))
+
+      (spaceline-toggle-buffer-id-off)
+      (spaceline-spacemacs-theme))))

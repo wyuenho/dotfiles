@@ -26,7 +26,7 @@
  '(custom-enabled-themes (quote (solarized-dark)))
  '(custom-safe-themes
    (quote
-    ("e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
+    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
  '(dabbrev-case-fold-search nil)
  '(delete-by-moving-to-trash t)
  '(delete-old-versions t)
@@ -44,6 +44,7 @@
  '(el-get-user-package-directory "~/.emacs.d/el-get-init-files/")
  '(emmet-indentation 2)
  '(ensime-default-server-root "~/.emacs.d/ensime")
+ '(eval-expression-print-level 1000)
  '(exec-path-from-shell-check-startup-files nil)
  '(fill-column 80)
  '(flycheck-check-syntax-automatically (quote (save mode-enabled)))
@@ -51,7 +52,7 @@
    (quote
     (ada-gnat asciidoc c/c++-clang c/c++-gcc c/c++-cppcheck cfengine chef-foodcritic coffee coffee-coffeelint coq css-csslint d-dmd emacs-lisp emacs-lisp-checkdoc erlang eruby-erubis fortran-gfortran go-gofmt go-golint go-vet go-build go-test go-errcheck groovy haml handlebars haskell-stack-ghc haskell-ghc haskell-hlint html-tidy jade javascript-eslint javascript-jshint javascript-gjslint javascript-jscs javascript-standard json-jsonlint json-python-json less luacheck lua perl perl-perlcritic php php-phpmd php-phpcs processing puppet-parser puppet-lint python-flake8 python-pylint python-pycompile r-lintr rpm-rpmlint rst-sphinx rst ruby-rubocop ruby-rubylint ruby ruby-jruby rust-cargo rust sass scala scala-scalastyle scss-lint scss sh-bash sh-posix-dash sh-posix-bash sh-zsh sh-shellcheck slim sql-sqlint tex-chktex tex-lacheck texinfo verilog-verilator xml-xmlstarlet xml-xmllint yaml-jsyaml yaml-ruby)))
  '(flymake-no-changes-timeout 1)
- '(global-auto-revert-mode t)
+ '(global-anzu-mode t)
  '(global-company-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(global-move-dup-mode t)
@@ -88,7 +89,7 @@
  '(kept-new-versions 10)
  '(kept-old-versions 10)
  '(linum-delay t)
- '(linum-format (quote dynamic))
+ '(linum-format "%4d ")
  '(mac-emulate-three-button-mouse (quote reverse))
  '(mac-input-method-mode t)
  '(mac-print-mode t)
@@ -99,6 +100,11 @@
  '(minibuffer-frame-alist (quote ((width . 80) (height . 2))))
  '(minimap-dedicated-window t)
  '(minimap-window-location (quote right))
+ '(mode-line-format
+   (quote
+    ("%e" mode-line-front-space mode-line-mule-info mode-line-client mode-line-modified mode-line-auto-compile mode-line-remote mode-line-frame-identification "   " mode-line-position
+     (vc-mode vc-mode)
+     "  " mode-line-modes mode-line-misc-info mode-line-end-spaces)))
  '(mouse-wheel-follow-mouse nil)
  '(mouse-wheel-mode t)
  '(mouse-wheel-progressive-speed nil)
@@ -111,14 +117,15 @@
  '(nxml-default-buffer-file-coding-system (quote utf-8))
  '(package-archives
    (quote
-    (("gnu" . "http://elpa.gnu.org/packages/")
-     ("melpa" . "http://melpa.org/packages/"))))
+    (("gnu" . "https://elpa.gnu.org/packages/")
+     ("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (exec-path-from-shell less-css-mode whitespace-cleanup-mode tide flycheck anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sublimity sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors move-dup monky memory-usage markdown-mode magit js2-mode js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode editorconfig dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
+    (spaceline-all-the-icons spaceline persp-projectile perspective vlf avy avy-flycheck rich-minority anzu golden-ratio gitattributes-mode gitconfig-mode gitignore-mode company-quickhelp which-key expand-region projectile magithub ztree rainbow-mode exec-path-from-shell less-css-mode whitespace-cleanup-mode tide flycheck anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sublimity sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors move-dup monky memory-usage markdown-mode magit js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode editorconfig dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
  '(php-mode-warn-if-mumamo-off "Don't warn")
  '(php-template-compatibility nil)
  '(popcmp-completion-style (quote emacs-default))
+ '(powerline-gui-use-vcs-glyph t)
  '(py-honor-comment-indentation (quote other))
  '(python-skeleton-autoinsert t)
  '(recentf-auto-cleanup (quote never))
@@ -126,6 +133,9 @@
  '(recentf-save-file "~/.emacs.d/.recentf")
  '(require-final-newline (quote ask))
  '(ring-bell-function (quote ignore))
+ '(rm-blacklist
+   (quote
+    (" Anaconda" " FlyC" " DS" " hs" " Anzu" " $" " ElDoc" " yas" " company" " md" " Undo-Tree" " WK" " hl-p" " WSC" " Wrap")))
  '(rst-adjust-hook (quote rst-toc-update))
  '(rst-indent-comment 2)
  '(rst-indent-field 2)
@@ -157,6 +167,7 @@
            (package-build-minor-mode)))))
  '(save-place-mode t)
  '(savehist-mode t nil (savehist))
+ '(scroll-bar-mode nil)
  '(scss-compile-at-save nil)
  '(select-enable-clipboard t)
  '(semantic-imenu-auto-rebuild-directory-indexes t)
@@ -165,11 +176,14 @@
  '(server-mode t)
  '(show-paren-mode t)
  '(size-indication-mode t)
+ '(smartparens-global-mode t)
  '(smooth-scrolling-mode t)
  '(smtpmail-default-smtp-server "smtp.gmail.com")
  '(smtpmail-smtp-service 465)
  '(smtpmail-smtp-user "wyuenho")
  '(smtpmail-stream-type (quote ssl))
+ '(spaceline-all-the-icons-clock-always-visible nil)
+ '(spaceline-all-the-icons-hide-long-buffer-path t)
  '(standard-indent 2)
  '(tab-stop-list
    (quote
@@ -180,6 +194,7 @@
  '(udev-cedet-dir "~/.emacs.d")
  '(udev-ecb-dir "~/.emacs.d")
  '(uniquify-buffer-name-style (quote reverse) nil (uniquify))
+ '(vc-follow-symlinks nil)
  '(version-control t)
  '(web-mode-code-indent-offset 2)
  '(web-mode-css-indent-offset 2)
@@ -191,7 +206,7 @@
    (quote
     (emacs-lisp-mode c-mode c++-mode perl-mode cperl-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode python-mode)))
  '(which-function-mode t)
- '(zencoding-indentation 2))
+ '(which-key-paging-key nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -202,5 +217,8 @@
  '(flycheck-fringe-info ((t (:background nil :foreground "#69B7F0" :weight bold))))
  '(flycheck-fringe-warning ((t (:background nil :foreground "#DEB542" :weight bold))))
  '(js2-warning ((t (:underline (:color "orange" :style wave)))))
- '(linum ((t (:family "Inconsolata"))))
- '(mouse ((t (:background "white")))))
+ '(linum ((((type tty) (class color) (min-colors 16)) (:background "dim gray")) (((type x w32 mac)) (:background "#003b4a" :foreground "#586e75" :underline nil :weight normal))))
+ '(mode-line ((t (:background "#073642" :foreground "#839496" :box (:line-width -1 :color "#073642") :overline nil :underline nil))))
+ '(mouse ((t (:background "white"))))
+ '(smerge-base ((((class color) (min-colors 88) (background light) (supports)) (:background "#ffffaa")) (((class color) (min-colors 88) (background dark) (supports :foreground "white smoke")) (:background "#888833")) (((class color)) (:foreground "yellow"))))
+ '(smerge-refined-changed ((t (:foreground "white smoke")))))
