@@ -10,6 +10,7 @@
  '(ad-default-compilation-action (quote always))
  '(auto-compile-on-save-mode t)
  '(auto-revert-check-vc-info t)
+ '(auto-revert-use-notify t)
  '(auto-save-default nil)
  '(auto-save-interval 0)
  '(background-mode light)
