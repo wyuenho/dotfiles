@@ -8,7 +8,9 @@
  '(ac-menu-height 20)
  '(ac-trigger-commands nil)
  '(ad-default-compilation-action (quote always))
+ '(auto-compile-on-load-mode t)
  '(auto-compile-on-save-mode t)
+ '(auto-compile-update-autoloads t)
  '(auto-revert-check-vc-info t)
  '(auto-revert-use-notify t)
  '(auto-save-default nil)
@@ -122,7 +124,7 @@
      ("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (spaceline-all-the-icons spaceline persp-projectile perspective vlf avy avy-flycheck rich-minority anzu golden-ratio gitattributes-mode gitconfig-mode gitignore-mode company-quickhelp which-key expand-region projectile magithub ztree rainbow-mode exec-path-from-shell less-css-mode whitespace-cleanup-mode tide flycheck anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sublimity sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors move-dup monky memory-usage markdown-mode magit js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode editorconfig dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
+    (syntax-subword use-package mocha-snippets react-snippets editorconfig markdown-mode magit magit-filenotify magit-gh-pulls magit-gitflow move-dup all-the-icons-ivy counsel counsel-projectile ivy swiper projectile try tide spaceline-all-the-icons spaceline persp-projectile perspective vlf rich-minority golden-ratio gitattributes-mode gitconfig-mode gitignore-mode company-quickhelp which-key expand-region magithub ztree rainbow-mode exec-path-from-shell less-css-mode whitespace-cleanup-mode anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sublimity sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors monky memory-usage js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
  '(php-mode-warn-if-mumamo-off "Don't warn")
  '(php-template-compatibility nil)
  '(popcmp-completion-style (quote emacs-default))
