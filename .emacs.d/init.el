@@ -2,12 +2,6 @@
 ;; packages to load first makes conifguring them in the init file possible.
 (package-initialize)
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(require 'use-package)
-(require 'bind-key)
-
 ;; Tell Custom to write and find the custom settings elsewhere
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
@@ -80,6 +74,12 @@ Optional argument ARG same as `comment-dwim''s."
 (dolist (hook (list 'prog-mode-hook 'text-mode-hook))
   (add-hook hook (lambda () (ignore-errors (imenu-add-menubar-index)))))
 
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+(require 'bind-key)
+
 ;; Turn on subword mode for all prog modes
 (use-package syntax-subword
   :config (add-hook 'prog-mode-hook (lambda () (syntax-subword-mode t))))
@@ -112,14 +112,13 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
-  :config (lambda ()
-            (which-key-mode t)))
+  :config (which-key-mode))
 
 ;; Auto-completion
 (eval-after-load 'company
   ;; Bring help popup back to company
   (when (require 'company-quickhelp nil t)
-    (company-quickhelp-mode t)))
+    (company-quickhelp-mode)))
 
 (use-package web-mode
   :mode ("\\.css\\'"
@@ -147,6 +146,7 @@ Optional argument ARG same as `comment-dwim''s."
   :after web-mode
   :config (dolist (hook (list 'sgml-mode-hook 'web-mode-hook 'nxml-mode-hook))
             (add-hook hook 'emmet-mode)))
+
 ;; js-mode
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
 (add-hook 'js-mode-hook
@@ -170,17 +170,23 @@ Optional argument ARG same as `comment-dwim''s."
           (lambda ()
             (when (require 'py-autopep8 nil t)
               (py-autopep8-enable-on-save))
+
             (when (require 'python-docstring nil t)
               (python-docstring-mode))
+
             (when (require 'py-isort nil t)
               (eval-when-compile (require 'python))
               (define-key python-mode-map (kbd "C-c s") 'py-isort-buffer))
+
             (when (require 'anaconda-mode nil t)
               (anaconda-mode)
               (anaconda-eldoc-mode))
+
             (eval-after-load 'company
               '(add-to-list 'company-backends '(company-anaconda :with company-capf)))
+
             (require 'pyenv-mode-auto nil t)
+
             (hs-minor-mode)))
 
 (add-hook 'inferior-python-mode-hook
@@ -192,7 +198,6 @@ Optional argument ARG same as `comment-dwim''s."
 ;; yasnippet
 (use-package yasnippet
   :config (lambda ()
-            (eval-when-compile (require 'yasnippet))
             (add-hook 'yas-minor-mode-hook
                       (lambda ()
                         (define-key yas-minor-mode-map (kbd "TAB") nil)
@@ -204,38 +209,33 @@ Optional argument ARG same as `comment-dwim''s."
               (yas-reload-all))))
 
 ;; Modern fancy mode line
+(defun set-buffer-id-to-header-line ()
+  (when (window-header-line-height)
+    (setq header-line-format 'mode-line-buffer-identification)))
+
+(defun replace-mode-with-icon ()
+  (when (and (require 'all-the-icons nil t) (window-system))
+    (let ((icon (all-the-icons-icon-for-mode major-mode)))
+      (when (and icon (not (string= major-mode icon)))
+        (setq mode-name icon)))))
+
 (when (require 'spaceline-config nil t)
-  (if (require 'spaceline-all-the-icons nil t)
-      (progn
-        (spaceline-all-the-icons-theme)
-        ;; (when (require 'anzu nil t)
-        ;;   (spaceline-all-the-icons--setup-anzu))
-        (spaceline-all-the-icons--setup-package-updates)
-        (spaceline-all-the-icons--setup-git-ahead)
-        ;; (when (require 'neotree nil t)
-        ;;   (spaceline-all-the-icons--setup-neotree))
-        )
-    (progn
-      ;; header-line with buffer name
-      (dolist (hook (list
-                     'window-configuration-change-hook
-                     'after-change-major-mode-hook))
-        (add-hook hook
-                  (lambda ()
-                    (if (window-header-line-height)
-                        (setq header-line-format 'mode-line-buffer-identification)))))
+  (cond ((require 'spaceline-all-the-icons nil t)
+         (spaceline-all-the-icons-theme)
+         (spaceline-all-the-icons--setup-package-updates)
+         (spaceline-all-the-icons--setup-git-ahead)
+         (spaceline-all-the-icons--setup-neotree))
+        (t
+         (dolist (hook (list
+                        'window-configuration-change-hook
+                        'after-change-major-mode-hook))
+           (add-hook hook 'set-buffer-id-to-header-line))
+         (set-buffer-id-to-header-line)
 
-      ;; The buffer ID is removed from the mode line in customize.el, this sexp
-      ;; replace it with the icon
-      (add-hook 'after-change-major-mode-hook
-                (lambda ()
-                  (when (and (require 'all-the-icons nil t)
-                             (window-system))
-                    (let ((icon (all-the-icons-icon-for-mode major-mode)))
-                      (when (and icon
-                                 (not (string= major-mode icon)))
-                        (setq mode-name icon))))))
-
-      (spaceline-toggle-projectile-root-off)
-      (spaceline-toggle-buffer-id-off)
-      (spaceline-spacemacs-theme))))
+         ;; The buffer ID is removed from the mode line in customize.el, this sexp
+         ;; replace it with the icon
+         (add-hook 'after-change-major-mode-hook 'replace-mode-with-icon)
+         (replace-mode-with-icon)
+         (spaceline-toggle-projectile-root-off)
+         (spaceline-toggle-buffer-id-off)
+         (spaceline-spacemacs-theme))))
