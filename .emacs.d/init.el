@@ -152,8 +152,8 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Auto-completion
 (eval-after-load 'company
   ;; Bring help popup back to company
-  (when (require 'company-quickhelp nil t)
-    (company-quickhelp-mode)))
+  (use-package company-quickhelp
+    :config (company-quickhelp-mode t)))
 
 (use-package web-mode
   :mode ("\\.css\\'"
@@ -186,43 +186,39 @@ Optional argument ARG same as `comment-dwim''s."
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
 (add-hook 'js-mode-hook
           (lambda ()
-            (when (require 'eslintd-fix nil t)
-              (eslintd-fix-mode))
-            (when (require 'tern nil t)
-              (eval-after-load 'company
-                '(add-to-list 'company-backends 'company-tern)))))
+            (use-package eslintd-fix
+              :config (eslintd-fix-mode t))
+
+            (use-package tern
+              :config (eval-after-load 'company
+                        '(add-to-list 'company-backends 'company-tern)))))
 
 ;; FlyCheck
 (dolist (hook (list 'python-mode-hook 'web-mode-hook 'js-mode-hook))
-  (add-hook hook
-            (lambda ()
-              (when (or (require 'flycheck-mypy nil t)
-                        (require 'flycheck nil t))
-                (flycheck-mode)))))
+  (add-hook hook (lambda ()
+                   (use-package flycheck-mypy
+                     :config (flycheck-mode t)))))
 
 ;; Python stuff
 (add-hook 'python-mode-hook
           (lambda ()
-            (when (require 'py-autopep8 nil t)
-              (py-autopep8-enable-on-save))
+            (use-package py-autopep8
+              :config (py-autopep8-enable-on-save))
 
-            (when (require 'python-docstring nil t)
-              (python-docstring-mode))
+            (use-package python-docstring
+              :config (python-docstring-mode))
 
-            (when (require 'py-isort nil t)
-              (eval-when-compile (require 'python))
-              (define-key python-mode-map (kbd "C-c s") 'py-isort-buffer))
+            (use-package py-isort
+              :config (define-key python-mode-map (kbd "C-c s") 'py-isort-buffer))
 
-            (when (require 'anaconda-mode nil t)
-              (anaconda-mode)
-              (anaconda-eldoc-mode))
+            (use-package pyenv-mode-auto)
 
-            (eval-after-load 'company
-              '(add-to-list 'company-backends '(company-anaconda :with company-capf)))
-
-            (require 'pyenv-mode-auto nil t)
-
-            (hs-minor-mode)))
+            (use-package anaconda-mode
+              :config (progn
+                        (anaconda-mode t)
+                        (anaconda-eldoc-mode t)
+                        (eval-after-load 'company
+                          '(add-to-list 'company-backends '(company-anaconda :with company-capf)))))))
 
 (add-hook 'inferior-python-mode-hook
           (lambda ()
