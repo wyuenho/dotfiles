@@ -6,6 +6,11 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+
 ;; Maximize frame on startup and set up default font
 (when (window-system)
   (set-frame-font "DejaVu Sans Mono")
@@ -74,11 +79,6 @@ Optional argument ARG same as `comment-dwim''s."
 (dolist (hook (list 'prog-mode-hook 'text-mode-hook))
   (add-hook hook (lambda () (ignore-errors (imenu-add-menubar-index)))))
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(require 'use-package)
-(require 'bind-key)
 
 ;; Turn on subword mode for all prog modes
 (use-package syntax-subword
