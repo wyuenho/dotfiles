@@ -228,7 +228,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; yasnippet
 (use-package yasnippet
-  :config (lambda ()
+  :config (progn
             (add-hook 'yas-minor-mode-hook
                       (lambda ()
                         (define-key yas-minor-mode-map (kbd "TAB") nil)
