@@ -120,10 +120,17 @@ Optional argument ARG same as `comment-dwim''s."
   :config (add-hook 'prog-mode-hook (lambda () (syntax-subword-mode t))))
 
 (use-package expand-region
-  :bind (("C-=" . er/expand-region)
-         ("C--" . er/contract-region)))
+  :bind (("M-=" . er/expand-region)
+         ("M--" . er/contract-region)))
 
-(use-package smartparens-config)
+(use-package smartparens-config
+  :bind (("M-A" . sp-beginning-of-sexp)
+         ("M-E" . sp-end-of-sexp)
+         ("M-_" . sp-unwrap-sexp)
+         ("C-<left>" . sp-backward-slurp-sexp)
+         ("M-<left>" . sp-backward-barf-sexp)
+         ("C-<right>" . sp-forward-slurp-sexp)
+         ("M-<right>" . sp-forward-barf-sexp)))
 
 ;; Vim-like increment and decrement
 (use-package evil-numbers
