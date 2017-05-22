@@ -146,7 +146,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
-  :config (which-key-mode))
+  :bind (("C-h b" . which-key-show-top-level))
+  :config (which-key-mode t))
 
 ;; Auto-completion
 (eval-after-load 'company
