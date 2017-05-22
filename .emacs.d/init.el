@@ -65,16 +65,8 @@ Optional argument ARG same as `comment-dwim''s."
 (define-key emacs-lisp-mode-map (kbd "C-c v") 'find-variable-at-point)
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
-;; Rebind hide/show mode's ridiculous keybindings
-(add-hook 'hs-minor-mode-hook
-          (lambda ()
-            (eval-when-compile (require 'hideshow))
-            (define-key hs-minor-mode-map (kbd "C-c @") nil)
-            (define-key hs-minor-mode-map (kbd "C-c C-/") 'hs-toggle-hiding)
-            (define-key hs-minor-mode-map (kbd "C-c C-<") 'hs-hide-all)
-            (define-key hs-minor-mode-map (kbd "C-c C->") 'hs-show-all)
-            (define-key hs-minor-mode-map (kbd "C-c C-,") 'hs-hide-block)
-            (define-key hs-minor-mode-map (kbd "C-c C-.") 'hs-show-block)))
+;; Unbind hide/show mode's ridiculous keybindings
+(assq-delete-all 'hs-minor-mode minor-mode-map-alist)
 
 ;; Turn on iMenu for code outlines for all prog and text modes, if possible
 (dolist (hook (list 'prog-mode-hook 'text-mode-hook))
