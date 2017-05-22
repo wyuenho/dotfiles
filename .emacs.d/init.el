@@ -247,33 +247,44 @@ Optional argument ARG same as `comment-dwim''s."
   :config (counsel-projectile-on))
 
 ;; Modern fancy mode line
-(defun set-buffer-id-to-header-line ()
-  (when (window-header-line-height)
-    (setq header-line-format 'mode-line-buffer-identification)))
+;; (defvar use-icon t)
 
-(defun replace-mode-with-icon ()
-  (when (and (require 'all-the-icons nil t) (window-system))
-    (let ((icon (all-the-icons-icon-for-mode major-mode)))
-      (when (and icon (not (string= major-mode icon)))
-        (setq mode-name icon)))))
+(use-package spaceline
+  :after projectile)
 
-(when (require 'spaceline-config nil t)
-  (cond ((require 'spaceline-all-the-icons nil t)
-         (spaceline-all-the-icons-theme)
-         (spaceline-all-the-icons--setup-package-updates)
-         (spaceline-all-the-icons--setup-git-ahead)
-         (spaceline-all-the-icons--setup-neotree))
-        (t
-         (dolist (hook (list
-                        'window-configuration-change-hook
-                        'after-change-major-mode-hook))
-           (add-hook hook 'set-buffer-id-to-header-line))
-         (set-buffer-id-to-header-line)
+;; (use-package spaceline-config
+;;   :after spaceline
+;;   :functions spaceline-toggle-buffer-id-off spaceline-spacemacs-theme
+;;   :config (progn
+;;             (dolist (hook (list
+;;                            'window-configuration-change-hook
+;;                            'after-change-major-mode-hook))
+;;               (add-hook hook
+;;                         (lambda ()
+;;                           (when (window-header-line-height)
+;;                             (setq header-line-format 'mode-line-buffer-identification)))))
 
-         ;; The buffer ID is removed from the mode line in customize.el, this sexp
-         ;; replace it with the icon
-         (add-hook 'after-change-major-mode-hook 'replace-mode-with-icon)
-         (replace-mode-with-icon)
-         (spaceline-toggle-projectile-root-off)
-         (spaceline-toggle-buffer-id-off)
-         (spaceline-spacemacs-theme))))
+;;             ;; The buffer ID is removed from the mode line in customize.el, this sexp
+;;             ;; replace it with the icon
+;;             (add-hook 'after-change-major-mode-hook
+;;                       (lambda ()
+;;                         (when (and (require 'all-the-icons nil t) (window-system))
+;;                           (let ((icon (all-the-icons-icon-for-mode major-mode)))
+;;                             (when (and icon (not (string= major-mode icon)))
+;;                               (setq mode-name icon))))))
+
+;;             (spaceline-toggle-minor-modes-off)
+;;             (spaceline-toggle-buffer-id-off)
+;;             (spaceline-spacemacs-theme)))
+
+(use-package spaceline-all-the-icons
+  :after spaceline
+  :functions spaceline-all-the-icons-theme
+  spaceline-all-the-icons--setup-package-updates
+  spaceline-all-the-icons--setup-git-ahead
+  spaceline-all-the-icons--setup-neotree
+  :config (progn
+            (spaceline-all-the-icons-theme)
+            (spaceline-all-the-icons--setup-package-updates)
+            (spaceline-all-the-icons--setup-git-ahead)
+            (spaceline-all-the-icons--setup-neotree)))
