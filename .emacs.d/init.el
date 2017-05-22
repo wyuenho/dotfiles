@@ -109,6 +109,12 @@ Optional argument ARG same as `comment-dwim''s."
             (defalias 'isearch-query-replace 'anzu-isearch-query-replace)
             (defalias 'isearch-query-replace-regexp 'anzu-isearch-query-replace-regexp)))
 
+;; Modern code folding
+(use-package origami
+  :bind (("M-0" . origami-open-all-nodes)
+         ("M-9" . origami-close-all-nodes)
+         ("C-M-/" . origami-recursively-toggle-node)))
+
 ;; Turn on subword mode for all prog modes
 (use-package syntax-subword
   :config (add-hook 'prog-mode-hook (lambda () (syntax-subword-mode t))))
