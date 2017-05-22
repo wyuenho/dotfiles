@@ -65,6 +65,16 @@ Optional argument ARG same as `comment-dwim''s."
 (define-key emacs-lisp-mode-map (kbd "C-c v") 'find-variable-at-point)
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
+;; rebind windmove keys
+(global-set-key (kbd "C-c <left>")  'windmove-left)
+(global-set-key (kbd "C-c <right>") 'windmove-right)
+(global-set-key (kbd "C-c <up>")    'windmove-up)
+(global-set-key (kbd "C-c <down>")  'windmove-down)
+
+;; unmap undo-tree mode
+(assq-delete-all 'undo-tree-mode minor-mode-map-alist)
+(global-set-key (kbd "C-x u") 'undo-tree-visualize)
+
 ;; Unbind hide/show mode's ridiculous keybindings
 (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
 
