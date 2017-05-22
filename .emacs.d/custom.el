@@ -55,10 +55,10 @@
    (quote
     (ada-gnat asciidoc c/c++-clang c/c++-gcc c/c++-cppcheck cfengine chef-foodcritic coffee coffee-coffeelint coq css-csslint d-dmd emacs-lisp emacs-lisp-checkdoc erlang eruby-erubis fortran-gfortran go-gofmt go-golint go-vet go-build go-test go-errcheck groovy haml handlebars haskell-stack-ghc haskell-ghc haskell-hlint html-tidy jade javascript-eslint javascript-jshint javascript-gjslint javascript-jscs javascript-standard json-jsonlint json-python-json less luacheck lua perl perl-perlcritic php php-phpmd php-phpcs processing puppet-parser puppet-lint python-flake8 python-pylint python-pycompile r-lintr rpm-rpmlint rst-sphinx rst ruby-rubocop ruby-rubylint ruby ruby-jruby rust-cargo rust sass scala scala-scalastyle scss-lint scss sh-bash sh-posix-dash sh-posix-bash sh-zsh sh-shellcheck slim sql-sqlint tex-chktex tex-lacheck texinfo verilog-verilator xml-xmlstarlet xml-xmllint yaml-jsyaml yaml-ruby)))
  '(flymake-no-changes-timeout 1)
- '(global-anzu-mode t)
  '(global-company-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(global-move-dup-mode t)
+ '(global-origami-mode t)
  '(global-undo-tree-mode t)
  '(global-visual-line-mode t)
  '(global-whitespace-cleanup-mode t)
@@ -70,13 +70,11 @@
  '(imenu-auto-rescan t)
  '(imenu-auto-rescan-maxout 524288)
  '(imenu-max-items 100)
- '(imenu-sort-function (quote imenu--sort-by-position))
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(ispell-program-name "hunspell")
- '(jedi-direx:hide-imports t)
- '(jedi:complete-on-dot t)
- '(jedi:install-imenu t)
+ '(ivy-rich-abbreviate-paths t)
+ '(ivy-wrap t)
  '(js-doc-author "Jimmy Yuen Ho Wong")
  '(js-doc-license "MIT @license")
  '(js-doc-mail-address "wyuenho@gmail.com")
@@ -96,13 +94,12 @@
  '(mac-emulate-three-button-mouse (quote reverse))
  '(mac-input-method-mode t)
  '(mac-print-mode t)
+ '(magit-completing-read-function (quote ivy-completing-read))
  '(magit-diff-use-overlays nil)
  '(make-pointer-invisible nil)
  '(markdown-command "markdown_py -x extra -x sane_lists")
  '(menu-bar-mode t)
  '(minibuffer-frame-alist (quote ((width . 80) (height . 2))))
- '(minimap-dedicated-window t)
- '(minimap-window-location (quote right))
  '(mode-line-format
    (quote
     ("%e" mode-line-front-space mode-line-mule-info mode-line-client mode-line-modified mode-line-auto-compile mode-line-remote mode-line-frame-identification "   " mode-line-position
@@ -112,7 +109,6 @@
  '(mouse-wheel-mode t)
  '(mouse-wheel-progressive-speed nil)
  '(neo-theme (quote icons))
- '(nlinum-format "%4d")
  '(ns-command-modifier (quote meta))
  '(ns-pop-up-frames nil)
  '(nxhtml-default-encoding (quote utf-8))
@@ -124,58 +120,25 @@
      ("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (spaceline-config syntax-subword use-package mocha-snippets react-snippets editorconfig markdown-mode magit magit-filenotify magit-gh-pulls magit-gitflow move-dup all-the-icons-ivy counsel counsel-projectile ivy swiper projectile try tide spaceline-all-the-icons spaceline persp-projectile perspective vlf rich-minority golden-ratio gitattributes-mode gitconfig-mode gitignore-mode company-quickhelp which-key expand-region magithub ztree rainbow-mode exec-path-from-shell less-css-mode whitespace-cleanup-mode anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sublimity sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors monky memory-usage js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
+    (hideshowvis origami esup docker which-key package-lint prettier-js package-build git-timemachine flx ivy-rich ivy-hydra anzu spaceline-config syntax-subword use-package mocha-snippets react-snippets editorconfig markdown-mode magit magit-filenotify magit-gh-pulls magit-gitflow move-dup counsel counsel-projectile ivy swiper projectile try tide spaceline-all-the-icons spaceline vlf golden-ratio gitattributes-mode gitconfig-mode gitignore-mode company-quickhelp expand-region magithub ztree rainbow-mode exec-path-from-shell less-css-mode whitespace-cleanup-mode anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors monky memory-usage js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
  '(php-mode-warn-if-mumamo-off "Don't warn")
  '(php-template-compatibility nil)
- '(popcmp-completion-style (quote emacs-default))
  '(powerline-gui-use-vcs-glyph t)
- '(py-honor-comment-indentation (quote other))
  '(python-skeleton-autoinsert t)
  '(recentf-auto-cleanup (quote never))
  '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/.recentf")
  '(require-final-newline (quote ask))
  '(ring-bell-function (quote ignore))
- '(rm-blacklist
-   (quote
-    (" Anaconda" " FlyC" " DS" " hs" " Anzu" " $" " ElDoc" " yas" " company" " md" " Undo-Tree" " WK" " hl-p" " WSC" " Wrap")))
  '(rst-adjust-hook (quote rst-toc-update))
  '(rst-indent-comment 2)
  '(rst-indent-field 2)
  '(rst-indent-literal-normal 2)
- '(safe-local-variable-values
-   (quote
-    ((pungi-setup-jedi . t)
-     (pungi-setup-jedi)
-     (eval when
-           (and
-            (buffer-file-name)
-            (file-regular-p
-             (buffer-file-name))
-            (string-match-p "^[^.]"
-                            (buffer-file-name)))
-           (emacs-lisp-mode)
-           (when
-               (fboundp
-                (quote flycheck-mode))
-             (flycheck-mode -1))
-           (unless
-               (featurep
-                (quote package-build))
-             (let
-                 ((load-path
-                   (cons ".." load-path)))
-               (require
-                (quote package-build))))
-           (package-build-minor-mode)))))
  '(save-place-mode t)
  '(savehist-mode t nil (savehist))
  '(scroll-bar-mode nil)
  '(scss-compile-at-save nil)
  '(select-enable-clipboard t)
- '(semantic-imenu-auto-rebuild-directory-indexes t)
- '(semantic-imenu-index-directory t)
- '(semantic-which-function-use-color t)
  '(server-mode t)
  '(show-paren-mode t)
  '(size-indication-mode t)
@@ -194,8 +157,6 @@
  '(tab-width 2)
  '(tool-bar-mode nil)
  '(transient-mark-mode t)
- '(udev-cedet-dir "~/.emacs.d")
- '(udev-ecb-dir "~/.emacs.d")
  '(uniquify-buffer-name-style (quote reverse) nil (uniquify))
  '(vc-follow-symlinks nil)
  '(version-control t)
@@ -207,9 +168,8 @@
  '(web-mode-style-padding 2)
  '(which-func-modes
    (quote
-    (emacs-lisp-mode c-mode c++-mode perl-mode cperl-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode python-mode)))
- '(which-function-mode t)
- '(which-key-paging-key nil))
+    (emacs-lisp-mode c-mode c++-mode perl-mode cperl-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode python-mode js-mode js-jsx-mode)))
+ '(which-function-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -222,6 +182,7 @@
  '(js2-warning ((t (:underline (:color "orange" :style wave)))))
  '(linum ((((type tty) (class color) (min-colors 16)) (:background "dim gray")) (((type x w32 mac)) (:background "#003b4a" :foreground "#586e75" :underline nil :weight normal))))
  '(mode-line ((t (:background "#073642" :foreground "#839496" :box (:line-width -1 :color "#073642") :overline nil :underline nil))))
+ '(mode-line-inactive ((t (:background "#002b36" :foreground "#586e75" :box (:line-width -1 :color "#002b36") :overline nil :underline nil))))
  '(mouse ((t (:background "white"))))
  '(smerge-base ((((class color) (min-colors 88) (background light) (supports)) (:background "#ffffaa")) (((class color) (min-colors 88) (background dark) (supports :foreground "white smoke")) (:background "#888833")) (((class color)) (:foreground "yellow"))))
  '(smerge-refined-changed ((t (:foreground "white smoke")))))
