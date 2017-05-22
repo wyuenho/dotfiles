@@ -54,14 +54,15 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
 
-;; emacs-lisp-mode
+;; lisp keybindings
 (define-key emacs-lisp-mode-map (kbd "C-c e e") 'eval-last-sexp)
 (define-key emacs-lisp-mode-map (kbd "C-c e r") 'eval-region)
 (define-key emacs-lisp-mode-map (kbd "C-c e b") 'eval-buffer)
 (define-key emacs-lisp-mode-map (kbd "C-c e c") 'emacs-lisp-byte-compile)
 (define-key emacs-lisp-mode-map (kbd "C-c e l") 'emacs-lisp-byte-compile-and-load)
 (define-key emacs-lisp-mode-map (kbd "C-c e d") 'byte-recompile-directory)
-(define-key emacs-lisp-mode-map (kbd "C-c g") 'find-function-at-point)
+(define-key emacs-lisp-mode-map (kbd "C-c f") 'find-function-at-point)
+(define-key emacs-lisp-mode-map (kbd "C-c v") 'find-variable-at-point)
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
 ;; Rebind hide/show mode's ridiculous keybindings
