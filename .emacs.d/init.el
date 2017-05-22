@@ -82,18 +82,36 @@ Optional argument ARG same as `comment-dwim''s."
 (dolist (hook (list 'prog-mode-hook 'text-mode-hook))
   (add-hook hook (lambda () (ignore-errors (imenu-add-menubar-index)))))
 
+;; Replace ido and isearch
+(use-package ivy
+  :after magit
+  :config (ivy-mode t))
+
+(use-package ivy-rich
+  :after ivy
+  :config (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
+
+(use-package swiper
+  :after ivy
+  :bind (("C-s" . swiper)))
+
+(use-package counsel
+  :after swiper
+  :bind (("C-x C-f" . counsel-find-file)
+         :map read-expression-map
+              ("C-r" . counsel-expression-history)))
+
+;; Replace isearch query replace and query-replace functions with Anzu's equivalents
+(use-package anzu
+  :config (progn ()
+            (defalias 'query-replace 'anzu-query-replace)
+            (defalias 'query-replace-regexp 'anzu-query-replace-regexp)
+            (defalias 'isearch-query-replace 'anzu-isearch-query-replace)
+            (defalias 'isearch-query-replace-regexp 'anzu-isearch-query-replace-regexp)))
 
 ;; Turn on subword mode for all prog modes
 (use-package syntax-subword
   :config (add-hook 'prog-mode-hook (lambda () (syntax-subword-mode t))))
-
-;; Replace isearch and query-replace functions with Anzu's equivalents
-;; (use-package anzu
-;;   :config (lambda ()
-;;             (defalias 'query-replace 'anzu-query-replace)
-;;             (defalias 'query-replace-regexp 'anzu-query-replace-regexp)
-;;             (defalias 'isearch-query-replace 'anzu-isearch-query-replace)
-;;             (defalias 'isearch-query-replace-regexp 'anzu-isearch-query-replace-regexp)))
 
 (use-package expand-region
   :bind (("C-=" . er/expand-region)
