@@ -239,6 +239,13 @@ Optional argument ARG same as `comment-dwim''s."
               (add-hook hook 'yas-minor-mode)
               (yas-reload-all))))
 
+;; Project and window management
+(use-package golden-ratio
+  :config (golden-ratio-mode t))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-on))
+
 ;; Modern fancy mode line
 (defun set-buffer-id-to-header-line ()
   (when (window-header-line-height)
