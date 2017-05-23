@@ -1,3 +1,8 @@
+;; Stop asking me if a theme is safe. The entirety of Emacs is built around
+;; evaling arbituary code...
+(advice-add 'load-theme :around (lambda (old-load-theme &rest r)
+                                  (apply old-load-theme (append r '(t)))))
+
 ;; Emacs loads init file first and the packages last normally. Forcing the
 ;; packages to load first makes conifguring them in the init file possible.
 (package-initialize)
