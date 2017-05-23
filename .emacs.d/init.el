@@ -181,6 +181,7 @@ Optional argument ARG same as `comment-dwim''s."
     :config (company-quickhelp-mode t)))
 
 (use-package web-mode
+  :after tide
   :mode ("\\.css\\'"
          "\\.phtml\\'"
          "\\.jsp\\'"
@@ -207,16 +208,20 @@ Optional argument ARG same as `comment-dwim''s."
   :config (dolist (hook (list 'sgml-mode-hook 'web-mode-hook 'nxml-mode-hook))
             (add-hook hook 'emmet-mode)))
 
-;; js-mode
-(add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
-(add-hook 'js-mode-hook
-          (lambda ()
-            (use-package eslintd-fix
-              :config (eslintd-fix-mode t))
+;; JavaScript
+(use-package tide
+  :config (add-hook 'typescript-mode-hook 'tide-setup))
 
-            (use-package tern
-              :config (eval-after-load 'company
-                        '(add-to-list 'company-backends 'company-tern)))))
+(add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
+(add-hook 'js-jsx-mode-hook
+          (lambda ()
+            (use-package tide
+              :config (progn
+                        (flycheck-add-next-checker 'javascript-eslint 'jsx-tide 'append)
+                        (tide-setup)))
+
+            (use-package eslintd-fix
+              :config (eslintd-fix-mode t))))
 
 ;; FlyCheck
 (dolist (hook (list 'python-mode-hook 'web-mode-hook 'js-mode-hook))
