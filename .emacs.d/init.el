@@ -1,5 +1,5 @@
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
-;; evaling arbituary code...
+;; evaling arbitrary code...
 (advice-add 'load-theme :around #'(lambda (old-load-theme &rest r)
                                     (apply old-load-theme (append r '(t)))))
 
@@ -51,8 +51,6 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Automatically wrap overly long lines for all text modes
 (add-hook 'text-mode-hook #'(lambda () (auto-fill-mode t)))
 
-(global-set-key (kbd "C-c e f") 'byte-compile-file)
-
 ;; Turn on linum mode for all prog and text modes
 (dolist (hook (list 'prog-mode-hook 'text-mode-hook))
   (add-hook hook #'(lambda () (linum-mode t))))
@@ -60,6 +58,7 @@ Optional argument ARG same as `comment-dwim''s."
 (add-hook 'after-revert-hook 'linum-update-current)
 
 ;; lisp keybindings
+(global-set-key (kbd "C-c e f") 'byte-compile-file)
 (define-key emacs-lisp-mode-map (kbd "C-c e e") 'eval-last-sexp)
 (define-key emacs-lisp-mode-map (kbd "C-c e r") 'eval-region)
 (define-key emacs-lisp-mode-map (kbd "C-c e b") 'eval-buffer)
@@ -70,13 +69,13 @@ Optional argument ARG same as `comment-dwim''s."
 (define-key emacs-lisp-mode-map (kbd "C-c e v") 'find-variable-at-point)
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
-;; rebind windmove keys
+;; Rebind windmove keys
 (global-set-key (kbd "C-c <left>")  'windmove-left)
 (global-set-key (kbd "C-c <right>") 'windmove-right)
 (global-set-key (kbd "C-c <up>")    'windmove-up)
 (global-set-key (kbd "C-c <down>")  'windmove-down)
 
-;; unmap undo-tree mode
+;; Unmap undo-tree mode
 (assq-delete-all 'undo-tree-mode minor-mode-map-alist)
 (global-set-key (kbd "C-x u") 'undo-tree-visualize)
 
@@ -113,11 +112,11 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Replace isearch query replace and query-replace functions with Anzu's equivalents
 (use-package anzu
-  :config (progn ()
-                 (defalias 'query-replace 'anzu-query-replace)
-                 (defalias 'query-replace-regexp 'anzu-query-replace-regexp)
-                 (defalias 'isearch-query-replace 'anzu-isearch-query-replace)
-                 (defalias 'isearch-query-replace-regexp 'anzu-isearch-query-replace-regexp)))
+  :config (progn
+            (defalias 'query-replace 'anzu-query-replace)
+            (defalias 'query-replace-regexp 'anzu-query-replace-regexp)
+            (defalias 'isearch-query-replace 'anzu-isearch-query-replace)
+            (defalias 'isearch-query-replace-regexp 'anzu-isearch-query-replace-regexp)))
 
 ;; Git
 (use-package magit
