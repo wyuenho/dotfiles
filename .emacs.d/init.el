@@ -94,7 +94,9 @@ Optional argument ARG same as `comment-dwim''s."
        #'(lambda () (set-window-configuration ediff-saved-window-configuration))))
   (add-hook 'ediff-quit-hook restore-window-configuration 'append)
   (add-hook 'ediff-suspend-hook restore-window-configuration 'append))
-(add-hook 'ediff-cleanup-hook #'(lambda () (eval-after-load "ediff-util" (ediff-janitor nil nil))))
+(add-hook 'ediff-cleanup-hook #'(lambda () (eval-when-compile
+                                             (require 'ediff-util)
+                                             (ediff-janitor nil nil))) 'append)
 
 ;; Replace ido and isearch
 (use-package ivy
@@ -280,14 +282,17 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Project and window management
 (use-package golden-ratio
-  :init (defun inhibit-golden-ratio-maybe ()
-          (null ediff-session-registry))
-  :config (push 'inhibit-golden-ratio-maybe golden-ratio-inhibit-functions))
+  :config (progn
+            (defvar ediff-on nil)
+            (add-hook 'ediff-before-setup-hook #'(lambda () (setq ediff-on t)))
+            (add-hook 'ediff-quit-hook #'(lambda () (setq ediff-on nil)) 'append)
+            (add-hook 'ediff-suspend-hook #'(lambda () (setq ediff-on nil)) 'append)
+            (push #'(lambda () ediff-on) golden-ratio-inhibit-functions)))
 
 (use-package centered-window-mode
   :config (progn
             (centered-window-mode)
-            (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle 'append)
+            (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
             (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
             (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append)))
 
