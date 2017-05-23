@@ -66,8 +66,8 @@ Optional argument ARG same as `comment-dwim''s."
 (define-key emacs-lisp-mode-map (kbd "C-c e c") 'emacs-lisp-byte-compile)
 (define-key emacs-lisp-mode-map (kbd "C-c e l") 'emacs-lisp-byte-compile-and-load)
 (define-key emacs-lisp-mode-map (kbd "C-c e d") 'byte-recompile-directory)
-(define-key emacs-lisp-mode-map (kbd "C-c f") 'find-function-at-point)
-(define-key emacs-lisp-mode-map (kbd "C-c v") 'find-variable-at-point)
+(define-key emacs-lisp-mode-map (kbd "C-c e g") 'find-function-at-point)
+(define-key emacs-lisp-mode-map (kbd "C-c e v") 'find-variable-at-point)
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 
 ;; rebind windmove keys
