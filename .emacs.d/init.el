@@ -1,7 +1,7 @@
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbituary code...
-(advice-add 'load-theme :around (lambda (old-load-theme &rest r)
-                                  (apply old-load-theme (append r '(t)))))
+(advice-add 'load-theme :around #'(lambda (old-load-theme &rest r)
+                                    (apply old-load-theme (append r '(t)))))
 
 ;; Emacs loads init file first and the packages last normally. Forcing the
 ;; packages to load first makes conifguring them in the init file possible.
@@ -49,13 +49,13 @@ Optional argument ARG same as `comment-dwim''s."
 (global-set-key (kbd "M-;") 'comment-dwim-line-or-region)
 
 ;; Automatically wrap overly long lines for all text modes
-(add-hook 'text-mode-hook (lambda () (auto-fill-mode t)))
+(add-hook 'text-mode-hook #'(lambda () (auto-fill-mode t)))
 
 (global-set-key (kbd "C-c e f") 'byte-compile-file)
 
 ;; Turn on linum mode for all prog and text modes
 (dolist (hook (list 'prog-mode-hook 'text-mode-hook))
-  (add-hook hook (lambda () (linum-mode t))))
+  (add-hook hook #'(lambda () (linum-mode t))))
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
 
@@ -85,7 +85,12 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Turn on iMenu for code outlines for all prog and text modes, if possible
 (dolist (hook (list 'prog-mode-hook 'text-mode-hook))
-  (add-hook hook (lambda () (ignore-errors (imenu-add-menubar-index)))))
+  (add-hook hook #'(lambda () (ignore-errors (imenu-add-menubar-index)))))
+
+;; ediff
+(add-hook 'ediff-cleanup-hook #'(lambda ()
+                                  (eval-when-compile (require 'ediff-util))
+                                  (ediff-janitor nil nil)))
 
 ;; Replace ido and isearch
 (use-package ivy
@@ -104,15 +109,15 @@ Optional argument ARG same as `comment-dwim''s."
   :after swiper
   :bind (("C-x C-f" . counsel-find-file)
          :map read-expression-map
-              ("C-r" . counsel-expression-history)))
+         ("C-r" . counsel-expression-history)))
 
 ;; Replace isearch query replace and query-replace functions with Anzu's equivalents
 (use-package anzu
   :config (progn ()
-            (defalias 'query-replace 'anzu-query-replace)
-            (defalias 'query-replace-regexp 'anzu-query-replace-regexp)
-            (defalias 'isearch-query-replace 'anzu-isearch-query-replace)
-            (defalias 'isearch-query-replace-regexp 'anzu-isearch-query-replace-regexp)))
+                 (defalias 'query-replace 'anzu-query-replace)
+                 (defalias 'query-replace-regexp 'anzu-query-replace-regexp)
+                 (defalias 'isearch-query-replace 'anzu-isearch-query-replace)
+                 (defalias 'isearch-query-replace-regexp 'anzu-isearch-query-replace-regexp)))
 
 ;; Git
 (use-package magit
@@ -130,7 +135,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Turn on subword mode for all prog modes
 (use-package syntax-subword
-  :config (add-hook 'prog-mode-hook (lambda () (syntax-subword-mode t))))
+  :config (add-hook 'prog-mode-hook #'(lambda () (syntax-subword-mode t))))
 
 (use-package expand-region
   :bind (("M-=" . er/expand-region)
@@ -192,14 +197,14 @@ Optional argument ARG same as `comment-dwim''s."
          "\\.html?\\'"
          "\\.handlebars\\'"))
 
-;; (when (require 'php-mode nil t)
-;;   (dolist (hook (list
+;; (use-package php-mode
+;;   :config (dolist (hook (list
 ;;                  'php-mode-pear-hook
 ;;                  'php-mode-psr2-hook
 ;;                  'php-mode-drupal-hook
 ;;                  'php-mode-symfony2-hook
 ;;                  'php-mode-wordpress-hook))
-;;     (add-hook hook (lambda ()
+;;     (add-hook hook #'(lambda ()
 ;;                      (setq c-basic-offset 4)
 ;;                      (setq tab-width 4)))))
 
@@ -214,65 +219,62 @@ Optional argument ARG same as `comment-dwim''s."
 
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
 (add-hook 'js-jsx-mode-hook
-          (lambda ()
-            (use-package tide
-              :config (progn
-                        (flycheck-add-next-checker 'javascript-eslint 'jsx-tide 'append)
-                        (tide-setup)))
+          #'(lambda ()
+              (use-package tide
+                :config (progn
+                          (flycheck-add-next-checker 'javascript-eslint 'jsx-tide 'append)
+                          (tide-setup)))
 
-            (use-package eslintd-fix
-              :config (eslintd-fix-mode t))))
+              (use-package eslintd-fix
+                :config (eslintd-fix-mode t))))
 
 ;; FlyCheck
 (dolist (hook (list 'python-mode-hook 'web-mode-hook 'js-mode-hook))
-  (add-hook hook (lambda ()
-                   (use-package flycheck-mypy
-                     :config (flycheck-mode t)))))
+  (add-hook hook #'(lambda ()
+                     (use-package flycheck-mypy
+                       :config (flycheck-mode t)))))
 
 ;; Python stuff
 (add-hook 'python-mode-hook
-          (lambda ()
-            (use-package py-autopep8
-              :config (py-autopep8-enable-on-save))
+          #'(lambda ()
+              (use-package py-autopep8
+                :config (py-autopep8-enable-on-save))
 
-            (use-package python-docstring
-              :config (python-docstring-mode))
+              (use-package python-docstring
+                :config (python-docstring-mode))
 
-            (use-package py-isort
-              :config (define-key python-mode-map (kbd "C-c s") 'py-isort-buffer))
+              (use-package py-isort
+                :config (define-key python-mode-map (kbd "C-c s") 'py-isort-buffer))
 
-            (use-package pyenv-mode-auto)
+              (use-package pyenv-mode-auto)
 
-            (use-package anaconda-mode
-              :config (progn
-                        (anaconda-mode t)
-                        (anaconda-eldoc-mode t)
-                        (eval-after-load 'company
-                          '(add-to-list 'company-backends '(company-anaconda :with company-capf)))))))
+              (use-package anaconda-mode
+                :config (progn
+                          (anaconda-mode t)
+                          (anaconda-eldoc-mode t)
+                          (eval-after-load 'company
+                            '(add-to-list 'company-backends '(company-anaconda :with company-capf)))))))
 
 (add-hook 'inferior-python-mode-hook
-          (lambda ()
-            (dolist (process (process-list))
-              (when (string-prefix-p "Python" (process-name process))
-                (set-process-query-on-exit-flag process nil)))))
+          #'(lambda ()
+              (dolist (process (process-list))
+                (when (string-prefix-p "Python" (process-name process))
+                  (set-process-query-on-exit-flag process nil)))))
 
 ;; yasnippet
 (use-package yasnippet
   :config (progn
             (add-hook 'yas-minor-mode-hook
-                      (lambda ()
-                        (define-key yas-minor-mode-map (kbd "TAB") nil)
-                        (define-key yas-minor-mode-map (kbd "<tab>") nil)
-                        (define-key yas-minor-mode-map (kbd "C-c i") 'yas-expand)))
+                      #'(lambda ()
+                          (define-key yas-minor-mode-map (kbd "TAB") nil)
+                          (define-key yas-minor-mode-map (kbd "<tab>") nil)
+                          (define-key yas-minor-mode-map (kbd "C-c i") 'yas-expand)))
             ;; Turn on yasnippet for all prog and text modes
             (dolist (hook (list 'prog-mode-hook 'text-mode))
               (add-hook hook 'yas-minor-mode)
               (yas-reload-all))))
 
 ;; Project and window management
-(use-package golden-ratio
-  :config (golden-ratio-mode t))
-
 (use-package counsel-projectile
   :config (counsel-projectile-on))
 
@@ -290,14 +292,14 @@ Optional argument ARG same as `comment-dwim''s."
 ;;                            'window-configuration-change-hook
 ;;                            'after-change-major-mode-hook))
 ;;               (add-hook hook
-;;                         (lambda ()
+;;                         #'(lambda ()
 ;;                           (when (window-header-line-height)
 ;;                             (setq header-line-format 'mode-line-buffer-identification)))))
 
 ;;             ;; The buffer ID is removed from the mode line in customize.el, this sexp
 ;;             ;; replace it with the icon
 ;;             (add-hook 'after-change-major-mode-hook
-;;                       (lambda ()
+;;                       #'(lambda ()
 ;;                         (when (and (require 'all-the-icons nil t) (window-system))
 ;;                           (let ((icon (all-the-icons-icon-for-mode major-mode)))
 ;;                             (when (and icon (not (string= major-mode icon)))
