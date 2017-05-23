@@ -145,6 +145,18 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-<right>" . sp-forward-slurp-sexp)
          ("M-<right>" . sp-forward-barf-sexp)))
 
+;; Cycle thru most commonly programming identifier styles
+(use-package string-inflection
+  :init (defun inflect-string ()
+          (interactive)
+          (cond ((memq major-mode '(java-mode js-mode js-jsx-mode typescript-mode))
+                 (string-inflection-java-style-cycle))
+                ((memq major-mode '(python-mode ruby-mode))
+                 (string-inflection-ruby-style-cycle))
+                ((derived-mode-p major-mode 'prog-mode)
+                 (string-inflection-all-cycle))))
+  :bind (("C-c C-u" . inflect-string)))
+
 ;; Vim-like increment and decrement
 (use-package evil-numbers
   :bind (("C-c =" . evil-numbers/inc-at-pt)
