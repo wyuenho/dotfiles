@@ -27,9 +27,7 @@
  '(css-indent-offset 2)
  '(current-language-environment "English")
  '(custom-enabled-themes (quote (solarized-dark)))
- '(custom-safe-themes
-   (quote
-    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
+ '(cwm-left-fringe-ratio 0)
  '(dabbrev-case-fold-search nil)
  '(delete-by-moving-to-trash t)
  '(delete-old-versions t)
@@ -41,11 +39,11 @@
  '(desktop-restore-eager 5)
  '(desktop-save-mode t)
  '(diff-switches "-u -B")
- '(ecb-layout-name "right1")
- '(ecb-tip-of-the-day nil)
  '(ediff-split-window-function (quote split-window-horizontally))
  '(el-get-user-package-directory "~/.emacs.d/el-get-init-files/")
  '(emmet-indentation 2)
+ '(enable-local-eval t)
+ '(enable-local-variables :all)
  '(ensime-default-server-root "~/.emacs.d/ensime")
  '(eval-expression-print-level 1000)
  '(exec-path-from-shell-check-startup-files nil)
@@ -62,6 +60,7 @@
  '(global-undo-tree-mode t)
  '(global-visual-line-mode t)
  '(global-whitespace-cleanup-mode t)
+ '(golden-ratio-mode t)
  '(graphviz-dot-delete-completions t)
  '(graphviz-dot-toggle-completions t)
  '(history-length 250)
@@ -120,7 +119,7 @@
      ("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (hideshowvis origami esup docker which-key package-lint prettier-js package-build git-timemachine flx ivy-rich ivy-hydra anzu spaceline-config syntax-subword use-package mocha-snippets react-snippets editorconfig markdown-mode magit magit-filenotify magit-gh-pulls magit-gitflow move-dup counsel counsel-projectile ivy swiper projectile try tide spaceline-all-the-icons spaceline vlf golden-ratio gitattributes-mode gitconfig-mode gitignore-mode company-quickhelp expand-region magithub ztree rainbow-mode exec-path-from-shell less-css-mode whitespace-cleanup-mode anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors monky memory-usage js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
+    (cycle-quotes eyebrowse kill-or-bury-alive workgroups2 centered-window-mode pcre2el hideshowvis origami esup docker which-key package-lint prettier-js package-build git-timemachine flx ivy-rich ivy-hydra anzu spaceline-config syntax-subword use-package mocha-snippets react-snippets editorconfig markdown-mode magit magit-filenotify magit-gh-pulls magit-gitflow move-dup counsel counsel-projectile ivy swiper projectile try tide spaceline-all-the-icons spaceline vlf golden-ratio gitattributes-mode gitconfig-mode gitignore-mode company-quickhelp expand-region magithub ztree rainbow-mode exec-path-from-shell less-css-mode whitespace-cleanup-mode anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons-dired neotree pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors monky memory-usage js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
  '(php-mode-warn-if-mumamo-off "Don't warn")
  '(php-template-compatibility nil)
  '(powerline-gui-use-vcs-glyph t)
