@@ -114,6 +114,14 @@ Optional argument ARG same as `comment-dwim''s."
             (defalias 'isearch-query-replace 'anzu-isearch-query-replace)
             (defalias 'isearch-query-replace-regexp 'anzu-isearch-query-replace-regexp)))
 
+;; Git
+(use-package magit
+  :bind (("C-c v g" . magit-status)))
+
+;; Hg
+(use-package monky
+  :bind (("C-c v h" . monky-status)))
+
 ;; Modern code folding
 (use-package origami
   :bind (("M-0" . origami-open-all-nodes)
