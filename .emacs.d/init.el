@@ -125,7 +125,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Use ido for even more things than ido-everywhere
 (use-package ido-ubiquitous)
-(use-package ido-match-modes)
 (use-package ido-vertical-mode)
 
 ;; Git
