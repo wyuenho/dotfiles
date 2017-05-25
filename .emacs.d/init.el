@@ -305,6 +305,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Window management
 (use-package golden-ratio
+  :defines golden-ratio-inhibit-functions
   :config (progn
             (defvar ediff-on nil)
             (add-hook 'ediff-before-setup-hook #'(lambda () (setq ediff-on t)))
