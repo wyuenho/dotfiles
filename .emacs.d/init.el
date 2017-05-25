@@ -30,6 +30,15 @@
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Automatically wrap overly long lines for all text modes
+(add-hook 'text-mode-hook #'(lambda () (auto-fill-mode t)))
+
+;; Turn on linum mode for all prog and text modes
+(dolist (hook '(prog-mode-hook text-mode-hook))
+  (add-hook hook #'(lambda () (linum-mode t))))
+;; Renumber the current buffer after reverting the buffer
+(add-hook 'after-revert-hook 'linum-update-current)
+
 ;; More sensible comment-dwim
 (defun comment-dwim-line-or-region (&optional arg)
   "Replacement for the ‘comment-dwim' command.
@@ -46,41 +55,34 @@ Optional argument ARG same as `comment-dwim''s."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
-(global-set-key (kbd "M-;") 'comment-dwim-line-or-region)
 
-;; Automatically wrap overly long lines for all text modes
-(add-hook 'text-mode-hook #'(lambda () (auto-fill-mode t)))
+(use-package bind-key
+  :bind (
+         ("M-;" . comment-dwim-line-or-region)
+         ;; Rebind windmove keys
+         ("C-c <left>"  . windmove-left)
+         ("C-c <right>" . windmove-right)
+         ("C-c <up>"    . windmove-up)
+         ("C-c <down>"  . windmove-down)
+         ;; Replace default buffer menu with ibuffer
+         ("C-x C-b"     . ibuffer)
+         ;; Rebind undo to undo-tree visualizer
+         ("C-x u"       . undo-tree-visualize)
+         ("C-c e f"     . byte-compile-file)
+         :emacs-lisp-mode-map
+         ("C-c e e"     . eval-last-sexp)
+         ("C-c e e"     . eval-last-sexp)
+         ("C-c e r"     . eval-region)
+         ("C-c e b"     . eval-buffer)
+         ("C-c e c"     . emacs-lisp-byte-compile)
+         ("C-c e l"     . emacs-lisp-byte-compile-and-load)
+         ("C-c e d"     . byte-recompile-directory)
+         ("C-c e g"     . find-function-at-point)
+         ("C-c e v"     . find-variable-at-point))
+  :config (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
 
-;; Turn on linum mode for all prog and text modes
-(dolist (hook '(prog-mode-hook text-mode-hook))
-  (add-hook hook #'(lambda () (linum-mode t))))
-;; Renumber the current buffer after reverting the buffer
-(add-hook 'after-revert-hook 'linum-update-current)
-
-;; lisp keybindings
-(global-set-key (kbd "C-c e f") 'byte-compile-file)
-(define-key emacs-lisp-mode-map (kbd "C-c e e") 'eval-last-sexp)
-(define-key emacs-lisp-mode-map (kbd "C-c e r") 'eval-region)
-(define-key emacs-lisp-mode-map (kbd "C-c e b") 'eval-buffer)
-(define-key emacs-lisp-mode-map (kbd "C-c e c") 'emacs-lisp-byte-compile)
-(define-key emacs-lisp-mode-map (kbd "C-c e l") 'emacs-lisp-byte-compile-and-load)
-(define-key emacs-lisp-mode-map (kbd "C-c e d") 'byte-recompile-directory)
-(define-key emacs-lisp-mode-map (kbd "C-c e g") 'find-function-at-point)
-(define-key emacs-lisp-mode-map (kbd "C-c e v") 'find-variable-at-point)
-(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-
-;; Rebind windmove keys
-(global-set-key (kbd "C-c <left>")  'windmove-left)
-(global-set-key (kbd "C-c <right>") 'windmove-right)
-(global-set-key (kbd "C-c <up>")    'windmove-up)
-(global-set-key (kbd "C-c <down>")  'windmove-down)
-
-;; Replace default buffer menu with ibuffer
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-
-;; Unmap undo-tree mode
+;; Unmap extraneous undo-tree mode keys
 (assq-delete-all 'undo-tree-mode minor-mode-map-alist)
-(global-set-key (kbd "C-x u") 'undo-tree-visualize)
 
 ;; Unbind hide/show mode's ridiculous keybindings
 (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
@@ -120,10 +122,9 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Use ido with M-x
 (use-package smex
-  :config (progn
-            (smex-initialize)
-            (global-set-key (kbd "M-x") 'smex)
-            (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
+  :bind (("M-x" . smex)
+         ("M-X" . smex-major-mode-commands))
+  :config (smex-initialize))
 
 ;; Use ido for even more things than ido-everywhere
 (use-package ido-ubiquitous)
@@ -140,8 +141,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Modern code folding
 (use-package origami
-  :bind (("M-0" . origami-open-all-nodes)
-         ("M-9" . origami-close-all-nodes)
+  :bind (("M-0"   . origami-open-all-nodes)
+         ("M-9"   . origami-close-all-nodes)
          ("C-M-/" . origami-recursively-toggle-node)))
 
 ;; Turn on subword mode for all prog modes
@@ -153,11 +154,11 @@ Optional argument ARG same as `comment-dwim''s."
          ("M--" . er/contract-region)))
 
 (use-package smartparens-config
-  :bind (("M-A" . sp-beginning-of-sexp)
-         ("M-E" . sp-end-of-sexp)
-         ("M-_" . sp-unwrap-sexp)
-         ("C-<left>" . sp-backward-slurp-sexp)
-         ("M-<left>" . sp-backward-barf-sexp)
+  :bind (("M-A"       . sp-beginning-of-sexp)
+         ("M-E"       . sp-end-of-sexp)
+         ("M-_"       . sp-unwrap-sexp)
+         ("C-<left>"  . sp-backward-slurp-sexp)
+         ("M-<left>"  . sp-backward-barf-sexp)
          ("C-<right>" . sp-forward-slurp-sexp)
          ("M-<right>" . sp-forward-barf-sexp)))
 
@@ -274,7 +275,8 @@ Optional argument ARG same as `comment-dwim''s."
                 :config (python-docstring-mode))
 
               (use-package py-isort
-                :config (define-key python-mode-map (kbd "C-c s") 'py-isort-buffer))
+                :bind (:map python-mode-map
+                            ("C-c s" . py-isort-buffer)))
 
               (use-package pyenv-mode-auto)
 
@@ -293,16 +295,13 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; yasnippet
 (use-package yasnippet
-  :config (progn
-            (add-hook 'yas-minor-mode-hook
-                      #'(lambda ()
-                          (define-key yas-minor-mode-map (kbd "TAB") nil)
-                          (define-key yas-minor-mode-map (kbd "<tab>") nil)
-                          (define-key yas-minor-mode-map (kbd "C-c i") 'yas-expand)))
-            ;; Turn on yasnippet for all prog and text modes
-            (dolist (hook '(prog-mode-hook text-mode))
-              (add-hook hook 'yas-minor-mode)
-              (yas-reload-all))))
+  :bind (:map yas-minor-mode-map
+              ("TAB"   . nil)
+              ("<tab>" . nil)
+              ("C-c i" . yas-expand))
+  :config (dolist (hook '(prog-mode-hook text-mode))
+            (add-hook hook 'yas-minor-mode)
+            (yas-reload-all)))
 
 ;; Window management
 (use-package golden-ratio
