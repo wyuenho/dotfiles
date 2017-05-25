@@ -56,6 +56,7 @@
  '(gc-cons-threshold 20000000)
  '(global-company-mode t)
  '(global-font-lock-mode t nil (font-lock))
+ '(global-hl-line-mode t)
  '(global-move-dup-mode t)
  '(global-origami-mode t)
  '(global-undo-tree-mode t)
@@ -126,7 +127,7 @@
      ("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ido-match-modes ido-grid-mode ido-vertical-mode ido-ubiquitous company-flx flx-ido flx-isearch smex typescript-mode golden-ratio cycle-quotes eyebrowse kill-or-bury-alive centered-window-mode pcre2el hideshowvis origami esup docker which-key package-lint prettier-js package-build git-timemachine spaceline-config syntax-subword use-package mocha-snippets react-snippets editorconfig markdown-mode magit magit-filenotify magit-gh-pulls magit-gitflow move-dup projectile try tide spaceline-all-the-icons spaceline vlf gitattributes-mode gitconfig-mode gitignore-mode company-quickhelp expand-region magithub ztree rainbow-mode exec-path-from-shell less-css-mode whitespace-cleanup-mode anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons-dired pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors monky memory-usage js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
+    (ido-grid-mode ido-vertical-mode ido-ubiquitous company-flx flx-ido flx-isearch smex typescript-mode golden-ratio cycle-quotes eyebrowse kill-or-bury-alive centered-window-mode pcre2el hideshowvis origami esup docker which-key package-lint prettier-js package-build git-timemachine spaceline-config syntax-subword use-package mocha-snippets react-snippets editorconfig markdown-mode magit magit-filenotify magit-gh-pulls magit-gitflow move-dup projectile try tide spaceline-all-the-icons spaceline vlf gitattributes-mode gitconfig-mode gitignore-mode company-quickhelp expand-region magithub ztree rainbow-mode exec-path-from-shell less-css-mode whitespace-cleanup-mode anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons-dired pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sphinx-doc solarized-theme smooth-scrolling smartparens scss-mode py-isort nose multiple-cursors monky memory-usage js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
  '(php-mode-warn-if-mumamo-off "Don't warn")
  '(php-template-compatibility nil)
  '(powerline-gui-use-vcs-glyph t)
