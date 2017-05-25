@@ -113,8 +113,8 @@ Optional argument ARG same as `comment-dwim''s."
             (flx-ido-mode t)))
 
 (use-package flx-isearch
-  :bind (("C-M-s" . flx-isearch-forward)
-         ("C-M-r" . flx-isearch-backward))
+  :bind (("C-s" . flx-isearch-forward)
+         ("C-r" . flx-isearch-backward))
   :config (flx-isearch-mode t))
 
 ;; Use ido with M-x
