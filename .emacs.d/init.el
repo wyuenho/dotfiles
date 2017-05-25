@@ -71,14 +71,11 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-c e f"     . byte-compile-file)
          :emacs-lisp-mode-map
          ("C-c e e"     . eval-last-sexp)
-         ("C-c e e"     . eval-last-sexp)
          ("C-c e r"     . eval-region)
          ("C-c e b"     . eval-buffer)
          ("C-c e c"     . emacs-lisp-byte-compile)
          ("C-c e l"     . emacs-lisp-byte-compile-and-load)
-         ("C-c e d"     . byte-recompile-directory)
-         ("C-c e g"     . find-function-at-point)
-         ("C-c e v"     . find-variable-at-point))
+         ("C-c e d"     . byte-recompile-directory))
   :config (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
 
 ;; Unmap extraneous undo-tree mode keys
