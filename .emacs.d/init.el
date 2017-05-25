@@ -11,10 +11,8 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(require 'use-package)
+(eval-when-compile
+  (require 'use-package))
 
 ;; Maximize frame on startup and set up default font
 (when (window-system)
@@ -55,10 +53,8 @@ Optional argument ARG same as `comment-dwim''s."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
-
 (use-package bind-key
-  :bind (
-         ("M-;" . comment-dwim-line-or-region)
+  :bind (("M-;" . comment-dwim-line-or-region)
          ;; Rebind windmove keys
          ("C-c <left>"  . windmove-left)
          ("C-c <right>" . windmove-right)
@@ -113,8 +109,8 @@ Optional argument ARG same as `comment-dwim''s."
             (flx-ido-mode t)))
 
 (use-package flx-isearch
-  :bind (("C-s" . flx-isearch-forward)
-         ("C-r" . flx-isearch-backward))
+  :bind (("C-M-s" . flx-isearch-forward)
+         ("C-M-r" . flx-isearch-backward))
   :config (flx-isearch-mode t))
 
 ;; Use ido with M-x
