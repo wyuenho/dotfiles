@@ -52,7 +52,7 @@ Optional argument ARG same as `comment-dwim''s."
 (add-hook 'text-mode-hook #'(lambda () (auto-fill-mode t)))
 
 ;; Turn on linum mode for all prog and text modes
-(dolist (hook (list 'prog-mode-hook 'text-mode-hook))
+(dolist (hook '(prog-mode-hook text-mode-hook))
   (add-hook hook #'(lambda () (linum-mode t))))
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
@@ -75,6 +75,9 @@ Optional argument ARG same as `comment-dwim''s."
 (global-set-key (kbd "C-c <up>")    'windmove-up)
 (global-set-key (kbd "C-c <down>")  'windmove-down)
 
+;; Replace default buffer menu with ibuffer
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
 ;; Unmap undo-tree mode
 (assq-delete-all 'undo-tree-mode minor-mode-map-alist)
 (global-set-key (kbd "C-x u") 'undo-tree-visualize)
@@ -83,7 +86,7 @@ Optional argument ARG same as `comment-dwim''s."
 (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
 
 ;; Turn on iMenu for code outlines for all prog and text modes, if possible
-(dolist (hook (list 'prog-mode-hook 'text-mode-hook))
+(dolist (hook '(prog-mode-hook text-mode-hook))
   (add-hook hook #'(lambda () (ignore-errors (imenu-add-menubar-index)))))
 
 ;; Save window config before ediff starts and restores it and cleans up when it quits, sanity!
@@ -94,36 +97,38 @@ Optional argument ARG same as `comment-dwim''s."
        #'(lambda () (set-window-configuration ediff-saved-window-configuration))))
   (add-hook 'ediff-quit-hook restore-window-configuration 'append)
   (add-hook 'ediff-suspend-hook restore-window-configuration 'append))
-(add-hook 'ediff-cleanup-hook #'(lambda () (eval-when-compile
-                                             (require 'ediff-util)
-                                             (ediff-janitor nil nil))) 'append)
+(add-hook 'ediff-cleanup-hook
+          #'(lambda ()
+              (eval-when-compile
+                (require 'ediff-util)
+                (ediff-janitor nil nil)))
+          'append)
 
-;; Replace ido and isearch
-(use-package ivy
-  :after magit
-  :config (ivy-mode t))
+(use-package all-the-icons-dired
+  :config (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
-(use-package ivy-rich
-  :after ivy
-  :config (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
-
-(use-package swiper
-  :after ivy
-  :bind (("C-s" . swiper)))
-
-(use-package counsel
-  :after swiper
-  :bind (("C-x C-f" . counsel-find-file)
-         :map read-expression-map
-         ("C-r" . counsel-expression-history)))
-
-;; Replace isearch query replace and query-replace functions with Anzu's equivalents
-(use-package anzu
+;; Enhances ido and isearch's fuzzy search
+(use-package flx-ido
   :config (progn
-            (defalias 'query-replace 'anzu-query-replace)
-            (defalias 'query-replace-regexp 'anzu-query-replace-regexp)
-            (defalias 'isearch-query-replace 'anzu-isearch-query-replace)
-            (defalias 'isearch-query-replace-regexp 'anzu-isearch-query-replace-regexp)))
+            (setq flx-ido-use-faces nil)
+            (flx-ido-mode t)))
+
+(use-package flx-isearch
+  :bind (("C-M-s" . flx-isearch-forward)
+         ("C-M-r" . flx-isearch-backward))
+  :config (flx-isearch-mode t))
+
+;; Use ido with M-x
+(use-package smex
+  :config (progn
+            (smex-initialize)
+            (global-set-key (kbd "M-x") 'smex)
+            (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
+
+;; Use ido for even more things than ido-everywhere
+(use-package ido-ubiquitous)
+(use-package ido-match-modes)
+(use-package ido-vertical-mode)
 
 ;; Git
 (use-package magit
@@ -193,7 +198,9 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package web-mode
   :after tide
-  :mode ("\\.css\\'"
+  :mode ("\\.jinja'"
+         "\\.tsx\\'"
+         "\\.css\\'"
          "\\.phtml\\'"
          "\\.jsp\\'"
          "\\.as[cp]x\\'"
@@ -201,41 +208,58 @@ Optional argument ARG same as `comment-dwim''s."
          "\\.mustache\\'"
          "\\.djhtml\\'"
          "\\.html?\\'"
-         "\\.handlebars\\'"))
-
-;; (use-package php-mode
-;;   :config (dolist (hook (list
-;;                  'php-mode-pear-hook
-;;                  'php-mode-psr2-hook
-;;                  'php-mode-drupal-hook
-;;                  'php-mode-symfony2-hook
-;;                  'php-mode-wordpress-hook))
-;;     (add-hook hook #'(lambda ()
-;;                      (setq c-basic-offset 4)
-;;                      (setq tab-width 4)))))
+         "\\.handlebars\\'")
+  :config (add-hook 'web-mode-hook
+                    #'(lambda ()
+                        (when (string-equal "tsx" (file-name-extension buffer-file-name))
+                          (tide-setup)
+                          (tide-hl-identifier-mode t)
+                          (flycheck-mode t)
+                          (eldoc-mode t)))))
 
 (use-package emmet-mode
   :after web-mode
-  :config (dolist (hook (list 'sgml-mode-hook 'web-mode-hook 'nxml-mode-hook))
+  :config (dolist (hook '(sgml-mode-hook web-mode-hook nxml-mode-hook))
             (add-hook hook 'emmet-mode)))
 
-;; JavaScript
+;; TypeScript
+(use-package typescript-mode)
 (use-package tide
-  :config (add-hook 'typescript-mode-hook 'tide-setup))
+  :after typescript-mode
+  :bind (:map typescript-mode-map
+              ("M-F" . tide-format)
+              ("M-r" . tide-rename-symbol)
+              ("M-1" . tide-fix)
+              ("M-G" . tide-references)
+              ("M-d" . tide-documentation-at-point))
+  :config (progn
+            (add-hook 'typescript-mode-hook
+                      #'(lambda ()
+                          (tide-setup)
+                          (tide-hl-identifier-mode t)
+                          (flycheck-mode t)
+                          (eldoc-mode t)))
+            (add-hook 'before-save-hook 'tide-format-before-save)))
 
+;; JavaScript
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
 (add-hook 'js-jsx-mode-hook
           #'(lambda ()
-              (use-package tide
-                :config (progn
-                          (flycheck-add-next-checker 'javascript-eslint 'jsx-tide 'append)
-                          (tide-setup)))
+              (use-package prettier-js
+                :init (eval-when-compile (require 'js))
+                :bind (:map js-mode-map
+                            ("M-F" . prettier))
+                :config (prettier-mode))
 
               (use-package eslintd-fix
-                :config (eslintd-fix-mode t))))
+                :config (eslintd-fix-mode t))
+
+              (use-package tern
+                :config (eval-after-load 'company
+                          '(add-to-list 'company-backends 'company-tern)))))
 
 ;; FlyCheck
-(dolist (hook (list 'python-mode-hook 'web-mode-hook 'js-mode-hook))
+(dolist (hook '(python-mode-hook web-mode-hook js-mode-hook))
   (add-hook hook #'(lambda ()
                      (use-package flycheck-mypy
                        :config (flycheck-mode t)))))
@@ -276,11 +300,11 @@ Optional argument ARG same as `comment-dwim''s."
                           (define-key yas-minor-mode-map (kbd "<tab>") nil)
                           (define-key yas-minor-mode-map (kbd "C-c i") 'yas-expand)))
             ;; Turn on yasnippet for all prog and text modes
-            (dolist (hook (list 'prog-mode-hook 'text-mode))
+            (dolist (hook '(prog-mode-hook text-mode))
               (add-hook hook 'yas-minor-mode)
               (yas-reload-all))))
 
-;; Project and window management
+;; Window management
 (use-package golden-ratio
   :config (progn
             (defvar ediff-on nil)
@@ -296,42 +320,8 @@ Optional argument ARG same as `comment-dwim''s."
             (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
             (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append)))
 
-(use-package counsel-projectile
-  :config (counsel-projectile-on))
-
 ;; Modern fancy mode line
-;; (defvar use-icon t)
-
-(use-package spaceline
-  :after projectile)
-
-;; (use-package spaceline-config
-;;   :after spaceline
-;;   :functions spaceline-toggle-buffer-id-off spaceline-spacemacs-theme
-;;   :config (progn
-;;             (dolist (hook (list
-;;                            'window-configuration-change-hook
-;;                            'after-change-major-mode-hook))
-;;               (add-hook hook
-;;                         #'(lambda ()
-;;                           (when (window-header-line-height)
-;;                             (setq header-line-format 'mode-line-buffer-identification)))))
-
-;;             ;; The buffer ID is removed from the mode line in customize.el, this sexp
-;;             ;; replace it with the icon
-;;             (add-hook 'after-change-major-mode-hook
-;;                       #'(lambda ()
-;;                         (when (and (require 'all-the-icons nil t) (window-system))
-;;                           (let ((icon (all-the-icons-icon-for-mode major-mode)))
-;;                             (when (and icon (not (string= major-mode icon)))
-;;                               (setq mode-name icon))))))
-
-;;             (spaceline-toggle-minor-modes-off)
-;;             (spaceline-toggle-buffer-id-off)
-;;             (spaceline-spacemacs-theme)))
-
 (use-package spaceline-all-the-icons
-  :after spaceline
   :functions spaceline-all-the-icons-theme
   spaceline-all-the-icons--setup-package-updates
   spaceline-all-the-icons--setup-git-ahead
@@ -339,5 +329,4 @@ Optional argument ARG same as `comment-dwim''s."
   :config (progn
             (spaceline-all-the-icons-theme)
             (spaceline-all-the-icons--setup-package-updates)
-            (spaceline-all-the-icons--setup-git-ahead)
-            (spaceline-all-the-icons--setup-neotree)))
+            (spaceline-all-the-icons--setup-git-ahead)))
