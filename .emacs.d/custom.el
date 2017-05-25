@@ -131,7 +131,7 @@
  '(php-mode-warn-if-mumamo-off "Don't warn")
  '(php-template-compatibility nil)
  '(powerline-gui-use-vcs-glyph t)
- '(projectile-mode t nil (projectile))
+ '(projectile-mode t)
  '(python-skeleton-autoinsert t)
  '(recentf-auto-cleanup (quote never))
  '(recentf-mode t)
