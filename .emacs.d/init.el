@@ -291,13 +291,17 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; yasnippet
 (use-package yasnippet
+  :functions yas-reload-all
   :bind (:map yas-minor-mode-map
               ("TAB"   . nil)
               ("<tab>" . nil)
               ("C-c i" . yas-expand))
-  :config (dolist (hook '(prog-mode-hook text-mode))
-            (add-hook hook 'yas-minor-mode)
-            (yas-reload-all)))
+  :config (progn
+            (dolist (hook '(prog-mode-hook text-mode))
+              (add-hook hook 'yas-minor-mode))
+            (add-hook 'yas-minor-mode-hook
+                      #'(lambda ()
+                          (yas-reload-all)))))
 
 ;; Window management
 (use-package golden-ratio
