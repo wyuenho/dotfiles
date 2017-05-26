@@ -117,7 +117,7 @@
  '(package-archives
    (quote
     (("gnu" . "https://elpa.gnu.org/packages/")
-     ("melpa" . "https://www.mirrorservice.org/sites/melpa.org/packages/"))))
+     ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
     (smooth-scrolling ido-grid-mode ido-vertical-mode ido-ubiquitous company-flx flx-ido flx-isearch smex typescript-mode golden-ratio cycle-quotes eyebrowse kill-or-bury-alive centered-window-mode pcre2el hideshowvis origami esup docker which-key package-lint prettier-js package-build git-timemachine spaceline-config syntax-subword use-package mocha-snippets react-snippets editorconfig markdown-mode magit magit-filenotify magit-gh-pulls magit-gitflow move-dup projectile try tide spaceline-all-the-icons spaceline vlf gitattributes-mode gitconfig-mode gitignore-mode company-quickhelp expand-region magithub ztree rainbow-mode exec-path-from-shell less-css-mode whitespace-cleanup-mode anaconda-mode company string-inflection eslintd-fix py-autopep8 all-the-icons-dired pyimport pyenv-mode-auto python python-docstring company-dict company-shell zoom-frm yasnippet yaml-mode web-mode undo-tree sphinx-doc solarized-theme smartparens scss-mode py-isort nose multiple-cursors monky memory-usage js-doc iedit highlight-indent-guides graphviz-dot-mode flycheck-mypy evil-numbers emmet-mode dumb-jump dockerfile-mode csv-mode company-web company-tern company-anaconda auto-compile ag)))
