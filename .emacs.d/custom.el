@@ -11,6 +11,7 @@
  '(auto-compile-on-load-mode t)
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
+ '(auto-revert-buffer-list-filter (quote magit-auto-revert-repository-buffer-p))
  '(auto-revert-check-vc-info t)
  '(auto-revert-use-notify t)
  '(auto-save-default nil)
