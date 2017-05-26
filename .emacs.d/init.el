@@ -55,7 +55,8 @@ Optional argument ARG same as `comment-dwim''s."
 (require 'bind-key)
 
 (bind-keys
- ("M-;" . comment-dwim-line-or-region)
+ ("M-;"         . comment-dwim-line-or-region)
+ ("M-/"         . xref-find-references)
  ;; Rebind windmove keys
  ("C-c <left>"  . windmove-left)
  ("C-c <right>" . windmove-right)
@@ -66,13 +67,14 @@ Optional argument ARG same as `comment-dwim''s."
  ;; Rebind undo to undo-tree visualizer
  ("C-x u"       . undo-tree-visualize)
  ("C-c e f"     . byte-compile-file)
- ("C-c e d"     . byte-recompile-directory)
- :map emacs-lisp-mode-map
- ("C-c e e"     . eval-last-sexp)
- ("C-c e r"     . eval-region)
- ("C-c e b"     . eval-buffer)
- ("C-c e c"     . emacs-lisp-byte-compile)
- ("C-c e l"     . emacs-lisp-byte-compile-and-load))
+ ("C-c e d"     . byte-recompile-directory))
+
+(bind-keys :map emacs-lisp-mode-map
+           ("C-c e e" . eval-last-sexp)
+           ("C-c e r" . eval-region)
+           ("C-c e b" . eval-buffer)
+           ("C-c e c" . emacs-lisp-byte-compile)
+           ("C-c e l" . emacs-lisp-byte-compile-and-load))
 
 ;; Unmap extraneous undo-tree mode keys
 (assq-delete-all 'undo-tree-mode minor-mode-map-alist)
@@ -81,8 +83,8 @@ Optional argument ARG same as `comment-dwim''s."
 (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
 
 ;; Turn on iMenu for code outlines for all prog and text modes, if possible
-(dolist (hook '(prog-mode-hook text-mode-hook))
-  (add-hook hook #'(lambda () (ignore-errors (imenu-add-menubar-index)))))
+;; (dolist (hook '(prog-mode-hook text-mode-hook))
+;;   (add-hook hook #'(lambda () (ignore-errors (imenu-add-menubar-index)))))
 
 ;; Save window config before ediff starts and restores it and cleans up when it quits, sanity!
 (defvar ediff-saved-window-configuration)
@@ -102,20 +104,22 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
-  :config (progn
-            (setq flx-ido-use-faces nil)
-            (flx-ido-mode t)))
+  :config
+  (setq flx-ido-use-faces nil)
+  (flx-ido-mode t))
 
 (use-package flx-isearch
-  :bind (("C-M-s" . flx-isearch-forward)
-         ("C-M-r" . flx-isearch-backward))
-  :config (flx-isearch-mode t))
+  :config
+  (flx-isearch-mode t)
+  (bind-keys ("C-M-s" . flx-isearch-forward)
+             ("C-M-r" . flx-isearch-backward)))
 
 ;; Use ido with M-x
 (use-package smex
-  :bind (("M-x" . smex)
-         ("M-X" . smex-major-mode-commands))
-  :config (smex-initialize))
+  :config
+  (smex-initialize)
+  (bind-keys ("M-x" . smex)
+             ("M-X" . smex-major-mode-commands)))
 
 ;; Use ido for even more things than ido-everywhere
 (use-package ido-ubiquitous)
@@ -123,63 +127,65 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Git
 (use-package magit
-  :bind (("C-c v g" . magit-status)))
+  :config (bind-keys ("C-x v g" . magit-status)))
 
 ;; Hg
 (use-package monky
-  :bind (("C-c v h" . monky-status)))
+  :config (bind-keys ("C-x v h" . monky-status)))
 
 ;; Modern code folding
 (use-package origami
-  :bind (("M-0"   . origami-open-all-nodes)
-         ("M-9"   . origami-close-all-nodes)
-         ("C-M-/" . origami-recursively-toggle-node)))
+  :config (bind-keys ("M-0"   . origami-open-all-nodes)
+                     ("M-9"   . origami-close-all-nodes)
+                     ("C-M-/" . origami-recursively-toggle-node)))
 
 ;; Turn on subword mode for all prog modes
 (use-package syntax-subword
   :config (add-hook 'prog-mode-hook #'(lambda () (syntax-subword-mode t))))
 
 (use-package expand-region
-  :bind (("M-=" . er/expand-region)
-         ("M--" . er/contract-region)))
+  :config (bind-keys ("M-=" . er/expand-region)
+                     ("M--" . er/contract-region)))
 
 (use-package smartparens-config
-  :bind (("M-A"       . sp-beginning-of-sexp)
-         ("M-E"       . sp-end-of-sexp)
-         ("M-_"       . sp-unwrap-sexp)
-         ("C-<left>"  . sp-backward-slurp-sexp)
-         ("M-<left>"  . sp-backward-barf-sexp)
-         ("C-<right>" . sp-forward-slurp-sexp)
-         ("M-<right>" . sp-forward-barf-sexp)))
+  :config (bind-keys ("M-A"       . sp-beginning-of-sexp)
+                     ("M-E"       . sp-end-of-sexp)
+                     ("M-_"       . sp-unwrap-sexp)
+                     ("C-<left>"  . sp-backward-slurp-sexp)
+                     ("M-<left>"  . sp-backward-barf-sexp)
+                     ("C-<right>" . sp-forward-slurp-sexp)
+                     ("M-<right>" . sp-forward-barf-sexp)))
 
 ;; Cycle thru most commonly programming identifier styles
 (use-package string-inflection
-  :init (defun inflect-string ()
-          (interactive)
-          (cond ((memq major-mode '(java-mode js-mode js-jsx-mode typescript-mode))
-                 (string-inflection-java-style-cycle))
-                ((memq major-mode '(python-mode ruby-mode))
-                 (string-inflection-ruby-style-cycle))
-                ((derived-mode-p major-mode 'prog-mode)
-                 (string-inflection-all-cycle))))
-  :bind (("C-c C-u" . inflect-string)))
+  :init
+  (defun inflect-string ()
+    (interactive)
+    (cond ((memq major-mode '(java-mode js-mode js-jsx-mode typescript-mode))
+           (string-inflection-java-style-cycle))
+          ((memq major-mode '(python-mode ruby-mode))
+           (string-inflection-ruby-style-cycle))
+          ((derived-mode-p major-mode 'prog-mode)
+           (string-inflection-all-cycle))))
+  :config (bind-keys ("C-c C-u" . inflect-string)))
 
 ;; Vim-like increment and decrement
 (use-package evil-numbers
-  :bind (("C-c =" . evil-numbers/inc-at-pt)
-         ("C-c -" . evil-numbers/dec-at-pt)))
+  :config (bind-keys ("C-c =" . evil-numbers/inc-at-pt)
+                     ("C-c -" . evil-numbers/dec-at-pt)))
 
 ;; Adjust frame-wide font size
 (use-package zoom-frm
-  :bind (("C-x C-+" . zoom-in/out)
-         ("C-x C--" . zoom-in/out)
-         ("C-x C-=" . zoom-in/out)
-         ("C-x C-0" . zoom-in/out)))
+  :config (bind-keys ("C-x C-+" . zoom-in/out)
+                     ("C-x C--" . zoom-in/out)
+                     ("C-x C-=" . zoom-in/out)
+                     ("C-x C-0" . zoom-in/out)))
 
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
-  :bind (("C-h b" . which-key-show-top-level))
-  :config (which-key-mode t))
+  :config
+  (which-key-mode t)
+  (bind-keys ("C-h b" . which-key-show-top-level)))
 
 ;; Auto-completion
 (eval-after-load 'company
@@ -216,36 +222,38 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package typescript-mode)
 (use-package tide
   :after typescript-mode
-  :bind (:map typescript-mode-map
-              ("M-F" . tide-format)
-              ("M-r" . tide-rename-symbol)
-              ("M-1" . tide-fix)
-              ("M-G" . tide-references)
-              ("M-d" . tide-documentation-at-point))
-  :config (progn
-            (add-hook 'typescript-mode-hook
-                      #'(lambda ()
-                          (tide-setup)
-                          (tide-hl-identifier-mode t)
-                          (flycheck-mode t)))
-            (add-hook 'before-save-hook 'tide-format-before-save)))
+  :config
+  (add-hook 'typescript-mode-hook #'(lambda ()
+                                      (tide-setup)
+                                      (tide-hl-identifier-mode t)
+                                      (flycheck-mode t)))
+  (add-hook 'before-save-hook 'tide-format-before-save)
+  (bind-keys :map typescript-mode-map
+             ("M-F" . tide-format)
+             ("M-r" . tide-rename-symbol)
+             ("M-1" . tide-fix)
+             ("M-/" . tide-references)
+             ("M-d" . tide-documentation-at-point)))
 
 ;; JavaScript
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
-(add-hook 'js-jsx-mode-hook
+(add-hook 'js-mode-hook
           #'(lambda ()
-              (use-package prettier-js
-                :init (eval-when-compile (require 'js))
-                :bind (:map js-mode-map
-                            ("M-F" . prettier))
-                :config (prettier-mode))
+              (use-package import-js
+                :config (bind-keys :map js-mode-map
+                                   ("M-i" . import-js-import)
+                                   ("M-1" . import-js-fix)
+                                   ("M-." . import-js-goto)))
 
               (use-package eslintd-fix
-                :config (eslintd-fix-mode t))
+                :functions eslintd-fix
+                :config
+                (eslintd-fix-mode t)
+                (bind-keys :map js-mode-map
+                           ("M-F" . eslintd-fix)))
 
               (use-package tern
-                :config (eval-after-load 'company
-                          '(add-to-list 'company-backends 'company-tern)))))
+                :config (eval-after-load 'company '(add-to-list 'company-backends 'company-tern)))))
 
 ;; FlyCheck
 (dolist (hook '(python-mode-hook web-mode-hook js-mode-hook))
@@ -260,20 +268,20 @@ Optional argument ARG same as `comment-dwim''s."
                 :config (py-autopep8-enable-on-save))
 
               (use-package python-docstring
-                :config (python-docstring-mode))
+                :config (python-docstring-mode t))
 
               (use-package py-isort
-                :bind (:map python-mode-map
-                            ("C-c s" . py-isort-buffer)))
+                :config (bind-keys :map python-mode-map
+                                   ("C-c s" . py-isort-buffer)))
 
               (use-package pyenv-mode-auto)
 
               (use-package anaconda-mode
-                :config (progn
-                          (anaconda-mode t)
-                          (anaconda-eldoc-mode t)
-                          (eval-after-load 'company
-                            '(add-to-list 'company-backends '(company-anaconda :with company-capf)))))))
+                :config
+                (anaconda-mode t)
+                (anaconda-eldoc-mode t)
+                (eval-after-load 'company
+                  '(add-to-list 'company-backends '(company-anaconda :with company-capf))))))
 
 (add-hook 'inferior-python-mode-hook
           #'(lambda ()
@@ -288,29 +296,30 @@ Optional argument ARG same as `comment-dwim''s."
               ("TAB"   . nil)
               ("<tab>" . nil)
               ("C-c i" . yas-expand))
-  :config (progn
-            (dolist (hook '(prog-mode-hook text-mode))
-              (add-hook hook 'yas-minor-mode))
-            (add-hook 'yas-minor-mode-hook
-                      #'(lambda ()
-                          (yas-reload-all)))))
+  :config
+  (dolist (hook '(prog-mode-hook text-mode))
+    (add-hook hook 'yas-minor-mode))
+  (add-hook 'yas-minor-mode-hook #'(lambda () (yas-reload-all))))
 
 ;; Window management
 (use-package golden-ratio
   :defines golden-ratio-inhibit-functions
-  :config (progn
-            (defvar ediff-on nil)
-            (add-hook 'ediff-before-setup-hook #'(lambda () (setq ediff-on t)))
-            (add-hook 'ediff-quit-hook #'(lambda () (setq ediff-on nil)) 'append)
-            (add-hook 'ediff-suspend-hook #'(lambda () (setq ediff-on nil)) 'append)
-            (push #'(lambda () ediff-on) golden-ratio-inhibit-functions)))
+  :config
+  (defvar ediff-on nil)
+  (add-hook 'ediff-before-setup-hook #'(lambda () (setq ediff-on t)))
+  (add-hook 'ediff-quit-hook #'(lambda () (setq ediff-on nil)) 'append)
+  (add-hook 'ediff-suspend-hook #'(lambda () (setq ediff-on nil)) 'append)
+  (push #'(lambda () ediff-on) golden-ratio-inhibit-functions))
 
 (use-package centered-window-mode
-  :config (progn
-            (centered-window-mode)
-            (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
-            (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
-            (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append)))
+  :config
+  (centered-window-mode)
+  (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
+  (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
+  (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
+
+(use-package projectile
+  :config (projectile-mode))
 
 ;; Modern fancy mode line
 (use-package spaceline-all-the-icons
@@ -318,7 +327,7 @@ Optional argument ARG same as `comment-dwim''s."
   spaceline-all-the-icons--setup-package-updates
   spaceline-all-the-icons--setup-git-ahead
   spaceline-all-the-icons--setup-neotree
-  :config (progn
-            (spaceline-all-the-icons-theme)
-            (spaceline-all-the-icons--setup-package-updates)
-            (spaceline-all-the-icons--setup-git-ahead)))
+  :config
+  (spaceline-all-the-icons-theme)
+  (spaceline-all-the-icons--setup-package-updates)
+  (spaceline-all-the-icons--setup-git-ahead))
