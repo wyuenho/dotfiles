@@ -11,9 +11,6 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
-(eval-when-compile
-  (require 'use-package))
-
 ;; Maximize frame on startup and set up default font
 (when (window-system)
   (set-frame-font "DejaVu Sans Mono")
@@ -53,26 +50,29 @@ Optional argument ARG same as `comment-dwim''s."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
-(use-package bind-key
-  :bind (("M-;" . comment-dwim-line-or-region)
-         ;; Rebind windmove keys
-         ("C-c <left>"  . windmove-left)
-         ("C-c <right>" . windmove-right)
-         ("C-c <up>"    . windmove-up)
-         ("C-c <down>"  . windmove-down)
-         ;; Replace default buffer menu with ibuffer
-         ("C-x C-b"     . ibuffer)
-         ;; Rebind undo to undo-tree visualizer
-         ("C-x u"       . undo-tree-visualize)
-         ("C-c e f"     . byte-compile-file)
-         :emacs-lisp-mode-map
-         ("C-c e e"     . eval-last-sexp)
-         ("C-c e r"     . eval-region)
-         ("C-c e b"     . eval-buffer)
-         ("C-c e c"     . emacs-lisp-byte-compile)
-         ("C-c e l"     . emacs-lisp-byte-compile-and-load)
-         ("C-c e d"     . byte-recompile-directory))
-  :config (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
+(eval-when-compile
+  (require 'use-package))
+(require 'bind-key)
+
+(bind-keys
+ ("M-;" . comment-dwim-line-or-region)
+ ;; Rebind windmove keys
+ ("C-c <left>"  . windmove-left)
+ ("C-c <right>" . windmove-right)
+ ("C-c <up>"    . windmove-up)
+ ("C-c <down>"  . windmove-down)
+ ;; Replace default buffer menu with ibuffer
+ ("C-x C-b"     . ibuffer)
+ ;; Rebind undo to undo-tree visualizer
+ ("C-x u"       . undo-tree-visualize)
+ ("C-c e f"     . byte-compile-file)
+ ("C-c e d"     . byte-recompile-directory)
+ :map emacs-lisp-mode-map
+ ("C-c e e"     . eval-last-sexp)
+ ("C-c e r"     . eval-region)
+ ("C-c e b"     . eval-buffer)
+ ("C-c e c"     . emacs-lisp-byte-compile)
+ ("C-c e l"     . emacs-lisp-byte-compile-and-load))
 
 ;; Unmap extraneous undo-tree mode keys
 (assq-delete-all 'undo-tree-mode minor-mode-map-alist)
@@ -94,10 +94,8 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'ediff-suspend-hook restore-window-configuration 'append))
 (add-hook 'ediff-cleanup-hook
           #'(lambda ()
-              (eval-when-compile
-                (require 'ediff-util)
-                (ediff-janitor nil nil)))
-          'append)
+              (eval-and-compile (require 'ediff-util))
+              (ediff-janitor nil nil)) 'append)
 
 (use-package all-the-icons-dired
   :config (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
@@ -207,8 +205,7 @@ Optional argument ARG same as `comment-dwim''s."
                         (when (string-equal "tsx" (file-name-extension buffer-file-name))
                           (tide-setup)
                           (tide-hl-identifier-mode t)
-                          (flycheck-mode t)
-                          (eldoc-mode t)))))
+                          (flycheck-mode t)))))
 
 (use-package emmet-mode
   :after web-mode
@@ -230,8 +227,7 @@ Optional argument ARG same as `comment-dwim''s."
                       #'(lambda ()
                           (tide-setup)
                           (tide-hl-identifier-mode t)
-                          (flycheck-mode t)
-                          (eldoc-mode t)))
+                          (flycheck-mode t)))
             (add-hook 'before-save-hook 'tide-format-before-save)))
 
 ;; JavaScript
