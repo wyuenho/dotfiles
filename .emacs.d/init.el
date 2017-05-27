@@ -34,6 +34,23 @@
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
 
+;; Turn on iMenu for code outlines for all prog and text modes, if possible
+(dolist (hook '(prog-mode-hook text-mode-hook))
+  (add-hook hook #'(lambda () (ignore-errors (imenu-add-menubar-index)))))
+
+;; Save window config before ediff starts and restores it and cleans up when it quits, sanity!
+(defvar ediff-saved-window-configuration)
+(add-hook 'ediff-before-setup-hook
+          #'(lambda () (setq ediff-saved-window-configuration (current-window-configuration))))
+(let ((restore-window-configuration
+       #'(lambda () (set-window-configuration ediff-saved-window-configuration))))
+  (add-hook 'ediff-quit-hook restore-window-configuration 'append)
+  (add-hook 'ediff-suspend-hook restore-window-configuration 'append))
+(add-hook 'ediff-cleanup-hook
+          #'(lambda ()
+              (eval-and-compile (require 'ediff-util))
+              (ediff-janitor nil nil)) 'append)
+
 ;; More sensible comment-dwim
 (defun comment-dwim-line-or-region (&optional arg)
   "Replacement for the ‘comment-dwim' command.
@@ -81,23 +98,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Unbind hide/show mode's ridiculous keybindings
 (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
-
-;; Turn on iMenu for code outlines for all prog and text modes, if possible
-;; (dolist (hook '(prog-mode-hook text-mode-hook))
-;;   (add-hook hook #'(lambda () (ignore-errors (imenu-add-menubar-index)))))
-
-;; Save window config before ediff starts and restores it and cleans up when it quits, sanity!
-(defvar ediff-saved-window-configuration)
-(add-hook 'ediff-before-setup-hook
-          #'(lambda () (setq ediff-saved-window-configuration (current-window-configuration))))
-(let ((restore-window-configuration
-       #'(lambda () (set-window-configuration ediff-saved-window-configuration))))
-  (add-hook 'ediff-quit-hook restore-window-configuration 'append)
-  (add-hook 'ediff-suspend-hook restore-window-configuration 'append))
-(add-hook 'ediff-cleanup-hook
-          #'(lambda ()
-              (eval-and-compile (require 'ediff-util))
-              (ediff-janitor nil nil)) 'append)
 
 (use-package all-the-icons-dired
   :config (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
@@ -239,12 +239,7 @@ Optional argument ARG same as `comment-dwim''s."
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
 (add-hook 'js-mode-hook
           #'(lambda ()
-              (use-package import-js
-                :config (bind-keys :map js-mode-map
-                                   ("M-i" . import-js-import)
-                                   ("M-1" . import-js-fix)
-                                   ("M-." . import-js-goto)))
-
+              (eval-when-compile (require 'js))
               (use-package eslintd-fix
                 :functions eslintd-fix
                 :config
@@ -316,14 +311,26 @@ Optional argument ARG same as `comment-dwim''s."
   (centered-window-mode)
   (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
   (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
-  (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
+  (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append)
+  (when (eq (window-system) 'mac)
+    (dolist (fringe '("left" "right"))
+      (dolist (wheel-speed '("" "double" "triple"))
+        (dolist (scroll-direction '("left" "right" "up" "down"))
+          (bind-key
+           (concat
+            "<" fringe "-fringe> "
+            "<" wheel-speed
+            (if (string= wheel-speed "") "" "-")
+            "wheel-" scroll-direction ">")
+           'mac-mwheel-scroll))))))
 
 (use-package projectile
   :config (projectile-mode))
 
 ;; Modern fancy mode line
 (use-package spaceline-all-the-icons
-  :functions spaceline-all-the-icons-theme
+  :functions
+  spaceline-all-the-icons-theme
   spaceline-all-the-icons--setup-package-updates
   spaceline-all-the-icons--setup-git-ahead
   spaceline-all-the-icons--setup-neotree
