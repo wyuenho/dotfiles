@@ -190,13 +190,13 @@ Optional argument ARG same as `comment-dwim''s."
                      ("M--" . er/contract-region)))
 
 (use-package smartparens-config
-  :config (bind-keys ("M-A"       . sp-beginning-of-sexp)
-                     ("M-E"       . sp-end-of-sexp)
-                     ("M-_"       . sp-unwrap-sexp)
-                     ("C-<left>"  . sp-backward-slurp-sexp)
-                     ("M-<left>"  . sp-backward-barf-sexp)
-                     ("C-<right>" . sp-forward-slurp-sexp)
-                     ("M-<right>" . sp-forward-barf-sexp)))
+  :config
+  (sp-use-smartparens-bindings)
+  (bind-keys :map smartparens-mode-map
+             ("M-<delete>"    . nil)
+             ("M-<backspace>" . nil)
+             ("C-M-["         . sp-backward-unwrap-sexp)
+             ("M-["           . sp-unwrap-sexp)))
 
 ;; Cycle thru most commonly programming identifier styles
 (use-package string-inflection
