@@ -50,6 +50,7 @@
  '(enable-local-eval t)
  '(enable-local-variables :all)
  '(ensime-default-server-root "~/.emacs.d/ensime")
+ '(eval-expression-print-length 1000)
  '(eval-expression-print-level 1000)
  '(exec-path-from-shell-check-startup-files nil)
  '(fill-column 80)
