@@ -3,7 +3,7 @@
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
 (advice-add 'load-theme :around #'(lambda (old-load-theme &rest r)
-                                    (apply old-load-theme (append r '(t)))))
+                                    (apply old-load-theme (car r) t (cddr r))))
 
 ;; Emacs loads init file first and the packages last normally. Forcing the
 ;; packages to load first makes conifguring them in the init file possible.
