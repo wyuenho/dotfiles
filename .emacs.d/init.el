@@ -74,6 +74,7 @@ Optional argument ARG same as `comment-dwim''s."
 (require 'bind-key)
 
 (bind-keys
+ ("C-c a"       . align)
  ("M-;"         . comment-dwim-line-or-region)
  ("M-/"         . xref-find-references)
  ;; Rebind windmove keys
