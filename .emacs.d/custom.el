@@ -95,6 +95,7 @@
  '(js2-include-jslint-globals nil)
  '(js2-include-node-externs t)
  '(js2-strict-inconsistent-return-warning nil)
+ '(json-reformat:indent-width 2)
  '(kept-new-versions 10)
  '(kept-old-versions 10)
  '(linum-delay t)
