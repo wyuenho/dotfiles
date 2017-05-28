@@ -56,6 +56,7 @@
  '(fill-column 80)
  '(flymake-no-changes-timeout 1)
  '(gc-cons-threshold 20000000)
+ '(global-aggressive-indent-mode t)
  '(global-company-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(global-hl-line-mode t)
