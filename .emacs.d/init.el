@@ -132,6 +132,11 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Unbind hide/show mode's ridiculous keybindings
 (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
 
+;; Modern code folding
+(use-package origami
+  :config (bind-keys ("M-0"   . origami-open-all-nodes)
+                     ("M-9"   . origami-close-all-nodes)
+                     ("C-M-/" . origami-recursively-toggle-node)))
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
@@ -156,19 +161,25 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package ido-ubiquitous)
 (use-package ido-vertical-mode)
 
-;; Git
-(use-package magit
-  :config (bind-keys ("C-x v g" . magit-status)))
+;; Mark and edit multiple things at once
+(use-package multiple-cursors
+  :config
+  (bind-keys ("C-c C-e" . mc/edit-lines)
+             ("C->"     . mc/mark-next-like-this)
+             ("C-<"     . mc/mark-previous-like-this)
+             ("C-M->"   . mc/skip-to-next-like-this)
+             ("C-M-<"   . mc/skip-to-previous-like-this)
+             ("C-c C->" . mc/mark-all-dwim)))
 
-;; Hg
-(use-package monky
-  :config (bind-keys ("C-x v h" . monky-status)))
-
-;; Modern code folding
-(use-package origami
-  :config (bind-keys ("M-0"   . origami-open-all-nodes)
-                     ("M-9"   . origami-close-all-nodes)
-                     ("C-M-/" . origami-recursively-toggle-node)))
+;; Construct regexp and search visually and incrementally
+(use-package visual-regexp-steroids
+  :after multiple-cursors
+  :config
+  (bind-keys ("M-%"     . vr/replace)
+             ("C-M-%"   . vr/query-replace)
+             ("C-c C-s" . vr/isearch-forward)
+             ("C-c C-r" . vr/isearch-backward)
+             ("C-c m"   . vr/mc-mark)))
 
 ;; Turn on subword mode for all prog modes
 (use-package syntax-subword
@@ -204,6 +215,14 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package evil-numbers
   :config (bind-keys ("C-c =" . evil-numbers/inc-at-pt)
                      ("C-c -" . evil-numbers/dec-at-pt)))
+
+;; Git
+(use-package magit
+  :config (bind-keys ("C-x v g" . magit-status)))
+
+;; Hg
+(use-package monky
+  :config (bind-keys ("C-x v h" . monky-status)))
 
 ;; Adjust frame-wide font size
 (use-package zoom-frm
