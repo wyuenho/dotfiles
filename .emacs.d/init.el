@@ -273,11 +273,11 @@ Optional argument ARG same as `comment-dwim''s."
                                       (flycheck-mode t)))
   (add-hook 'before-save-hook 'tide-format-before-save)
   (bind-keys :map typescript-mode-map
-             ("M-F" . tide-format)
-             ("M-r" . tide-rename-symbol)
-             ("M-1" . tide-fix)
-             ("M-/" . tide-references)
-             ("M-d" . tide-documentation-at-point)))
+             ("C-c C-f" . tide-format)
+             ("C-c m"   . tide-rename-symbol)
+             ("M-1"     . tide-fix)
+             ("M-/"     . tide-references)
+             ("M-d"     . tide-documentation-at-point)))
 
 ;; JavaScript
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
