@@ -86,8 +86,7 @@ Optional argument ARG same as `comment-dwim''s."
  ("C-x C-b"     . ibuffer)
  ;; Rebind undo to undo-tree visualizer
  ("C-x u"       . undo-tree-visualize)
- ("C-c e f"     . byte-compile-file)
- ("C-c e d"     . byte-recompile-directory))
+ ("C-c e f"     . byte-compile-file))
 
 (bind-keys :map emacs-lisp-mode-map
            ("C-c e e" . eval-last-sexp)
