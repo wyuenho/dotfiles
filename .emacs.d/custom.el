@@ -123,8 +123,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ag aggressive-indent all-the-icons-dired anaconda-mode auto-compile centered-window-mode company company-anaconda company-dict company-flx company-quickhelp company-shell company-tern company-web csv-mode cycle-quotes docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix esup evil-numbers exec-path-from-shell expand-region eyebrowse flx-ido flx-isearch flycheck-demjsonlint flycheck-mypy flycheck-yamllint git-timemachine gitattributes-mode gitconfig-mode gitignore-mode golden-ratio graphviz-dot-mode ido-ubiquitous ido-vertical-mode js-doc json-mode kill-or-bury-alive less-css-mode lorem-ipsum magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multiple-cursors nose origami package-build package-lint pcre2el projectile py-autopep8 py-isort pyenv-mode-auto pyimport python python-docstring rainbow-mode react-snippets scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide try typescript-mode undo-tree use-package visual-regexp visual-regexp-steroids vlf web-mode which-key whitespace-cleanup-mode yaml-mode yasnippet zoom-frm)))
- '(powerline-gui-use-vcs-glyph t)
+    (ag aggressive-indent all-the-icons-dired anaconda-mode auto-compile centered-window-mode company company-anaconda company-dict company-flx company-quickhelp company-shell company-tern company-web csv-mode cycle-quotes docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix esup evil-numbers exec-path-from-shell expand-region eyebrowse flx-ido flx-isearch flycheck-demjsonlint flycheck-mypy flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode golden-ratio graphviz-dot-mode ido-ubiquitous ido-vertical-mode js-doc json-mode kill-or-bury-alive less-css-mode lorem-ipsum magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multiple-cursors nose origami package-build package-lint pcre2el popwin projectile py-autopep8 py-isort pyenv-mode-auto pyimport python python-docstring rainbow-mode react-snippets scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide try typescript-mode undo-tree use-package visual-regexp visual-regexp-steroids vlf web-mode which-key whitespace-cleanup-mode xterm-color yaml-mode yasnippet zoom-frm)))
  '(python-skeleton-autoinsert t)
  '(recentf-auto-cleanup (quote never))
  '(recentf-mode t)
@@ -149,8 +148,6 @@
  '(smtpmail-smtp-service 465)
  '(smtpmail-smtp-user "wyuenho")
  '(smtpmail-stream-type (quote ssl))
- '(spaceline-all-the-icons-clock-always-visible nil)
- '(spaceline-all-the-icons-hide-long-buffer-path t)
  '(standard-indent 2)
  '(tab-stop-list
    (quote
