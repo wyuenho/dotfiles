@@ -108,11 +108,6 @@
  '(markdown-command "markdown_py -x extra -x sane_lists")
  '(menu-bar-mode t)
  '(minibuffer-frame-alist (quote ((width . 80) (height . 2))))
- '(mode-line-format
-   (quote
-    ("%e" mode-line-front-space mode-line-mule-info mode-line-client mode-line-modified mode-line-auto-compile mode-line-remote mode-line-frame-identification "   " mode-line-position
-     (vc-mode vc-mode)
-     "  " mode-line-modes mode-line-misc-info mode-line-end-spaces)))
  '(mouse-wheel-follow-mouse nil)
  '(mouse-wheel-mode t)
  '(mouse-wheel-progressive-speed nil)
