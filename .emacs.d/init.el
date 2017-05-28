@@ -345,6 +345,10 @@ Optional argument ARG same as `comment-dwim''s."
              ("<tab>" . nil)
              ("C-c i" . yas-expand)))
 
+;; Project management
+(use-package projectile
+  :config (projectile-mode))
+
 ;; Window management
 (use-package golden-ratio
   :defines golden-ratio-inhibit-functions
@@ -362,6 +366,7 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
   (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
 
-;; Project management
-(use-package projectile
-  :config (projectile-mode))
+(use-package popwin
+  :config
+  (popwin-mode t)
+  (global-set-key (kbd "C-z") popwin:keymap))
