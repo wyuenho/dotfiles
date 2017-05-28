@@ -100,20 +100,17 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package all-the-icons
   :if (window-system)
   :init
-  (defun set-buffer-id-to-header-line ()
+  (defun move-buffer-id-to-header-line ()
     (when (window-header-line-height)
-      (setq header-line-format 'mode-line-buffer-identification)))
-
+      (setq header-line-format 'mode-line-buffer-identification)
+      (setq mode-line-format (remove 'mode-line-buffer-identification mode-line-format))))
   (defun replace-mode-with-icon ()
-    (when (window-system)
-      (let ((icon (all-the-icons-icon-for-mode major-mode)))
-        (when (and icon (not (string= major-mode icon)))
-          (setq mode-name icon)))))
-
+    (let ((icon (all-the-icons-icon-for-mode major-mode)))
+      (when (and icon (not (string= major-mode icon)))
+        (setq mode-name icon))))
   :config
   (dolist (hook '(window-configuration-change-hook after-change-major-mode-hook))
-    (add-hook hook 'set-buffer-id-to-header-line))
-
+    (add-hook hook 'move-buffer-id-to-header-line))
   (add-hook 'after-change-major-mode-hook 'replace-mode-with-icon))
 
 ;; Use icons in dired
