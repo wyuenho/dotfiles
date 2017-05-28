@@ -55,11 +55,11 @@
 
 ;; More sensible comment-dwim
 (defun comment-dwim-line-or-region (&optional arg)
-  "Replacement for the ‘comment-dwim' command.
+  "Replacement for the `comment-dwim' command.
 
 If no region is selected then comment the current line from the
 front, otherwise the commentable lines in the region. Replaces
-the default behaviour of ‘comment-dwim’, where it inserts comment
+the default behaviour of `comment-dwim', where it inserts comment
 at the end of the line.
 
 Optional argument ARG same as `comment-dwim''s."
