@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
 (advice-add 'load-theme :around #'(lambda (old-load-theme &rest r)
