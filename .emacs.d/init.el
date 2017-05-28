@@ -95,14 +95,43 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-c e c" . emacs-lisp-byte-compile)
            ("C-c e l" . emacs-lisp-byte-compile-and-load))
 
+;; Replace the major mode name with its icon and move the buffer name from the
+;; mode line to the header line
+(use-package all-the-icons
+  :if (window-system)
+  :init
+  (defun set-buffer-id-to-header-line ()
+    (when (window-header-line-height)
+      (setq header-line-format 'mode-line-buffer-identification)))
+
+  (defun replace-mode-with-icon ()
+    (when (window-system)
+      (let ((icon (all-the-icons-icon-for-mode major-mode)))
+        (when (and icon (not (string= major-mode icon)))
+          (setq mode-name icon)))))
+
+  :config
+  (dolist (hook '(window-configuration-change-hook after-change-major-mode-hook))
+    (add-hook hook 'set-buffer-id-to-header-line))
+
+  (add-hook 'after-change-major-mode-hook 'replace-mode-with-icon))
+
+;; Use icons in dired
+(use-package all-the-icons-dired
+  :config (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
+;; Turn on keyboard shortcut remainder
+(use-package which-key
+  :config
+  (which-key-mode t)
+  (bind-keys ("C-h b" . which-key-show-top-level)))
+
 ;; Unmap extraneous undo-tree mode keys
 (assq-delete-all 'undo-tree-mode minor-mode-map-alist)
 
 ;; Unbind hide/show mode's ridiculous keybindings
 (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
 
-(use-package all-the-icons-dired
-  :config (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
@@ -182,12 +211,6 @@ Optional argument ARG same as `comment-dwim''s."
                      ("C-x C--" . zoom-in/out)
                      ("C-x C-=" . zoom-in/out)
                      ("C-x C-0" . zoom-in/out)))
-
-;; Turn on keyboard shortcut remainder
-(use-package which-key
-  :config
-  (which-key-mode t)
-  (bind-keys ("C-h b" . which-key-show-top-level)))
 
 ;; Auto-completion
 (eval-after-load 'company
@@ -328,15 +351,3 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package projectile
   :config (projectile-mode))
-
-;; Modern fancy mode line
-(use-package spaceline-all-the-icons
-  :functions
-  spaceline-all-the-icons-theme
-  spaceline-all-the-icons--setup-package-updates
-  spaceline-all-the-icons--setup-git-ahead
-  spaceline-all-the-icons--setup-neotree
-  :config
-  (spaceline-all-the-icons-theme)
-  (spaceline-all-the-icons--setup-package-updates)
-  (spaceline-all-the-icons--setup-git-ahead))
