@@ -280,7 +280,7 @@ Optional argument ARG same as `comment-dwim''s."
              ("M-d"     . tide-documentation-at-point)))
 
 ;; JavaScript
-(add-to-list 'auto-mode-alist '("\\.js[x]?\\'\\|\\.json\\'" . js-jsx-mode))
+(add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . js-jsx-mode))
 (add-hook 'js-mode-hook
           #'(lambda ()
               (eval-when-compile (require 'js))
@@ -289,18 +289,26 @@ Optional argument ARG same as `comment-dwim''s."
                 :config
                 (eslintd-fix-mode t)
                 (bind-keys :map js-mode-map
-                           ("M-F" . eslintd-fix)))
+                           ("C-c C-f" . eslintd-fix)))
 
               (use-package tern
                 :config (eval-after-load 'company '(add-to-list 'company-backends 'company-tern)))))
 
 ;; FlyCheck
-(dolist (hook '(python-mode-hook web-mode-hook js-mode-hook))
-  (add-hook hook #'(lambda ()
-                     (use-package flycheck-mypy
-                       :config (flycheck-mode t)))))
+(use-package flycheck-yamllint
+  :config
+  (eval-after-load 'flycheck
+    '(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup)))
+(use-package flycheck-demjsonlint)
+(use-package flycheck-mypy)
+(dolist (hook '(python-mode-hook web-mode-hook js-mode-hook sh-mode-hook json-mode-hook))
+  (add-hook hook #'(lambda () (flycheck-mode t))))
 
-;; Python stuff
+;; JSON
+(use-package json-mode
+  :after flycheck-demjsonlint)
+
+;; Python
 (add-hook 'python-mode-hook
           #'(lambda ()
               (use-package py-autopep8
