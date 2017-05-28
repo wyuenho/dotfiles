@@ -363,18 +363,8 @@ Optional argument ARG same as `comment-dwim''s."
   (centered-window-mode)
   (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
   (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
-  (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append)
-  (when (eq (window-system) 'mac)
-    (dolist (fringe '("left" "right"))
-      (dolist (wheel-speed '("" "double" "triple"))
-        (dolist (scroll-direction '("left" "right" "up" "down"))
-          (bind-key
-           (concat
-            "<" fringe "-fringe> "
-            "<" wheel-speed
-            (if (string= wheel-speed "") "" "-")
-            "wheel-" scroll-direction ">")
-           'mac-mwheel-scroll))))))
+  (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
 
+;; Project management
 (use-package projectile
   :config (projectile-mode))
