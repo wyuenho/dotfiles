@@ -235,6 +235,41 @@ Optional argument ARG same as `comment-dwim''s."
                      ("C-x C-=" . zoom-in/out)
                      ("C-x C-0" . zoom-in/out)))
 
+;; Project management
+(use-package projectile
+  :after pyenv-mode
+  :init (defun projectile-pyenv-mode-set ()
+          "Set pyenv version matching project name."
+          (let ((project (projectile-project-name)))
+            (if (member project (pyenv-mode-versions))
+                (pyenv-mode-set project)
+              (pyenv-mode-unset))))
+  :config
+  (projectile-mode t)
+  (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
+
+;; Window management
+(use-package golden-ratio
+  :defines golden-ratio-inhibit-functions
+  :config
+  (defvar ediff-on nil)
+  (add-hook 'ediff-before-setup-hook #'(lambda () (setq ediff-on t)))
+  (add-hook 'ediff-quit-hook #'(lambda () (setq ediff-on nil)) 'append)
+  (add-hook 'ediff-suspend-hook #'(lambda () (setq ediff-on nil)) 'append)
+  (push #'(lambda () ediff-on) golden-ratio-inhibit-functions))
+
+(use-package centered-window-mode
+  :config
+  (centered-window-mode)
+  (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
+  (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
+  (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
+
+(use-package popwin
+  :config
+  (popwin-mode t)
+  (global-set-key (kbd "C-z") popwin:keymap))
+
 ;; Auto-completion
 (eval-after-load 'company
   ;; Bring help popup back to company
@@ -313,6 +348,8 @@ Optional argument ARG same as `comment-dwim''s."
   :after flycheck-demjsonlint)
 
 ;; Python
+(use-package pyenv-mode)
+
 (add-hook 'python-mode-hook
           #'(lambda ()
               (use-package py-autopep8
@@ -324,8 +361,6 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package py-isort
                 :config (bind-keys :map python-mode-map
                                    ("C-c s" . py-isort-buffer)))
-
-              (use-package pyenv-mode-auto)
 
               (use-package anaconda-mode
                 :config
@@ -345,29 +380,3 @@ Optional argument ARG same as `comment-dwim''s."
              ("TAB"   . nil)
              ("<tab>" . nil)
              ("C-c i" . yas-expand)))
-
-;; Project management
-(use-package projectile
-  :config (projectile-mode))
-
-;; Window management
-(use-package golden-ratio
-  :defines golden-ratio-inhibit-functions
-  :config
-  (defvar ediff-on nil)
-  (add-hook 'ediff-before-setup-hook #'(lambda () (setq ediff-on t)))
-  (add-hook 'ediff-quit-hook #'(lambda () (setq ediff-on nil)) 'append)
-  (add-hook 'ediff-suspend-hook #'(lambda () (setq ediff-on nil)) 'append)
-  (push #'(lambda () ediff-on) golden-ratio-inhibit-functions))
-
-(use-package centered-window-mode
-  :config
-  (centered-window-mode)
-  (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
-  (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
-  (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
-
-(use-package popwin
-  :config
-  (popwin-mode t)
-  (global-set-key (kbd "C-z") popwin:keymap))
