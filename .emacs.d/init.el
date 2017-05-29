@@ -272,10 +272,20 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Auto-completion
 (eval-after-load 'company
-  ;; Bring help popup back to company
-  (use-package company-quickhelp
-    :config (company-quickhelp-mode t)))
+  (progn
+    ;; Bring help popup back to company
+    (use-package company-quickhelp
+      :config (company-quickhelp-mode t))
+    ;; More intuitive fuzzy matching
+    (use-package company-flx
+      :config (company-flx-mode t))
+    ;; Shell completion
+    (use-package company-shell
+      :config
+      (eval-after-load 'company
+        '(add-to-list 'company-backend '(company-shell company-shell-env))))))
 
+;; Web stuff
 (use-package web-mode
   :after tide
   :mode ("\\.jinja'"
