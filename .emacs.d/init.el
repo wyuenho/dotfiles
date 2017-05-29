@@ -313,8 +313,9 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; TypeScript
 (use-package typescript-mode)
+(use-package ts-comint)
 (use-package tide
-  :after typescript-mode
+  :after typescript-mode ts-comint
   :config
   (add-hook 'typescript-mode-hook #'(lambda ()
                                       (tide-setup)
@@ -322,6 +323,11 @@ Optional argument ARG same as `comment-dwim''s."
                                       (flycheck-mode t)))
   (add-hook 'before-save-hook 'tide-format-before-save)
   (bind-keys :map typescript-mode-map
+             ("C-x C-e" . ts-send-last-sexp)
+             ("C-M-x"   . ts-send-last-sexp-and-go)
+             ("C-c b"   . ts-send-buffer)
+             ("C-c C-b" . ts-send-buffer-and-go)
+             ("C-c l"   . ts-load-file-and-go)
              ("C-c C-f" . tide-format)
              ("C-c m"   . tide-rename-symbol)
              ("M-1"     . tide-fix)
