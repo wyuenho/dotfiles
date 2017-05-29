@@ -83,7 +83,6 @@ Optional argument ARG same as `comment-dwim''s."
 (bind-keys
  ("C-c a"       . align)
  ("M-;"         . comment-dwim-line-or-region)
- ("M-/"         . xref-find-references)
  ;; Rebind windmove keys
  ("C-c <left>"  . windmove-left)
  ("C-c <right>" . windmove-right)
@@ -199,8 +198,8 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys :map smartparens-mode-map
              ("M-<delete>"    . nil)
              ("M-<backspace>" . nil)
-             ("C-M-["         . sp-backward-unwrap-sexp)
-             ("M-["           . sp-unwrap-sexp)))
+             ("C-<delete>"    . sp-unwrap-sexp)
+             ("C-<backspace>" . sp-backward-unwrap-sexp)))
 
 ;; Cycle thru most commonly programming identifier styles
 (use-package string-inflection
