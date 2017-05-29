@@ -4,6 +4,7 @@ import os.path
 import inspect
 from pprint import pprint
 
+# Python 3.4+ defines this
 if not getattr(sys, '__interactivehook__', None):
     # Copied from site.py from python 3.5.2
     def register_readline():
