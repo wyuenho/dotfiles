@@ -80,6 +80,7 @@
  '(imenu-auto-rescan t)
  '(imenu-auto-rescan-maxout 524288)
  '(imenu-max-items 100)
+ '(imenu-sort-function (quote imenu--sort-by-name))
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(ispell-program-name "hunspell")
