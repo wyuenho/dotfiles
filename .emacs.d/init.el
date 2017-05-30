@@ -247,6 +247,9 @@ Optional argument ARG same as `comment-dwim''s."
   (projectile-mode t)
   (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
 
+(use-package go-projectile
+  :after go-mode projectile)
+
 ;; Window management
 (use-package golden-ratio
   :defines golden-ratio-inhibit-functions
@@ -383,6 +386,18 @@ Optional argument ARG same as `comment-dwim''s."
                 (anaconda-eldoc-mode t)
                 (eval-after-load 'company
                   '(add-to-list 'company-backends '(company-anaconda :with company-capf))))))
+;; Go
+(use-package go-mode
+  :config
+  (add-hook 'go-mode-hook
+            #'(lambda ()
+                (use-package go-eldoc
+                  :config
+                  (go-eldoc-setup))
+
+                (use-package company-go
+                  :config
+                  (set (make-local-variable 'company-backends) '(company-go))))))
 
 ;; yasnippet
 (use-package yasnippet
