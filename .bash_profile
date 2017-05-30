@@ -59,6 +59,7 @@ if [ "$(type -fp pip)" ]; then eval "$(pip completion -b)"; fi
 export NVM_DIR
 NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -r "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
 if [ "$(type -fp grunt)" ]; then eval "$(grunt --completion=bash)"; fi
 if [ "$(type -fp gulp)" ]; then eval "$(gulp --completion=bash)"; fi
 PATH="$HOME/.yarn/bin:$PATH"
