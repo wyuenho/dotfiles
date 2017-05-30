@@ -1,22 +1,26 @@
-export LC_ALL="en_US.UTF-8"
-export LANG="en_US.UTF-8"
+export LC_ALL
+LC_ALL="en_US.UTF-8"
+
+export LANG
+LANG="en_US.UTF-8"
 
 PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
 
-export PATH=".:${HOME}/Library/Python/3.5/bin:${HOME}/Library/Python/2.7/bin:$HOME/packages/elasticsearch/bin:$HOME/packages/kibana/bin:${HOME}/packages/sshuttle:${HOME}/packages/bin:/opt/local/bin:/opt/local/sbin:/usr/local/mysql/bin:${PATH}"
+export PATH
+PATH=".:$HOME/packages/m-cli:$HOME/packages/sshuttle:$HOME/packages/bin:/opt/local/bin:/opt/local/sbin:$PATH"
 
-export MANPATH="/opt/local/share/man:/usr/local/mysql/man:${MANPATH}"
-export TERM="xterm-color"
-export EDITOR="emacs -Q -mm"
-export CC="cc"
-export CXX="c++"
-export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
-export MBOX="${HOME}/.mail/mbox"
-export PYTHONSTARTUP="${HOME}/.pythonrc"
+export MANPATH
+MANPATH="/opt/local/share/man:$MANPATH"
 
-if [ -f ~/.bashrc ]; then . ~/.bashrc; fi
+export EDITOR
+EDITOR="emacs -Q -mm"
 
-if [ `which ls` == "/bin/ls" ]; then
+export MBOX
+MBOX="$HOME/.mail/mbox"
+
+if [ -f ~/.bashrc ]; then source ~/.bashrc; fi
+
+if [ "$(which ls)" == "/bin/ls" ]; then
     alias ls="ls -FhG"
 else
     alias ls="ls -Fh --color=auto"
@@ -30,29 +34,46 @@ alias sudo="/usr/bin/sudo"
 alias diff="diff -u -B -r"
 
 if [ -f /opt/local/etc/bash_completion ]; then
-   . /opt/local/etc/bash_completion
+    source /opt/local/etc/bash_completion
 fi
 
 bind 'set match-hidden-files off'
 
-# pip bash completion
-if [ $(type -fp pip) ]; then eval "$(pip completion -b)"; fi
+# C/C++
+export CC
+CC="cc"
+export CXX
+CXX="c++"
 
-# rbenv
-export PATH="$HOME/.rbenv/bin:$PATH"
-if [ $(type -fp rbenv) ]; then eval "$(rbenv init -)"; fi
+# Java
+export JAVA_HOME
+JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+PATH="$HOME/packages/elasticsearch/bin:$PATH"
+PATH="$HOME/packages/kibana/bin:$PATH"
 
-# grunt bash completion
-#if [ $(type -fp grunt) ]; then eval "$(grunt --completion=bash)"; fi
-
-# GVM
-[[ -s "${HOME}/.gvm/scripts/gvm" ]] && source "${HOME}/.gvm/scripts/gvm"
-
-# pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$HOME/.pyenv/bin:$PATH"
+# Python
+export PYTHONSTARTUP
+PYTHONSTARTUP="$HOME/.pythonrc"
+export PYENV_ROOT
+PYENV_ROOT="$HOME/.pyenv"
+PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
+if [ "$(type -fp pip)" ]; then eval "$(pip completion -b)"; fi
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+# Node
+export NVM_DIR
+NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"  # This loads nvm
+if [ "$(type -fp grunt)" ]; then eval "$(grunt --completion=bash)"; fi
+if [ "$(type -fp gulp)" ]; then eval "$(gulp --completion=bash)"; fi
+PATH="$HOME/.yarn/bin:$PATH"
+
+# Ruby
+PATH="$HOME/.rbenv/bin:$PATH"
+if [ "$(type -fp rbenv)" ]; then eval "$(rbenv init -)"; fi
+
+# Go
+[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+export GOROOT_BOOTSTRAP
+GOROOT_BOOTSTRAP=$(go env GOROOT)
