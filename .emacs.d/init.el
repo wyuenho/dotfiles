@@ -288,6 +288,16 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-to-list 'company-backend '(company-shell company-shell-env)))
 
+;; Live Syntax checking
+(use-package flycheck-yamllint
+  :config
+  (eval-after-load 'flycheck
+    '(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup)))
+(use-package flycheck-demjsonlint)
+(use-package flycheck-mypy)
+(dolist (hook '(python-mode-hook web-mode-hook js-mode-hook sh-mode-hook json-mode-hook))
+  (add-hook hook #'(lambda () (flycheck-mode t))))
+
 ;; Web stuff
 (use-package web-mode
   :after tide
@@ -352,16 +362,6 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package tern
                 :after company
                 :config (add-to-list 'company-backends 'company-tern))))
-
-;; FlyCheck
-(use-package flycheck-yamllint
-  :config
-  (eval-after-load 'flycheck
-    '(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup)))
-(use-package flycheck-demjsonlint)
-(use-package flycheck-mypy)
-(dolist (hook '(python-mode-hook web-mode-hook js-mode-hook sh-mode-hook json-mode-hook))
-  (add-hook hook #'(lambda () (flycheck-mode t))))
 
 ;; JSON
 (use-package json-mode
