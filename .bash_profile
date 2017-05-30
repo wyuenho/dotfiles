@@ -1,9 +1,3 @@
-export LC_ALL
-LC_ALL="en_US.UTF-8"
-
-export LANG
-LANG="en_US.UTF-8"
-
 PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
 
 export PATH
