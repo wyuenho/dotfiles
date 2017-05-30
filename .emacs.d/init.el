@@ -221,11 +221,11 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Git
 (use-package magit
-  :config (bind-keys ("C-x v g" . magit-status)))
+  :config (bind-keys ("C-c v g" . magit-status)))
 
 ;; Hg
 (use-package monky
-  :config (bind-keys ("C-x v h" . monky-status)))
+  :config (bind-keys ("C-c v h" . monky-status)))
 
 ;; Adjust frame-wide font size
 (use-package zoom-frm
