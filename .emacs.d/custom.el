@@ -161,7 +161,6 @@
  '(flycheck-fringe-error ((t (:background nil :foreground "#FF6E64" :weight bold))))
  '(flycheck-fringe-info ((t (:background nil :foreground "#69B7F0" :weight bold))))
  '(flycheck-fringe-warning ((t (:background nil :foreground "#DEB542" :weight bold))))
- '(js2-warning ((t (:underline (:color "orange" :style wave)))))
  '(linum ((((type tty) (class color) (min-colors 16)) (:background "dim gray")) (((type x w32 mac)) (:background "#003b4a" :foreground "#586e75" :underline nil :weight normal))))
  '(mode-line ((t (:background "#073642" :foreground "#839496" :box (:line-width -1 :color "#073642") :overline nil :underline nil))))
  '(mode-line-inactive ((t (:background "#002b36" :foreground "#586e75" :box (:line-width -1 :color "#002b36") :overline nil :underline nil))))
