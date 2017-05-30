@@ -273,19 +273,20 @@ Optional argument ARG same as `comment-dwim''s."
   (global-set-key (kbd "C-z") popwin:keymap))
 
 ;; Auto-completion
-(eval-after-load 'company
-  (progn
-    ;; Bring help popup back to company
-    (use-package company-quickhelp
-      :config (company-quickhelp-mode t))
-    ;; More intuitive fuzzy matching
-    (use-package company-flx
-      :config (company-flx-mode t))
-    ;; Shell completion
-    (use-package company-shell
-      :config
-      (eval-after-load 'company
-        '(add-to-list 'company-backend '(company-shell company-shell-env))))))
+(use-package company)
+
+(use-package company-quickhelp
+  :after company
+  :config (company-quickhelp-mode t))
+
+(use-package company-flx
+  :after company
+  :config (company-flx-mode t))
+
+(use-package company-shell
+  :after company
+  :config
+  (add-to-list 'company-backend '(company-shell company-shell-env)))
 
 ;; Web stuff
 (use-package web-mode
@@ -349,7 +350,8 @@ Optional argument ARG same as `comment-dwim''s."
                            ("C-c C-f" . eslintd-fix)))
 
               (use-package tern
-                :config (eval-after-load 'company '(add-to-list 'company-backends 'company-tern)))))
+                :after company
+                :config (add-to-list 'company-backends 'company-tern))))
 
 ;; FlyCheck
 (use-package flycheck-yamllint
@@ -381,11 +383,12 @@ Optional argument ARG same as `comment-dwim''s."
                                    ("C-c s" . py-isort-buffer)))
 
               (use-package anaconda-mode
+                :after company
                 :config
                 (anaconda-mode t)
                 (anaconda-eldoc-mode t)
-                (eval-after-load 'company
-                  '(add-to-list 'company-backends '(company-anaconda :with company-capf))))))
+                (add-to-list 'company-backends '(company-anaconda :with company-capf)))))
+
 ;; Go
 (use-package go-mode
   :config
