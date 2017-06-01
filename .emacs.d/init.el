@@ -193,13 +193,79 @@ Optional argument ARG same as `comment-dwim''s."
                      ("M--" . er/contract-region)))
 
 (use-package smartparens-config
+  :init
+  (defmacro def-pairs (pairs)
+    `(progn
+       ,@(loop for (key . val) in pairs
+               collect
+               `(defun ,(read
+                         (concat
+                          "wrap-with-"
+                          (symbol-name key)
+                          "s"))
+                    (&optional arg)
+                  (interactive "P")
+                  (sp-wrap-with-pair ,val)))))
+
+  (def-pairs ((paren        . "(")
+              (bracket      . "[")
+              (brace        . "{")
+              (single-quote . "'")
+              (double-quote . "\"")
+              (underscore   . "_")
+              (back-quote   . "`")
+              (angle        . "<")))
+
   :config
-  (sp-use-smartparens-bindings)
-  (bind-keys :map smartparens-mode-map
-             ("M-<delete>"    . nil)
-             ("M-<backspace>" . nil)
-             ("C-<delete>"    . sp-unwrap-sexp)
-             ("C-<backspace>" . sp-backward-unwrap-sexp)))
+  (bind-keys
+   ;; TODO: deal with Hybrid S-Expressions for C-ish syntax
+   :map smartparens-mode-map
+   ("C-M-a" . sp-beginning-of-sexp)
+   ("C-M-e" . sp-end-of-sexp)
+
+   ("C-M-d" . sp-down-sexp)
+   ("C-M-u" . sp-backward-up-sexp)
+   ("M-D"   . sp-backward-down-sexp)
+   ("M-U"   . sp-up-sexp)
+
+   ("C-M-f" . sp-forward-sexp)
+   ("C-M-b" . sp-backward-sexp)
+
+   ("C-M-n" . sp-next-sexp)
+   ("C-M-p" . sp-previous-sexp)
+
+   ("C-S-f" . sp-forward-symbol)
+   ("C-S-b" . sp-backward-symbol)
+
+   ("C-<right>" . sp-forward-slurp-sexp)
+   ("M-<right>" . sp-forward-barf-sexp)
+   ("C-<left>"  . sp-backward-slurp-sexp)
+   ("M-<left>"  . sp-backward-barf-sexp)
+
+   ("C-M-t" . sp-transpose-sexp)
+   ("C-M-k" . sp-kill-sexp)
+   ("C-k"   . sp-kill-hybrid-sexp)
+   ("M-k"   . sp-backward-kill-sexp)
+   ("C-M-w" . sp-copy-sexp)
+   ("C-D"   . sp-kill-symbol)
+
+   ("M-<backspace>"               . backward-kill-word)
+   ("C-<backspace>"               . sp-backward-kill-word)
+   ([remap sp-backward-kill-word] . backward-kill-word)
+
+   ("C-x C-t" . sp-transpose-hybrid-sexp)
+
+   ("M-[" . sp-backward-unwrap-sexp)
+   ("M-]" . sp-unwrap-sexp)
+
+   ("C-c ("   . wrap-with-parens)
+   ("C-c ["   . wrap-with-brackets)
+   ("C-c {"   . wrap-with-braces)
+   ("C-c '"   . wrap-with-single-quotes)
+   ("C-c \""  . wrap-with-double-quotes)
+   ("C-c _"   . wrap-with-underscores)
+   ("C-c `"   . wrap-with-back-quotes)
+   ("C-c <"   . wrap-with-angles)))
 
 ;; Cycle thru most commonly programming identifier styles
 (use-package string-inflection
