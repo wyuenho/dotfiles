@@ -358,14 +358,17 @@ Optional argument ARG same as `comment-dwim''s."
   (add-to-list 'company-backend '(company-shell company-shell-env)))
 
 ;; Live Syntax checking
-(use-package flycheck-yamllint
-  :config
-  (eval-after-load 'flycheck
-    '(add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup)))
-(use-package flycheck-demjsonlint)
 (use-package flycheck-mypy)
 (dolist (hook '(python-mode-hook web-mode-hook js-mode-hook sh-mode-hook json-mode-hook))
   (add-hook hook #'(lambda () (flycheck-mode t))))
+
+(use-package yaml-mode
+  :config
+  (add-hook 'yaml-mode-hook
+            #'(lambda ()
+                (use-package flycheck-yamllint
+                  :after flycheck
+                  :config (add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup)))))
 
 ;; Web stuff
 (use-package web-mode
@@ -430,11 +433,26 @@ Optional argument ARG same as `comment-dwim''s."
 
               (use-package tern
                 :after company
-                :config (add-to-list 'company-backends 'company-tern))))
+                :config (add-to-list 'company-backends 'company-tern))
+
+              (use-package flow-minor-mode
+                :config (flow-minor-mode t))
+
+              (use-package company-flow
+                :after company
+                :config (add-to-list 'company-backends 'company-flow))
+
+              (use-package flycheck-flow
+                :config
+                (flycheck-add-next-checker 'javascript-eslint 'javascript-flow 'append)
+                (flycheck-add-next-checker 'javascript-flow 'javascript-flow-coverage 'append))))
 
 ;; JSON
 (use-package json-mode
-  :after flycheck-demjsonlint)
+  :config
+  (add-hook 'json-mode-hook
+            #'(lambda ()
+                (use-package flycheck-demjsonlint))))
 
 ;; Python
 (use-package pyenv-mode)
