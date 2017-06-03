@@ -101,6 +101,12 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-c e c" . emacs-lisp-byte-compile)
            ("C-c e l" . emacs-lisp-byte-compile-and-load))
 
+;; No more undo needed to go back to last change
+(use-package goto-chg
+  :config
+  (bind-keys ("C-." . goto-last-change)
+             ("C-," . goto-last-change-reverse)))
+
 ;; Replace the major mode name with its icon and move the buffer name from the
 ;; mode line to the header line
 (use-package all-the-icons
