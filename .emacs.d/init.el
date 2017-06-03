@@ -204,11 +204,7 @@ Optional argument ARG same as `comment-dwim''s."
     `(progn
        ,@(loop for (key . val) in pairs
                collect
-               `(defun ,(read
-                         (concat
-                          "wrap-with-"
-                          (symbol-name key)
-                          "s"))
+               `(defun ,(read (concat  "wrap-with-" (prin1-to-string key) "s"))
                     (&optional arg)
                   (interactive "P")
                   (sp-wrap-with-pair ,val)))))
@@ -224,21 +220,21 @@ Optional argument ARG same as `comment-dwim''s."
 
   :config
   (bind-keys
-   ;; TODO: deal with Hybrid S-Expressions for C-ish syntax
+   ;; TODO: deal with hybrid sexp for non-lisp langauges
    :map smartparens-mode-map
    ("C-M-a" . sp-beginning-of-sexp)
    ("C-M-e" . sp-end-of-sexp)
-
-   ("C-M-d" . sp-down-sexp)
-   ("C-M-u" . sp-backward-up-sexp)
-   ("M-D"   . sp-backward-down-sexp)
-   ("M-U"   . sp-up-sexp)
 
    ("C-M-f" . sp-forward-sexp)
    ("C-M-b" . sp-backward-sexp)
 
    ("C-M-n" . sp-next-sexp)
    ("C-M-p" . sp-previous-sexp)
+
+   ("C-M-d" . sp-down-sexp)
+   ("C-M-u" . sp-backward-up-sexp)
+   ("M-S-d" . sp-backward-down-sexp)
+   ("M-S-u" . sp-up-sexp)
 
    ("C-S-f" . sp-forward-symbol)
    ("C-S-b" . sp-backward-symbol)
@@ -248,18 +244,19 @@ Optional argument ARG same as `comment-dwim''s."
    ("C-<left>"  . sp-backward-slurp-sexp)
    ("M-<left>"  . sp-backward-barf-sexp)
 
-   ("C-M-t" . sp-transpose-sexp)
+   ("C-M-w"   . sp-copy-sexp)
+   ("C-M-t"   . sp-transpose-sexp)
+   ("M-S-t"   . sp-push-hybrid-sexp)
+   ("C-x C-t" . sp-transpose-hybrid-sexp)
+
+   ("C-S-d" . sp-kill-symbol)
    ("C-M-k" . sp-kill-sexp)
    ("C-k"   . sp-kill-hybrid-sexp)
    ("M-k"   . sp-backward-kill-sexp)
-   ("C-M-w" . sp-copy-sexp)
-   ("C-D"   . sp-kill-symbol)
 
    ("M-<backspace>"               . backward-kill-word)
    ("C-<backspace>"               . sp-backward-kill-word)
    ([remap sp-backward-kill-word] . backward-kill-word)
-
-   ("C-x C-t" . sp-transpose-hybrid-sexp)
 
    ("M-[" . sp-backward-unwrap-sexp)
    ("M-]" . sp-unwrap-sexp)
