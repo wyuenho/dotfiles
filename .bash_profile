@@ -48,6 +48,7 @@ PATH="$HOME/packages/kibana/bin:$PATH"
 # Python
 export PYTHONSTARTUP
 PYTHONSTARTUP="$HOME/.pythonrc"
+PATH="$HOME/Library/Python/2.7/bin:$PATH"
 export PYENV_ROOT
 PYENV_ROOT="$HOME/.pyenv"
 PATH="$HOME/.pyenv/bin:$PATH"
