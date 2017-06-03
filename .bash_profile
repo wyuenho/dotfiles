@@ -63,6 +63,7 @@ NVM_DIR="$HOME/.nvm"
 if [ "$(type -fp grunt)" ]; then eval "$(grunt --completion=bash)"; fi
 if [ "$(type -fp gulp)" ]; then eval "$(gulp --completion=bash)"; fi
 PATH="$HOME/.yarn/bin:$PATH"
+if [ "$(type -fp npm)" ]; then eval "$(npm completion)"; fi
 
 # Ruby
 PATH="$HOME/.rbenv/bin:$PATH"
