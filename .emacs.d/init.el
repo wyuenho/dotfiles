@@ -80,19 +80,18 @@ Optional argument ARG same as `comment-dwim''s."
   (require 'use-package))
 (require 'bind-key)
 
-(bind-keys
- ("C-c a"       . align)
- ("M-;"         . comment-dwim-line-or-region)
- ;; Rebind windmove keys
- ("C-c <left>"  . windmove-left)
- ("C-c <right>" . windmove-right)
- ("C-c <up>"    . windmove-up)
- ("C-c <down>"  . windmove-down)
- ;; Replace default buffer menu with ibuffer
- ("C-x C-b"     . ibuffer)
- ;; Rebind undo to undo-tree visualizer
- ("C-x u"       . undo-tree-visualize)
- ("C-c e f"     . byte-compile-file))
+(bind-keys ("C-c a"       . align)
+           ("M-;"         . comment-dwim-line-or-region)
+           ;; Rebind windmove keys
+           ("C-c <left>"  . windmove-left)
+           ("C-c <right>" . windmove-right)
+           ("C-c <up>"    . windmove-up)
+           ("C-c <down>"  . windmove-down)
+           ;; Replace default buffer menu with ibuffer
+           ("C-x C-b"     . ibuffer)
+           ;; Rebind undo to undo-tree visualizer
+           ("C-x u"       . undo-tree-visualize)
+           ("C-c e f"     . byte-compile-file))
 
 (bind-keys :map emacs-lisp-mode-map
            ("C-c e e" . eval-last-sexp)
@@ -100,12 +99,6 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-c e b" . eval-buffer)
            ("C-c e c" . emacs-lisp-byte-compile)
            ("C-c e l" . emacs-lisp-byte-compile-and-load))
-
-;; No more undo needed to go back to last change
-(use-package goto-chg
-  :config
-  (bind-keys ("C-." . goto-last-change)
-             ("C-," . goto-last-change-reverse)))
 
 ;; Replace the major mode name with its icon and move the buffer name from the
 ;; mode line to the header line
@@ -143,9 +136,10 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Modern code folding
 (use-package origami
-  :config (bind-keys ("M-0"   . origami-open-all-nodes)
-                     ("M-9"   . origami-close-all-nodes)
-                     ("C-M-/" . origami-recursively-toggle-node)))
+  :config
+  (bind-keys ("M-0"   . origami-open-all-nodes)
+             ("M-9"   . origami-close-all-nodes)
+             ("C-M-/" . origami-recursively-toggle-node)))
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
@@ -195,8 +189,9 @@ Optional argument ARG same as `comment-dwim''s."
   :config (add-hook 'prog-mode-hook #'(lambda () (syntax-subword-mode t))))
 
 (use-package expand-region
-  :config (bind-keys ("M-=" . er/expand-region)
-                     ("M--" . er/contract-region)))
+  :config
+  (bind-keys ("M-=" . er/expand-region)
+             ("M--" . er/contract-region)))
 
 (use-package smartparens-config
   :init
@@ -205,7 +200,7 @@ Optional argument ARG same as `comment-dwim''s."
        ,@(loop for (key . val) in pairs
                collect
                `(defun ,(read (concat  "wrap-with-" (prin1-to-string key) "s"))
-                    (&optional arg)
+                    (&optional _arg)
                   (interactive "P")
                   (sp-wrap-with-pair ,val)))))
 
@@ -219,56 +214,54 @@ Optional argument ARG same as `comment-dwim''s."
               (angle        . "<")))
 
   :config
-  (bind-keys
-   ;; TODO: deal with hybrid sexp for non-lisp langauges
-   :map smartparens-mode-map
-   ("C-M-a" . sp-beginning-of-sexp)
-   ("C-M-e" . sp-end-of-sexp)
+  (bind-keys :map smartparens-mode-map
+             ("C-M-a" . sp-beginning-of-sexp)
+             ("C-M-e" . sp-end-of-sexp)
 
-   ("C-M-f" . sp-forward-sexp)
-   ("C-M-b" . sp-backward-sexp)
+             ("C-M-f" . sp-forward-sexp)
+             ("C-M-b" . sp-backward-sexp)
 
-   ("C-M-n" . sp-next-sexp)
-   ("C-M-p" . sp-previous-sexp)
+             ("C-M-n" . sp-next-sexp)
+             ("C-M-p" . sp-previous-sexp)
 
-   ("C-M-d" . sp-down-sexp)
-   ("C-M-u" . sp-backward-up-sexp)
-   ("M-S-d" . sp-backward-down-sexp)
-   ("M-S-u" . sp-up-sexp)
+             ("C-M-d" . sp-down-sexp)
+             ("C-M-u" . sp-backward-up-sexp)
+             ("M-S-d" . sp-backward-down-sexp)
+             ("M-S-u" . sp-up-sexp)
 
-   ("C-S-f" . sp-forward-symbol)
-   ("C-S-b" . sp-backward-symbol)
+             ("C-S-f" . sp-forward-symbol)
+             ("C-S-b" . sp-backward-symbol)
 
-   ("C-<right>" . sp-forward-slurp-sexp)
-   ("M-<right>" . sp-forward-barf-sexp)
-   ("C-<left>"  . sp-backward-slurp-sexp)
-   ("M-<left>"  . sp-backward-barf-sexp)
+             ("C-<right>" . sp-forward-slurp-sexp)
+             ("M-<right>" . sp-forward-barf-sexp)
+             ("C-<left>"  . sp-backward-slurp-sexp)
+             ("M-<left>"  . sp-backward-barf-sexp)
 
-   ("C-M-w"   . sp-copy-sexp)
-   ("C-M-t"   . sp-transpose-sexp)
-   ("M-S-t"   . sp-push-hybrid-sexp)
-   ("C-x C-t" . sp-transpose-hybrid-sexp)
+             ("C-M-w"   . sp-copy-sexp)
+             ("C-M-t"   . sp-transpose-sexp)
+             ("M-S-t"   . sp-push-hybrid-sexp)
+             ("C-x C-t" . sp-transpose-hybrid-sexp)
 
-   ("C-S-d" . sp-kill-symbol)
-   ("C-M-k" . sp-kill-sexp)
-   ("C-k"   . sp-kill-hybrid-sexp)
-   ("M-k"   . sp-backward-kill-sexp)
+             ("C-S-d" . sp-kill-symbol)
+             ("C-M-k" . sp-kill-sexp)
+             ("C-k"   . sp-kill-hybrid-sexp)
+             ("M-k"   . sp-backward-kill-sexp)
 
-   ("M-<backspace>"               . backward-kill-word)
-   ("C-<backspace>"               . sp-backward-kill-word)
-   ([remap sp-backward-kill-word] . backward-kill-word)
+             ("M-<backspace>"               . backward-kill-word)
+             ("C-<backspace>"               . sp-backward-kill-word)
+             ([remap sp-backward-kill-word] . backward-kill-word)
 
-   ("M-[" . sp-backward-unwrap-sexp)
-   ("M-]" . sp-unwrap-sexp)
+             ("M-[" . sp-backward-unwrap-sexp)
+             ("M-]" . sp-unwrap-sexp)
 
-   ("C-c ("   . wrap-with-parens)
-   ("C-c ["   . wrap-with-brackets)
-   ("C-c {"   . wrap-with-braces)
-   ("C-c '"   . wrap-with-single-quotes)
-   ("C-c \""  . wrap-with-double-quotes)
-   ("C-c _"   . wrap-with-underscores)
-   ("C-c `"   . wrap-with-back-quotes)
-   ("C-c <"   . wrap-with-angles)))
+             ("C-c ("   . wrap-with-parens)
+             ("C-c ["   . wrap-with-brackets)
+             ("C-c {"   . wrap-with-braces)
+             ("C-c '"   . wrap-with-single-quotes)
+             ("C-c \""  . wrap-with-double-quotes)
+             ("C-c _"   . wrap-with-underscores)
+             ("C-c `"   . wrap-with-back-quotes)
+             ("C-c <"   . wrap-with-angles)))
 
 ;; Cycle thru most commonly programming identifier styles
 (use-package string-inflection
@@ -285,8 +278,9 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Vim-like increment and decrement
 (use-package evil-numbers
-  :config (bind-keys ("C-c =" . evil-numbers/inc-at-pt)
-                     ("C-c -" . evil-numbers/dec-at-pt)))
+  :config
+  (bind-keys ("C-c =" . evil-numbers/inc-at-pt)
+             ("C-c -" . evil-numbers/dec-at-pt)))
 
 ;; Git
 (use-package magit
@@ -298,26 +292,11 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Adjust frame-wide font size
 (use-package zoom-frm
-  :config (bind-keys ("C-x C-+" . zoom-in/out)
-                     ("C-x C--" . zoom-in/out)
-                     ("C-x C-=" . zoom-in/out)
-                     ("C-x C-0" . zoom-in/out)))
-
-;; Project management
-(use-package projectile
-  :after pyenv-mode
-  :init (defun projectile-pyenv-mode-set ()
-          "Set pyenv version matching project name."
-          (let ((project (projectile-project-name)))
-            (if (member project (pyenv-mode-versions))
-                (pyenv-mode-set project)
-              (pyenv-mode-unset))))
   :config
-  (projectile-mode t)
-  (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
-
-(use-package go-projectile
-  :after go-mode projectile)
+  (bind-keys ("C-x C-+" . zoom-in/out)
+             ("C-x C--" . zoom-in/out)
+             ("C-x C-=" . zoom-in/out)
+             ("C-x C-0" . zoom-in/out)))
 
 ;; Window management
 (use-package golden-ratio
@@ -342,82 +321,45 @@ Optional argument ARG same as `comment-dwim''s."
   (global-set-key (kbd "C-z") popwin:keymap))
 
 ;; Auto-completion
-(use-package company)
-
 (use-package company-quickhelp
-  :after company
   :config (company-quickhelp-mode t))
 
 (use-package company-flx
-  :after company
   :config (company-flx-mode t))
 
-(use-package company-shell
-  :after company
+;; Shell mode
+(add-hook 'sh-mode-hook
+          #'(lambda ()
+              (use-package company-shell
+                :config
+                (add-to-list 'company-backend '(company-shell company-shell-env)))))
+
+;; Quick Snippets
+(use-package yasnippet
   :config
-  (add-to-list 'company-backend '(company-shell company-shell-env)))
+  (dolist (hook '(prog-mode-hook text-mode))
+    (add-hook hook 'yas-minor-mode))
+  (eval-when-compile (require 'yasnippet))
+  (add-hook 'yas-minor-mode-hook #'(lambda () (yas-reload-all)))
+  (bind-keys :map yas-minor-mode-map
+             ("TAB"   . nil)
+             ("<tab>" . nil)
+             ("C-c i" . yas-expand)))
 
-;; Live Syntax checking
-(use-package flycheck-mypy)
-(dolist (hook '(python-mode-hook web-mode-hook js-mode-hook sh-mode-hook json-mode-hook))
-  (add-hook hook #'(lambda () (flycheck-mode t))))
+;; JSON mode
+(use-package json-mode
+  :config
+  (add-hook 'json-mode-hook
+            #'(lambda ()
+                (use-package flycheck-demjsonlint))))
 
+;; YAML mode
 (use-package yaml-mode
   :config
   (add-hook 'yaml-mode-hook
             #'(lambda ()
                 (use-package flycheck-yamllint
-                  :after flycheck
                   :config (add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup)))))
-
-;; Web stuff
-(use-package web-mode
-  :after tide
-  :mode ("\\.jinja'"
-         "\\.tsx\\'"
-         "\\.css\\'"
-         "\\.phtml\\'"
-         "\\.jsp\\'"
-         "\\.as[cp]x\\'"
-         "\\.erb\\'"
-         "\\.mustache\\'"
-         "\\.djhtml\\'"
-         "\\.html?\\'"
-         "\\.handlebars\\'")
-  :config (add-hook 'web-mode-hook
-                    #'(lambda ()
-                        (when (string-equal "tsx" (file-name-extension buffer-file-name))
-                          (tide-setup)
-                          (tide-hl-identifier-mode t)
-                          (flycheck-mode t)))))
-
-(use-package emmet-mode
-  :after web-mode
-  :config (dolist (hook '(sgml-mode-hook web-mode-hook nxml-mode-hook))
-            (add-hook hook 'emmet-mode)))
-
-;; TypeScript
-(use-package typescript-mode)
-(use-package ts-comint)
-(use-package tide
-  :after typescript-mode ts-comint
-  :config
-  (add-hook 'typescript-mode-hook #'(lambda ()
-                                      (tide-setup)
-                                      (tide-hl-identifier-mode t)
-                                      (flycheck-mode t)))
-  (add-hook 'before-save-hook 'tide-format-before-save)
-  (bind-keys :map typescript-mode-map
-             ("C-x C-e" . ts-send-last-sexp)
-             ("C-M-x"   . ts-send-last-sexp-and-go)
-             ("C-c b"   . ts-send-buffer)
-             ("C-c C-b" . ts-send-buffer-and-go)
-             ("C-c l"   . ts-load-file-and-go)
-             ("C-c C-f" . tide-format)
-             ("C-c m"   . tide-rename-symbol)
-             ("M-1"     . tide-fix)
-             ("M-/"     . tide-references)
-             ("M-d"     . tide-documentation-at-point)))
 
 ;; JavaScript
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . js-jsx-mode))
@@ -431,15 +373,13 @@ Optional argument ARG same as `comment-dwim''s."
                 (bind-keys :map js-mode-map
                            ("C-c C-f" . eslintd-fix)))
 
-              (use-package tern
-                :after company
+              (use-package company-tern
                 :config (add-to-list 'company-backends 'company-tern))
 
               (use-package flow-minor-mode
                 :config (flow-minor-mode t))
 
               (use-package company-flow
-                :after company
                 :config (add-to-list 'company-backends 'company-flow))
 
               (use-package flycheck-flow
@@ -447,12 +387,32 @@ Optional argument ARG same as `comment-dwim''s."
                 (flycheck-add-next-checker 'javascript-eslint 'javascript-flow 'append)
                 (flycheck-add-next-checker 'javascript-flow 'javascript-flow-coverage 'append))))
 
-;; JSON
-(use-package json-mode
+;; TypeScript
+(use-package typescript-mode
   :config
-  (add-hook 'json-mode-hook
-            #'(lambda ()
-                (use-package flycheck-demjsonlint))))
+  (use-package ts-comint)
+  (bind-keys :map typescript-mode-map
+             ("C-x C-e" . ts-send-last-sexp)
+             ("C-M-x"   . ts-send-last-sexp-and-go)
+             ("C-c b"   . ts-send-buffer)
+             ("C-c C-b" . ts-send-buffer-and-go)
+             ("C-c l"   . ts-load-file-and-go)))
+
+(use-package tide
+  :after typescript-mode
+  :config (add-hook 'typescript-mode-hook
+                    #'(lambda ()
+                        (tide-setup)
+                        (tide-hl-identifier-mode t)))
+
+  ;; (add-hook 'before-save-hook 'tide-format-before-save)
+
+  (bind-keys :map typescript-mode-map
+             ("C-c C-f" . tide-format)
+             ("C-c m"   . tide-rename-symbol)
+             ("M-1"     . tide-fix)
+             ("M-/"     . tide-references)
+             ("M-d"     . tide-documentation-at-point)))
 
 ;; Python
 (use-package pyenv-mode)
@@ -466,15 +426,17 @@ Optional argument ARG same as `comment-dwim''s."
                 :config (python-docstring-mode t))
 
               (use-package py-isort
-                :config (bind-keys :map python-mode-map
-                                   ("C-c s" . py-isort-buffer)))
+                :config
+                (bind-keys :map python-mode-map
+                           ("C-c s" . py-isort-buffer)))
 
               (use-package anaconda-mode
-                :after company
                 :config
                 (anaconda-mode t)
                 (anaconda-eldoc-mode t)
-                (add-to-list 'company-backends '(company-anaconda :with company-capf)))))
+                (add-to-list 'company-backends '(company-anaconda :with company-capf)))
+
+              (use-package flycheck-mypy)))
 
 ;; Go
 (use-package go-mode
@@ -482,21 +444,54 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'go-mode-hook
             #'(lambda ()
                 (use-package go-eldoc
-                  :config
-                  (go-eldoc-setup))
+                  :config (go-eldoc-setup))
 
                 (use-package company-go
                   :config
                   (set (make-local-variable 'company-backends) '(company-go))))))
 
-;; yasnippet
-(use-package yasnippet
+;; Web stuff
+(use-package web-mode
+  :mode ("\\.jinja'"
+         "\\.tsx\\'"
+         "\\.css\\'"
+         "\\.phtml\\'"
+         "\\.jsp\\'"
+         "\\.as[cp]x\\'"
+         "\\.erb\\'"
+         "\\.mustache\\'"
+         "\\.djhtml\\'"
+         "\\.html?\\'"
+         "\\.handlebars\\'")
   :config
-  (dolist (hook '(prog-mode-hook text-mode))
-    (add-hook hook 'yas-minor-mode))
-  (eval-when-compile (require 'yasnippet))
-  (add-hook 'yas-minor-mode-hook #'(lambda () (yas-reload-all)))
-  (bind-keys :map yas-minor-mode-map
-             ("TAB"   . nil)
-             ("<tab>" . nil)
-             ("C-c i" . yas-expand)))
+  (add-hook 'web-mode-hook
+            #'(lambda ()
+                (when (and (string-equal "tsx" (file-name-extension buffer-file-name))
+                           (featurep 'tide))
+                  (tide-setup)
+                  (tide-hl-identifier-mode t)))))
+
+(use-package emmet-mode
+  :after web-mode
+  :config (dolist (hook '(sgml-mode-hook
+                          nxml-mode-hook
+                          web-mode-hook
+                          js-jsx-mode-hook
+                          typescript-mode-hook))
+            (add-hook hook 'emmet-mode)))
+
+;; Project management
+(use-package projectile
+  :after pyenv-mode
+  :init (defun projectile-pyenv-mode-set ()
+          "Set pyenv version matching project name."
+          (let ((project (projectile-project-name)))
+            (if (member project (pyenv-mode-versions))
+                (pyenv-mode-set project)
+              (pyenv-mode-unset))))
+  :config
+  (projectile-mode t)
+  (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
+
+(use-package go-projectile
+  :after go-mode projectile)

@@ -53,6 +53,7 @@
  '(global-company-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(global-hl-line-mode t)
+ '(global-magit-file-mode t)
  '(global-move-dup-mode t)
  '(global-origami-mode t)
  '(global-undo-tree-mode t)
@@ -106,7 +107,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ag aggressive-indent all-the-icons-dired anaconda-mode auto-compile bind-key centered-window-mode company company-anaconda company-flx company-go company-quickhelp company-shell company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix esup evil-numbers exec-path-from-shell expand-region eyebrowse flx-ido flx-isearch flycheck flycheck-demjsonlint flycheck-mypy flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-ubiquitous ido-vertical-mode idomenu js-doc json-mode kill-or-bury-alive kurecolor less-css-mode lorem-ipsum magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nose origami package-build package-lint pcre2el popwin projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode react-snippets scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide try ts-comint typescript-mode undo-tree use-package visual-regexp visual-regexp-steroids vlf web-mode which-key whitespace-cleanup-mode yaml-mode yasnippet zoom-frm)))
+    (ag aggressive-indent all-the-icons-dired anaconda-mode auto-compile bind-key centered-window-mode company company-anaconda company-flow company-flx company-go company-quickhelp company-shell company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix esup evil-numbers exec-path-from-shell expand-region eyebrowse flow-minor-mode flx-ido flx-isearch flycheck flycheck-demjsonlint flycheck-flow flycheck-mypy flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-ubiquitous ido-vertical-mode idomenu js-doc json-mode kill-or-bury-alive kurecolor less-css-mode lorem-ipsum magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nose origami package-build package-lint pcre2el popwin projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode react-snippets scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide try ts-comint typescript-mode undo-tree use-package visual-regexp visual-regexp-steroids vlf web-mode which-key whitespace-cleanup-mode yaml-mode yasnippet zoom-frm)))
  '(pyenv-mode t)
  '(python-skeleton-autoinsert t)
  '(recentf-auto-cleanup (quote never))
