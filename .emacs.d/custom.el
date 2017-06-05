@@ -97,7 +97,6 @@
  '(markdown-command "markdown_py -x extra -x sane_lists")
  '(menu-bar-mode t)
  '(minibuffer-frame-alist (quote ((width . 80) (height . 2))))
- '(mouse-wheel-follow-mouse nil)
  '(mouse-wheel-mode t)
  '(mouse-wheel-progressive-speed nil)
  '(ns-command-modifier (quote meta))
