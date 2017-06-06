@@ -1,5 +1,3 @@
-PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
-
 if [ "$(which ls)" == "/bin/ls" ]; then
     alias ls="ls -FhG"
 else
@@ -19,14 +17,17 @@ fi
 
 bind 'set match-hidden-files off'
 
-export EDITOR
-EDITOR="emacs -Q -mm"
+
+PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
 
 export PATH
 PATH=".:$HOME/packages/m-cli:$HOME/packages/sshuttle:$HOME/packages/bin:/opt/local/bin:/opt/local/sbin:$PATH"
 
 export MANPATH
 MANPATH="/opt/local/share/man:$MANPATH"
+
+export EDITOR
+EDITOR="emacs -Q -mm"
 
 export MBOX
 MBOX="$HOME/.mail/mbox"
