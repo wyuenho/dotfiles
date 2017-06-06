@@ -33,6 +33,7 @@
 ;; Turn on linum mode for all prog and text modes
 (dolist (hook '(prog-mode-hook text-mode-hook))
   (add-hook hook #'(lambda () (linum-mode t))))
+
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
 
@@ -92,13 +93,6 @@ Optional argument ARG same as `comment-dwim''s."
            ;; Rebind undo to undo-tree visualizer
            ("C-x u"       . undo-tree-visualize)
            ("C-c e f"     . byte-compile-file))
-
-(bind-keys :map emacs-lisp-mode-map
-           ("C-c e e" . eval-last-sexp)
-           ("C-c e r" . eval-region)
-           ("C-c e b" . eval-buffer)
-           ("C-c e c" . emacs-lisp-byte-compile)
-           ("C-c e l" . emacs-lisp-byte-compile-and-load))
 
 ;; Replace the major mode name with its icon and move the buffer name from the
 ;; mode line to the header line
@@ -320,20 +314,6 @@ Optional argument ARG same as `comment-dwim''s."
   (popwin-mode t)
   (global-set-key (kbd "C-z") popwin:keymap))
 
-;; Auto-completion
-(use-package company-quickhelp
-  :config (company-quickhelp-mode t))
-
-(use-package company-flx
-  :config (company-flx-mode t))
-
-;; Shell mode
-(add-hook 'sh-mode-hook
-          #'(lambda ()
-              (use-package company-shell
-                :config
-                (add-to-list 'company-backend '(company-shell company-shell-env)))))
-
 ;; Quick Snippets
 (use-package yasnippet
   :config
@@ -346,11 +326,40 @@ Optional argument ARG same as `comment-dwim''s."
              ("<tab>" . nil)
              ("C-c i" . yas-expand)))
 
+;; Auto-completion
+(use-package company-quickhelp
+  :config (company-quickhelp-mode t))
+
+(use-package company-flx
+  :config (company-flx-mode t))
+
+;; Much faster PDF viewing
+(add-hook 'doc-view-mode-hook
+          #'(lambda ()
+              (when (fboundp 'pdf-tools-install)
+                (pdf-tools-install))))
+
+;; Lisp
+(dolist (hook '(lisp-mode-hook emacs-lisp-mode-hook))
+  (add-hook hook #'(lambda () (flycheck-mode t))))
+(bind-keys :map emacs-lisp-mode-map
+           ("C-c e c" . emacs-lisp-byte-compile)
+           ("C-c e l" . emacs-lisp-byte-compile-and-load))
+
+;; Shell mode
+(add-hook 'sh-mode-hook
+          #'(lambda ()
+              (flycheck-mode t)
+              (use-package company-shell
+                :config
+                (add-to-list 'company-backend '(company-shell company-shell-env)))))
+
 ;; JSON mode
 (use-package json-mode
   :config
   (add-hook 'json-mode-hook
             #'(lambda ()
+                (flycheck-mode t)
                 (use-package flycheck-demjsonlint))))
 
 ;; YAML mode
@@ -358,8 +367,10 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'yaml-mode-hook
             #'(lambda ()
+                (flycheck-mode t)
                 (use-package flycheck-yamllint
-                  :config (add-hook 'flycheck-mode-hook 'flycheck-yamllint-setup)))))
+                  :config
+                  (flycheck-yamllint-setup)))))
 
 ;; JavaScript
 (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . js-jsx-mode))
@@ -373,19 +384,25 @@ Optional argument ARG same as `comment-dwim''s."
                 (bind-keys :map js-mode-map
                            ("C-c C-f" . eslintd-fix)))
 
+              (use-package tern
+                :config (tern-mode t))
+
               (use-package company-tern
                 :config (add-to-list 'company-backends 'company-tern))
 
-              (use-package flow-minor-mode
-                :config (flow-minor-mode t))
+              ;; (use-package flow-minor-mode
+              ;;   :config (flow-minor-mode t))
 
-              (use-package company-flow
-                :config (add-to-list 'company-backends 'company-flow))
+              ;; (use-package company-flow
+              ;;   :config (add-to-list 'company-backends 'company-flow))
 
-              (use-package flycheck-flow
-                :config
-                (flycheck-add-next-checker 'javascript-eslint 'javascript-flow 'append)
-                (flycheck-add-next-checker 'javascript-flow 'javascript-flow-coverage 'append))))
+              (flycheck-mode t)
+
+              ;; (use-package flycheck-flow
+              ;;   :config
+              ;;   (flycheck-add-next-checker 'javascript-eslint 'javascript-flow 'append)
+              ;;   (flycheck-add-next-checker 'javascript-flow 'javascript-flow-coverage 'append))
+              ))
 
 ;; TypeScript
 (use-package typescript-mode
@@ -396,7 +413,8 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-M-x"   . ts-send-last-sexp-and-go)
              ("C-c b"   . ts-send-buffer)
              ("C-c C-b" . ts-send-buffer-and-go)
-             ("C-c l"   . ts-load-file-and-go)))
+             ("C-c l"   . ts-load-file-and-go))
+  (add-hook 'typescript-mode-hook #'(lambda () (flycheck-mode t))))
 
 (use-package tide
   :after typescript-mode
@@ -419,6 +437,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 (add-hook 'python-mode-hook
           #'(lambda ()
+              (flycheck-mode t)
+
               (use-package py-autopep8
                 :config (py-autopep8-enable-on-save))
 
@@ -443,6 +463,8 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'go-mode-hook
             #'(lambda ()
+                (flycheck-mode t)
+
                 (use-package go-eldoc
                   :config (go-eldoc-setup))
 
@@ -466,6 +488,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'web-mode-hook
             #'(lambda ()
+                (flycheck-mode t)
                 (when (and (string-equal "tsx" (file-name-extension buffer-file-name))
                            (featurep 'tide))
                   (tide-setup)
