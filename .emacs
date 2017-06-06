@@ -312,7 +312,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package popwin
   :config
   (popwin-mode t)
-  (global-set-key (kbd "C-z") popwin:keymap))
+  (bind-key "C-z" popwin:keymap))
 
 ;; Quick Snippets
 (use-package yasnippet
