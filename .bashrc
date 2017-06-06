@@ -51,8 +51,8 @@ if [ "$(type -fp pip)" ]; then eval "$(pip completion -b)"; fi
 export PYENV_ROOT
 PYENV_ROOT="$HOME/.pyenv"
 PATH="$HOME/.pyenv/bin:$HOME/Library/Python/2.7/bin:$PATH"
-if [ "$(type -fp virtualenv)" ]; then eval "$(pyenv virtualenv-init -)"; fi
 if [ "$(type -fp pyenv)" ]; then eval "$(pyenv init -)"; fi
+if [ "$(type -fp virtualenv)" ]; then eval "$(pyenv virtualenv-init -)"; fi
 
 # Node
 export NVM_DIR
