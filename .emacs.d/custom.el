@@ -48,6 +48,7 @@
  '(eval-expression-print-length 1000)
  '(eval-expression-print-level 1000)
  '(exec-path-from-shell-check-startup-files nil)
+ '(explicit-shell-file-name "/opt/local/bin/bash")
  '(fill-column 80)
  '(gc-cons-threshold 20000000)
  '(global-aggressive-indent-mode t)
@@ -107,7 +108,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ag aggressive-indent all-the-icons-dired anaconda-mode auto-compile bind-key centered-window-mode company company-anaconda company-flow company-flx company-go company-quickhelp company-shell company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix esup evil-numbers exec-path-from-shell expand-region eyebrowse flow-minor-mode flx-ido flx-isearch flycheck flycheck-demjsonlint flycheck-flow flycheck-mypy flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-ubiquitous ido-vertical-mode idomenu js-doc json-mode kill-or-bury-alive kurecolor less-css-mode lorem-ipsum magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nose origami package-build package-lint pcre2el popwin projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode react-snippets scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide try ts-comint typescript-mode undo-tree use-package visual-regexp visual-regexp-steroids vlf web-mode which-key whitespace-cleanup-mode yaml-mode yasnippet zoom-frm)))
+    (ag aggressive-indent all-the-icons-dired anaconda-mode auto-compile bind-key centered-window-mode company company-anaconda company-flow company-flx company-go company-quickhelp company-shell company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix esup evil-numbers exec-path-from-shell expand-region eyebrowse flow-minor-mode flx-ido flx-isearch flycheck flycheck-demjsonlint flycheck-flow flycheck-mypy flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-ubiquitous ido-vertical-mode idomenu js-doc json-mode kill-or-bury-alive kurecolor less-css-mode lorem-ipsum magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nose origami package-build package-lint pcre2el pdf-tools popwin projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode react-snippets scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide try ts-comint typescript-mode undo-tree use-package visual-regexp visual-regexp-steroids web-mode which-key whitespace-cleanup-mode yaml-mode yasnippet zoom-frm)))
  '(pyenv-mode t)
  '(python-skeleton-autoinsert t)
  '(recentf-auto-cleanup (quote never))
@@ -160,7 +161,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "nil" :family "DejaVu Sans Mono"))))
  '(flycheck-fringe-error ((t (:background nil :foreground "#FF6E64" :weight bold))))
  '(flycheck-fringe-info ((t (:background nil :foreground "#69B7F0" :weight bold))))
  '(flycheck-fringe-warning ((t (:background nil :foreground "#DEB542" :weight bold))))
