@@ -46,13 +46,12 @@ PATH="$HOME/packages/kibana/bin:$PATH"
 # Python
 export PYTHONSTARTUP
 PYTHONSTARTUP="$HOME/.pythonrc"
-PATH="$HOME/Library/Python/2.7/bin:$PATH"
+if [ "$(type -fp pip)" ]; then eval "$(pip completion -b)"; fi
 export PYENV_ROOT
 PYENV_ROOT="$HOME/.pyenv"
-PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-if [ "$(type -fp pip)" ]; then eval "$(pip completion -b)"; fi
+PATH="$HOME/.pyenv/bin:$HOME/Library/Python/2.7/bin:$PATH"
+if [ "$(type -fp virtualenv)" ]; then eval "$(pyenv virtualenv-init -)"; fi
+if [ "$(type -fp pyenv)" ]; then eval "$(pyenv init -)"; fi
 
 # Node
 export NVM_DIR
@@ -61,8 +60,9 @@ NVM_DIR="$HOME/.nvm"
 [ -r "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
 if [ "$(type -fp grunt)" ]; then eval "$(grunt --completion=bash)"; fi
 if [ "$(type -fp gulp)" ]; then eval "$(gulp --completion=bash)"; fi
-PATH="$HOME/.yarn/bin:$PATH"
 if [ "$(type -fp npm)" ]; then eval "$(npm completion)"; fi
+PATH="$HOME/.yarn/bin:$PATH"
+PATH="$HOME/packages/phantomjs/bin:$PATH"
 
 # Ruby
 PATH="$HOME/.rbenv/bin:$PATH"
