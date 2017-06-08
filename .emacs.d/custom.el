@@ -51,7 +51,6 @@
  '(explicit-shell-file-name "/opt/local/bin/bash")
  '(fill-column 80)
  '(gc-cons-threshold 20000000)
- '(global-aggressive-indent-mode t)
  '(global-company-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(global-hl-line-mode t)
