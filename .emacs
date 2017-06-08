@@ -352,7 +352,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (pdf-tools-install))))
 
 ;; Lisp
-(dolist (hook '(lisp-mode-hook emacs-lisp-mode-hook))
+(dolist (hook '(lisp-mode-hook))
   (add-hook hook #'(lambda () (flycheck-mode t))))
 (bind-keys :map emacs-lisp-mode-map
            ("C-c e c" . emacs-lisp-byte-compile)
