@@ -466,9 +466,8 @@ Optional argument ARG same as `comment-dwim''s."
                 :config
                 (anaconda-mode t)
                 (anaconda-eldoc-mode t)
-                (add-to-list 'company-backends '(company-anaconda :with company-capf)))
-
-              (use-package flycheck-mypy)))
+                (add-to-list 'company-backends '(company-anaconda :with company-capf))
+                (bind-key "C-c C-f" 'anaconda-mode-show-doc anaconda-mode-map))))
 
 ;; Go
 (use-package go-mode
