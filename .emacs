@@ -54,13 +54,6 @@
               (eval-and-compile (require 'ediff-util))
               (ediff-janitor nil nil)) 'append)
 
-;; Kill all running subprocesses automatically when emacs is killed
-(add-hook 'kill-emacs-query-functions
-          #'(lambda ()
-              (dolist (process (process-list))
-                (set-process-query-on-exit-flag process nil))
-              t))
-
 ;; More sensible comment-dwim
 (defun comment-dwim-line-or-region (&optional arg)
   "Replacement for the `comment-dwim' command.
