@@ -28,11 +28,11 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Automatically wrap overly long lines for all text modes
-(add-hook 'text-mode-hook #'(lambda () (auto-fill-mode t)))
+(add-hook 'text-mode-hook #'(lambda () (auto-fill-mode 1)))
 
 ;; Turn on linum mode for all prog and text modes
 (dolist (hook '(prog-mode-hook text-mode-hook))
-  (add-hook hook #'(lambda () (linum-mode t))))
+  (add-hook hook #'(lambda () (linum-mode 1))))
 
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
@@ -112,7 +112,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
   :config
-  (which-key-mode t)
+  (which-key-mode 1)
   (bind-keys ("C-h b" . which-key-show-top-level)))
 
 ;; Unmap extraneous undo-tree mode keys
@@ -132,11 +132,11 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package flx-ido
   :config
   (setq flx-ido-use-faces nil)
-  (flx-ido-mode t))
+  (flx-ido-mode 1))
 
 (use-package flx-isearch
   :config
-  (flx-isearch-mode t)
+  (flx-isearch-mode 1)
   (bind-keys ("C-M-s" . flx-isearch-forward)
              ("C-M-r" . flx-isearch-backward)))
 
@@ -173,7 +173,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Turn on subword mode for all prog modes
 (use-package syntax-subword
-  :config (add-hook 'prog-mode-hook #'(lambda () (syntax-subword-mode t))))
+  :config (add-hook 'prog-mode-hook #'(lambda () (syntax-subword-mode 1))))
 
 (use-package expand-region
   :config
@@ -273,7 +273,8 @@ Optional argument ARG same as `comment-dwim''s."
                   typescript-mode-hook
                   web-mode-hook
                   go-mode-hook))
-    (add-hook hook #'(lambda () (aggressive-indent-mode t)))))
+    (add-hook hook #'(lambda () (aggressive-indent-mode 1))))
+  (add-hook 'json-mode-hook #'(lambda () (aggressive-indent-mode 0))))
 
 ;; Vim-like increment and decrement
 (use-package evil-numbers
@@ -302,7 +303,7 @@ Optional argument ARG same as `comment-dwim''s."
   :defines golden-ratio-inhibit-functions
   :config
   (defvar ediff-on nil)
-  (add-hook 'ediff-before-setup-hook #'(lambda () (setq ediff-on t)))
+  (add-hook 'ediff-before-setup-hook #'(lambda () (setq ediff-on 1)))
   (add-hook 'ediff-quit-hook #'(lambda () (setq ediff-on nil)) 'append)
   (add-hook 'ediff-suspend-hook #'(lambda () (setq ediff-on nil)) 'append)
   (push #'(lambda () ediff-on) golden-ratio-inhibit-functions))
@@ -316,7 +317,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package popwin
   :config
-  (popwin-mode t)
+  (popwin-mode 1)
   (bind-key "C-z" popwin:keymap))
 
 ;; Quick Snippets
@@ -333,10 +334,10 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Auto-completion
 (use-package company-quickhelp
-  :config (company-quickhelp-mode t))
+  :config (company-quickhelp-mode 1))
 
 (use-package company-flx
-  :config (company-flx-mode t))
+  :config (company-flx-mode 1))
 
 ;; Much faster PDF viewing
 (add-hook 'doc-view-mode-hook
@@ -346,7 +347,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Lisp
 (dolist (hook '(lisp-mode-hook))
-  (add-hook hook #'(lambda () (flycheck-mode t))))
+  (add-hook hook #'(lambda () (flycheck-mode 1))))
 (bind-keys :map emacs-lisp-mode-map
            ("C-c e c" . emacs-lisp-byte-compile)
            ("C-c e l" . emacs-lisp-byte-compile-and-load))
@@ -354,7 +355,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Shell mode
 (add-hook 'sh-mode-hook
           #'(lambda ()
-              (flycheck-mode t)
+              (flycheck-mode 1)
               (use-package company-shell
                 :config
                 (add-to-list 'company-backend '(company-shell company-shell-env)))))
@@ -364,7 +365,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'json-mode-hook
             #'(lambda ()
-                (flycheck-mode t)
+                (flycheck-mode 1)
                 (use-package flycheck-demjsonlint))))
 
 ;; YAML mode
@@ -372,7 +373,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'yaml-mode-hook
             #'(lambda ()
-                (flycheck-mode t)
+                (flycheck-mode 1)
                 (use-package flycheck-yamllint
                   :config
                   (flycheck-yamllint-setup)))))
@@ -385,17 +386,17 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package eslintd-fix
                 :functions eslintd-fix
                 :config
-                (eslintd-fix-mode t)
+                (eslintd-fix-mode 1)
                 (bind-keys :map js-mode-map
                            ("C-c C-f" . eslintd-fix)))
 
               (use-package tern
-                :config (tern-mode t))
+                :config (tern-mode 1))
 
               (use-package company-tern
                 :config (add-to-list 'company-backends 'company-tern))
 
-              (flycheck-mode t)))
+              (flycheck-mode 1)))
 
 ;; TypeScript
 (use-package typescript-mode
@@ -407,14 +408,14 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-c b"   . ts-send-buffer)
              ("C-c C-b" . ts-send-buffer-and-go)
              ("C-c l"   . ts-load-file-and-go))
-  (add-hook 'typescript-mode-hook #'(lambda () (flycheck-mode t))))
+  (add-hook 'typescript-mode-hook #'(lambda () (flycheck-mode 1))))
 
 (use-package tide
   :after typescript-mode
   :config (add-hook 'typescript-mode-hook
                     #'(lambda ()
                         (tide-setup)
-                        (tide-hl-identifier-mode t)))
+                        (tide-hl-identifier-mode 1)))
 
   (add-hook 'before-save-hook 'tide-format-before-save)
 
@@ -430,13 +431,13 @@ Optional argument ARG same as `comment-dwim''s."
 
 (add-hook 'python-mode-hook
           #'(lambda ()
-              (flycheck-mode t)
+              (flycheck-mode 1)
 
               (use-package py-autopep8
                 :config (py-autopep8-enable-on-save))
 
               (use-package python-docstring
-                :config (python-docstring-mode t))
+                :config (python-docstring-mode 1))
 
               (use-package py-isort
                 :config
@@ -445,8 +446,8 @@ Optional argument ARG same as `comment-dwim''s."
 
               (use-package anaconda-mode
                 :config
-                (anaconda-mode t)
-                (anaconda-eldoc-mode t)
+                (anaconda-mode 1)
+                (anaconda-eldoc-mode 1)
                 (add-to-list 'company-backends '(company-anaconda :with company-capf))
                 (bind-key "M-d" 'anaconda-mode-show-doc anaconda-mode-map))))
 
@@ -455,7 +456,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'go-mode-hook
             #'(lambda ()
-                (flycheck-mode t)
+                (flycheck-mode 1)
 
                 (use-package go-eldoc
                   :config (go-eldoc-setup))
@@ -480,11 +481,11 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'web-mode-hook
             #'(lambda ()
-                (flycheck-mode t)
+                (flycheck-mode 1)
                 (when (and (string-equal "tsx" (file-name-extension buffer-file-name))
                            (featurep 'tide))
                   (tide-setup)
-                  (tide-hl-identifier-mode t)))))
+                  (tide-hl-identifier-mode 1)))))
 
 (use-package emmet-mode
   :after web-mode
@@ -505,7 +506,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (pyenv-mode-set project)
               (pyenv-mode-unset))))
   :config
-  (projectile-mode t)
+  (projectile-mode 1)
   (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
 
 (use-package go-projectile
