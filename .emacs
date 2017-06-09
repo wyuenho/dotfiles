@@ -416,7 +416,7 @@ Optional argument ARG same as `comment-dwim''s."
                         (tide-setup)
                         (tide-hl-identifier-mode t)))
 
-  ;; (add-hook 'before-save-hook 'tide-format-before-save)
+  (add-hook 'before-save-hook 'tide-format-before-save)
 
   (bind-keys :map typescript-mode-map
              ("C-c C-f" . tide-format)
