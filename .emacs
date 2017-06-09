@@ -448,7 +448,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (anaconda-mode t)
                 (anaconda-eldoc-mode t)
                 (add-to-list 'company-backends '(company-anaconda :with company-capf))
-                (bind-key "C-c C-f" 'anaconda-mode-show-doc anaconda-mode-map))))
+                (bind-key "M-d" 'anaconda-mode-show-doc anaconda-mode-map))))
 
 ;; Go
 (use-package go-mode
