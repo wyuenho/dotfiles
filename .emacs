@@ -395,19 +395,7 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package company-tern
                 :config (add-to-list 'company-backends 'company-tern))
 
-              ;; (use-package flow-minor-mode
-              ;;   :config (flow-minor-mode t))
-
-              ;; (use-package company-flow
-              ;;   :config (add-to-list 'company-backends 'company-flow))
-
-              (flycheck-mode t)
-
-              ;; (use-package flycheck-flow
-              ;;   :config
-              ;;   (flycheck-add-next-checker 'javascript-eslint 'javascript-flow 'append)
-              ;;   (flycheck-add-next-checker 'javascript-flow 'javascript-flow-coverage 'append))
-              ))
+              (flycheck-mode t)))
 
 ;; TypeScript
 (use-package typescript-mode
