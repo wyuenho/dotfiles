@@ -453,8 +453,10 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Go
 (use-package go-mode
   :config
+  (add-hook 'before-save-hook 'gofmt-before-save)
   (add-hook 'go-mode-hook
             #'(lambda ()
+
                 (flycheck-mode 1)
 
                 (use-package go-eldoc
