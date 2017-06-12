@@ -219,15 +219,14 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-S-f" . sp-forward-symbol)
              ("C-S-b" . sp-backward-symbol)
 
-             ("C-<right>" . sp-forward-slurp-sexp)
+             ("A-<right>" . sp-slurp-hybrid-sexp)
              ("M-<right>" . sp-forward-barf-sexp)
-             ("C-<left>"  . sp-backward-slurp-sexp)
+             ("A-<left>"  . sp-backward-slurp-sexp)
              ("M-<left>"  . sp-backward-barf-sexp)
 
              ("C-M-w"   . sp-copy-sexp)
-             ("C-M-t"   . sp-transpose-sexp)
-             ("M-S-t"   . sp-push-hybrid-sexp)
-             ("C-x C-t" . sp-transpose-hybrid-sexp)
+             ("C-M-S-t" . sp-push-hybrid-sexp)
+             ("C-M-t"   . sp-transpose-hybrid-sexp)
 
              ("C-S-d" . sp-kill-symbol)
              ("C-M-k" . sp-kill-sexp)
