@@ -332,6 +332,11 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-c i" . yas-expand)))
 
 ;; Auto-completion
+(use-package company
+  :config
+  (bind-keys :map company-mode-map
+             ("M-/" . company-complete)))
+
 (use-package company-quickhelp
   :config (company-quickhelp-mode 1))
 
