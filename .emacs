@@ -447,6 +447,13 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package python-docstring
                 :config (python-docstring-mode 1))
 
+              (use-package importmagic
+                :config
+                (setq importmagic-be-quiet t)
+                (importmagic-mode 1)
+                (bind-keys :map importmagic-mode-map
+                           ("M-1" . importmagic-fix-imports)))
+
               (use-package py-isort
                 :config
                 (bind-keys :map python-mode-map
