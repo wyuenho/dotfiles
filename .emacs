@@ -427,7 +427,7 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-c C-f" . tide-format)
              ("C-c m"   . tide-rename-symbol)
              ("M-1"     . tide-fix)
-             ("M-/"     . tide-references)
+             ("M-?"     . tide-references)
              ("M-d"     . tide-documentation-at-point)))
 
 ;; Python
