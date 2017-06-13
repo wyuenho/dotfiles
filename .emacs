@@ -431,7 +431,11 @@ Optional argument ARG same as `comment-dwim''s."
              ("M-d"     . tide-documentation-at-point)))
 
 ;; Python
-(use-package pyenv-mode)
+(use-package pyenv-mode
+  :config
+  (bind-keys :map pyenv-mode-map
+             ("C-c C-s" . nil)
+             ("C-c C-u" . nil)))
 
 (add-hook 'python-mode-hook
           #'(lambda ()
