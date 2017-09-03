@@ -337,10 +337,16 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys :map company-mode-map
              ("M-/" . company-complete)))
 
+(use-package company-statistics
+  :after company
+  :config (company-statistics-mode 1))
+
 (use-package company-quickhelp
+  :after company
   :config (company-quickhelp-mode 1))
 
 (use-package company-flx
+  :after company
   :config (company-flx-mode 1))
 
 ;; Much faster PDF viewing
