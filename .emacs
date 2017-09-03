@@ -389,7 +389,7 @@ Optional argument ARG same as `comment-dwim''s."
                   (flycheck-yamllint-setup)))))
 
 ;; JavaScript
-(add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . js-jsx-mode))
+;; (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . js-jsx-mode))
 (add-hook 'js-mode-hook
           #'(lambda ()
               (eval-when-compile (require 'js))
