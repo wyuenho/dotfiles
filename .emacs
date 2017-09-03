@@ -148,7 +148,7 @@ Optional argument ARG same as `comment-dwim''s."
              ("M-X" . smex-major-mode-commands)))
 
 ;; Use ido for even more things than ido-everywhere
-(use-package ido-ubiquitous)
+(use-package ido-completing-read+)
 (use-package ido-vertical-mode)
 
 ;; Mark and edit multiple things at once
