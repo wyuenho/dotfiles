@@ -331,6 +331,15 @@ Optional argument ARG same as `comment-dwim''s."
              ("<tab>" . nil)
              ("C-c i" . yas-expand)))
 
+;; restclient
+(use-package restclient
+  :config
+  (add-hook 'restclient-mode-hook
+            #'(lambda ()
+                (use-package company-restclient
+                  :config
+                  (add-to-list 'company-backends 'company-restclient)))))
+
 ;; Auto-completion
 (use-package company
   :config
