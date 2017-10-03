@@ -40,7 +40,7 @@ CXX="c++"
 
 # Java
 export JAVA_HOME
-JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+JAVA_HOME=$(/usr/libexec/java_home -v 9)
 PATH="$HOME/packages/elasticsearch/bin:$PATH"
 PATH="$HOME/packages/kibana/bin:$PATH"
 
