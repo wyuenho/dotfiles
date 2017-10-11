@@ -85,6 +85,8 @@
  '(js-flat-functions t)
  '(js-indent-level 2)
  '(js-switch-indent-offset 2)
+ '(js2-mode-show-parse-errors nil)
+ '(js2-mode-show-strict-warnings nil)
  '(json-reformat:indent-width 2)
  '(kept-new-versions 10)
  '(kept-old-versions 10)
@@ -107,7 +109,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (company-statistics all-the-icons use-package ido-completing-read+ ag aggressive-indent all-the-icons-dired anaconda-mode auto-compile bind-key centered-window-mode company company-anaconda company-flx company-go company-quickhelp company-shell company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix esup evil-numbers exec-path-from-shell expand-region eyebrowse flx-ido flx-isearch flycheck flycheck-demjsonlint flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-vertical-mode idomenu importmagic js-doc json-mode kill-or-bury-alive kurecolor less-css-mode lorem-ipsum magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nose origami package-build package-lint pcre2el pdf-tools popwin projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode react-snippets scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide try ts-comint undo-tree visual-regexp visual-regexp-steroids which-key whitespace-cleanup-mode yaml-mode zoom-frm)))
+    (ag aggressive-indent all-the-icons all-the-icons-dired anaconda-mode auto-compile bind-key centered-window-mode company company-anaconda company-flx company-go company-quickhelp company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix esup evil-numbers exec-path-from-shell expand-region eyebrowse flx-ido flx-isearch flycheck flycheck-demjsonlint flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu importmagic js-doc json-mode kill-or-bury-alive kurecolor less-css-mode lorem-ipsum magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nose origami package-build package-lint pcre2el pdf-tools popwin projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode react-snippets rjsx-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode web-mode-edit-element which-key whitespace-cleanup-mode yaml-mode zoom-frm)))
  '(pyenv-mode t)
  '(python-skeleton-autoinsert t)
  '(recentf-auto-cleanup (quote never))
