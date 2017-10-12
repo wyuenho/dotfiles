@@ -262,19 +262,6 @@ Optional argument ARG same as `comment-dwim''s."
            (string-inflection-all-cycle))))
   :config (bind-keys ("C-c C-u" . inflect-string)))
 
-;; Automatically reindent everything after point
-(use-package aggressive-indent
-  :config
-  (dolist (hook '(lisp-mode-hook
-                  emacs-mode-hook
-                  c-mode-hook
-                  js-mode-hook
-                  typescript-mode-hook
-                  web-mode-hook
-                  go-mode-hook))
-    (add-hook hook #'(lambda () (aggressive-indent-mode 1))))
-  (add-hook 'json-mode-hook #'(lambda () (aggressive-indent-mode 0))))
-
 ;; Vim-like increment and decrement
 (use-package evil-numbers
   :config
