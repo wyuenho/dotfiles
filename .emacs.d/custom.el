@@ -8,6 +8,9 @@
  '(ag-highlight-search t)
  '(ag-reuse-buffers t)
  '(ag-reuse-window t)
+ '(aggressive-indent-excluded-modes
+   (quote
+    (inf-ruby-mode makefile-mode makefile-gmake-mode python-mode text-mode yaml-mode rjsx-mode js-jsx-mode)))
  '(auto-compile-on-load-mode t)
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
