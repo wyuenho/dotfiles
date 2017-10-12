@@ -70,6 +70,8 @@ PATH="$HOME/.rbenv/bin:$PATH"
 if [ "$(type -fp rbenv)" ]; then eval "$(rbenv init -)"; fi
 
 # Go
-[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
-export GOROOT_BOOTSTRAP
-GOROOT_BOOTSTRAP=$(go env GOROOT)
+if [[ -s "$HOME/.gvm/scripts/gvm" ]]; then
+    source "$HOME/.gvm/scripts/gvm"
+    export GOROOT_BOOTSTRAP
+    GOROOT_BOOTSTRAP=$(go env GOROOT)
+fi
