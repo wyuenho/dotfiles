@@ -254,7 +254,7 @@ Optional argument ARG same as `comment-dwim''s."
   :init
   (defun inflect-string ()
     (interactive)
-    (cond ((memq major-mode '(java-mode js-mode js-jsx-mode typescript-mode))
+    (cond ((memq major-mode '(java-mode js-mode js2-mode rjsx-mode typescript-mode))
            (string-inflection-java-style-cycle))
           ((memq major-mode '(python-mode ruby-mode))
            (string-inflection-ruby-style-cycle))
@@ -385,15 +385,14 @@ Optional argument ARG same as `comment-dwim''s."
                   (flycheck-yamllint-setup)))))
 
 ;; JavaScript
-;; (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . js-jsx-mode))
-(add-hook 'js-mode-hook
+(add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . rjsx-mode))
+(add-hook 'rjsx-mode-hook
           #'(lambda ()
-              (eval-when-compile (require 'js))
               (use-package eslintd-fix
                 :functions eslintd-fix
                 :config
                 (eslintd-fix-mode 1)
-                (bind-keys :map js-mode-map
+                (bind-keys :map rjsx-mode-map
                            ("C-c C-f" . eslintd-fix)))
 
               (use-package tern
@@ -512,6 +511,8 @@ Optional argument ARG same as `comment-dwim''s."
                           nxml-mode-hook
                           web-mode-hook
                           js-jsx-mode-hook
+                          js2-jsx-mode
+                          rjsx-mode-hook
                           typescript-mode-hook))
             (add-hook hook 'emmet-mode)))
 
