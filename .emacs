@@ -254,7 +254,7 @@ Optional argument ARG same as `comment-dwim''s."
   :init
   (defun inflect-string ()
     (interactive)
-    (cond ((memq major-mode '(java-mode js-mode js2-mode rjsx-mode typescript-mode))
+    (cond ((memq major-mode '(java-mode js-mode js2-mode typescript-mode))
            (string-inflection-java-style-cycle))
           ((memq major-mode '(python-mode ruby-mode))
            (string-inflection-ruby-style-cycle))
@@ -385,23 +385,27 @@ Optional argument ARG same as `comment-dwim''s."
                   (flycheck-yamllint-setup)))))
 
 ;; JavaScript
-(add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . rjsx-mode))
-(add-hook 'rjsx-mode-hook
-          #'(lambda ()
-              (use-package eslintd-fix
-                :functions eslintd-fix
-                :config
-                (eslintd-fix-mode 1)
-                (bind-keys :map rjsx-mode-map
-                           ("C-c C-f" . eslintd-fix)))
+(use-package rjsx-mode
+  :mode ("\\.js[x]?\\'")
+  :config
+  (bind-keys :map rjsx-mode-map
+             ("M-?" . js2-jump-to-definition))
+  (add-hook 'rjsx-mode-hook
+            #'(lambda ()
+                (use-package eslintd-fix
+                  :functions eslintd-fix
+                  :config
+                  (eslintd-fix-mode 1)
+                  (bind-keys :map rjsx-mode-map
+                             ("C-c C-f" . eslintd-fix)))
 
-              (use-package tern
-                :config (tern-mode 1))
+                (use-package tern
+                  :config (tern-mode 1))
 
-              (use-package company-tern
-                :config (add-to-list 'company-backends 'company-tern))
+                (use-package company-tern
+                  :config (add-to-list 'company-backends 'company-tern))
 
-              (flycheck-mode 1)))
+                (flycheck-mode 1))))
 
 ;; TypeScript
 (use-package typescript-mode
