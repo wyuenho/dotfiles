@@ -388,8 +388,6 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package rjsx-mode
   :mode ("\\.js[x]?\\'")
   :config
-  (bind-keys :map rjsx-mode-map
-             ("M-?" . js2-jump-to-definition))
   (add-hook 'rjsx-mode-hook
             #'(lambda ()
                 (use-package eslintd-fix
