@@ -388,7 +388,19 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package rjsx-mode
   :mode ("\\.js[x]?\\'")
   :config
-  (add-hook 'rjsx-mode-hook
+  (js2r-add-keybindings-with-prefix "C-c C-m")
+
+  (use-package xref-js2
+    :config
+    (add-hook 'js2-mode-hook
+              #'(lambda ()
+                  (unbind-key "M-." js2-mode-map)
+                  (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))))
+
+  (add-hook 'js-mode-hook
+            #'(lambda () (js2-imenu-extras-mode 1)))
+
+  (add-hook 'js-mode-hook
             #'(lambda ()
                 (use-package eslintd-fix
                   :functions eslintd-fix
