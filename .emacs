@@ -70,6 +70,9 @@ Optional argument ARG same as `comment-dwim''s."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
+;; WTF still using ASCII inputs???
+(define-key input-decode-map [?\C-m] [C-m])
+
 (eval-when-compile
   (require 'use-package))
 (require 'bind-key)
@@ -168,7 +171,6 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys ("M-%"     . vr/replace)
              ("C-M-%"   . vr/query-replace)
              ("C-c C-s" . vr/isearch-forward)
-             ("C-c C-r" . vr/isearch-backward)
              ("C-c m"   . vr/mc-mark)))
 
 ;; Turn on subword mode for all prog modes
@@ -388,17 +390,16 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package rjsx-mode
   :mode ("\\.js[x]?\\'")
   :config
-  (js2r-add-keybindings-with-prefix "C-c C-m")
 
-  (use-package xref-js2
-    :config
-    (add-hook 'js2-mode-hook
-              #'(lambda ()
+  (add-hook 'js2-mode-hook
+            #'(lambda ()
+                (use-package xref-js2
+                  :config
                   (unbind-key "M-." js2-mode-map)
-                  (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))))
+                  (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))
 
-  (add-hook 'js-mode-hook
-            #'(lambda () (js2-imenu-extras-mode 1)))
+                (js2-refactor-mode 1)
+                (js2r-add-keybindings-with-prefix "C-c r")))
 
   (add-hook 'js-mode-hook
             #'(lambda ()
@@ -410,7 +411,9 @@ Optional argument ARG same as `comment-dwim''s."
                              ("C-c C-f" . eslintd-fix)))
 
                 (use-package tern
-                  :config (tern-mode 1))
+                  :config
+                  (tern-mode 1)
+                  (unbind-key "C-c C-r" tern-mode-keymap))
 
                 (use-package company-tern
                   :config (add-to-list 'company-backends 'company-tern))
