@@ -38,7 +38,6 @@
     (tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode)))
  '(desktop-path (quote ("~/.emacs.d")))
  '(desktop-restore-eager 5)
- '(desktop-restore-frames nil)
  '(desktop-save-mode t)
  '(diff-switches "-u -B")
  '(ediff-split-window-function (quote split-window-horizontally))
