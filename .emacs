@@ -16,7 +16,8 @@
 ;; Maximize frame on startup and set up default font
 (when (window-system)
   (set-frame-font "DejaVu Sans Mono")
-  (set-frame-parameter nil 'fullscreen 'maximized))
+  (set-frame-parameter nil 'fullscreen 'maximized)
+  (set-mouse-color "white"))
 
 (prefer-coding-system 'utf-8)
 
