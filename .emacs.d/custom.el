@@ -167,7 +167,6 @@
  '(linum ((((type tty) (class color) (min-colors 16)) (:background "dim gray")) (((type x w32 mac)) (:background "#003b4a" :foreground "#586e75" :underline nil :weight normal))))
  '(mode-line ((t (:background "#073642" :foreground "#839496" :box (:line-width -1 :color "#073642") :overline nil :underline nil))))
  '(mode-line-inactive ((t (:background "#002b36" :foreground "#586e75" :box (:line-width -1 :color "#002b36") :overline nil :underline nil))))
- '(mouse ((t nil)))
  '(region ((t (:background "SteelBlue1" :foreground "white smoke"))))
  '(smerge-base ((((class color) (min-colors 88) (background light) (supports)) (:background "#ffffaa")) (((class color) (min-colors 88) (background dark) (supports :foreground "white smoke")) (:background "#888833")) (((class color)) (:foreground "yellow"))))
  '(smerge-refined-changed ((t (:foreground "white smoke")))))
