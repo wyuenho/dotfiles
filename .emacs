@@ -392,16 +392,6 @@ Optional argument ARG same as `comment-dwim''s."
   :mode ("\\.js[x]?\\'")
   :config
 
-  (add-hook 'js2-mode-hook
-            #'(lambda ()
-                (use-package xref-js2
-                  :config
-                  (unbind-key "M-." js2-mode-map)
-                  (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))
-
-                (js2-refactor-mode 1)
-                (js2r-add-keybindings-with-prefix "C-c r")))
-
   (add-hook 'js-mode-hook
             #'(lambda ()
                 (use-package eslintd-fix
@@ -419,26 +409,54 @@ Optional argument ARG same as `comment-dwim''s."
                 (use-package company-tern
                   :config (add-to-list 'company-backends 'company-tern))
 
-                (flycheck-mode 1))))
+                (flycheck-mode 1)
+
+                (define-key js-mode-map [menu-bar] nil)
+
+                (use-package js-comint
+                  :config
+                  (use-package nvm
+                    :config (js-do-use-nvm))
+
+                  (bind-keys :map js-mode-map
+                             ("C-x C-e" . js-send-last-sexp)
+                             ("C-M-x"   . js-send-last-sexp-and-go)
+                             ("C-c b"   . js-send-buffer)
+                             ("C-c C-b" . js-send-buffer-and-go)
+                             ("C-c l"   . js-load-file-and-go)))))
+
+  (add-hook 'js2-mode-hook
+            #'(lambda ()
+                (use-package xref-js2
+                  :config
+                  (unbind-key "M-." js2-mode-map)
+                  (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))
+
+                (js2-refactor-mode 1)
+                (js2r-add-keybindings-with-prefix "C-c r"))))
 
 ;; TypeScript
 (use-package typescript-mode
   :config
-  (use-package ts-comint)
-  (bind-keys :map typescript-mode-map
-             ("C-x C-e" . ts-send-last-sexp)
-             ("C-M-x"   . ts-send-last-sexp-and-go)
-             ("C-c b"   . ts-send-buffer)
-             ("C-c C-b" . ts-send-buffer-and-go)
-             ("C-c l"   . ts-load-file-and-go))
-  (add-hook 'typescript-mode-hook #'(lambda () (flycheck-mode 1))))
+  (add-hook 'typescript-mode-hook
+            #'(lambda ()
+                (use-package ts-comint
+                  :config
+                  (bind-keys :map typescript-mode-map
+                             ("C-x C-e" . ts-send-last-sexp)
+                             ("C-M-x"   . ts-send-last-sexp-and-go)
+                             ("C-c b"   . ts-send-buffer)
+                             ("C-c C-b" . ts-send-buffer-and-go)
+                             ("C-c l"   . ts-load-file-and-go)))
+                (flycheck-mode 1))))
 
 (use-package tide
   :after typescript-mode
-  :config (add-hook 'typescript-mode-hook
-                    #'(lambda ()
-                        (tide-setup)
-                        (tide-hl-identifier-mode 1)))
+  :config
+  (add-hook 'typescript-mode-hook
+            #'(lambda ()
+                (tide-setup)
+                (tide-hl-identifier-mode 1)))
 
   (add-hook 'before-save-hook 'tide-format-before-save)
 
