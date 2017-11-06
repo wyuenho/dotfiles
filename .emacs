@@ -532,6 +532,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Web stuff
 (use-package web-mode
+  :functions web-mode-language-at-pos
   :mode ("\\.tsx\\'"
          "\\.handlebars\\'"
          "\\.underscore\\'"
