@@ -78,25 +78,31 @@ Optional argument ARG same as `comment-dwim''s."
   (require 'use-package))
 (require 'bind-key)
 
-(bind-keys ("C-c a"                          . align)
-           ("M-;"                            . comment-dwim-line-or-region)
-           ;; Make sure C-a and C-e are always moving by logical line, and
-           ;; `next-line' and `previous-line' are also moving by logical lines,
-           ;; even when `visual-line-mode' is turned on
-           ("C-a"                            . beginning-of-line)
-           ("C-e"                            . end-of-line)
-           ([remap next-line]                . next-logical-line)
-           ([remap previous-line]            . previous-logical-line)
+(bind-keys ("C-c a"       . align)
+           ("M-;"         . comment-dwim-line-or-region)
            ;; Rebind windmove keys
-           ("C-c <left>"                     . windmove-left)
-           ("C-c <right>"                    . windmove-right)
-           ("C-c <up>"                       . windmove-up)
-           ("C-c <down>"                     . windmove-down)
+           ("C-c <left>"  . windmove-left)
+           ("C-c <right>" . windmove-right)
+           ("C-c <up>"    . windmove-up)
+           ("C-c <down>"  . windmove-down)
            ;; Replace default buffer menu with ibuffer
-           ("C-x C-b"                        . ibuffer)
-           ;;
-           ("C-x u"                          . undo-tree-visualize)
-           ("C-c e f"                        . byte-compile-file))
+           ("C-x C-b"     . ibuffer)
+           ;; Misc
+           ("C-x u"       . undo-tree-visualize)
+           ("C-c e f"     . byte-compile-file))
+
+;; Completely unbind visual-line-mode's stupid bindings
+(add-hook 'visual-line-mode-hook
+          #'(lambda ()
+              (bind-keys
+               :map visual-line-mode-map
+               ([remap move-beginning-of-line]   . nil)
+               ([remap move-end-of-line]         . nil)
+               ([remap beginning-of-visual-line] . move-beginning-of-line)
+               ([remap end-of-visual-line]       . move-end-of-line)
+               ([remap kill-line]                . nil)
+               ([remap next-line]                . next-logical-line)
+               ([remap previous-line]            . previous-logical-line))))
 
 ;; Replace the major mode name with its icon and move the buffer name from the
 ;; mode line to the header line
