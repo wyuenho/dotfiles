@@ -441,6 +441,16 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'typescript-mode-hook #'my-load-flycheck))
 
+(use-package ts-comint
+  :after typescript-mode
+  :config
+  (bind-keys :map typescript-mode-map
+             ("C-x C-e" . ts-send-last-sexp)
+             ("C-M-x"   . ts-send-last-sexp-and-go)
+             ("C-c b"   . ts-send-buffer)
+             ("C-c C-b" . ts-send-buffer-and-go)
+             ("C-c l"   . ts-load-file-and-go)))
+
 (use-package tide
   :after typescript-mode
   :config
