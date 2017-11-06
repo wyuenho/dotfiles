@@ -321,32 +321,35 @@ Optional argument ARG same as `comment-dwim''s."
              ("<tab>" . nil)
              ("C-c i" . yas-expand)))
 
-;; restclient
+;; Auto-completion
+(defun my-load-company ()
+  (when (require 'company nil t)
+    (bind-keys :map company-mode-map
+               ("M-/" . company-complete)))
+
+  (when (require 'company-statistics nil t)
+    (company-statistics-mode 1))
+
+  (when (require 'company-quickhelp nil t)
+    (company-quickhelp-mode 1))
+
+  (when (require 'company-flx nil t)
+    (company-flx-mode 1)))
+
+;; Automatical syntax checking
+(defun my-load-flycheck ()
+  (when (require 'flycheck nil t)
+    (flycheck-mode 1)))
+
+;; Plain-text RESTful service client
 (use-package restclient
   :config
   (add-hook 'restclient-mode-hook
             #'(lambda ()
+                (my-load-company)
                 (use-package company-restclient
                   :config
                   (add-to-list 'company-backends 'company-restclient)))))
-
-;; Auto-completion
-(use-package company
-  :config
-  (bind-keys :map company-mode-map
-             ("M-/" . company-complete)))
-
-(use-package company-statistics
-  :after company
-  :config (company-statistics-mode 1))
-
-(use-package company-quickhelp
-  :after company
-  :config (company-quickhelp-mode 1))
-
-(use-package company-flx
-  :after company
-  :config (company-flx-mode 1))
 
 ;; Much faster PDF viewing
 (add-hook 'doc-view-mode-hook
@@ -356,7 +359,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Lisp
 (dolist (hook '(lisp-mode-hook))
-  (add-hook hook #'(lambda () (flycheck-mode 1))))
+  (add-hook hook #'my-load-flycheck))
+
 (bind-keys :map emacs-lisp-mode-map
            ("C-c e c" . emacs-lisp-byte-compile)
            ("C-c e l" . emacs-lisp-byte-compile-and-load))
@@ -364,7 +368,8 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Shell mode
 (add-hook 'sh-mode-hook
           #'(lambda ()
-              (flycheck-mode 1)
+              (my-load-flycheck)
+              (my-load-company)
               (use-package company-shell
                 :config
                 (add-to-list 'company-backend '(company-shell company-shell-env)))))
@@ -374,7 +379,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'json-mode-hook
             #'(lambda ()
-                (flycheck-mode 1)
+                (my-load-flycheck)
                 (use-package flycheck-demjsonlint))))
 
 ;; YAML mode
@@ -382,7 +387,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'yaml-mode-hook
             #'(lambda ()
-                (flycheck-mode 1)
+                (my-load-flycheck)
                 (use-package flycheck-yamllint
                   :config
                   (flycheck-yamllint-setup)))))
@@ -394,6 +399,8 @@ Optional argument ARG same as `comment-dwim''s."
 
   (add-hook 'js-mode-hook
             #'(lambda ()
+                (my-load-flycheck)
+
                 (use-package eslintd-fix
                   :functions eslintd-fix
                   :config
@@ -406,24 +413,12 @@ Optional argument ARG same as `comment-dwim''s."
                   (tern-mode 1)
                   (unbind-key "C-c C-r" tern-mode-keymap))
 
+                (my-load-company)
                 (use-package company-tern
-                  :config (add-to-list 'company-backends 'company-tern))
-
-                (flycheck-mode 1)
-
-                (define-key js-mode-map [menu-bar] nil)
-
-                (use-package js-comint
                   :config
-                  (use-package nvm
-                    :config (js-do-use-nvm))
+                  (add-to-list 'company-backends 'company-tern))
 
-                  (bind-keys :map js-mode-map
-                             ("C-x C-e" . js-send-last-sexp)
-                             ("C-M-x"   . js-send-last-sexp-and-go)
-                             ("C-c b"   . js-send-buffer)
-                             ("C-c C-b" . js-send-buffer-and-go)
-                             ("C-c l"   . js-load-file-and-go)))))
+                (define-key js-mode-map [menu-bar] nil)))
 
   (add-hook 'js2-mode-hook
             #'(lambda ()
@@ -432,23 +427,19 @@ Optional argument ARG same as `comment-dwim''s."
                   (unbind-key "M-." js2-mode-map)
                   (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))
 
-                (js2-refactor-mode 1)
-                (js2r-add-keybindings-with-prefix "C-c r"))))
+                (use-package js2-refactor
+                  :config
+                  (js2-refactor-mode 1)
+                  (js2r-add-keybindings-with-prefix "C-c r"))
+
+                (use-package js2-imenu-extras
+                  :config
+                  (js2-imenu-extras-mode 1)))))
 
 ;; TypeScript
 (use-package typescript-mode
   :config
-  (add-hook 'typescript-mode-hook
-            #'(lambda ()
-                (use-package ts-comint
-                  :config
-                  (bind-keys :map typescript-mode-map
-                             ("C-x C-e" . ts-send-last-sexp)
-                             ("C-M-x"   . ts-send-last-sexp-and-go)
-                             ("C-c b"   . ts-send-buffer)
-                             ("C-c C-b" . ts-send-buffer-and-go)
-                             ("C-c l"   . ts-load-file-and-go)))
-                (flycheck-mode 1))))
+  (add-hook 'typescript-mode-hook #'my-load-flycheck))
 
 (use-package tide
   :after typescript-mode
@@ -465,7 +456,7 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-c m"   . tide-rename-symbol)
              ("M-1"     . tide-fix)
              ("M-?"     . tide-references)
-             ("M-d"     . tide-documentation-at-point)))
+             ("C-h o"   . tide-documentation-at-point)))
 
 ;; Python
 (use-package pyenv-mode
@@ -476,7 +467,20 @@ Optional argument ARG same as `comment-dwim''s."
 
 (add-hook 'python-mode-hook
           #'(lambda ()
-              (flycheck-mode 1)
+              (my-load-flycheck)
+
+              (my-load-company)
+              (use-package anaconda-mode
+                :config
+                (anaconda-mode 1)
+                (anaconda-eldoc-mode 1)
+                (add-to-list 'company-backends '(company-anaconda :with company-capf))
+                (bind-keys :map anaconda-mode-map
+                           ("M-r"   . nil)
+                           ("M-\""  . anaconda-mode-find-assignments)
+                           ("M-?"   . anaconda-mode-find-references)
+                           ("M-,"   . anaconda-mode-go-back)
+                           ("C-h o" . anaconda-mode-show-doc)))
 
               (use-package py-autopep8
                 :config (py-autopep8-enable-on-save))
@@ -494,14 +498,7 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package py-isort
                 :config
                 (bind-keys :map python-mode-map
-                           ("C-c s" . py-isort-buffer)))
-
-              (use-package anaconda-mode
-                :config
-                (anaconda-mode 1)
-                (anaconda-eldoc-mode 1)
-                (add-to-list 'company-backends '(company-anaconda :with company-capf))
-                (bind-key "M-d" 'anaconda-mode-show-doc anaconda-mode-map))))
+                           ("C-c s" . py-isort-buffer)))))
 
 ;; Go
 (use-package go-mode
@@ -509,48 +506,67 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'before-save-hook 'gofmt-before-save)
   (add-hook 'go-mode-hook
             #'(lambda ()
-
-                (flycheck-mode 1)
-
-                (use-package go-eldoc
-                  :config (go-eldoc-setup))
-
+                (my-load-flycheck)
+                (my-load-company)
                 (use-package company-go
                   :config
-                  (set (make-local-variable 'company-backends) '(company-go))))))
+                  (set (make-local-variable 'company-backends) '(company-go)))))
+  (add-hook 'go-mode-hook #'(lambda () (use-package go-eldoc :config (go-eldoc-setup)))))
 
 ;; Web stuff
 (use-package web-mode
-  :mode ("\\.jinja'"
-         "\\.tsx\\'"
+  :mode ("\\.tsx\\'"
+         "\\.handlebars\\'"
+         "\\.underscore\\'"
          "\\.css\\'"
-         "\\.phtml\\'"
+         "\\.html?\\'"
+         "\\.jinja'"
+         "\\.mako\\'"
+         "\\.dtl\\'"
          "\\.jsp\\'"
+         "\\.soy\\'"
          "\\.as[cp]x\\'"
          "\\.erb\\'"
-         "\\.mustache\\'"
-         "\\.djhtml\\'"
-         "\\.html?\\'"
-         "\\.handlebars\\'")
+         "\\.mustache\\'")
   :config
   (add-hook 'web-mode-hook
             #'(lambda ()
-                (flycheck-mode 1)
+                (my-load-flycheck)
+                ;; TODO: deal with this
+                (flycheck-add-mode 'typescript-tslint 'web-mode)
+
+                (my-load-company)
+                (when (and (require 'company-tern nil t)
+                           (require 'company-web-html nil t))
+                  (set (make-local-variable 'company-backends)
+                       '(company-tern company-web-html company-yasnippet company-files))
+
+                  (advice-add 'company-tern :before
+                              #'(lambda (&rest _)
+                                  (if (equal major-mode 'web-mode)
+                                      (let ((web-mode-cur-language
+                                             (web-mode-language-at-pos)))
+                                        (if (or (string= web-mode-cur-language "javascript")
+                                                (string= web-mode-cur-language "jsx"))
+                                            (unless tern-mode (tern-mode))
+                                          (if tern-mode (tern-mode -1))))))))
+
                 (when (and (string-equal "tsx" (file-name-extension buffer-file-name))
                            (featurep 'tide))
                   (tide-setup)
                   (tide-hl-identifier-mode 1)))))
 
+;; deal with tsx and jsx classnames
 (use-package emmet-mode
   :after web-mode
-  :config (dolist (hook '(sgml-mode-hook
-                          nxml-mode-hook
-                          web-mode-hook
-                          js-jsx-mode-hook
-                          js2-jsx-mode
-                          rjsx-mode-hook
-                          typescript-mode-hook))
-            (add-hook hook 'emmet-mode)))
+  :config
+  (dolist (hook '(sgml-mode-hook
+                  nxml-mode-hook
+                  web-mode-hook
+                  js-jsx-mode-hook
+                  js2-jsx-mode
+                  rjsx-mode-hook))
+    (add-hook hook 'emmet-mode)))
 
 ;; Project management
 (use-package projectile
