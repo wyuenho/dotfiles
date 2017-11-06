@@ -78,18 +78,25 @@ Optional argument ARG same as `comment-dwim''s."
   (require 'use-package))
 (require 'bind-key)
 
-(bind-keys ("C-c a"       . align)
-           ("M-;"         . comment-dwim-line-or-region)
+(bind-keys ("C-c a"                          . align)
+           ("M-;"                            . comment-dwim-line-or-region)
+           ;; Make sure C-a and C-e are always moving by logical line, and
+           ;; `next-line' and `previous-line' are also moving by logical lines,
+           ;; even when `visual-line-mode' is turned on
+           ("C-a"                            . beginning-of-line)
+           ("C-e"                            . end-of-line)
+           ([remap next-line]                . next-logical-line)
+           ([remap previous-line]            . previous-logical-line)
            ;; Rebind windmove keys
-           ("C-c <left>"  . windmove-left)
-           ("C-c <right>" . windmove-right)
-           ("C-c <up>"    . windmove-up)
-           ("C-c <down>"  . windmove-down)
+           ("C-c <left>"                     . windmove-left)
+           ("C-c <right>"                    . windmove-right)
+           ("C-c <up>"                       . windmove-up)
+           ("C-c <down>"                     . windmove-down)
            ;; Replace default buffer menu with ibuffer
-           ("C-x C-b"     . ibuffer)
-           ;; Rebind undo to undo-tree visualizer
-           ("C-x u"       . undo-tree-visualize)
-           ("C-c e f"     . byte-compile-file))
+           ("C-x C-b"                        . ibuffer)
+           ;;
+           ("C-x u"                          . undo-tree-visualize)
+           ("C-c e f"                        . byte-compile-file))
 
 ;; Replace the major mode name with its icon and move the buffer name from the
 ;; mode line to the header line
