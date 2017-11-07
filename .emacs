@@ -407,9 +407,9 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; JavaScript
 (use-package rjsx-mode
+  :after smartparens-config
   :mode ("\\.js[x]?\\'")
   :config
-
   (add-hook 'js-mode-hook
             #'(lambda ()
                 (my-load-flycheck)
@@ -435,6 +435,10 @@ Optional argument ARG same as `comment-dwim''s."
 
   (add-hook 'js2-mode-hook
             #'(lambda ()
+                (bind-keys
+                 :map js2-mode-map
+                 ("C-k" . sp-kill-whole-line))
+
                 (use-package xref-js2
                   :config
                   (unbind-key "M-." js2-mode-map)
