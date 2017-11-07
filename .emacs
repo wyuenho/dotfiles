@@ -542,6 +542,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Web stuff
 (use-package web-mode
+  :after tide
   :functions web-mode-language-at-pos
   :mode ("\\.tsx\\'"
          "\\.handlebars\\'"
@@ -560,10 +561,9 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'web-mode-hook
             #'(lambda ()
                 (my-load-flycheck)
-                ;; TODO: deal with this
-                (flycheck-add-mode 'typescript-tslint 'web-mode)
 
                 (my-load-company)
+
                 (when (and (require 'company-tern nil t)
                            (require 'company-web-html nil t))
                   (set (make-local-variable 'company-backends)
@@ -581,10 +581,12 @@ Optional argument ARG same as `comment-dwim''s."
 
                 (when (and (string-equal "tsx" (file-name-extension buffer-file-name))
                            (featurep 'tide))
+                  (flycheck-add-mode 'typescript-tslint 'web-mode)
                   (tide-setup)
                   (tide-hl-identifier-mode 1)))))
 
-;; deal with tsx and jsx classnames
+;; TODO: deal with tsx and jsx classnames, and fix emmet.el's camelCase mapping
+;; in the snippets
 (use-package emmet-mode
   :after web-mode
   :config
