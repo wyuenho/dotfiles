@@ -1,3 +1,6 @@
+ulimit -n 10240
+ulimit -u 2128
+
 if [ "$(which ls)" == "/bin/ls" ]; then
     alias ls="ls -FhG"
 else
