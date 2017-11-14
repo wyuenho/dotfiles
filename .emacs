@@ -349,7 +349,7 @@ Optional argument ARG same as `comment-dwim''s."
   (when (require 'company-flx nil t)
     (company-flx-mode 1)))
 
-;; Automatical syntax checking
+;; Automatic syntax checking
 (defun my-load-flycheck ()
   (when (require 'flycheck nil t)
     (flycheck-mode 1)))
@@ -390,10 +390,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; JSON mode
 (use-package json-mode
   :config
-  (add-hook 'json-mode-hook
-            #'(lambda ()
-                (my-load-flycheck)
-                (use-package flycheck-demjsonlint))))
+  (add-hook 'json-mode-hook #'(my-load-flycheck)))
 
 ;; YAML mode
 (use-package yaml-mode
@@ -405,34 +402,45 @@ Optional argument ARG same as `comment-dwim''s."
                   :config
                   (flycheck-yamllint-setup)))))
 
-;; JavaScript
-(use-package rjsx-mode
-  :after smartparens-config
-  :mode ("\\.js[x]?\\'")
+;; Javascript
+(add-hook 'js-mode-hook
+          #'(lambda ()
+              ;; Make sure the keyword list in js-mode is up to date
+              ;; (font-lock-add-keywords
+              ;;  nil
+              ;;  '(("\\_<import\\_>" "\\_<as\\_>")
+              ;;    ("\\_<for\\_>" "\\_<of\\_>")))
+
+              (my-load-flycheck)
+
+              (use-package eslintd-fix
+                :functions eslintd-fix
+                :config
+                (eslintd-fix-mode 1)
+                (bind-keys :map js-mode-map
+                           ("C-c C-f" . eslintd-fix)))
+
+              (use-package tern
+                :config
+                (tern-mode 1)
+                (unbind-key "C-c C-r" tern-mode-keymap))
+
+              (my-load-company)
+              (use-package company-tern
+                :config
+                (add-to-list 'company-backends 'company-tern))
+
+              (use-package js-doc
+                :after yasnippet
+                :config
+                (bind-keys :map js-mode-map
+                           ("C-c d" . js-doc-insert-file-doc)
+                           ("C-c f" . js-doc-insert-function-doc-snippet)))
+
+              (define-key js-mode-map [menu-bar] nil)))
+
+(use-package js2-mode
   :config
-  (add-hook 'js-mode-hook
-            #'(lambda ()
-                (my-load-flycheck)
-
-                (use-package eslintd-fix
-                  :functions eslintd-fix
-                  :config
-                  (eslintd-fix-mode 1)
-                  (bind-keys :map rjsx-mode-map
-                             ("C-c C-f" . eslintd-fix)))
-
-                (use-package tern
-                  :config
-                  (tern-mode 1)
-                  (unbind-key "C-c C-r" tern-mode-keymap))
-
-                (my-load-company)
-                (use-package company-tern
-                  :config
-                  (add-to-list 'company-backends 'company-tern))
-
-                (define-key js-mode-map [menu-bar] nil)))
-
   (add-hook 'js2-mode-hook
             #'(lambda ()
                 (bind-keys
@@ -452,6 +460,9 @@ Optional argument ARG same as `comment-dwim''s."
                 (use-package js2-imenu-extras
                   :config
                   (js2-imenu-extras-mode 1)))))
+
+(use-package rjsx-mode
+  :mode ("\\.js[x]?\\'"))
 
 ;; TypeScript
 (use-package typescript-mode
@@ -537,7 +548,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (my-load-company)
                 (use-package company-go
                   :config
-                  (set (make-local-variable 'company-backends) '(company-go)))))
+                  (setq-local company-backends '(company-go)))))
   (add-hook 'go-mode-hook #'(lambda () (use-package go-eldoc :config (go-eldoc-setup)))))
 
 ;; Web stuff
@@ -566,12 +577,12 @@ Optional argument ARG same as `comment-dwim''s."
 
                 (when (and (require 'company-tern nil t)
                            (require 'company-web-html nil t))
-                  (set (make-local-variable 'company-backends)
+                  (setq-local company-backends
                        '(company-tern company-web-html company-yasnippet company-files))
 
                   (advice-add 'company-tern :before
                               #'(lambda (&rest _)
-                                  (if (equal major-mode 'web-mode)
+                                  (if (eq major-mode 'web-mode)
                                       (let ((web-mode-cur-language
                                              (web-mode-language-at-pos)))
                                         (if (or (string= web-mode-cur-language "javascript")
@@ -585,8 +596,6 @@ Optional argument ARG same as `comment-dwim''s."
                   (tide-setup)
                   (tide-hl-identifier-mode 1)))))
 
-;; TODO: deal with tsx and jsx classnames, and fix emmet.el's camelCase mapping
-;; in the snippets
 (use-package emmet-mode
   :after web-mode
   :config
@@ -596,7 +605,12 @@ Optional argument ARG same as `comment-dwim''s."
                   js-jsx-mode-hook
                   js2-jsx-mode
                   rjsx-mode-hook))
-    (add-hook hook 'emmet-mode)))
+    (add-hook hook #'(lambda ()
+                       (emmet-mode 1)
+                       (when (or (member major-mode '(js-jsx-mode js2-jsx-mode rjsx-mode))
+                                 (and (eq major-mode 'web-mode)
+                                      (string= (web-mode-language-at-pos) "jsx")))
+                         (setq-local emmet-expand-jsx-className? t))))))
 
 ;; Project management
 (use-package projectile
