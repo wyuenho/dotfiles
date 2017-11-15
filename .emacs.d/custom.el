@@ -81,7 +81,6 @@
  '(js-doc-license "MIT @license")
  '(js-doc-mail-address "wyuenho@gmail.com")
  '(js-enabled-frameworks (quote (javascript)))
- '(js-expr-indent-offset -2)
  '(js-flat-functions t)
  '(js-indent-level 2)
  '(js-switch-indent-offset 2)
