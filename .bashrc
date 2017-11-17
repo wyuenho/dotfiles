@@ -14,8 +14,14 @@ alias su="/usr/bin/su"
 alias sudo="/usr/bin/sudo"
 alias diff="diff -u -B -r"
 
+# MacPorts
 if [ -f /opt/local/etc/bash_completion ]; then
     source /opt/local/etc/bash_completion
+fi
+
+# Homebrew
+if [ -f /usr/local/share/bash-completion/bash_completion ]; then
+    source /usr/local/share/bash-completion/bash_completion
 fi
 
 bind 'set match-hidden-files off'
@@ -77,6 +83,12 @@ if [[ -s "$HOME/.gvm/scripts/gvm" ]]; then
     source "$HOME/.gvm/scripts/gvm"
     export GOROOT_BOOTSTRAP
     GOROOT_BOOTSTRAP=$(go env GOROOT)
+fi
+
+# Git bash prompt from Homebrew
+if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
+    __GIT_PROMPT_DIR="/usr/local/opt/bash-git-prompt/share"
+    source "/usr/local/opt/bash-git-prompt/share/gitprompt.sh"
 fi
 
 # hh
