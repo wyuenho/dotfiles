@@ -104,6 +104,12 @@ Optional argument ARG same as `comment-dwim''s."
                ([remap next-line]                . next-logical-line)
                ([remap previous-line]            . previous-logical-line))))
 
+;; Happy Emacs exec-path in Emacs
+(use-package exec-path-from-shell
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
 ;; Replace the major mode name with its icon and move the buffer name from the
 ;; mode line to the header line
 (use-package all-the-icons
