@@ -282,7 +282,9 @@ Optional argument ARG same as `comment-dwim''s."
            (string-inflection-ruby-style-cycle))
           ((derived-mode-p major-mode 'prog-mode)
            (string-inflection-all-cycle))))
-  :config (bind-keys ("C-c C-u" . inflect-string)))
+  :config
+  (setq string-inflection-skip-backward-when-done t)
+  (bind-keys ("C-c C-u" . inflect-string)))
 
 ;; Vim-like increment and decrement
 (use-package evil-numbers
