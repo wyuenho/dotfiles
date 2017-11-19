@@ -104,7 +104,7 @@ Optional argument ARG same as `comment-dwim''s."
                ([remap next-line]                . next-logical-line)
                ([remap previous-line]            . previous-logical-line))))
 
-;; Happy Emacs exec-path in Emacs
+;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X and Linux.
 (use-package exec-path-from-shell
   :config
   (when (memq window-system '(mac ns x))
@@ -195,7 +195,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Turn on subword mode for all prog modes
 (use-package syntax-subword
-  :config (add-hook 'prog-mode-hook #'(lambda () (syntax-subword-mode 1))))
+  :config
+  (add-hook 'prog-mode-hook #'(lambda () (syntax-subword-mode 1))))
 
 (use-package expand-region
   :config
@@ -276,7 +277,7 @@ Optional argument ARG same as `comment-dwim''s."
   :init
   (defun inflect-string ()
     (interactive)
-    (cond ((memq major-mode '(java-mode js-mode js2-mode typescript-mode))
+    (cond ((memq major-mode '(java-mode js-mode js2-mode rjsx-mode typescript-mode go-mode))
            (string-inflection-java-style-cycle))
           ((memq major-mode '(python-mode ruby-mode))
            (string-inflection-ruby-style-cycle))
@@ -444,6 +445,15 @@ Optional argument ARG same as `comment-dwim''s."
                 (bind-keys :map js-mode-map
                            ("C-c d" . js-doc-insert-file-doc)
                            ("C-c f" . js-doc-insert-function-doc-snippet)))
+
+              (use-package nodejs-repl
+                :config
+                (bind-keys :map js-mode-map
+                           ("C-x C-e" . nodejs-repl-send-last-expression)
+                           ("C-c C-j" . nodejs-repl-send-line)
+                           ("C-c r"   . nodejs-repl-send-region)
+                           ("C-c l"   . nodejs-repl-load-file)
+                           ("C-c z"   . nodejs-repl-switch-to-repl)))
 
               (define-key js-mode-map [menu-bar] nil)))
 
