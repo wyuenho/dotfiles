@@ -28,7 +28,6 @@ mq =
 eol =
 color =
 progress =
-prompt = ~/.hg-prompt/prompt.py
 record =
 rebase =
 
@@ -42,6 +41,3 @@ only-consistent = False
 username = Jimmy Yuen Ho Wong <wyuenho@gmail.com>
 merge = emacs
 ignore = ~/.hgignore_global
-
-[web]
-cacerts = /etc/hg-dummy-cert.pem
