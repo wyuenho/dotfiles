@@ -138,7 +138,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bind-key centered-window-mode company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix esup evil-numbers exec-path-from-shell expand-region eyebrowse flx-ido flx-isearch flycheck flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic js-doc js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nose origami package-build package-lint pcre2el pdf-tools popwin projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode restclient rjsx-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode xref-js2 yaml-mode yarn-mode zoom-frm)))
+    (ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bind-key centered-window-mode company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region eyebrowse flx-ido flx-isearch flycheck flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic js-doc js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools popwin projectile projectile-codesearch py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode restclient rjsx-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide treemacs treemacs-evil treemacs-projectile try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode xref-js2 yaml-mode yarn-mode zoom-frm)))
  '(pyenv-mode t)
  '(reb-re-syntax (quote string))
  '(recentf-auto-cleanup (quote never))
@@ -173,6 +173,12 @@
  '(tab-width 2)
  '(tool-bar-mode nil)
  '(transient-mark-mode t)
+ '(treemacs-collapse-dirs 3)
+ '(treemacs-filewatch-mode t)
+ '(treemacs-follow-after-init t)
+ '(treemacs-follow-mode t)
+ '(treemacs-git-integration t)
+ '(treemacs-header-function (quote treemacs-projectile-create-header))
  '(typescript-indent-level 2)
  '(uniquify-buffer-name-style (quote reverse) nil (uniquify))
  '(vc-follow-symlinks nil)

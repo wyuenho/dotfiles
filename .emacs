@@ -110,6 +110,9 @@ Optional argument ARG same as `comment-dwim''s."
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
+;; Sane scrolling
+(use-package pager-default-keybindings)
+
 ;; Replace the major mode name with its icon and move the buffer name from the
 ;; mode line to the header line
 (use-package all-the-icons
@@ -334,10 +337,9 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Quick Snippets
 (use-package yasnippet
   :config
+  (yas-reload-all)
   (dolist (hook '(prog-mode-hook text-mode))
     (add-hook hook 'yas-minor-mode))
-  (eval-when-compile (require 'yasnippet))
-  (add-hook 'yas-minor-mode-hook #'(lambda () (yas-reload-all)))
   (bind-keys :map yas-minor-mode-map
              ("TAB"   . nil)
              ("<tab>" . nil)
@@ -410,6 +412,15 @@ Optional argument ARG same as `comment-dwim''s."
                 (use-package flycheck-yamllint
                   :config
                   (flycheck-yamllint-setup)))))
+
+;; C/C++/Objective-C
+(use-package codesearch
+  :config
+  (add-hook 'after-change-major-mode-hook
+            #'(lambda ()
+                (when (member major-mode '(c-mode c++-mode objc-mode))
+                  (bind-keys :map (symbol-value (intern-soft (concat (symbol-name major-mode) "-map")))
+                             ("M-." . codesearch-search))))))
 
 ;; Javascript
 (add-hook 'js-mode-hook
@@ -645,3 +656,29 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package go-projectile
   :after go-mode projectile)
+
+(use-package projectile-codesearch
+  :after projectile
+  :config
+  (bind-keys :map projectile-command-map
+             ("s c" . projectile-codesearch-search)))
+
+(use-package treemacs
+  :config
+  (bind-keys ([f8]        . treemacs-toggle)
+             ("M-0"       . treemacs-select-window)
+             ("C-c 1"     . treemacs-delete-other-windows)))
+
+(use-package treemacs-projectile
+  :after projectile
+  :config
+  (setq treemacs-header-function #'treemacs-projectile-create-header)
+  (bind-keys :prefix-map treemacs-prefix-map
+             :prefix "M-m"
+             ("f t"   . treemacs-toggle)
+             ("f T"   . treemacs)
+             ("f B"   . treemacs-bookmark)
+             ("f C-t" . treemacs-find-file)
+             ("f M-t" . treemacs-find-tag)
+             ("f P"   . treemacs-projectile)
+             ("f p"   . treemacs-projectile-toggle)))
