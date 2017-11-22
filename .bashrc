@@ -28,6 +28,7 @@ PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
 
 export PATH
 PATH=".:$HOME/packages/m-cli:$HOME/packages/sshuttle:$HOME/packages/bin:/opt/local/bin:/opt/local/sbin:$PATH"
+PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
 
 export MANPATH
 MANPATH="/opt/local/share/man:$MANPATH"
@@ -80,12 +81,6 @@ if [[ -s "$HOME/.gvm/scripts/gvm" ]]; then
     source "$HOME/.gvm/scripts/gvm"
     export GOROOT_BOOTSTRAP
     GOROOT_BOOTSTRAP=$(go env GOROOT)
-fi
-
-# Git bash prompt from Homebrew
-if [ -f "/usr/local/opt/bash-git-prompt/share/gitprompt.sh" ]; then
-    __GIT_PROMPT_DIR="/usr/local/opt/bash-git-prompt/share"
-    source "/usr/local/opt/bash-git-prompt/share/gitprompt.sh"
 fi
 
 # hh
