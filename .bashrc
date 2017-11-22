@@ -1,3 +1,4 @@
+# Aliases
 if [ "$(which ls)" == "/bin/ls" ]; then
     alias ls="ls -FhG"
 else
@@ -11,21 +12,37 @@ alias su="/usr/bin/su"
 alias sudo="/usr/bin/sudo"
 alias diff="diff -u -B -r"
 
-# MacPorts
+# Bash Completion
 if [ -f /opt/local/etc/bash_completion ]; then
+    # MacPorts
     source /opt/local/etc/bash_completion
-fi
-
-# Homebrew
-if [ -f /usr/local/share/bash-completion/bash_completion ]; then
-    source /usr/local/share/bash-completion/bash_completion
+else if [ -f /usr/local/share/bash-completion/bash_completion ]; then
+         # Homebrew
+         source /usr/local/share/bash-completion/bash_completion
+     fi
 fi
 
 bind 'set match-hidden-files off'
 
+# Prompt
+if [ -f $HOME/.scm-prompt.sh ]; then
+    source "$HOME/.scm-prompt.sh"
+    PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\[\e[01;35m\]$(_scm_prompt)\[\e[0m\]\n\$ '
+else
+    PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
+fi
 
-PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
+# Bash command search auto-completion
+export HH_CONFIG=hicolor         # get more colors
+shopt -s histappend              # append new history items to .bash_history
+export HISTCONTROL=ignorespace   # leading space hides commands from history
+export HISTFILESIZE=10000        # increase history file size (default is 500)
+export HISTSIZE=${HISTFILESIZE}  # increase history size (default is 500)
+export PROMPT_COMMAND="history -a; history -n;"   # mem/file sync
+# if this is interactive shell, then bind hh to Ctrl-r (for Vi mode check doc)
+if [[ $- =~ .*i.* && "$(type -fp hh)" ]]; then bind '"\C-r": "\C-a hh -- \C-j"'; fi
 
+# Paths
 export PATH
 PATH=".:$HOME/packages/m-cli:$HOME/packages/sshuttle:$HOME/packages/bin:/opt/local/bin:/opt/local/sbin:$PATH"
 PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
@@ -82,13 +99,3 @@ if [[ -s "$HOME/.gvm/scripts/gvm" ]]; then
     export GOROOT_BOOTSTRAP
     GOROOT_BOOTSTRAP=$(go env GOROOT)
 fi
-
-# hh
-export HH_CONFIG=hicolor         # get more colors
-shopt -s histappend              # append new history items to .bash_history
-export HISTCONTROL=ignorespace   # leading space hides commands from history
-export HISTFILESIZE=10000        # increase history file size (default is 500)
-export HISTSIZE=${HISTFILESIZE}  # increase history size (default is 500)
-export PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"   # mem/file sync
-# if this is interactive shell, then bind hh to Ctrl-r (for Vi mode check doc)
-if [[ $- =~ .*i.* && "$(type -fp hh)" ]]; then bind '"\C-r": "\C-a hh -- \C-j"'; fi
