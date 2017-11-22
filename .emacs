@@ -337,10 +337,9 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Quick Snippets
 (use-package yasnippet
   :config
+  (yas-reload-all)
   (dolist (hook '(prog-mode-hook text-mode))
     (add-hook hook 'yas-minor-mode))
-  (eval-when-compile (require 'yasnippet))
-  (add-hook 'yas-minor-mode-hook #'(lambda () (yas-reload-all)))
   (bind-keys :map yas-minor-mode-map
              ("TAB"   . nil)
              ("<tab>" . nil)
