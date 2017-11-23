@@ -413,15 +413,6 @@ Optional argument ARG same as `comment-dwim''s."
                   :config
                   (flycheck-yamllint-setup)))))
 
-;; C/C++/Objective-C
-(use-package codesearch
-  :config
-  (add-hook 'after-change-major-mode-hook
-            #'(lambda ()
-                (when (member major-mode '(c-mode c++-mode objc-mode))
-                  (bind-keys :map (symbol-value (intern-soft (concat (symbol-name major-mode) "-map")))
-                             ("M-." . codesearch-search))))))
-
 ;; Javascript
 (add-hook 'js-mode-hook
           #'(lambda ()
@@ -657,11 +648,11 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package go-projectile
   :after go-mode projectile)
 
-(use-package projectile-codesearch
+(use-package projectile-ripgrep
   :after projectile
   :config
   (bind-keys :map projectile-command-map
-             ("s c" . projectile-codesearch-search)))
+             ("s r" . projectile-ripgrep)))
 
 (use-package treemacs
   :config
