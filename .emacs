@@ -6,7 +6,7 @@
                                     (apply old-load-theme (car r) t (cddr r))))
 
 ;; Emacs loads init file first and the packages last normally. Forcing the
-;; packages to load first makes conifguring them in the init file possible.
+;; packages to load first makes configuring them in the init file possible.
 (package-initialize)
 
 ;; Tell Custom to write and find the custom settings elsewhere
@@ -665,20 +665,17 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package treemacs
   :config
-  (bind-keys ([f8]        . treemacs-toggle)
-             ("M-0"       . treemacs-select-window)
-             ("C-c 1"     . treemacs-delete-other-windows)))
-
-(use-package treemacs-projectile
-  :after projectile
-  :config
-  (setq treemacs-header-function #'treemacs-projectile-create-header)
   (bind-keys :prefix-map treemacs-prefix-map
              :prefix "M-m"
-             ("f t"   . treemacs-toggle)
              ("f T"   . treemacs)
              ("f B"   . treemacs-bookmark)
-             ("f C-t" . treemacs-find-file)
-             ("f M-t" . treemacs-find-tag)
-             ("f P"   . treemacs-projectile)
-             ("f p"   . treemacs-projectile-toggle)))
+             ("f C-f" . treemacs-find-file)
+             ("f C-t" . treemacs-find-tag)
+             ([f8]    . treemacs-toggle)))
+
+(use-package treemacs-projectile
+  :after projectile treemacs
+  :config
+  (setq treemacs-header-function #'treemacs-projectile-create-header)
+  (bind-keys ("M-m f P" . treemacs-projectile)
+             ("M-m f p" . treemacs-projectile-toggle)))
