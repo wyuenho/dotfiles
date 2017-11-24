@@ -12,6 +12,8 @@ alias su="/usr/bin/su"
 alias sudo="/usr/bin/sudo"
 alias diff="diff -u -B -r"
 
+PATH=".:$HOME/packages/sshuttle:$HOME/packages/bin:/opt/local/bin:/opt/local/sbin:$PATH:/usr/local/sbin"
+
 # Bash Completion
 if [ -f /opt/local/etc/bash_completion ]; then
     # MacPorts
@@ -41,10 +43,6 @@ export HISTSIZE=${HISTFILESIZE}  # increase history size (default is 500)
 export PROMPT_COMMAND="history -a; history -n;"   # mem/file sync
 # if this is interactive shell, then bind hh to Ctrl-r (for Vi mode check doc)
 if [[ $- =~ .*i.* && "$(type -fp hh)" ]]; then bind '"\C-r": "\C-a hh -- \C-j"'; fi
-
-# Paths
-export PATH
-PATH=".:$HOME/packages/sshuttle:$HOME/packages/bin:/opt/local/bin:/opt/local/sbin:$PATH:/usr/local/sbin"
 
 export EDITOR
 EDITOR="emacs -Q -mm"
