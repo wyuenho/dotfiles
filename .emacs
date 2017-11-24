@@ -647,7 +647,7 @@ Optional argument ARG same as `comment-dwim''s."
                                       (string= (web-mode-language-at-pos) "jsx")))
                          (setq-local emmet-expand-jsx-className? t))))))
 
-;; Project management
+;; Project management, file search and browser
 (use-package projectile
   :after pyenv-mode
   :init (defun projectile-pyenv-mode-set ()
@@ -663,11 +663,22 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package go-projectile
   :after go-mode projectile)
 
-(use-package projectile-ripgrep
-  :after projectile
+;; Second fastest but the best find grep in terms of tooling support
+(use-package ag
   :config
+  (bind-keys ("M-s a" . ag)))
+
+(use-package wgrep-ag
+  :after ag)
+
+;; Currently the fastest find grep
+(use-package rg
+  :after wgrep-ag projectile
+  :config
+  (add-hook 'rg-mode-hook 'wgrep-ag-setup)
+  (bind-keys ("M-s r" . rg-dwim))
   (bind-keys :map projectile-command-map
-             ("s r" . projectile-ripgrep)))
+             ("s r" . rp-project)))
 
 (use-package treemacs
   :config
