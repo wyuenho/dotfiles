@@ -106,9 +106,9 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X and Linux.
 (use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
   :config
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
+  (exec-path-from-shell-initialize))
 
 ;; Sane scrolling
 (use-package pager-default-keybindings)
