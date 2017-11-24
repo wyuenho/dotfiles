@@ -453,6 +453,16 @@ Optional argument ARG same as `comment-dwim''s."
                            ("C-c d" . js-doc-insert-file-doc)
                            ("C-c f" . js-doc-insert-function-doc-snippet)))
 
+              (use-package import-js
+                :config
+                (run-import-js)
+                (bind-keys :map js-mode-map
+                           :prefix-map import-js-prefix-map
+                           :prefix "C-i"
+                           ("i" . import-js-import)
+                           ("f" . import-js-fix)
+                           ("M-." . import-js-goto)))
+
               (use-package nodejs-repl
                 :config
                 (bind-keys :map js-mode-map
