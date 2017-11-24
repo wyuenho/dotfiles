@@ -44,11 +44,7 @@ if [[ $- =~ .*i.* && "$(type -fp hh)" ]]; then bind '"\C-r": "\C-a hh -- \C-j"';
 
 # Paths
 export PATH
-PATH=".:$HOME/packages/m-cli:$HOME/packages/sshuttle:$HOME/packages/bin:/opt/local/bin:/opt/local/sbin:$PATH"
-PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
-
-export MANPATH
-MANPATH="/opt/local/share/man:$MANPATH"
+PATH=".:$HOME/packages/sshuttle:$HOME/packages/bin:/opt/local/bin:/opt/local/sbin:$PATH:/usr/local/sbin"
 
 export EDITOR
 EDITOR="emacs -Q -mm"
