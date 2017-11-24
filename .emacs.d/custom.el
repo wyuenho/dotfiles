@@ -6,6 +6,7 @@
  '(TeX-PDF-mode t)
  '(ad-default-compilation-action (quote always))
  '(ag-highlight-search t)
+ '(ag-ignore-list (quote ("*.min.js")))
  '(ag-reuse-buffers t)
  '(ag-reuse-window t)
  '(auto-compile-on-load-mode t)
