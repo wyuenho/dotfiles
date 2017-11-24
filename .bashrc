@@ -99,3 +99,6 @@ if [[ -s "$HOME/.gvm/scripts/gvm" ]]; then
     export GOROOT_BOOTSTRAP
     GOROOT_BOOTSTRAP=$(go env GOROOT)
 fi
+
+# Rust
+export PATH="$HOME/.cargo/bin:$PATH"
