@@ -290,6 +290,11 @@ Optional argument ARG same as `comment-dwim''s."
   (setq string-inflection-skip-backward-when-done t)
   (bind-keys ("C-c C-u" . inflect-string)))
 
+;; Cycle between quotes
+(use-package cycle-quotes
+  :config
+  (bind-keys ("C-c C-'" . cycle-quotes)))
+
 ;; Vim-like increment and decrement
 (use-package evil-numbers
   :config
