@@ -685,10 +685,10 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys :prefix-map treemacs-prefix-map
              :prefix "M-m"
              ("f T"   . treemacs)
+             ("f t"   . treemacs-toggle)
              ("f B"   . treemacs-bookmark)
              ("f C-f" . treemacs-find-file)
-             ("f C-t" . treemacs-find-tag)
-             ([f8]    . treemacs-toggle)))
+             ("f C-t" . treemacs-find-tag)))
 
 (use-package treemacs-projectile
   :after projectile treemacs
