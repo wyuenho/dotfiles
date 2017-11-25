@@ -60,7 +60,7 @@
   "Replacement for the `comment-dwim' command.
 
 If no region is selected then comment the current line from the
-front, otherwise the commentable lines in the region. Replaces
+front, otherwise the commentable lines in the region.  Replaces
 the default behaviour of `comment-dwim', where it inserts comment
 at the end of the line.
 
@@ -71,11 +71,10 @@ Optional argument ARG same as `comment-dwim''s."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
-;; WTF still using ASCII inputs???
+;; WTF still uses ASCII inputs??? Leave enter alone jeez
 (define-key input-decode-map [?\C-m] [C-m])
 
-(eval-when-compile
-  (require 'use-package))
+(eval-when-compile (require 'use-package))
 (require 'bind-key)
 
 (bind-keys ("C-c a"       . align)
@@ -331,14 +330,6 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys ("C-c =" . evil-numbers/inc-at-pt)
              ("C-c -" . evil-numbers/dec-at-pt)))
 
-;; Git
-(use-package magit
-  :config (bind-keys ("C-c v g" . magit-status)))
-
-;; Hg
-(use-package monky
-  :config (bind-keys ("C-c v h" . monky-status)))
-
 ;; Adjust frame-wide font size
 (use-package zoom-frm
   :config
@@ -381,34 +372,19 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-c i" . yas-expand)))
 
 ;; Auto-completion
-(defun my-load-company ()
-  (when (require 'company nil t)
-    (bind-keys :map company-mode-map
-               ("M-/" . company-complete)))
-
-  (when (require 'company-statistics nil t)
-    (company-statistics-mode 1))
-
-  (when (require 'company-quickhelp nil t)
-    (company-quickhelp-mode 1))
-
-  (when (require 'company-flx nil t)
-    (company-flx-mode 1)))
-
-;; Automatic syntax checking
-(defun my-load-flycheck ()
-  (when (require 'flycheck nil t)
-    (flycheck-mode 1)))
-
-;; Plain-text RESTful service client
-(use-package restclient
+(use-package company
   :config
-  (add-hook 'restclient-mode-hook
+  (bind-key "M-/" 'company-complete company-mode-map)
+  (add-hook 'company-mode-hook
             #'(lambda ()
-                (my-load-company)
-                (use-package company-restclient
-                  :config
-                  (add-to-list 'company-backends 'company-restclient)))))
+                (use-package company-statistics
+                  :config (company-statistics-mode 1))
+
+                (use-package company-quickhelp
+                  :config (company-quickhelp-mode 1))
+
+                (use-package company-flx
+                  :config (company-flx-mode 1)))))
 
 ;; Much faster PDF viewing
 (add-hook 'doc-view-mode-hook
@@ -416,10 +392,17 @@ Optional argument ARG same as `comment-dwim''s."
               (when (fboundp 'pdf-tools-install)
                 (pdf-tools-install))))
 
-;; Lisp
-(dolist (hook '(lisp-mode-hook))
-  (add-hook hook #'my-load-flycheck))
+;; Restclient
+(use-package restclient
+  :config
+  (add-hook 'restclient-mode-hook
+            #'(lambda ()
+                (use-package company-restclient
+                  :after company
+                  :config
+                  (add-to-list 'company-backends 'company-restclient)))))
 
+;; Lisp
 (bind-keys :map emacs-lisp-mode-map
            ("C-c e c" . emacs-lisp-byte-compile)
            ("C-c e l" . emacs-lisp-byte-compile-and-load))
@@ -427,23 +410,16 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Shell mode
 (add-hook 'sh-mode-hook
           #'(lambda ()
-              (my-load-flycheck)
-              (my-load-company)
               (use-package company-shell
+                :after company
                 :config
                 (add-to-list 'company-backend '(company-shell company-shell-env)))))
-
-;; JSON mode
-(use-package json-mode
-  :config
-  (add-hook 'json-mode-hook #'(my-load-flycheck)))
 
 ;; YAML mode
 (use-package yaml-mode
   :config
   (add-hook 'yaml-mode-hook
             #'(lambda ()
-                (my-load-flycheck)
                 (use-package flycheck-yamllint
                   :config
                   (flycheck-yamllint-setup)))))
@@ -457,22 +433,13 @@ Optional argument ARG same as `comment-dwim''s."
               ;;  '(("\\_<import\\_>" "\\_<as\\_>")
               ;;    ("\\_<for\\_>" "\\_<of\\_>")))
 
-              (my-load-flycheck)
-
-              (use-package eslintd-fix
-                :functions eslintd-fix
-                :config
-                (eslintd-fix-mode 1)
-                (bind-keys :map js-mode-map
-                           ("C-c C-f" . eslintd-fix)))
-
               (use-package tern
                 :config
                 (tern-mode 1)
                 (unbind-key "C-c C-r" tern-mode-keymap))
 
-              (my-load-company)
               (use-package company-tern
+                :after company
                 :config
                 (add-to-list 'company-backends 'company-tern))
 
@@ -492,6 +459,13 @@ Optional argument ARG same as `comment-dwim''s."
                            ("i" . import-js-import)
                            ("f" . import-js-fix)
                            ("M-." . import-js-goto)))
+
+              (use-package eslintd-fix
+                :functions eslintd-fix
+                :config
+                (eslintd-fix-mode 1)
+                (bind-keys :map js-mode-map
+                           ("C-c C-f" . eslintd-fix)))
 
               (use-package nodejs-repl
                 :config
@@ -530,9 +504,7 @@ Optional argument ARG same as `comment-dwim''s."
   :mode ("\\.js[x]?\\'"))
 
 ;; TypeScript
-(use-package typescript-mode
-  :config
-  (add-hook 'typescript-mode-hook #'my-load-flycheck))
+(use-package typescript-mode)
 
 (use-package ts-comint
   :after typescript-mode
@@ -570,10 +542,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 (add-hook 'python-mode-hook
           #'(lambda ()
-              (my-load-flycheck)
-
-              (my-load-company)
               (use-package anaconda-mode
+                :after company-mode
                 :config
                 (anaconda-mode 1)
                 (anaconda-eldoc-mode 1)
@@ -609,16 +579,15 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'before-save-hook 'gofmt-before-save)
   (add-hook 'go-mode-hook
             #'(lambda ()
-                (my-load-flycheck)
-                (my-load-company)
                 (use-package company-go
+                  :after company
                   :config
-                  (setq-local company-backends '(company-go)))))
-  (add-hook 'go-mode-hook #'(lambda () (use-package go-eldoc :config (go-eldoc-setup)))))
+                  (setq-local company-backends '(company-go)))
+
+                (use-package go-eldoc :config (go-eldoc-setup)))))
 
 ;; Web stuff
 (use-package web-mode
-  :after tide
   :functions web-mode-language-at-pos
   :mode ("\\.tsx\\'"
          "\\.handlebars\\'"
@@ -636,14 +605,15 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'web-mode-hook
             #'(lambda ()
-                (my-load-flycheck)
+                (use-package tern
+                  :config
+                  (unbind-key "C-c C-r" tern-mode-keymap))
 
-                (my-load-company)
-
-                (when (and (require 'company-tern nil t)
-                           (require 'company-web-html nil t))
+                (use-package company-tern
+                  :after company tern
+                  :config
                   (setq-local company-backends
-                       '(company-tern company-web-html company-yasnippet company-files))
+                              '(company-tern company-yasnippet company-files))
 
                   (advice-add 'company-tern :before
                               #'(lambda (&rest _)
@@ -654,6 +624,12 @@ Optional argument ARG same as `comment-dwim''s."
                                                 (string= web-mode-cur-language "jsx"))
                                             (unless tern-mode (tern-mode))
                                           (if tern-mode (tern-mode -1))))))))
+
+                (use-package company-web-html
+                  :after company
+                  :config
+                  (setq-local company-backends
+                              '(company-tern company-web-html company-yasnippet company-files)))
 
                 (when (and (string-equal "tsx" (file-name-extension buffer-file-name))
                            (featurep 'tide))
@@ -677,7 +653,7 @@ Optional argument ARG same as `comment-dwim''s."
                                       (string= (web-mode-language-at-pos) "jsx")))
                          (setq-local emmet-expand-jsx-className? t))))))
 
-;; Project management, file search and browser
+;; Project management, version control, file search and browser
 (use-package projectile
   :after pyenv-mode
   :init (defun projectile-pyenv-mode-set ()
@@ -713,8 +689,17 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys :map projectile-command-map
              ("s r" . rp-project)))
 
+;; Git
+(use-package magit
+  :config (bind-keys ("C-c v g" . magit-status)))
+
+;; Hg
+(use-package monky
+  :config (bind-keys ("C-c v h" . monky-status)))
+
 (use-package treemacs
   :config
+  (setq treemacs-icon-fallback-text (propertize "  " 'face 'font-lock-keyword-face))
   (bind-keys :prefix-map treemacs-prefix-map
              :prefix "M-m"
              ("f T"   . treemacs)

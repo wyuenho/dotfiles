@@ -8,13 +8,12 @@
  '(ag-highlight-search t)
  '(ag-ignore-list (quote ("*.min.js")))
  '(ag-reuse-buffers t)
- '(ag-reuse-window t)
  '(auto-compile-on-load-mode t)
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
  '(auto-revert-buffer-list-filter (quote magit-auto-revert-repository-buffer-p))
  '(auto-revert-check-vc-info t)
- '(auto-revert-use-notify t)
+ '(auto-revert-use-notify nil)
  '(auto-save-default nil)
  '(auto-save-interval 0)
  '(backup-by-copying t)
@@ -23,6 +22,9 @@
  '(c-basic-offset 2)
  '(case-fold-search t)
  '(column-number-mode t)
+ '(company-global-modes
+   (quote
+    (lisp-mode emacs-lisp-mode restclient-mode js-mode js-jsx-mode js2-mode js2-rjsx-mode rjsx-mode python-mode go-mode web-mode c-mode c++-mode objc-mode)))
  '(compilation-message-face (quote default))
  '(css-indent-offset 2)
  '(current-language-environment "English")
@@ -51,8 +53,12 @@
  '(exec-path-from-shell-check-startup-files nil)
  '(explicit-shell-file-name "/opt/local/bin/bash")
  '(fill-column 80)
+ '(flycheck-global-modes
+   (quote
+    (sh-mode json-mode yaml-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode typescript-mode python-mode go-mode web-mode)))
  '(gc-cons-threshold 20000000)
  '(global-company-mode t)
+ '(global-flycheck-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(global-hl-line-mode t)
  '(global-magit-file-mode t)
@@ -92,7 +98,7 @@
  '(kept-old-versions 10)
  '(linum-delay t)
  '(linum-format "%4d ")
- '(mac-emulate-three-button-mouse (quote reverse))
+ '(mac-emulate-three-button-mouse t)
  '(mac-input-method-mode t)
  '(mac-print-mode t)
  '(magit-diff-use-overlays nil)
@@ -139,7 +145,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bind-key centered-window-mode company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region eyebrowse flx-ido flx-isearch flycheck flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic js-doc js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools popwin projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode restclient rg rjsx-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide treemacs treemacs-projectile try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode xref-js2 yaml-mode yarn-mode zoom-frm)))
+    (ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bind-key centered-window-mode company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic js-doc js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools popwin projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode restclient rg rjsx-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide treemacs treemacs-projectile try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode xref-js2 yaml-mode yarn-mode zoom-frm)))
  '(pyenv-mode t)
  '(reb-re-syntax (quote string))
  '(recentf-auto-cleanup (quote never))
@@ -190,9 +196,6 @@
  '(web-mode-markup-indent-offset 2)
  '(web-mode-script-padding 2)
  '(web-mode-style-padding 2)
- '(which-func-modes
-   (quote
-    (emacs-lisp-mode c-mode c++-mode perl-mode cperl-mode makefile-mode sh-mode fortran-mode f90-mode ada-mode python-mode js-mode js-jsx-mode)))
  '(which-function-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
