@@ -705,8 +705,11 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package rg
   :after wgrep-ag projectile
   :config
-  (add-hook 'rg-mode-hook 'wgrep-ag-setup)
-  (bind-keys ("M-s r" . rg-dwim))
+  (add-hook 'rg-mode-hook
+            #'(lambda ()
+                (next-error-follow-minor-mode 0)
+                (wgrep-ag-setup)))
+  (bind-keys ("M-s r" . rg))
   (bind-keys :map projectile-command-map
              ("s r" . rp-project)))
 
