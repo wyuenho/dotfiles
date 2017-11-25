@@ -91,6 +91,35 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-x u"       . undo-tree-visualize)
            ("C-c e f"     . byte-compile-file))
 
+;; Completely unbind annoying abbrev, dabbrev, expand, hippie-expand. These
+;; ancient completion commands are just too stupid for this day and age
+(unbind-key "M-'")
+(unbind-key "M-/")
+(unbind-key "C-x '")
+;; Always use M-g prefix to jump between errors
+(unbind-key "C-x `")
+
+;; Not that I use occur very often, but when I do, I'd like its keybindings the
+;; same as grep mode's
+(add-hook 'occur-mode-hook
+          #'(lambda ()
+              (bind-keys :map occur-mode-map
+                         ("M-n" . nil)
+                         ("M-p" . nil)
+                         ("n"   . occur-next)
+                         ("p"   . occur-prev))))
+
+;; I use compilation mode more, so of course I have to do the same thing as
+;; occur mode
+(with-eval-after-load 'compile
+  (add-hook 'compilation-mode-hook
+            #'(lambda ()
+                (bind-keys :map compilation-mode-map
+                           ("M-n" . nil)
+                           ("M-p" . nil)
+                           ("n"   . compilation-next-error)
+                           ("p"   . compilation-previous-error)))))
+
 ;; Completely unbind visual-line-mode's stupid bindings
 (add-hook 'visual-line-mode-hook
           #'(lambda ()
