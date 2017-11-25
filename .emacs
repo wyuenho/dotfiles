@@ -133,14 +133,15 @@ Optional argument ARG same as `comment-dwim''s."
                ([remap next-line]                . next-logical-line)
                ([remap previous-line]            . previous-logical-line))))
 
+;; Sane scrolling
+(use-package pager-default-keybindings)
+
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X and Linux.
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
   :config
-  (exec-path-from-shell-initialize))
-
-;; Sane scrolling
-(use-package pager-default-keybindings)
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "GOPATH"))
 
 ;; Replace the major mode name with its icon and move the buffer name from the
 ;; mode line to the header line
