@@ -13,11 +13,23 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
-;; Maximize frame on startup and set up default font
+;; Maximize frame on startup and set up default fonts
 (when (window-system)
-  (set-frame-font "DejaVu Sans Mono")
-  (set-frame-parameter nil 'fullscreen 'maximized)
-  (set-mouse-color "white"))
+  (let* ((preferred-font-families '("SF Mono"
+                                    "Noto Sans Mono"
+                                    "DejaVu Sans Mono"
+                                    "Bitstream Vera Sans Mono"
+                                    "Menlo"
+                                    "Monaco"
+                                    "Andale Mono"
+                                    "Courier New"
+                                    "Courier"))
+         (font-family (seq-find (lambda (elt) (member elt (font-family-list))) preferred-font-families)))
+    (set-face-attribute 'default nil :family font-family :weight 'regular :width 'semi-condensed)
+    (set-frame-parameter nil 'fullscreen 'maximized)
+    (set-mouse-color "white")
+    (with-eval-after-load 'linum
+      (set-face-attribute 'linum nil :weight 'light))))
 
 (prefer-coding-system 'utf-8)
 
