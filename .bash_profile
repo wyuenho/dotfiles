@@ -1,5 +1,3 @@
-if [ -f ~/.bashrc ]; then source ~/.bashrc; fi
-
 PATH="$HOME/packages/sshuttle:$HOME/packages/bin:/opt/local/bin:/opt/local/sbin:$PATH:/usr/local/sbin"
 
 # C/C++
@@ -46,3 +44,5 @@ PATH="$HOME/.cargo/bin:$PATH"
 
 # PWD
 PATH=".:$PATH"
+
+if [ -f ~/.bashrc ]; then source ~/.bashrc; fi
