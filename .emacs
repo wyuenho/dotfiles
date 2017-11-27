@@ -88,7 +88,8 @@ Optional argument ARG same as `comment-dwim''s."
 (eval-when-compile (require 'use-package))
 (require 'bind-key)
 
-(bind-keys ("C-c a"       . align)
+(bind-keys ("C-c f"       . follow-mode)
+           ("C-c a"       . align)
            ("M-;"         . comment-dwim-line-or-region)
            ;; Rebind windmove keys
            ("C-c <left>"  . windmove-left)
@@ -361,13 +362,15 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package centered-window-mode
   :config
-  (centered-window-mode)
   (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
   (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
   (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
 
 (use-package popwin
+  :defines popwin:keymap
+  :functions popwin-mode
   :config
+  ;; (popwin-mode) has to be activated like this because it is not autoloaded
   (popwin-mode 1)
   (bind-key "C-z" popwin:keymap))
 
@@ -711,10 +714,15 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package treemacs
   :config
   (setq treemacs-icon-fallback-text (propertize "  " 'face 'font-lock-keyword-face))
+
+  (bind-keys ([f8]    . treemacs-toggle)
+             ("M-0"   . treemacs-select-window)
+             ("C-c 1" . treemacs-delete-other-windows))
+
   (bind-keys :prefix-map treemacs-prefix-map
              :prefix "M-m"
-             ("f T"   . treemacs)
              ("f t"   . treemacs-toggle)
+             ("f T"   . treemacs)
              ("f B"   . treemacs-bookmark)
              ("f C-f" . treemacs-find-file)
              ("f C-t" . treemacs-find-tag)))
