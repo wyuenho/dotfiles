@@ -32,10 +32,9 @@ bind 'set match-hidden-files off'
 if [ -f /opt/local/etc/bash_completion ]; then
     # MacPorts
     source /opt/local/etc/bash_completion
-else if [ -f /usr/local/share/bash-completion/bash_completion ]; then
-         # Homebrew
-         source /usr/local/share/bash-completion/bash_completion
-     fi
+elif [ -f /usr/local/share/bash-completion/bash_completion ]; then
+    # Homebrew
+    source /usr/local/share/bash-completion/bash_completion
 fi
 
 # Better bash history search
