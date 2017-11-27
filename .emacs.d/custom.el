@@ -21,6 +21,7 @@
  '(blink-cursor-mode t)
  '(c-basic-offset 2)
  '(case-fold-search t)
+ '(centered-window-mode t)
  '(column-number-mode t)
  '(company-global-modes
    (quote
@@ -29,9 +30,7 @@
  '(css-indent-offset 2)
  '(current-language-environment "English")
  '(custom-enabled-themes (quote (solarized-dark)))
- '(cwm-frame-internal-border 0)
  '(cwm-incremental-padding t)
- '(cwm-use-vertical-padding t)
  '(dabbrev-case-fold-search nil)
  '(delete-by-moving-to-trash t)
  '(delete-old-versions t)
@@ -145,7 +144,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bind-key centered-window-mode company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic js-doc js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools popwin projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode restclient rg rjsx-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide treemacs treemacs-projectile try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode xref-js2 yaml-mode yarn-mode zoom-frm)))
+    (centered-window-mode ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bind-key company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic jq-mode js-doc js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools popwin popwin-browse-kill-ring popwin-pp popwin-term projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode restclient rg rjsx-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection syntax-subword tide treemacs treemacs-projectile try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose xref-js2 yaml-mode yarn-mode zoom-frm)))
  '(pyenv-mode t)
  '(reb-re-syntax (quote string))
  '(recentf-auto-cleanup (quote never))
@@ -205,7 +204,6 @@
  '(flycheck-fringe-error ((t (:background nil :foreground "#FF6E64" :weight bold))))
  '(flycheck-fringe-info ((t (:background nil :foreground "#69B7F0" :weight bold))))
  '(flycheck-fringe-warning ((t (:background nil :foreground "#DEB542" :weight bold))))
- '(linum ((((type tty) (class color) (min-colors 16)) (:background "dim gray")) (((type x w32 mac)) (:background "#003b4a" :foreground "#586e75" :underline nil :weight normal))))
  '(mode-line ((t (:background "#073642" :foreground "#839496" :box (:line-width -1 :color "#073642") :overline nil :underline nil))))
  '(mode-line-inactive ((t (:background "#002b36" :foreground "#586e75" :box (:line-width -1 :color "#002b36") :overline nil :underline nil))))
  '(region ((t (:background "SteelBlue1" :foreground "white smoke"))))
