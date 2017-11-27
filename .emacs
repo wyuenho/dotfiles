@@ -23,7 +23,9 @@
                                     "Fira Mono"
                                     "Menlo"
                                     "SF Mono"))
-         (font-family (seq-find (lambda (elt) (member elt (font-family-list))) preferred-font-families)))
+         (font-family (seq-find
+                       (lambda (elt) (member elt (font-family-list)))
+                       preferred-font-families)))
     (set-face-attribute 'default nil :family font-family :weight 'regular)
     (set-frame-parameter nil 'fullscreen 'maximized)
     (set-mouse-color "white")
