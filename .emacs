@@ -91,19 +91,19 @@ Optional argument ARG same as `comment-dwim''s."
 (eval-when-compile (require 'use-package))
 (require 'bind-key)
 
-(bind-keys ("C-c f"       . follow-mode)
-           ("C-c a"       . align)
-           ("M-;"         . comment-dwim-line-or-region)
+(bind-keys ("C-c f"   . follow-mode)
+           ("C-c a"   . align)
+           ("M-;"     . comment-dwim-line-or-region)
            ;; Rebind windmove keys
-           ("C-c <left>"  . windmove-left)
-           ("C-c <right>" . windmove-right)
-           ("C-c <up>"    . windmove-up)
-           ("C-c <down>"  . windmove-down)
-           ;; Replace default buffer menu with ibuffer
-           ("C-x C-b"     . ibuffer)
+           ("C-c h"   . windmove-left)
+           ("C-c l"   . windmove-right)
+           ("C-c k"   . windmove-up)
+           ("C-c j"   . windmove-down)
+           ;; replace default buffer menu with ibuffer
+           ("C-x C-b" . ibuffer)
            ;; Misc
-           ("C-x u"       . undo-tree-visualize)
-           ("C-c e f"     . byte-compile-file))
+           ("C-x u"   . undo-tree-visualize)
+           ("C-c e f" . byte-compile-file))
 
 ;; Completely unbind annoying abbrev, dabbrev, expand, hippie-expand. These
 ;; ancient completion commands are just too stupid for this day and age
