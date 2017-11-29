@@ -356,7 +356,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Window management
 (use-package golden-ratio
-  :defines golden-ratio-inhibit-functions
   :config
   (defvar ediff-on nil)
   (add-hook 'ediff-before-setup-hook #'(lambda () (setq ediff-on 1)))
@@ -371,8 +370,6 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
 
 (use-package popwin
-  :defines popwin:keymap
-  :functions popwin-mode
   :config
   ;; (popwin-mode) has to be activated like this because it is not autoloaded
   (popwin-mode 1)
@@ -468,6 +465,10 @@ Optional argument ARG same as `comment-dwim''s."
                            ("C-c d" . js-doc-insert-file-doc)
                            ("C-c f" . js-doc-insert-function-doc-snippet)))
 
+              (use-package add-node-modules-path
+                :config
+                (add-node-modules-path))
+
               (use-package import-js
                 :config
                 (run-import-js)
@@ -479,11 +480,16 @@ Optional argument ARG same as `comment-dwim''s."
                            ("M-." . import-js-goto)))
 
               (use-package eslintd-fix
-                :functions eslintd-fix
                 :config
                 (eslintd-fix-mode 1)
                 (bind-keys :map js-mode-map
                            ("C-c C-f" . eslintd-fix)))
+
+              (use-package js-format
+                :config
+                (js-format-setup "standard")
+                (bind-keys :map js-mode-map
+                           ("C-x j b" . js-format-buffer)))
 
               (use-package nodejs-repl
                 :config
