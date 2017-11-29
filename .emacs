@@ -15,22 +15,23 @@
 
 ;; Maximize frame on startup and set up default fonts
 (when (window-system)
-  (let* ((preferred-font-families '("Noto Sans Mono"
+  (let* ((preferred-font-families '("Roboto Mono"
+                                    "Noto Sans Mono"
                                     "DejaVu Sans Mono"
                                     "Bitstream Vera Sans Mono"
-                                    "Hack"
-                                    "Monaco"
                                     "Fira Mono"
+                                    "Monaco"
                                     "Menlo"
-                                    "SF Mono"))
+                                    "SF Mono"
+                                    "Hack"))
          (font-family (seq-find
                        (lambda (elt) (member elt (font-family-list)))
                        preferred-font-families)))
     (set-face-attribute 'default nil :family font-family :weight 'regular)
-    (set-frame-parameter nil 'fullscreen 'maximized)
+    (maximize-frame 'both)
     (set-mouse-color "white")
     (with-eval-after-load 'linum
-      (set-face-attribute 'linum nil :weight 'light))))
+      (set-face-attribute 'linum nil :weight 'thin))))
 
 (prefer-coding-system 'utf-8)
 
