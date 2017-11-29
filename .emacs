@@ -252,6 +252,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package smartparens-config
   :init
+  (require 'cl)
   (defmacro def-pairs (pairs)
     `(progn
        ,@(loop for (key . val) in pairs
