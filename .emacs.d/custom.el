@@ -8,7 +8,6 @@
  '(ag-highlight-search t)
  '(ag-ignore-list (quote ("*.min.js")))
  '(ag-reuse-buffers t)
- '(auto-compile-on-load-mode t)
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
  '(auto-revert-buffer-list-filter (quote magit-auto-revert-repository-buffer-p))
@@ -195,7 +194,8 @@
  '(web-mode-markup-indent-offset 2)
  '(web-mode-script-padding 2)
  '(web-mode-style-padding 2)
- '(which-function-mode t))
+ '(which-function-mode t)
+ '(winner-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
