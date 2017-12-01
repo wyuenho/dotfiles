@@ -183,7 +183,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Use icons in dired
 (use-package all-the-icons-dired
-  if (window-system)
+  :if (window-system)
   :after all-the-icons
   :config (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
