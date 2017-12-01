@@ -8,6 +8,9 @@
  '(ag-highlight-search t)
  '(ag-ignore-list (quote ("*.min.js")))
  '(ag-reuse-buffers t)
+ '(align-c++-modes
+   (quote
+    (c++-mode c-mode java-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode)))
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
  '(auto-revert-buffer-list-filter (quote magit-auto-revert-repository-buffer-p))
