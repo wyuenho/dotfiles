@@ -728,22 +728,16 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package treemacs
   :config
   (setq treemacs-icon-fallback-text (propertize "  " 'face 'font-lock-keyword-face))
-
-  (bind-keys ([f8]    . treemacs-toggle)
-             ("M-0"   . treemacs-select-window)
-             ("C-c 1" . treemacs-delete-other-windows))
-
-  (bind-keys :prefix-map treemacs-prefix-map
-             :prefix "M-m"
-             ("f t"   . treemacs-toggle)
-             ("f T"   . treemacs)
-             ("f B"   . treemacs-bookmark)
-             ("f C-f" . treemacs-find-file)
-             ("f C-t" . treemacs-find-tag)))
+  (bind-keys ([f8]        . treemacs-toggle)
+             ("M-0"       . treemacs-select-window)
+             ("C-c 1"     . treemacs-delete-other-windows)
+             ("C-c d b"   . treemacs-bookmark)
+             ("C-c d C-f" . treemacs-find-file)
+             ("C-c d C-t" . treemacs-find-tag)))
 
 (use-package treemacs-projectile
   :after projectile treemacs
   :config
   (setq treemacs-header-function #'treemacs-projectile-create-header)
-  (bind-keys ("M-m f P" . treemacs-projectile)
-             ("M-m f p" . treemacs-projectile-toggle)))
+  (bind-keys ("C-c d P" . treemacs-projectile)
+             ("C-c d p" . treemacs-projectile-toggle)))
