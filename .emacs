@@ -28,7 +28,7 @@
                        (lambda (elt) (member elt (font-family-list)))
                        preferred-font-families)))
     (set-face-attribute 'default nil :family font-family :weight 'regular)
-    (maximize-frame 'both)
+    (set-frame-parameter nil 'fullscreen 'maximized)
     (set-mouse-color "white")
     (with-eval-after-load 'linum
       (set-face-attribute 'linum nil :weight 'thin))))
@@ -90,6 +90,12 @@ Optional argument ARG same as `comment-dwim''s."
 
 (eval-when-compile (require 'use-package))
 (require 'bind-key)
+
+;; Unmap extraneous undo-tree mode keys
+(assq-delete-all 'undo-tree-mode minor-mode-map-alist)
+
+;; Unbind hide/show mode's ridiculous keybindings
+(assq-delete-all 'hs-minor-mode minor-mode-map-alist)
 
 (bind-keys ("C-c f"   . follow-mode)
            ("C-c a"   . align)
@@ -177,6 +183,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Use icons in dired
 (use-package all-the-icons-dired
+  if (window-system)
+  :after all-the-icons
   :config (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
 ;; Turn on keyboard shortcut remainder
@@ -184,12 +192,6 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (which-key-mode 1)
   (bind-keys ("C-h b" . which-key-show-top-level)))
-
-;; Unmap extraneous undo-tree mode keys
-(assq-delete-all 'undo-tree-mode minor-mode-map-alist)
-
-;; Unbind hide/show mode's ridiculous keybindings
-(assq-delete-all 'hs-minor-mode minor-mode-map-alist)
 
 ;; Modern code folding
 (use-package origami
@@ -363,12 +365,6 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'ediff-suspend-hook #'(lambda () (setq ediff-on nil)) 'append)
   (push #'(lambda () ediff-on) golden-ratio-inhibit-functions))
 
-(use-package centered-window-mode
-  :config
-  (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
-  (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
-  (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
-
 (use-package popwin
   :config
   ;; (popwin-mode) has to be activated like this because it is not autoloaded
@@ -502,8 +498,8 @@ Optional argument ARG same as `comment-dwim''s."
                 :config
                 (bind-keys :map js-mode-map
                            ("C-x C-e" . nodejs-repl-send-last-expression)
-                           ("C-c C-j" . nodejs-repl-send-line)
                            ("C-c r"   . nodejs-repl-send-region)
+                           ("C-c b"   . nodejs-repl-send-buffer)
                            ("C-c l"   . nodejs-repl-load-file)
                            ("C-c z"   . nodejs-repl-switch-to-repl)))
 
@@ -543,9 +539,10 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys :map typescript-mode-map
              ("C-x C-e" . ts-send-last-sexp)
              ("C-M-x"   . ts-send-last-sexp-and-go)
-             ("C-c b"   . ts-send-buffer)
-             ("C-c C-b" . ts-send-buffer-and-go)
-             ("C-c l"   . ts-load-file-and-go)))
+             ("C-c r"   . ts-send-region-and-go)
+             ("C-c b"   . ts-send-buffer-and-go)
+             ("C-c l"   . ts-load-file-and-go)
+             ("C-c z"   . switch-to-ts)))
 
 (use-package tide
   :after typescript-mode
