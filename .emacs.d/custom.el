@@ -17,6 +17,8 @@
  '(auto-save-interval 0)
  '(backup-by-copying t)
  '(backup-directory-alist (quote (("." . "~/.emacs.d/backups"))))
+ '(bash-completion-args nil)
+ '(bash-completion-prog "/opt/local/bin/bash")
  '(blink-cursor-mode t)
  '(c-basic-offset 2)
  '(case-fold-search t)
