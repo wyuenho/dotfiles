@@ -430,6 +430,13 @@ Optional argument ARG same as `comment-dwim''s."
                 :config
                 (add-to-list 'company-backend '(company-shell company-shell-env)))))
 
+;; Term mode stuff
+(use-package bash-completion
+  :config
+  (dolist (hook '(shell-dynamic-complete-functions
+                  term-dynamic-complete-functions))
+    (add-hook hook #'bash-completion-dynamic-complete)))
+
 ;; YAML mode
 (use-package yaml-mode
   :config
