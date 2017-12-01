@@ -15,8 +15,8 @@
 
 ;; Maximize frame on startup and set up default fonts
 (when (window-system)
-  (let* ((preferred-font-families '("Roboto Mono"
-                                    "Noto Sans Mono"
+  (let* ((preferred-font-families '("Noto Sans Mono"
+                                    "Roboto Mono"
                                     "DejaVu Sans Mono"
                                     "Bitstream Vera Sans Mono"
                                     "Fira Mono"
