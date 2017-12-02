@@ -140,6 +140,7 @@
  '(minibuffer-frame-alist (quote ((width . 80) (height . 2))))
  '(mouse-wheel-mode t)
  '(mouse-wheel-progressive-speed nil)
+ '(ns-alternate-modifier (quote none))
  '(ns-command-modifier (quote meta))
  '(ns-pop-up-frames nil)
  '(package-archives
