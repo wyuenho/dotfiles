@@ -1,5 +1,8 @@
 ;; -*- lexical-binding: t -*-
 
+;; Disable themes on terminals
+(setq custom--inhibit-theme-enable (not (display-graphic-p)))
+
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
 (advice-add 'load-theme :around #'(lambda (old-load-theme &rest r)
@@ -14,7 +17,7 @@
 (load custom-file)
 
 ;; Maximize frame on startup and set up default fonts
-(when (window-system)
+(when (display-graphic-p)
   (let* ((preferred-font-families '("Noto Sans Mono"
                                     "Roboto Mono"
                                     "DejaVu Sans Mono"
@@ -33,8 +36,6 @@
     (with-eval-after-load 'linum
       (set-face-attribute 'linum nil :weight 'thin))))
 
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
 ;; Enable initially disabled keys
@@ -86,11 +87,6 @@ Optional argument ARG same as `comment-dwim''s."
   (if (and (not (use-region-p)))
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
-
-;; Nobody cares about ASCII control codes anymore except those readline basics
-(define-key input-decode-map (kbd "C-m") [C-m]) ;; enter
-(define-key input-decode-map (kbd "C-i") [C-i]) ;; tab
-(define-key input-decode-map (kbd "C-[") [C-\[]) ;; escape
 
 (eval-when-compile (require 'use-package))
 (require 'bind-key)
@@ -165,12 +161,13 @@ Optional argument ARG same as `comment-dwim''s."
   :if (memq window-system '(mac ns x))
   :config
   (exec-path-from-shell-initialize)
-  (exec-path-from-shell-copy-env "GOPATH"))
+  (exec-path-from-shell-copy-env "GOPATH")
+  (exec-path-from-shell-copy-env "JAVA_HOME"))
 
 ;; Replace the major mode name with its icon and move the buffer name from the
 ;; mode line to the header line
 (use-package all-the-icons
-  :if (window-system)
+  :if (display-graphic-p)
   :init
   (defun move-buffer-id-to-header-line ()
     (when (window-header-line-height)
@@ -187,7 +184,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Use icons in dired
 (use-package all-the-icons-dired
-  :if (window-system)
+  :if (display-graphic-p)
   :after all-the-icons
   :config (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
@@ -379,7 +376,7 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys :map yas-minor-mode-map
              ("TAB"   . nil)
              ("<tab>" . nil)
-             ("C-i"   . yas-maybe-expand)))
+             ("C-c i" . yas-maybe-expand)))
 
 ;; Auto-completion
 (use-package company
