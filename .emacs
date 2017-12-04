@@ -246,11 +246,6 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-c C-s" . vr/isearch-forward)
              ("C-c m"   . vr/mc-mark)))
 
-;; Turn on subword mode for all prog modes
-(use-package syntax-subword
-  :config
-  (add-hook 'prog-mode-hook #'(lambda () (syntax-subword-mode 1))))
-
 (use-package expand-region
   :config
   (bind-keys ("M-=" . er/expand-region)

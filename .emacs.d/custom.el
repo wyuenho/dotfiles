@@ -67,6 +67,7 @@
  '(global-magit-file-mode t)
  '(global-move-dup-mode t)
  '(global-origami-mode t)
+ '(global-syntax-subword-mode t)
  '(global-undo-tree-mode t)
  '(global-visual-line-mode t)
  '(global-whitespace-cleanup-mode t)
