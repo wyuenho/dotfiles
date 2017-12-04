@@ -454,11 +454,17 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Javascript
 (add-hook 'js-mode-hook
           #'(lambda ()
-              ;; Make sure the keyword list in js-mode is up to date
-              ;; (font-lock-add-keywords
-              ;;  nil
-              ;;  '(("\\_<import\\_>" "\\_<as\\_>")
-              ;;    ("\\_<for\\_>" "\\_<of\\_>")))
+              ;; Make sure fontification in js-mode and derived modes is up to
+              ;; date with the latest ES6 keywords
+              (font-lock-add-keywords
+               nil
+               '("\\_<async\\_>"
+                 "\\_<await\\_>"
+                 ("\\_<import\\_>"
+                  ("\\_<as\\_>" nil nil (0 font-lock-keyword-face))
+                  ("\\_<from\\_>" nil nil (0 font-lock-keyword-face)))
+                 ("\\_<for\\_>" "\\_<of\\_>" nil nil (0 font-lock-keyword-face)))
+               t)
 
               (use-package tern
                 :config
