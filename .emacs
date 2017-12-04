@@ -33,6 +33,8 @@
     (with-eval-after-load 'linum
       (set-face-attribute 'linum nil :weight 'thin))))
 
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
 ;; Enable initially disabled keys
@@ -85,8 +87,10 @@ Optional argument ARG same as `comment-dwim''s."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
     (comment-dwim arg)))
 
-;; WTF still uses ASCII inputs??? Leave enter alone jeez
-(define-key input-decode-map [?\C-m] [C-m])
+;; Nobody cares about ASCII control codes anymore except those readline basics
+(define-key input-decode-map (kbd "C-m") [C-m]) ;; enter
+(define-key input-decode-map (kbd "C-i") [C-i]) ;; tab
+(define-key input-decode-map (kbd "C-[") [C-\[]) ;; escape
 
 (eval-when-compile (require 'use-package))
 (require 'bind-key)
@@ -365,11 +369,11 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'ediff-suspend-hook #'(lambda () (setq ediff-on nil)) 'append)
   (push #'(lambda () ediff-on) golden-ratio-inhibit-functions))
 
-(use-package popwin
+(use-package centered-window-mode
   :config
-  ;; (popwin-mode) has to be activated like this because it is not autoloaded
-  (popwin-mode 1)
-  (bind-key "C-z" popwin:keymap))
+  (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
+  (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
+  (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
 
 ;; Quick Snippets
 (use-package yasnippet
@@ -380,7 +384,7 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys :map yas-minor-mode-map
              ("TAB"   . nil)
              ("<tab>" . nil)
-             ("C-c i" . yas-expand)))
+             ("C-i"   . yas-maybe-expand)))
 
 ;; Auto-completion
 (use-package company
@@ -426,7 +430,7 @@ Optional argument ARG same as `comment-dwim''s."
                 :config
                 (add-to-list 'company-backend '(company-shell company-shell-env)))))
 
-;; Term mode stuff
+;; Term and shell
 (use-package bash-completion
   :config
   (dolist (hook '(shell-dynamic-complete-functions
