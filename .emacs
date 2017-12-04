@@ -36,6 +36,7 @@
     (with-eval-after-load 'linum
       (set-face-attribute 'linum nil :weight 'thin))))
 
+;; Set file, keyboard and terminal coding systems automatically
 (prefer-coding-system 'utf-8)
 
 ;; Enable initially disabled keys
@@ -524,7 +525,7 @@ Optional argument ARG same as `comment-dwim''s."
                   (js2-imenu-extras-mode 1)))))
 
 (use-package rjsx-mode
-  :mode ("\\.js[x]?\\'"))
+  :mode "\\.jsx?\\'")
 
 ;; TypeScript
 (use-package typescript-mode)
