@@ -485,11 +485,9 @@ Optional argument ARG same as `comment-dwim''s."
                 :config
                 (run-import-js)
                 (bind-keys :map js-mode-map
-                           :prefix-map import-js-prefix-map
-                           :prefix "C-i"
-                           ("i" . import-js-import)
-                           ("f" . import-js-fix)
-                           ("M-." . import-js-goto)))
+                           ("C-c t i"   . import-js-import)
+                           ("C-c t f"   . import-js-fix)
+                           ("C-c t M-." . import-js-goto)))
 
               (use-package eslintd-fix
                 :config
