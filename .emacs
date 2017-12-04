@@ -46,13 +46,13 @@
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; Kill active processes without asking when quitting
+;; Remove all query on exit flags on all processes before quitting
 (advice-add 'save-buffers-kill-emacs :before
             #'(lambda (&rest args)
-                (defun my-active-processes (process)
+                (defun processes-with-query (process)
                   (and (memq (process-status process) '(run stop open listen))
                        (process-query-on-exit-flag process)))
-                (let ((processes (seq-filter 'my-active-processes (process-list))))
+                (let ((processes (seq-filter 'processes-with-query (process-list))))
                   (dolist (process processes)
                     (set-process-query-on-exit-flag process nil)))))
 (setq kill-buffer-query-functions
