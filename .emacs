@@ -457,7 +457,7 @@ Optional argument ARG same as `comment-dwim''s."
 (add-hook 'js-mode-hook
           #'(lambda ()
               ;; Make sure fontification in js-mode and derived modes is up to
-              ;; date with the latest ES6 keywords
+              ;; date with the latest ES2015 keywords
               (font-lock-add-keywords
                nil
                '("\\_<async\\_>"
