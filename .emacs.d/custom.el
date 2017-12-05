@@ -25,7 +25,6 @@
  '(blink-cursor-mode t)
  '(c-basic-offset 2)
  '(case-fold-search t)
- '(centered-window-mode t)
  '(column-number-mode t)
  '(company-global-modes
    (quote
@@ -34,7 +33,7 @@
  '(css-indent-offset 2)
  '(current-language-environment "English")
  '(custom-enabled-themes (quote (solarized-dark)))
- '(cwm-incremental-padding t)
+ '(cwm-frame-internal-border 0)
  '(dabbrev-case-fold-search nil)
  '(delete-by-moving-to-trash t)
  '(delete-old-versions t)
@@ -84,7 +83,6 @@
  '(imenu-auto-rescan t)
  '(imenu-auto-rescan-maxout 524288)
  '(imenu-max-items 100)
- '(imenu-sort-function (quote imenu--sort-by-name))
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(ispell-program-name "hunspell")
@@ -150,7 +148,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (add-node-modules-path ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bash-completion bind-key centered-window-mode company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic jq-mode js-doc js-format js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode restclient rg rjsx-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection tide treemacs treemacs-projectile try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose xref-js2 yaml-mode yarn-mode zoom-frm)))
+    (add-node-modules-path ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bash-completion bind-key company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile golden-ratio graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic jq-mode js-doc js-format js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring rainbow-mode restclient rg rjsx-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection tide treemacs treemacs-projectile try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose xref-js2 yaml-mode yarn-mode zoom-frm)))
  '(pyenv-mode t)
  '(reb-re-syntax (quote string))
  '(recentf-auto-cleanup (quote never))

@@ -376,12 +376,6 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'ediff-suspend-hook #'(lambda () (setq ediff-on nil)) 'append)
   (push #'(lambda () ediff-on) golden-ratio-inhibit-functions))
 
-(use-package centered-window-mode
-  :config
-  (add-hook 'ediff-before-setup-hook 'centered-window-mode-toggle)
-  (add-hook 'ediff-quit-hook 'centered-window-mode-toggle 'append)
-  (add-hook 'ediff-suspend-hook 'centered-window-mode-toggle 'append))
-
 ;; Quick Snippets
 (use-package yasnippet
   :config
@@ -751,7 +745,7 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-c d C-t" . treemacs-find-tag)))
 
 (use-package treemacs-projectile
-  :after projectile treemacs
+  :after treemacs projectile
   :config
   (setq treemacs-header-function #'treemacs-projectile-create-header)
   (bind-keys ("C-c d P" . treemacs-projectile)
