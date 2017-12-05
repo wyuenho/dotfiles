@@ -61,9 +61,11 @@
 ;; Automatically wrap overly long lines for all text modes
 (add-hook 'text-mode-hook #'(lambda () (auto-fill-mode 1)))
 
-;; Turn on linum mode for all prog and text modes
+;; Turn on subword mode and linum mode for all prog and text modes
 (dolist (hook '(prog-mode-hook text-mode-hook))
-  (add-hook hook #'(lambda () (linum-mode 1))))
+  (add-hook hook #'(lambda ()
+                     (subword-mode 1)
+                     (linum-mode 1))))
 
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
