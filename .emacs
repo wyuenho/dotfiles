@@ -741,7 +741,6 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package treemacs
   :config
   (setq treemacs-icon-fallback-text (propertize "  " 'face 'font-lock-keyword-face))
-  (add-hook 'find-file-hook #'treemacs-find-file)
   (bind-keys ("<f12>"     . treemacs-toggle)
              ("C-x t o"   . treemacs-select-window)
              ("C-x t 1"   . treemacs-delete-other-windows)
@@ -755,6 +754,7 @@ Optional argument ARG same as `comment-dwim''s."
   :after treemacs projectile
   :config
   (setq treemacs-header-function #'treemacs-projectile-create-header)
+  (add-hook 'projectile-find-file-hook #'treemacs-find-file)
   (add-hook 'projectile-after-switch-project-hook #'treemacs-projectile)
   (bind-keys ("C-x t P" . treemacs-projectile)
              ("C-x t p" . treemacs-projectile-toggle)))
