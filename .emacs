@@ -741,16 +741,16 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys ([f4]        . treemacs-toggle)
              ("M-0"       . treemacs-select-window)
              ("C-x 1"     . treemacs-delete-other-windows)
-             ("C-c d t"   . treemacs-toggle)
-             ("C-c d T"   . treemacs)
-             ("C-c d b"   . treemacs-bookmark)
-             ("C-c d C-f" . treemacs-find-file)
-             ("C-c d C-t" . treemacs-find-tag)))
+             ("C-c t t"   . treemacs-toggle)
+             ("C-c t T"   . treemacs)
+             ("C-c t b"   . treemacs-bookmark)
+             ("C-c t C-f" . treemacs-find-file)
+             ("C-c t C-t" . treemacs-find-tag)))
 
 (use-package treemacs-projectile
   :after treemacs projectile
   :config
   (setq treemacs-header-function #'treemacs-projectile-create-header)
   (add-hook 'projectile-after-switch-project-hook #'treemacs-projectile)
-  (bind-keys ("C-c d P" . treemacs-projectile)
-             ("C-c d p" . treemacs-projectile-toggle)))
+  (bind-keys ("C-c t P" . treemacs-projectile)
+             ("C-c t p" . treemacs-projectile-toggle)))
