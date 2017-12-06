@@ -1,12 +1,9 @@
-;; -*- lexical-binding: t -*-
-
-;; Disable themes on terminals
-(setq custom--inhibit-theme-enable (not (display-graphic-p)))
-
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
 (advice-add 'load-theme :around #'(lambda (old-load-theme &rest r)
-                                    (apply old-load-theme (car r) t (cddr r))))
+                                    ;; Disable themes on terminals
+                                    (when (display-graphic-p)
+                                      (apply old-load-theme (car r) t (cddr r)))))
 
 ;; Emacs loads init file first and the packages last normally. Forcing the
 ;; packages to load first makes configuring them in the init file possible.
@@ -120,7 +117,7 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-c l"   . windmove-right)
            ("C-c k"   . windmove-up)
            ("C-c j"   . windmove-down)
-           ;; replace default buffer menu with ibuffer
+           ;; Replace default buffer menu with ibuffer
            ("C-x C-b" . ibuffer)
            ;; Misc
            ("C-x u"   . undo-tree-visualize)
@@ -133,6 +130,11 @@ Optional argument ARG same as `comment-dwim''s."
 (unbind-key "C-x '")
 ;; Always use M-g prefix to jump between errors
 (unbind-key "C-x `")
+
+(when (and (display-graphic-p)
+           (not (memq (window-system) '(x))))
+  (bind-key "<mouse-2>" 'mouse-buffer-menu)
+  (unbind-key "<mouse-3>"))
 
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
@@ -385,7 +387,7 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys :map yas-minor-mode-map
              ("TAB"   . nil)
              ("<tab>" . nil)
-             ("C-c i" . yas-maybe-expand)))
+             ("C-c i" . yas-expand)))
 
 ;; Auto-completion
 (use-package company
@@ -737,9 +739,12 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package treemacs
   :config
   (setq treemacs-icon-fallback-text (propertize "  " 'face 'font-lock-keyword-face))
-  (bind-keys ([f8]        . treemacs-toggle)
+  (add-hook 'find-file-hook #'treemacs-find-file)
+  (bind-keys ([f4]        . treemacs-toggle)
              ("M-0"       . treemacs-select-window)
-             ("C-c 1"     . treemacs-delete-other-windows)
+             ("C-x 1"     . treemacs-delete-other-windows)
+             ("C-c d t"   . treemacs-toggle)
+             ("C-c d T"   . treemacs)
              ("C-c d b"   . treemacs-bookmark)
              ("C-c d C-f" . treemacs-find-file)
              ("C-c d C-t" . treemacs-find-tag)))
@@ -748,5 +753,6 @@ Optional argument ARG same as `comment-dwim''s."
   :after treemacs projectile
   :config
   (setq treemacs-header-function #'treemacs-projectile-create-header)
+  (add-hook 'projectile-after-switch-project-hook #'treemacs-projectile)
   (bind-keys ("C-c d P" . treemacs-projectile)
              ("C-c d p" . treemacs-projectile-toggle)))
