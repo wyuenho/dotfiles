@@ -52,7 +52,7 @@
  '(enable-local-variables :all)
  '(eval-expression-print-length 1000)
  '(eval-expression-print-level 1000)
- '(exec-path-from-shell-check-startup-files nil)
+ '(exec-path-from-shell-variables (quote ("PATH" "MANPATH" "GOPATH")))
  '(explicit-shell-file-name "/opt/local/bin/bash")
  '(fill-column 80)
  '(flycheck-global-modes

@@ -177,9 +177,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
   :config
-  (exec-path-from-shell-initialize)
-  (exec-path-from-shell-copy-env "GOPATH")
-  (exec-path-from-shell-copy-env "JAVA_HOME"))
+  (exec-path-from-shell-initialize))
 
 ;; Replace the major mode name with its icon and move the buffer name from the
 ;; mode line to the header line
