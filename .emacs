@@ -739,7 +739,7 @@ Optional argument ARG same as `comment-dwim''s."
   (setq treemacs-icon-fallback-text (propertize "  " 'face 'font-lock-keyword-face))
   (add-hook 'find-file-hook #'treemacs-find-file)
   (bind-keys ([f4]        . treemacs-toggle)
-             ("M-0"       . treemacs-select-window)
+             ("C-x 0"     . treemacs-select-window)
              ("C-x 1"     . treemacs-delete-other-windows)
              ("C-c t t"   . treemacs-toggle)
              ("C-c t T"   . treemacs)
