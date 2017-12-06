@@ -109,19 +109,18 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Unbind hide/show mode's ridiculous keybindings
 (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
 
-(bind-keys ("C-c f"   . follow-mode)
-           ("C-c a"   . align)
+(bind-keys ("M-s f"   . follow-mode)
+           ("M-s s"   . align)
            ("M-;"     . comment-dwim-line-or-region)
            ;; Rebind windmove keys
-           ("C-c h"   . windmove-left)
-           ("C-c l"   . windmove-right)
-           ("C-c k"   . windmove-up)
-           ("C-c j"   . windmove-down)
+           ("M-s h"   . windmove-left)
+           ("M-s l"   . windmove-right)
+           ("M-s k"   . windmove-up)
+           ("M-s j"   . windmove-down)
            ;; Replace default buffer menu with ibuffer
            ("C-x C-b" . ibuffer)
            ;; Misc
-           ("C-x u"   . undo-tree-visualize)
-           ("C-c e f" . byte-compile-file))
+           ("C-x u"   . undo-tree-visualize))
 
 ;; Completely unbind annoying abbrev, dabbrev, expand, hippie-expand. These
 ;; ancient completion commands are just too stupid for this day and age
@@ -242,12 +241,12 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Mark and edit multiple things at once
 (use-package multiple-cursors
   :config
-  (bind-keys ("C-c C-e" . mc/edit-lines)
+  (bind-keys ("M-s M-e" . mc/edit-lines)
              ("C->"     . mc/mark-next-like-this)
              ("C-<"     . mc/mark-previous-like-this)
              ("C-M->"   . mc/skip-to-next-like-this)
              ("C-M-<"   . mc/skip-to-previous-like-this)
-             ("C-c C->" . mc/mark-all-dwim)))
+             ("M-s C->" . mc/mark-all-dwim)))
 
 ;; Construct regexp and search visually and incrementally
 (use-package visual-regexp-steroids
@@ -255,8 +254,8 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (bind-keys ("M-%"     . vr/replace)
              ("C-M-%"   . vr/query-replace)
-             ("C-c C-s" . vr/isearch-forward)
-             ("C-c m"   . vr/mc-mark)))
+             ("M-s C-s" . vr/isearch-forward)
+             ("M-s m"   . vr/mc-mark)))
 
 (use-package expand-region
   :config
@@ -346,18 +345,18 @@ Optional argument ARG same as `comment-dwim''s."
            (string-inflection-all-cycle))))
   :config
   (setq string-inflection-skip-backward-when-done t)
-  (bind-keys ("C-c C-u" . inflect-string)))
+  (bind-keys ("C-x C-y" . inflect-string)))
 
 ;; Cycle between quotes
 (use-package cycle-quotes
   :config
-  (bind-keys ("C-c C-'" . cycle-quotes)))
+  (bind-keys ("C-x C-'" . cycle-quotes)))
 
 ;; Vim-like increment and decrement
 (use-package evil-numbers
   :config
-  (bind-keys ("C-c =" . evil-numbers/inc-at-pt)
-             ("C-c -" . evil-numbers/dec-at-pt)))
+  (bind-keys ("C-x =" . evil-numbers/inc-at-pt)
+             ("C-x -" . evil-numbers/dec-at-pt)))
 
 ;; Adjust frame-wide font size
 (use-package zoom-frm
@@ -438,6 +437,10 @@ Optional argument ARG same as `comment-dwim''s."
                   term-dynamic-complete-functions))
     (add-hook hook #'bash-completion-dynamic-complete)))
 
+(use-package multi-term
+  :config
+  (bind-keys ("M-T" . multi-term)))
+
 ;; YAML mode
 (use-package yaml-mode
   :config
@@ -456,10 +459,9 @@ Optional argument ARG same as `comment-dwim''s."
                nil
                '("\\_<async\\_>"
                  "\\_<await\\_>"
-                 ("\\_<import\\_>"
-                  ("\\_<as\\_>" nil nil (0 font-lock-keyword-face))
-                  ("\\_<from\\_>" nil nil (0 font-lock-keyword-face)))
-                 ("\\_<for\\_>" "\\_<of\\_>" nil nil (0 font-lock-keyword-face)))
+                 "\\_<as\\_>"
+                 "\\_<from\\_>"
+                 "\\_<of\\_>")
                t)
 
               (use-package tern
@@ -565,7 +567,7 @@ Optional argument ARG same as `comment-dwim''s."
 
   (bind-keys :map typescript-mode-map
              ("C-c C-f" . tide-format)
-             ("C-c m"   . tide-rename-symbol)
+             ("C-c n"   . tide-rename-symbol)
              ("M-1"     . tide-fix)
              ("M-?"     . tide-references)
              ("C-h o"   . tide-documentation-at-point)))
@@ -728,29 +730,31 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Git
 (use-package magit
-  :config (bind-keys ("C-c v g" . magit-status)))
+  :config
+  (bind-keys ("C-x v C-g" . magit-status)))
 
 ;; Hg
 (use-package monky
-  :config (bind-keys ("C-c v h" . monky-status)))
+  :config
+  (bind-keys ("C-x v C-h" . monky-status)))
 
 (use-package treemacs
   :config
   (setq treemacs-icon-fallback-text (propertize "  " 'face 'font-lock-keyword-face))
   (add-hook 'find-file-hook #'treemacs-find-file)
-  (bind-keys ([f4]        . treemacs-toggle)
-             ("C-x 0"     . treemacs-select-window)
-             ("C-x 1"     . treemacs-delete-other-windows)
-             ("C-c t t"   . treemacs-toggle)
-             ("C-c t T"   . treemacs)
-             ("C-c t b"   . treemacs-bookmark)
-             ("C-c t C-f" . treemacs-find-file)
-             ("C-c t C-t" . treemacs-find-tag)))
+  (bind-keys ("<f12>"     . treemacs-toggle)
+             ("C-x t o"   . treemacs-select-window)
+             ("C-x t 1"   . treemacs-delete-other-windows)
+             ("C-x t t"   . treemacs-toggle)
+             ("C-x t T"   . treemacs)
+             ("C-x t b"   . treemacs-bookmark)
+             ("C-x t C-f" . treemacs-find-file)
+             ("C-x t C-t" . treemacs-find-tag)))
 
 (use-package treemacs-projectile
   :after treemacs projectile
   :config
   (setq treemacs-header-function #'treemacs-projectile-create-header)
   (add-hook 'projectile-after-switch-project-hook #'treemacs-projectile)
-  (bind-keys ("C-c t P" . treemacs-projectile)
-             ("C-c t p" . treemacs-projectile-toggle)))
+  (bind-keys ("C-x t P" . treemacs-projectile)
+             ("C-x t p" . treemacs-projectile-toggle)))

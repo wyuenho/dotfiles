@@ -189,7 +189,6 @@
  '(treemacs-change-root-without-asking t)
  '(treemacs-collapse-dirs 3)
  '(treemacs-filewatch-mode t)
- '(treemacs-follow-after-init t)
  '(treemacs-follow-mode t)
  '(treemacs-git-integration t)
  '(treemacs-no-png-images t)
