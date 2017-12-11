@@ -459,10 +459,10 @@ Optional argument ARG same as `comment-dwim''s."
                nil
                '("\\_<async\\_>"
                  "\\_<await\\_>"
-                 "\\_<as\\_>"
-                 "\\_<from\\_>"
-                 "\\_<of\\_>")
-               t)
+                 ("\\_<import\\_>"
+                  ("\\_<as\\_>" nil nil (0 font-lock-keyword-face))
+                  ("\\_<from\\_>" nil nil (0 font-lock-keyword-face)))
+                 ("\\_<for\\_>" "\\_<of\\_>" nil nil (0 font-lock-keyword-face))))
 
               (use-package tern
                 :config
