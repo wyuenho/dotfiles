@@ -1,9 +1,9 @@
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
-(advice-add 'load-theme :around #'(lambda (old-load-theme &rest r)
+(advice-add 'load-theme :around #'(lambda (old-load-theme &rest args)
                                     ;; Disable themes on terminals
                                     (when (display-graphic-p)
-                                      (apply old-load-theme (car r) t (cddr r)))))
+                                      (apply old-load-theme (car args) t (cddr args)))))
 
 ;; Emacs loads init file first and the packages last normally. Forcing the
 ;; packages to load first makes configuring them in the init file possible.
@@ -45,7 +45,7 @@
 
 ;; Remove all query on exit flags on all processes before quitting
 (advice-add 'save-buffers-kill-emacs :before
-            #'(lambda (&rest args)
+            #'(lambda (&rest _)
                 (defun processes-with-query (process)
                   (and (memq (process-status process) '(run stop open listen))
                        (process-query-on-exit-flag process)))
