@@ -366,15 +366,6 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-x C-=" . zoom-in/out)
              ("C-x C-0" . zoom-in/out)))
 
-;; Window management
-(use-package golden-ratio
-  :config
-  (defvar ediff-on nil)
-  (add-hook 'ediff-before-setup-hook #'(lambda () (setq ediff-on 1)))
-  (add-hook 'ediff-quit-hook #'(lambda () (setq ediff-on nil)) 'append)
-  (add-hook 'ediff-suspend-hook #'(lambda () (setq ediff-on nil)) 'append)
-  (push #'(lambda () ediff-on) golden-ratio-inhibit-functions))
-
 ;; Quick Snippets
 (use-package yasnippet
   :config
@@ -624,6 +615,22 @@ Optional argument ARG same as `comment-dwim''s."
                   (setq-local company-backends '(company-go)))
 
                 (use-package go-eldoc :config (go-eldoc-setup)))))
+
+;; Rust
+(use-package rust-mode
+  :mode "\\.rs\\'")
+
+(use-package racer
+  :after rust-mode
+  :config
+  (add-hook 'rust-mode-hook #'racer-mode)
+  (add-hook 'racer-mode-hook #'eldoc-mode)
+  (add-hook 'racer-mode-hook #'company-mode))
+
+(use-package cargo
+  :after rust-mode
+  :config
+  (add-hook 'rust-mode-hook #'cargo-minor-mode))
 
 ;; Web stuff
 (use-package web-mode
