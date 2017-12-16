@@ -733,7 +733,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (wgrep-ag-setup)))
   (bind-keys ("M-s r" . rg))
   (bind-keys :map projectile-command-map
-             ("s r" . rp-project)))
+             ("s r" . rg-project)))
 
 ;; Git
 (use-package magit
