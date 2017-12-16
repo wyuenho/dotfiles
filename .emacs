@@ -29,9 +29,14 @@
                        preferred-font-families)))
     (set-face-attribute 'default nil :family font-family :weight 'regular)
     (set-frame-parameter nil 'fullscreen 'maximized)
-    (set-mouse-color "white")
     (with-eval-after-load 'linum
       (set-face-attribute 'linum nil :weight 'thin))))
+
+;; A bug in mac port saves the mouse color when `frameset-save' is called, but
+;; it's not desirable on macOS because the window server will decide the color
+;; of the cursor according to the background color.
+(when (memq (window-system) '(mac))
+  (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
 
 ;; Set file, keyboard and terminal coding systems automatically
 (prefer-coding-system 'utf-8)
@@ -174,7 +179,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X and Linux.
 (use-package exec-path-from-shell
-  :if (memq window-system '(mac ns x))
+  :if (memq (window-system) '(mac ns x))
   :config
   (exec-path-from-shell-initialize))
 
