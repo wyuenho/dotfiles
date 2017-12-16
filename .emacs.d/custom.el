@@ -13,6 +13,8 @@
     (c++-mode c-mode java-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode)))
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
+ '(auto-package-update-delete-old-versions t)
+ '(auto-package-update-interval 1)
  '(auto-revert-buffer-list-filter (quote magit-auto-revert-repository-buffer-p))
  '(auto-revert-check-vc-info t)
  '(auto-revert-use-notify nil)
@@ -150,7 +152,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (add-node-modules-path ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bash-completion bind-key cargo company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic jq-mode js-doc js-format js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring racer rainbow-mode restclient rg rjsx-mode rust-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection tide treemacs treemacs-projectile try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose xref-js2 yaml-mode yarn-mode zoom-frm)))
+    (add-node-modules-path ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile auto-package-update bash-completion bind-key cargo company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes diminish docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic jq-mode js-doc js-format js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring racer rainbow-mode restclient rg rjsx-mode rust-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection tide treemacs treemacs-projectile try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose xref-js2 yaml-mode yarn-mode zoom-frm)))
  '(pyenv-mode t)
  '(reb-re-syntax (quote string))
  '(recentf-auto-cleanup (quote never))
