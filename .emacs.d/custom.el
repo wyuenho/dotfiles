@@ -47,6 +47,16 @@
  '(desktop-restore-eager 5)
  '(desktop-save-mode t)
  '(diff-switches "-u -B")
+ '(display-time-mode t)
+ '(display-time-world-list
+   (quote
+    (("America/San_Francisco" "San Francisco")
+     ("America/New_York" "New York")
+     ("Europe/London" "London")
+     ("Europe/Paris" "Paris")
+     ("Asia/Calcutta" "Bangalore")
+     ("Asia/Hong_Kong" "Hong Kong")
+     ("Asia/Tokyo" "Tokyo"))))
  '(ediff-split-window-function (quote split-window-horizontally))
  '(emmet-indentation 2)
  '(emmet-self-closing-tag-style " /")
