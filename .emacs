@@ -25,7 +25,7 @@
                                     "SF Mono"
                                     "Hack"))
          (font-family (seq-find
-                       (lambda (elt) (member elt (font-family-list)))
+                       #'(lambda (elt) (member elt (font-family-list)))
                        preferred-font-families)))
     (set-face-attribute 'default nil :family font-family :weight 'regular)
     (set-frame-parameter nil 'fullscreen 'maximized)
@@ -489,17 +489,58 @@ Optional argument ARG same as `comment-dwim''s."
                            ("C-c t f"   . import-js-fix)
                            ("C-c t M-." . import-js-goto)))
 
-              (use-package eslintd-fix
+              (use-package f
                 :config
-                (eslintd-fix-mode 1)
-                (bind-keys :map js-mode-map
-                           ("C-c C-f" . eslintd-fix)))
+                (defun find-js-format-style ()
+                  (let* ((package-json-dir
+                          (f-traverse-upwards
+                           #'(lambda (path)
+                               (f-exists? (f-expand "package.json" path)))
+                           (buffer-file-name)))
 
-              (use-package js-format
-                :config
-                (js-format-setup "standard")
-                (bind-keys :map js-mode-map
-                           ("C-x j b" . js-format-buffer)))
+                         (package-json
+                          (if package-json-dir
+                              (json-read-file (f-join package-json-dir "package.json"))
+                            nil))
+
+                         (devDependencies
+                          (if package-json
+                              (alist-get 'devDependencies package-json)
+                            nil))
+
+                         (formatter-styles
+                          '((prettier            . prettier)
+                            (eslint              . eslint)
+                            (esformatter         . esfmt)
+                            (babel-preset-airbnb . airbnb)
+                            (standard            . standard))))
+
+                    (cdr (car (map-filter
+                               #'(lambda (package _)
+                                   (map-contains-key devDependencies package))
+                               formatter-styles)))))
+
+                (let ((style (find-js-format-style)))
+                  (cond ((eq style 'prettier)
+                         (use-package prettier-js
+                           :config
+                           (prettier-js-mode 1)
+                           (bind-keys :map js-mode-map
+                                      ("C-c C-f" . prettier-js))))
+
+                        ((eq style 'eslint)
+                         (use-package eslintd-fix
+                           :config
+                           (eslintd-fix-mode 1)
+                           (bind-keys :map js-mode-map
+                                      ("C-c C-f" . eslintd-fix))))
+
+                        ((memq style '(esfmt airbnb standard))
+                         (use-package js-format
+                           :config
+                           (js-format-setup (find-js-format-style))
+                           (bind-keys :map js-mode-map
+                                      ("C-c C-f" . js-format-buffer)))))))
 
               (use-package nodejs-repl
                 :config
