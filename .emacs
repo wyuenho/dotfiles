@@ -576,7 +576,7 @@ Optional argument ARG same as `comment-dwim''s."
                   (js2-imenu-extras-mode 1)))))
 
 (use-package rjsx-mode
-  :mode "\\.jsx?\\'")
+  :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
 ;; TypeScript
 (use-package typescript-mode)
