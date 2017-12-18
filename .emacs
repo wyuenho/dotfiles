@@ -793,7 +793,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package treemacs
   :config
-  (setq treemacs-icon-tag-leaf-text (propertize "• " 'face 'font-lock-constant-face))
   (setq treemacs-icon-fallback-text (propertize "  " 'face 'font-lock-keyword-face))
   (bind-keys ("<f12>"     . treemacs-toggle)
              ("C-x t o"   . treemacs-select-window)
