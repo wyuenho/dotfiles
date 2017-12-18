@@ -538,7 +538,7 @@ Optional argument ARG same as `comment-dwim''s."
                         ((memq style '(esfmt airbnb standard))
                          (use-package js-format
                            :config
-                           (js-format-setup (find-js-format-style))
+                           (js-format-setup (symbol-name (find-js-format-style)))
                            (bind-keys :map js-mode-map
                                       ("C-c C-f" . js-format-buffer)))))))
 
