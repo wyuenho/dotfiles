@@ -811,8 +811,3 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'projectile-after-switch-project-hook #'treemacs-projectile)
   (bind-keys ("C-x t P" . treemacs-projectile)
              ("C-x t p" . treemacs-projectile-toggle)))
-
-;; Update packages automatically
-(use-package auto-package-update
-  :config
-  (auto-package-update-at-time "15:30"))
