@@ -191,6 +191,8 @@
  '(smtpmail-smtp-service 465)
  '(smtpmail-smtp-user "wyuenho")
  '(smtpmail-stream-type (quote ssl))
+ '(solarized-high-contrast-mode-line t)
+ '(solarized-use-variable-pitch nil)
  '(sp-hybrid-kill-excessive-whitespace t)
  '(standard-indent 2)
  '(tab-stop-list
