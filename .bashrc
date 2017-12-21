@@ -35,6 +35,11 @@ elif [ -f /usr/local/etc/bash_completion ]; then # Homebrew
     source /usr/local/etc/bash_completion
 fi
 
+# gcloud
+if [ -f '$HOME/.google-cloud-sdk/completion.bash.inc' ]; then
+    source '$HOME/.google-cloud-sdk/completion.bash.inc';
+fi
+
 # Better bash history search
 export HH_CONFIG=hicolor,rawhistory # get more colors
 shopt -s histappend                 # append new history items to .bash_history

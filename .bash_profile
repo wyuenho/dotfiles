@@ -16,8 +16,12 @@ PYTHONSTARTUP="$HOME/.pythonrc"
 export PYENV_ROOT
 PYENV_ROOT="$HOME/.pyenv"
 PATH="$HOME/.pyenv/bin:$HOME/Library/Python/2.7/bin:$PATH"
-if [ "$(type -fp pyenv)" ]; then eval "$(pyenv init -)"; fi
-if [ "$(type -fp pyenv-virtualenv-init)" ]; then eval "$(pyenv virtualenv-init -)"; fi
+if [ "$(type -fp pyenv)" ]; then
+    eval "$(pyenv init -)";
+    if [ -n "$(pyenv commands | grep virtualenv)" ]; then
+        eval "$(pyenv virtualenv-init -)";
+    fi
+fi
 
 # Node
 export NVM_DIR
@@ -41,6 +45,11 @@ fi
 
 # Rust
 PATH="$HOME/.cargo/bin:$PATH"
+
+# Google Cloud SDK
+if [ -f '$HOME/.google-cloud-sdk/path.bash.inc' ]; then
+    source '$HOME/.google-cloud-sdk/path.bash.inc'
+fi
 
 # PWD
 PATH=".:$PATH"
