@@ -36,8 +36,8 @@ elif [ -f /usr/local/etc/bash_completion ]; then # Homebrew
 fi
 
 # gcloud
-if [ -f '$HOME/.google-cloud-sdk/completion.bash.inc' ]; then
-    source '$HOME/.google-cloud-sdk/completion.bash.inc';
+if [ -f "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
+    source "$HOME/.google-cloud-sdk/completion.bash.inc";
 fi
 
 # Better bash history search
