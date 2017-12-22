@@ -35,6 +35,12 @@ elif [ -f /usr/local/etc/bash_completion ]; then # Homebrew
     source /usr/local/etc/bash_completion
 fi
 
+# NVM
+[ -r "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+
+# GVM
+[ -r "$HOME/.gvm/scripts/completion" ] && source "$HOME/.gvm/scripts/completion"
+
 # gcloud
 if [ -f "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
     source "$HOME/.google-cloud-sdk/completion.bash.inc";
