@@ -415,6 +415,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Lisp
 (bind-keys :map emacs-lisp-mode-map
+           ("C-c e f" . byte-compile-file)
            ("C-c e c" . emacs-lisp-byte-compile)
            ("C-c e l" . emacs-lisp-byte-compile-and-load))
 
