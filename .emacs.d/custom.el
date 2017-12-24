@@ -15,7 +15,6 @@
  '(auto-compile-update-autoloads t)
  '(auto-package-update-delete-old-versions t)
  '(auto-package-update-interval 1)
- '(auto-revert-buffer-list-filter (quote magit-auto-revert-repository-buffer-p))
  '(auto-revert-check-vc-info t)
  '(auto-revert-use-notify nil)
  '(auto-save-default nil)
@@ -67,10 +66,12 @@
  '(exec-path-from-shell-variables (quote ("PATH" "MANPATH" "GOPATH")))
  '(explicit-shell-file-name "/opt/local/bin/bash")
  '(fill-column 80)
+ '(find-file-visit-truename t)
  '(flycheck-global-modes
    (quote
     (sh-mode json-mode yaml-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode typescript-mode python-mode go-mode web-mode)))
  '(gc-cons-threshold 20000000)
+ '(global-auto-revert-mode t)
  '(global-company-mode t)
  '(global-flycheck-mode t)
  '(global-font-lock-mode t nil (font-lock))
