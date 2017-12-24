@@ -28,6 +28,9 @@
 	ci = commit
 	st = status
 	up = pull
+	sdiff = !git diff && git submodule foreach 'git diff'
+	spush = push --recurse-submodules=on-demand
+	supdate = submodule update --remote --merge
 
 [color]
 	ui = true
