@@ -1,39 +1,49 @@
 [user]
-name = Jimmy Yuen Ho Wong
-email = wyuenho@gmail.com
+	name = Jimmy Yuen Ho Wong
+	email = wyuenho@gmail.com
 
 [core]
-excludesfile = ~/.gitignore_global
-autocrlf = input
+	excludesfile = ~/.gitignore_global
+	autocrlf = input
 
 [difftool "ediff"]
-cmd = emacsclient --eval \"(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")\"
+	cmd = emacsclient --eval \"(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")\"
 
 [difftool "sourcetree"]
-cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-path = 
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path =
 
 [mergetool "ediff"]
-cmd = emacsclient --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"
+	cmd = emacsclient --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"
 
 [mergetool "sourcetree"]
-cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-trustExitCode = true
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
 
 [credential]
-helper = osxkeychain
+	helper = osxkeychain
 
 [alias]
-co = checkout
-ci = commit
-st = status
+	co = checkout
+	ci = commit
+	st = status
+	up = pull
 
 [color]
-ui = true
+	ui = true
 
 [push]
-default = simple
+	default = simple
 
 [filter "media"]
-clean = git-media-clean %f
-smudge = git-media-smudge %f
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	required = true
+	process = git-lfs filter-process
+
+[diff]
+	submodule = log

@@ -46,6 +46,9 @@ coverage.xml
 
 ### VirtualEnv ###
 .Python
+pyvenv.cfg
+.venv
+pip-selfcheck.json
 
 ### Emacs ###
 # -*- mode: gitignore; -*-
@@ -75,8 +78,15 @@ tramp
 # reftex files
 *.rel
 
+# projectiles files
+.projectile
+
+# directory configuration
+.dir-locals.el
+
 # TernJS
 .tern-port
+.tern-project
 
 ### vim ###
 [._]*.s[a-w][a-z]
