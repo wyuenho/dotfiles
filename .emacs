@@ -1,9 +1,9 @@
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
-(advice-add 'load-theme :around #'(lambda (old-load-theme &rest args)
-                                    ;; Disable themes on terminals
-                                    (when (display-graphic-p)
-                                      (apply old-load-theme (car args) t (cddr args)))))
+(advice-add 'load-theme :around (lambda (old-load-theme &rest args)
+                                  ;; Disable themes on terminals
+                                  (when (display-graphic-p)
+                                    (apply old-load-theme (car args) t (cddr args)))))
 
 ;; Emacs loads init file first and the packages last normally. Forcing the
 ;; packages to load first makes configuring them in the init file possible.
@@ -25,7 +25,7 @@
                                     "SF Mono"
                                     "Hack"))
          (font-family (seq-find
-                       #'(lambda (elt) (member elt (font-family-list)))
+                       (lambda (elt) (member elt (font-family-list)))
                        preferred-font-families)))
     (set-face-attribute 'default nil :family font-family :weight 'regular)
     (set-frame-parameter nil 'fullscreen 'maximized)
@@ -50,44 +50,49 @@
 
 ;; Remove all query on exit flags on all processes before quitting
 (advice-add 'save-buffers-kill-emacs :before
-            #'(lambda (&rest _)
-                (defun processes-with-query (process)
-                  (and (memq (process-status process) '(run stop open listen))
-                       (process-query-on-exit-flag process)))
-                (let ((processes (seq-filter 'processes-with-query (process-list))))
-                  (dolist (process processes)
-                    (set-process-query-on-exit-flag process nil)))))
+            (lambda (&rest _)
+              (defun processes-with-query (process)
+                (and (memq (process-status process) '(run stop open listen))
+                     (process-query-on-exit-flag process)))
+              (let ((processes (seq-filter 'processes-with-query (process-list))))
+                (dolist (process processes)
+                  (set-process-query-on-exit-flag process nil)))))
 (setq kill-buffer-query-functions
       (remq 'process-kill-buffer-query-function kill-buffer-query-functions))
 
 ;; Automatically wrap overly long lines for all text modes
-(add-hook 'text-mode-hook #'(lambda () (auto-fill-mode 1)))
+(add-hook 'text-mode-hook (lambda () (auto-fill-mode 1)))
 
 ;; Turn on subword mode and linum mode for all prog and text modes
 (dolist (hook '(prog-mode-hook text-mode-hook))
-  (add-hook hook #'(lambda ()
-                     (subword-mode 1)
-                     (linum-mode 1))))
+  (add-hook hook (lambda () (subword-mode 1) (linum-mode 1))))
 
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
 
 ;; Turn on iMenu for code outlines for all prog and text modes, if possible
 (dolist (hook '(prog-mode-hook text-mode-hook))
-  (add-hook hook #'(lambda () (ignore-errors (imenu-add-menubar-index)))))
+  (add-hook hook (lambda () (ignore-errors (imenu-add-menubar-index)))))
 
 ;; Save window config before ediff starts and restores it and cleans up when it quits, sanity!
 (defvar ediff-saved-window-configuration)
 (add-hook 'ediff-before-setup-hook
-          #'(lambda () (setq ediff-saved-window-configuration (current-window-configuration))))
+          (lambda () (setq ediff-saved-window-configuration (current-window-configuration))))
 (let ((restore-window-configuration
-       #'(lambda () (set-window-configuration ediff-saved-window-configuration))))
+       (lambda () (set-window-configuration ediff-saved-window-configuration))))
   (add-hook 'ediff-quit-hook restore-window-configuration 'append)
   (add-hook 'ediff-suspend-hook restore-window-configuration 'append))
 (add-hook 'ediff-cleanup-hook
-          #'(lambda ()
-              (eval-and-compile (require 'ediff-util))
-              (ediff-janitor nil nil)) 'append)
+          (lambda ()
+            (eval-and-compile (require 'ediff-util))
+            (ediff-janitor nil nil)) 'append)
+
+;; Move the buffer name from the mode line to the header line
+(dolist (hook '(window-configuration-change-hook after-change-major-mode-hook))
+  (add-hook hook (lambda ()
+                   (when (window-header-line-height)
+                     (setq header-line-format 'mode-line-buffer-identification)
+                     (setq mode-line-format (remove 'mode-line-buffer-identification mode-line-format))))))
 
 ;; More sensible comment-dwim
 (defun comment-dwim-line-or-region (&optional arg)
@@ -143,36 +148,36 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
 (add-hook 'occur-mode-hook
-          #'(lambda ()
-              (bind-keys :map occur-mode-map
-                         ("M-n" . nil)
-                         ("M-p" . nil)
-                         ("n"   . occur-next)
-                         ("p"   . occur-prev))))
+          (lambda ()
+            (bind-keys :map occur-mode-map
+                       ("M-n" . nil)
+                       ("M-p" . nil)
+                       ("n"   . occur-next)
+                       ("p"   . occur-prev))))
 
 ;; I use compilation mode more, so of course I have to do the same thing as
 ;; occur mode
 (with-eval-after-load 'compile
   (add-hook 'compilation-mode-hook
-            #'(lambda ()
-                (bind-keys :map compilation-mode-map
-                           ("M-n" . nil)
-                           ("M-p" . nil)
-                           ("n"   . compilation-next-error)
-                           ("p"   . compilation-previous-error)))))
+            (lambda ()
+              (bind-keys :map compilation-mode-map
+                         ("M-n" . nil)
+                         ("M-p" . nil)
+                         ("n"   . compilation-next-error)
+                         ("p"   . compilation-previous-error)))))
 
 ;; Completely unbind visual-line-mode's stupid bindings
 (add-hook 'visual-line-mode-hook
-          #'(lambda ()
-              (bind-keys
-               :map visual-line-mode-map
-               ([remap move-beginning-of-line]   . nil)
-               ([remap move-end-of-line]         . nil)
-               ([remap beginning-of-visual-line] . move-beginning-of-line)
-               ([remap end-of-visual-line]       . move-end-of-line)
-               ([remap kill-line]                . nil)
-               ([remap next-line]                . next-logical-line)
-               ([remap previous-line]            . previous-logical-line))))
+          (lambda ()
+            (bind-keys
+             :map visual-line-mode-map
+             ([remap move-beginning-of-line]   . nil)
+             ([remap move-end-of-line]         . nil)
+             ([remap beginning-of-visual-line] . move-beginning-of-line)
+             ([remap end-of-visual-line]       . move-end-of-line)
+             ([remap kill-line]                . nil)
+             ([remap next-line]                . next-logical-line)
+             ([remap previous-line]            . previous-logical-line))))
 
 ;; Sane scrolling
 (use-package pager-default-keybindings)
@@ -183,32 +188,36 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (exec-path-from-shell-initialize))
 
-;; Replace the major mode name with its icon and move the buffer name from the
-;; mode line to the header line
+;; Replace the major mode name with its icon and
 (use-package all-the-icons
-  :if (display-graphic-p)
-  :init
-  (defun move-buffer-id-to-header-line ()
-    (when (window-header-line-height)
-      (setq header-line-format 'mode-line-buffer-identification)
-      (setq mode-line-format (remove 'mode-line-buffer-identification mode-line-format))))
-  (defun replace-mode-with-icon ()
-    (let ((icon (all-the-icons-icon-for-mode major-mode)))
-      (when (and icon (not (string= major-mode icon)))
-        (setq mode-name icon))))
   :config
-  (dolist (hook '(window-configuration-change-hook after-change-major-mode-hook))
-    (add-hook hook 'move-buffer-id-to-header-line))
-  (add-hook 'after-change-major-mode-hook 'replace-mode-with-icon))
+  (add-hook 'after-change-major-mode-hook
+            (lambda ()
+              (let ((icon (all-the-icons-icon-for-mode major-mode)))
+                (when (and icon (not (string= major-mode icon)))
+                  (setq mode-name icon))))))
 
 ;; Use icons in dired
 (use-package all-the-icons-dired
-  :if (display-graphic-p)
   :after all-the-icons
   :config (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
+;; Turn off useless mode lighters
+(use-package delight
+  :config
+  (delight '((move-dup-mode nil move-dup)
+             (smartparens-mode nil smartparens)
+             (which-key-mode nil which-key)
+             (whitespace-cleanup-mode nil whitespace)
+             (undo-tree-mode nil undo-tree)
+             (auto-revert-mode nil autorevert)
+             (visual-line-mode nil simple)
+             (subword-mode nil subword)
+             (rainbow-mode nil rainbow-mode))))
+
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
+  :delight
   :config
   (which-key-mode 1)
   (bind-keys ("C-h b" . which-key-show-top-level)))
@@ -373,6 +382,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Quick Snippets
 (use-package yasnippet
+  :delight yas-minor-mode
   :config
   (yas-reload-all)
   (dolist (hook '(prog-mode-hook text-mode))
@@ -384,34 +394,35 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Auto-completion
 (use-package company
+  :delight
   :config
   (bind-key "M-/" 'company-complete company-mode-map)
   (add-hook 'company-mode-hook
-            #'(lambda ()
-                (use-package company-statistics
-                  :config (company-statistics-mode 1))
+            (lambda ()
+              (use-package company-statistics
+                :config (company-statistics-mode 1))
 
-                (use-package company-quickhelp
-                  :config (company-quickhelp-mode 1))
+              (use-package company-quickhelp
+                :config (company-quickhelp-mode 1))
 
-                (use-package company-flx
-                  :config (company-flx-mode 1)))))
+              (use-package company-flx
+                :config (company-flx-mode 1)))))
 
 ;; Much faster PDF viewing
 (add-hook 'doc-view-mode-hook
-          #'(lambda ()
-              (when (fboundp 'pdf-tools-install)
-                (pdf-tools-install))))
+          (lambda ()
+            (when (fboundp 'pdf-tools-install)
+              (pdf-tools-install))))
 
 ;; Restclient
 (use-package restclient
   :config
   (add-hook 'restclient-mode-hook
-            #'(lambda ()
-                (use-package company-restclient
-                  :after company
-                  :config
-                  (add-to-list 'company-backends 'company-restclient)))))
+            (lambda ()
+              (use-package company-restclient
+                :after company
+                :config
+                (add-to-list 'company-backends 'company-restclient)))))
 
 ;; Lisp
 (bind-keys :map emacs-lisp-mode-map
@@ -421,18 +432,18 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Shell mode
 (add-hook 'sh-mode-hook
-          #'(lambda ()
-              (use-package company-shell
-                :after company
-                :config
-                (add-to-list 'company-backend '(company-shell company-shell-env)))))
+          (lambda ()
+            (use-package company-shell
+              :after company
+              :config
+              (add-to-list 'company-backend '(company-shell company-shell-env)))))
 
 ;; Term and shell
 (use-package bash-completion
   :config
   (dolist (hook '(shell-dynamic-complete-functions
                   term-dynamic-complete-functions))
-    (add-hook hook #'bash-completion-dynamic-complete)))
+    (add-hook hook 'bash-completion-dynamic-complete)))
 
 (use-package multi-term
   :config
@@ -442,139 +453,144 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package yaml-mode
   :config
   (add-hook 'yaml-mode-hook
-            #'(lambda ()
-                (use-package flycheck-yamllint
-                  :config
-                  (flycheck-yamllint-setup)))))
+            (lambda ()
+              (use-package flycheck-yamllint
+                :config
+                (flycheck-yamllint-setup)))))
 
 ;; Javascript
 (add-hook 'js-mode-hook
-          #'(lambda ()
-              ;; Make sure fontification in js-mode and derived modes is up to
-              ;; date with the latest ES2015 keywords
-              (font-lock-add-keywords
-               nil
-               '("\\_<async\\_>"
-                 "\\_<await\\_>"
-                 ("\\_<import\\_>"
-                  ("\\_<as\\_>" nil nil (0 font-lock-keyword-face))
-                  ("\\_<from\\_>" nil nil (0 font-lock-keyword-face)))
-                 ("\\_<for\\_>" "\\_<of\\_>" nil nil (0 font-lock-keyword-face))))
+          (lambda ()
+            ;; Make sure fontification in js-mode and derived modes is up to
+            ;; date with the latest ES2015 keywords
+            (font-lock-add-keywords
+             nil
+             '("\\_<async\\_>"
+               "\\_<await\\_>"
+               ("\\_<import\\_>"
+                ("\\_<as\\_>" nil nil (0 font-lock-keyword-face))
+                ("\\_<from\\_>" nil nil (0 font-lock-keyword-face)))
+               ("\\_<for\\_>" "\\_<of\\_>" nil nil (0 font-lock-keyword-face))))
 
-              (use-package tern
-                :config
-                (tern-mode 1)
-                (unbind-key "C-c C-r" tern-mode-keymap))
+            (use-package tern
+              :delight
+              :config
+              (tern-mode 1)
+              (unbind-key "C-c C-r" tern-mode-keymap))
 
-              (use-package company-tern
-                :after company
-                :config
-                (add-to-list 'company-backends 'company-tern))
+            (use-package company-tern
+              :after company
+              :config
+              (add-to-list 'company-backends 'company-tern))
 
-              (use-package js-doc
-                :after yasnippet
-                :config
-                (bind-keys :map js-mode-map
-                           ("C-c d" . js-doc-insert-file-doc)
-                           ("C-c f" . js-doc-insert-function-doc-snippet)))
+            (use-package js-doc
+              :after yasnippet
+              :config
+              (bind-keys :map js-mode-map
+                         ("C-c d" . js-doc-insert-file-doc)
+                         ("C-c f" . js-doc-insert-function-doc-snippet)))
 
-              (use-package add-node-modules-path
-                :config
-                (add-node-modules-path))
+            (use-package add-node-modules-path
+              :config
+              (add-node-modules-path))
 
-              (use-package import-js
-                :config
-                (run-import-js)
-                (bind-keys :map js-mode-map
-                           ("C-c t i"   . import-js-import)
-                           ("C-c t f"   . import-js-fix)
-                           ("C-c t M-." . import-js-goto)))
+            (use-package import-js
+              :config
+              (run-import-js)
+              (bind-keys :map js-mode-map
+                         ("C-c t i"   . import-js-import)
+                         ("C-c t f"   . import-js-fix)
+                         ("C-c t M-." . import-js-goto)))
 
-              (use-package f
-                :config
-                (defun find-js-format-style ()
-                  (let* ((package-json-dir
-                          (f-traverse-upwards
-                           #'(lambda (path)
-                               (f-exists? (f-expand "package.json" path)))
-                           (buffer-file-name)))
+            (use-package f
+              :config
+              (defun find-js-format-style ()
+                (let* ((package-json-dir
+                        (f-traverse-upwards
+                         (lambda (path)
+                           (f-exists? (f-expand "package.json" path)))
+                         (buffer-file-name)))
 
-                         (package-json
-                          (if package-json-dir
-                              (json-read-file (f-join package-json-dir "package.json"))
-                            nil))
+                       (package-json
+                        (if package-json-dir
+                            (json-read-file (f-join package-json-dir "package.json"))
+                          nil))
 
-                         (devDependencies
-                          (if package-json
-                              (alist-get 'devDependencies package-json)
-                            nil))
+                       (devDependencies
+                        (if package-json
+                            (alist-get 'devDependencies package-json)
+                          nil))
 
-                         (formatter-styles
-                          '((prettier            . prettier)
-                            (eslint              . eslint)
-                            (esformatter         . esfmt)
-                            (babel-preset-airbnb . airbnb)
-                            (standard            . standard))))
+                       (formatter-styles
+                        '((prettier            . prettier)
+                          (eslint              . eslint)
+                          (esformatter         . esfmt)
+                          (babel-preset-airbnb . airbnb)
+                          (standard            . standard))))
 
-                    (cdr (car (map-filter
-                               #'(lambda (package _)
-                                   (map-contains-key devDependencies package))
-                               formatter-styles)))))
+                  (cdr (car (map-filter
+                             (lambda (package _)
+                               (map-contains-key devDependencies package))
+                             formatter-styles)))))
 
-                (let ((style (find-js-format-style)))
-                  (cond ((eq style 'prettier)
-                         (use-package prettier-js
-                           :config
-                           (prettier-js-mode 1)
-                           (bind-keys :map js-mode-map
-                                      ("C-c C-f" . prettier-js))))
+              (let ((style (find-js-format-style)))
+                (cond ((eq style 'prettier)
+                       (use-package prettier-js
+                         :delight
+                         :config
+                         (prettier-js-mode 1)
+                         (bind-keys :map js-mode-map
+                                    ("C-c C-f" . prettier-js))))
 
-                        ((eq style 'eslint)
-                         (use-package eslintd-fix
-                           :config
-                           (eslintd-fix-mode 1)
-                           (bind-keys :map js-mode-map
-                                      ("C-c C-f" . eslintd-fix))))
+                      ((eq style 'eslint)
+                       (use-package eslintd-fix
+                         :delight
+                         :config
+                         (eslintd-fix-mode 1)
+                         (bind-keys :map js-mode-map
+                                    ("C-c C-f" . eslintd-fix))))
 
-                        ((memq style '(esfmt airbnb standard))
-                         (use-package js-format
-                           :config
-                           (js-format-setup (symbol-name (find-js-format-style)))
-                           (bind-keys :map js-mode-map
-                                      ("C-c C-f" . js-format-buffer)))))))
+                      ((memq style '(esfmt airbnb standard))
+                       (use-package js-format
+                         :config
+                         (js-format-setup (symbol-name (find-js-format-style)))
+                         (bind-keys :map js-mode-map
+                                    ("C-c C-f" . js-format-buffer)))))))
 
-              (use-package nodejs-repl
-                :config
-                (bind-keys :map js-mode-map
-                           ("C-x C-e" . nodejs-repl-send-last-expression)
-                           ("C-c r"   . nodejs-repl-send-region)
-                           ("C-c b"   . nodejs-repl-send-buffer)
-                           ("C-c l"   . nodejs-repl-load-file)
-                           ("C-c z"   . nodejs-repl-switch-to-repl)))
+            (use-package nodejs-repl
+              :config
+              (bind-keys :map js-mode-map
+                         ("C-x C-e" . nodejs-repl-send-last-expression)
+                         ("C-c r"   . nodejs-repl-send-region)
+                         ("C-c b"   . nodejs-repl-send-buffer)
+                         ("C-c l"   . nodejs-repl-load-file)
+                         ("C-c z"   . nodejs-repl-switch-to-repl)))
 
-              (define-key js-mode-map [menu-bar] nil)))
+            (define-key js-mode-map [menu-bar] nil)))
 
 (use-package js2-mode
   :config
   (add-hook 'js2-mode-hook
-            #'(lambda ()
-                (bind-keys
-                 :map js2-mode-map
-                 ("C-k" . sp-kill-whole-line))
+            (lambda ()
+              (bind-keys
+               :map js2-mode-map
+               ("C-k" . sp-kill-whole-line))
 
-                (use-package xref-js2
-                  :config
-                  (unbind-key "M-." js2-mode-map)
-                  (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t))
+              (use-package xref-js2
+                :config
+                (unbind-key "M-." js2-mode-map)
+                (add-hook 'xref-backend-functions 'xref-js2-xref-backend nil t))
 
-                (use-package js2-refactor
-                  :config
-                  (js2-refactor-mode 1)
-                  (js2r-add-keybindings-with-prefix "C-c r"))
+              (use-package js2-refactor
+                :delight
+                :config
+                (js2-refactor-mode 1)
+                (js2r-add-keybindings-with-prefix "C-c r"))
 
-                (use-package js2-imenu-extras
-                  :config
-                  (js2-imenu-extras-mode 1)))))
+              (use-package js2-imenu-extras
+                :delight
+                :config
+                (js2-imenu-extras-mode 1)))))
 
 (use-package rjsx-mode
   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
@@ -597,9 +613,9 @@ Optional argument ARG same as `comment-dwim''s."
   :after typescript-mode
   :config
   (add-hook 'typescript-mode-hook
-            #'(lambda ()
-                (tide-setup)
-                (tide-hl-identifier-mode 1)))
+            (lambda ()
+              (tide-setup)
+              (tide-hl-identifier-mode 1)))
 
   (add-hook 'before-save-hook 'tide-format-before-save)
 
@@ -618,66 +634,71 @@ Optional argument ARG same as `comment-dwim''s."
              ("C-c C-u" . nil)))
 
 (add-hook 'python-mode-hook
-          #'(lambda ()
-              (use-package anaconda-mode
-                :after company-mode
-                :config
-                (anaconda-mode 1)
-                (anaconda-eldoc-mode 1)
-                (add-to-list 'company-backends '(company-anaconda :with company-capf))
-                (bind-keys :map anaconda-mode-map
-                           ("M-r"   . nil)
-                           ("M-\""  . anaconda-mode-find-assignments)
-                           ("M-?"   . anaconda-mode-find-references)
-                           ("M-,"   . anaconda-mode-go-back)
-                           ("C-h o" . anaconda-mode-show-doc)))
+          (lambda ()
+            (use-package anaconda-mode
+              :delight
+              :after company-mode
+              :config
+              (anaconda-mode 1)
+              (anaconda-eldoc-mode 1)
+              (add-to-list 'company-backends '(company-anaconda :with company-capf))
+              (bind-keys :map anaconda-mode-map
+                         ("M-r"   . nil)
+                         ("M-\""  . anaconda-mode-find-assignments)
+                         ("M-?"   . anaconda-mode-find-references)
+                         ("M-,"   . anaconda-mode-go-back)
+                         ("C-h o" . anaconda-mode-show-doc)))
 
-              (use-package py-autopep8
-                :config (py-autopep8-enable-on-save))
+            (use-package py-autopep8
+              :config (py-autopep8-enable-on-save))
 
-              (use-package python-docstring
-                :config (python-docstring-mode 1))
+            (use-package python-docstring
+              :delight
+              :config (python-docstring-mode 1))
 
-              (use-package importmagic
-                :config
-                (setq importmagic-be-quiet t)
-                (importmagic-mode 1)
-                (bind-keys :map importmagic-mode-map
-                           ("M-1" . importmagic-fix-imports)))
+            (use-package importmagic
+              :delight
+              :config
+              (setq importmagic-be-quiet t)
+              (importmagic-mode 1)
+              (bind-keys :map importmagic-mode-map
+                         ("M-1" . importmagic-fix-imports)))
 
-              (use-package py-isort
-                :config
-                (bind-keys :map python-mode-map
-                           ("C-c s" . py-isort-buffer)))))
+            (use-package py-isort
+              :config
+              (bind-keys :map python-mode-map
+                         ("C-c s" . py-isort-buffer)))))
 
 ;; Go
 (use-package go-mode
   :config
   (add-hook 'before-save-hook 'gofmt-before-save)
   (add-hook 'go-mode-hook
-            #'(lambda ()
-                (use-package company-go
-                  :after company
-                  :config
-                  (setq-local company-backends '(company-go)))
+            (lambda ()
+              (use-package company-go
+                :after company
+                :config
+                (setq-local company-backends '(company-go)))
 
-                (use-package go-eldoc :config (go-eldoc-setup)))))
+              (use-package go-eldoc :config (go-eldoc-setup)))))
 
 ;; Rust
 (use-package rust-mode
   :mode "\\.rs\\'")
 
 (use-package racer
+  :delight
   :after rust-mode
   :config
-  (add-hook 'rust-mode-hook #'racer-mode)
-  (add-hook 'racer-mode-hook #'eldoc-mode)
-  (add-hook 'racer-mode-hook #'company-mode))
+  (add-hook 'rust-mode-hook 'racer-mode)
+  (add-hook 'racer-mode-hook 'eldoc-mode)
+  (add-hook 'racer-mode-hook 'company-mode))
 
 (use-package cargo
+  :delight
   :after rust-mode
   :config
-  (add-hook 'rust-mode-hook #'cargo-minor-mode))
+  (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 ;; Web stuff
 (use-package web-mode
@@ -697,40 +718,42 @@ Optional argument ARG same as `comment-dwim''s."
          "\\.mustache\\'")
   :config
   (add-hook 'web-mode-hook
-            #'(lambda ()
-                (use-package tern
-                  :config
-                  (unbind-key "C-c C-r" tern-mode-keymap))
+            (lambda ()
+              (use-package tern
+                :delight
+                :config
+                (unbind-key "C-c C-r" tern-mode-keymap))
 
-                (use-package company-tern
-                  :after company tern
-                  :config
-                  (setq-local company-backends
-                              '(company-tern company-yasnippet company-files))
+              (use-package company-tern
+                :after company tern
+                :config
+                (setq-local company-backends
+                            '(company-tern company-yasnippet company-files))
 
-                  (advice-add 'company-tern :before
-                              #'(lambda (&rest _)
-                                  (if (eq major-mode 'web-mode)
-                                      (let ((web-mode-cur-language
-                                             (web-mode-language-at-pos)))
-                                        (if (or (string= web-mode-cur-language "javascript")
-                                                (string= web-mode-cur-language "jsx"))
-                                            (unless tern-mode (tern-mode))
-                                          (if tern-mode (tern-mode -1))))))))
+                (advice-add 'company-tern :before
+                            (lambda (&rest _)
+                              (if (eq major-mode 'web-mode)
+                                  (let ((web-mode-cur-language
+                                         (web-mode-language-at-pos)))
+                                    (if (or (string= web-mode-cur-language "javascript")
+                                            (string= web-mode-cur-language "jsx"))
+                                        (unless tern-mode (tern-mode))
+                                      (if tern-mode (tern-mode -1))))))))
 
-                (use-package company-web-html
-                  :after company
-                  :config
-                  (setq-local company-backends
-                              '(company-tern company-web-html company-yasnippet company-files)))
+              (use-package company-web-html
+                :after company
+                :config
+                (setq-local company-backends
+                            '(company-tern company-web-html company-yasnippet company-files)))
 
-                (when (and (string-equal "tsx" (file-name-extension buffer-file-name))
-                           (featurep 'tide))
-                  (flycheck-add-mode 'typescript-tslint 'web-mode)
-                  (tide-setup)
-                  (tide-hl-identifier-mode 1)))))
+              (when (and (string-equal "tsx" (file-name-extension buffer-file-name))
+                         (featurep 'tide))
+                (flycheck-add-mode 'typescript-tslint 'web-mode)
+                (tide-setup)
+                (tide-hl-identifier-mode 1)))))
 
 (use-package emmet-mode
+  :delight
   :after web-mode
   :config
   (dolist (hook '(sgml-mode-hook
@@ -739,12 +762,12 @@ Optional argument ARG same as `comment-dwim''s."
                   js-jsx-mode-hook
                   js2-jsx-mode
                   rjsx-mode-hook))
-    (add-hook hook #'(lambda ()
-                       (emmet-mode 1)
-                       (when (or (member major-mode '(js-jsx-mode js2-jsx-mode rjsx-mode))
-                                 (and (eq major-mode 'web-mode)
-                                      (string= (web-mode-language-at-pos) "jsx")))
-                         (setq-local emmet-expand-jsx-className? t))))))
+    (add-hook hook (lambda ()
+                     (emmet-mode 1)
+                     (when (or (member major-mode '(js-jsx-mode js2-jsx-mode rjsx-mode))
+                               (and (eq major-mode 'web-mode)
+                                    (string= (web-mode-language-at-pos) "jsx")))
+                       (setq-local emmet-expand-jsx-className? t))))))
 
 ;; Project management, version control, file search and browser
 (use-package projectile
@@ -775,9 +798,9 @@ Optional argument ARG same as `comment-dwim''s."
   :after wgrep-ag projectile
   :config
   (add-hook 'rg-mode-hook
-            #'(lambda ()
-                (next-error-follow-minor-mode 0)
-                (wgrep-ag-setup)))
+            (lambda ()
+              (next-error-follow-minor-mode 0)
+              (wgrep-ag-setup)))
   (bind-keys ("M-s r" . rg))
   (bind-keys :map projectile-command-map
              ("s r" . rg-project)))
@@ -794,7 +817,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package treemacs
   :config
-  (setq treemacs-icon-fallback-text (propertize "  " 'face 'font-lock-keyword-face))
   (bind-keys ("<f12>"     . treemacs-toggle)
              ("C-x t o"   . treemacs-select-window)
              ("C-x t 1"   . treemacs-delete-other-windows)
@@ -807,8 +829,17 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package treemacs-projectile
   :after treemacs projectile
   :config
-  (setq treemacs-header-function #'treemacs-projectile-create-header)
-  (add-hook 'projectile-find-file-hook #'treemacs-find-file)
-  (add-hook 'projectile-after-switch-project-hook #'treemacs-projectile)
+  (setq treemacs-header-function 'treemacs-projectile-create-header)
+  (add-hook 'projectile-find-file-hook 'treemacs-find-file)
+  (add-hook 'projectile-after-switch-project-hook 'treemacs-projectile)
   (bind-keys ("C-x t P" . treemacs-projectile)
              ("C-x t p" . treemacs-projectile-toggle)))
+
+;; Customize solarized theme
+(use-package solarized-theme
+  :config
+  (set-face-background 'flycheck-fringe-error nil)
+  (set-face-background 'flycheck-fringe-info nil)
+  (set-face-background 'flycheck-fringe-warning nil)
+  (set-face-attribute 'mode-line nil :overline nil :underline nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil :box nil))
