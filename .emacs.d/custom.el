@@ -5,9 +5,11 @@
  ;; If there is more than one, they won't work right.
  '(TeX-PDF-mode t)
  '(ad-default-compilation-action (quote always))
+ '(ag-arguments (quote ("--smart-case" "--stats" "--search-zip")))
  '(ag-highlight-search t)
  '(ag-ignore-list (quote ("*.min.js")))
  '(ag-reuse-buffers t)
+ '(ag-reuse-window t)
  '(align-c++-modes
    (quote
     (c++-mode c-mode java-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode)))
@@ -15,8 +17,6 @@
  '(auto-compile-update-autoloads t)
  '(auto-package-update-delete-old-versions t)
  '(auto-package-update-interval 1)
- '(auto-revert-check-vc-info t)
- '(auto-revert-use-notify nil)
  '(auto-save-default nil)
  '(auto-save-interval 0)
  '(backup-by-copying t)
@@ -66,12 +66,10 @@
  '(exec-path-from-shell-variables (quote ("PATH" "MANPATH" "GOPATH")))
  '(explicit-shell-file-name "/opt/local/bin/bash")
  '(fill-column 80)
- '(find-file-visit-truename t)
  '(flycheck-global-modes
    (quote
     (sh-mode json-mode yaml-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode typescript-mode python-mode go-mode web-mode)))
  '(gc-cons-threshold 20000000)
- '(global-auto-revert-mode t)
  '(global-company-mode t)
  '(global-flycheck-mode t)
  '(global-font-lock-mode t nil (font-lock))
@@ -164,7 +162,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (add-node-modules-path ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bash-completion bind-key cargo company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes delight docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region f flx-ido flx-isearch flycheck flycheck-rust flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic jq-mode js-doc js-format js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools prettier-js projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring racer rainbow-mode restclient rg rjsx-mode rust-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection tide treemacs treemacs-projectile try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose xref-js2 yaml-mode yarn-mode zoom-frm)))
+    (add-node-modules-path ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bash-completion bind-key cargo company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes delight docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region f flx-ido flx-isearch flycheck flycheck-rust flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile graphviz-dot-mode ido-completing-read+ ido-vertical-mode idomenu import-js importmagic jq-mode js-doc js-format js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools prettier-js projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring racer rainbow-mode restclient rg rjsx-mode rust-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection tide try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose xref-js2 yaml-mode yarn-mode zoom-frm)))
  '(purpose-mode t)
  '(pyenv-mode t)
  '(reb-re-syntax (quote string))
@@ -220,6 +218,7 @@
  '(web-mode-script-padding 2)
  '(web-mode-style-padding 2)
  '(which-function-mode t)
+ '(which-key-mode t)
  '(winner-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

@@ -219,7 +219,6 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package which-key
   :delight
   :config
-  (which-key-mode 1)
   (bind-keys ("C-h b" . which-key-show-top-level)))
 
 ;; Modern code folding
@@ -815,25 +814,22 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (bind-keys ("C-x v C-h" . monky-status)))
 
-(use-package treemacs
+;; TODO:
+;; - find out how to make unto tree kill it's own window on visualizer quit
+;; - find out how to mold purpose to popup help buffers
+;; - find out how to make purpose to always focus the edit window
+;; Sane window management
+(use-package window-purpose
+  :after magit
   :config
-  (bind-keys ("<f12>"     . treemacs-toggle)
-             ("C-x t o"   . treemacs-select-window)
-             ("C-x t 1"   . treemacs-delete-other-windows)
-             ("C-x t t"   . treemacs-toggle)
-             ("C-x t T"   . treemacs)
-             ("C-x t b"   . treemacs-bookmark)
-             ("C-x t C-f" . treemacs-find-file)
-             ("C-x t C-t" . treemacs-find-tag)))
-
-(use-package treemacs-projectile
-  :after treemacs projectile
-  :config
-  (setq treemacs-header-function 'treemacs-projectile-create-header)
-  (add-hook 'projectile-find-file-hook 'treemacs-find-file)
-  (add-hook 'projectile-after-switch-project-hook 'treemacs-projectile)
-  (bind-keys ("C-x t P" . treemacs-projectile)
-             ("C-x t p" . treemacs-projectile-toggle)))
+  (setq purpose-user-mode-purposes
+        (append purpose-user-mode-purposes
+                '((ag-mode       . search)
+                  (rg-mode       . search))))
+  (purpose-x-code1-setup)
+  (purpose-x-kill-setup)
+  (purpose-x-popwin-setup)
+  (purpose-x-magit-single-on))
 
 ;; Customize solarized theme
 (use-package solarized-theme
