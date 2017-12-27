@@ -82,7 +82,6 @@
  '(global-visual-line-mode t)
  '(global-whitespace-cleanup-mode t)
  '(golden-ratio-mode t)
- '(help-window-select t)
  '(history-length 250)
  '(ido-create-new-buffer (quote always))
  '(ido-enable-flex-matching t)
