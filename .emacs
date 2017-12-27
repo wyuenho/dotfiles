@@ -815,20 +815,22 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys ("C-x v C-h" . monky-status)))
 
 ;; TODO:
-;; - find out how to make unto tree kill it's own window on visualizer quit
-;; - find out how to mold purpose to popup help buffers
-;; - find out how to make purpose to always focus the edit window
+;; - always popup help buffers (first find out why it sometimes pop up but sometimes doesn't)
+;; - always focus on last selected window after pop up (compile log)
+;; - write a command that quickly moves point to pop up
+;; - always focus the edit window on startup, and last selected window on reset window config, undo/redo window config, and after deleting sibling windows
 ;; Sane window management
 (use-package window-purpose
   :after magit
   :config
   (setq purpose-user-mode-purposes
         (append purpose-user-mode-purposes
-                '((ag-mode       . search)
-                  (rg-mode       . search))))
+                '((ag-mode . search)
+                  (rg-mode . search))))
+  (purpose-compile-user-configuration)
   (purpose-x-code1-setup)
-  (purpose-x-kill-setup)
   (purpose-x-popwin-setup)
+  (purpose-x-kill-setup)
   (purpose-x-magit-single-on))
 
 ;; Customize solarized theme
