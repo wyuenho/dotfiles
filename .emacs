@@ -113,24 +113,11 @@ Optional argument ARG same as `comment-dwim''s."
 (eval-when-compile (require 'use-package))
 (require 'bind-key)
 
-;; Unmap extraneous undo-tree mode keys
-(assq-delete-all 'undo-tree-mode minor-mode-map-alist)
-
-;; Unbind hide/show mode's ridiculous keybindings
-(assq-delete-all 'hs-minor-mode minor-mode-map-alist)
-
-(bind-keys ("M-s f"   . follow-mode)
-           ("M-s s"   . align)
-           ("M-;"     . comment-dwim-line-or-region)
-           ;; Rebind windmove keys
-           ("M-s h"   . windmove-left)
-           ("M-s l"   . windmove-right)
-           ("M-s k"   . windmove-up)
-           ("M-s j"   . windmove-down)
-           ;; Replace default buffer menu with ibuffer
-           ("C-x C-b" . ibuffer)
-           ;; Misc
-           ("C-x u"   . undo-tree-visualize))
+;; I hate X mouse bindings
+(when (and (display-graphic-p)
+           (not (memq (window-system) '(x))))
+  (bind-key "<mouse-2>" 'mouse-buffer-menu)
+  (unbind-key "<mouse-3>"))
 
 ;; Completely unbind annoying abbrev, dabbrev, expand, hippie-expand. These
 ;; ancient completion commands are just too stupid for this day and age
@@ -140,10 +127,24 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Always use M-g prefix to jump between errors
 (unbind-key "C-x `")
 
-(when (and (display-graphic-p)
-           (not (memq (window-system) '(x))))
-  (bind-key "<mouse-2>" 'mouse-buffer-menu)
-  (unbind-key "<mouse-3>"))
+;; Bind  useful things to keys
+(bind-keys ("C-x f"     . follow-mode)
+           ("<backtab>" . align)
+           ("M-;"       . comment-dwim-line-or-region)
+           ;; Replace default buffer menu with ibuffer
+           ("C-x C-b"   . ibuffer))
+
+(use-package undo-tree
+  :config
+  ;; Unmap extraneous undo-tree mode keys
+  (assq-delete-all 'undo-tree-mode minor-mode-map-alist)
+  ;; Map the usual undo key to undo-tree-visualize
+  (bind-key "C-x u" 'undo-tree-visualize))
+
+;; Move around windows with shifted arrow keys
+(use-package windmove
+  :config
+  (windmove-default-keybindings))
 
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
@@ -215,18 +216,19 @@ Optional argument ARG same as `comment-dwim''s."
              (subword-mode nil subword)
              (rainbow-mode nil rainbow-mode))))
 
+;; Adjust frame-wide font size
+(use-package zoom-frm
+  :config
+  (bind-keys ("C-x C-+" . zoom-in/out)
+             ("C-x C--" . zoom-in/out)
+             ("C-x C-=" . zoom-in/out)
+             ("C-x C-0" . zoom-in/out)))
+
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
   :delight
   :config
   (bind-keys ("C-h b" . which-key-show-top-level)))
-
-;; Modern code folding
-(use-package origami
-  :config
-  (bind-keys ("M-0"   . origami-open-all-nodes)
-             ("M-9"   . origami-close-all-nodes)
-             ("C-M-/" . origami-recursively-toggle-node)))
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
@@ -371,14 +373,6 @@ Optional argument ARG same as `comment-dwim''s."
   (bind-keys ("C-x =" . evil-numbers/inc-at-pt)
              ("C-x -" . evil-numbers/dec-at-pt)))
 
-;; Adjust frame-wide font size
-(use-package zoom-frm
-  :config
-  (bind-keys ("C-x C-+" . zoom-in/out)
-             ("C-x C--" . zoom-in/out)
-             ("C-x C-=" . zoom-in/out)
-             ("C-x C-0" . zoom-in/out)))
-
 ;; Quick Snippets
 (use-package yasnippet
   :delight yas-minor-mode
@@ -390,6 +384,15 @@ Optional argument ARG same as `comment-dwim''s."
              ("TAB"   . nil)
              ("<tab>" . nil)
              ("C-c i" . yas-expand)))
+
+;; Modern code folding
+(use-package origami
+  :config
+  ;; Unbind hide/show mode's ridiculous keybindings
+  (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
+  (bind-keys ("M-0"   . origami-open-all-nodes)
+             ("M-9"   . origami-close-all-nodes)
+             ("C-M-/" . origami-recursively-toggle-node)))
 
 ;; Auto-completion
 (use-package company
