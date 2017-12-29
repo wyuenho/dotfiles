@@ -824,8 +824,13 @@ Optional argument ARG same as `comment-dwim''s."
 ;; - always focus the edit window on startup, and last selected window on reset window config, undo/redo window config, and after deleting sibling windows
 ;; Sane window management
 (use-package window-purpose
-  :after magit
+  :after magit undo-tree
   :config
+  ;; Make sure undo-tree-visualizer-quit kills its window
+  (advice-add 'undo-tree-visualize :after
+              (lambda (&rest _)
+                (let ((window (get-buffer-window undo-tree-visualizer-buffer-name)))
+                  (set-window-dedicated-p window 'soft))))
   (setq purpose-user-mode-purposes
         (append purpose-user-mode-purposes
                 '((ag-mode . search)
