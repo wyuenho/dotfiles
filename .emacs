@@ -928,8 +928,13 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Customize solarized theme
 (use-package solarized-theme
   :config
+  (face-spec-set 'region '((((class color) (min-colors 89) (background light))
+                            :background "#00629D" :foreground "#FDF6E3")
+                           (((class color) (min-colors 89) (background dark))
+                            :background "#69B7F0" :foreground "#002B36")))
   (set-face-background 'flycheck-fringe-error nil)
   (set-face-background 'flycheck-fringe-info nil)
   (set-face-background 'flycheck-fringe-warning nil)
   (set-face-attribute 'mode-line nil :overline nil :underline nil :box nil)
-  (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil :box nil))
+  (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil :box nil)
+  (set-face-attribute 'header-line nil :overline nil :underline nil :box nil))
