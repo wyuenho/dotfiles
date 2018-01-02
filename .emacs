@@ -28,9 +28,9 @@
     (with-eval-after-load 'linum
       (set-face-attribute 'linum nil :weight 'thin))))
 
-;; A bug in mac port saves the mouse color when `frameset-save' is called, but
-;; it's not desirable on macOS because the window server will decide the color
-;; of the cursor according to the background color.
+;; A bug in the mac port saves the mouse color when `frameset-save' is called,
+;; but it's not desirable on macOS because the window server will decide the
+;; color of the cursor according to the background color.
 (when (memq (window-system) '(mac))
   (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
 
