@@ -539,7 +539,7 @@ Optional argument ARG same as `comment-dwim''s."
                          ("C-c t M-." . import-js-goto)))
 
             (use-package f
-              :config
+              :preface
               (defun find-js-format-style ()
                 (let* ((package-json-dir
                         (f-traverse-upwards
@@ -568,7 +568,7 @@ Optional argument ARG same as `comment-dwim''s."
                              (lambda (package _)
                                (map-contains-key devDependencies package))
                              formatter-styles)))))
-
+              :config
               (let ((style (find-js-format-style)))
                 (cond ((eq style 'prettier)
                        (use-package prettier-js
