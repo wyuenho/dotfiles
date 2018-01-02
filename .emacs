@@ -1,9 +1,7 @@
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
 (advice-add 'load-theme :around (lambda (old-load-theme &rest args)
-                                  ;; Disable themes on terminals
-                                  (when (display-graphic-p)
-                                    (apply old-load-theme (car args) t (cddr args)))))
+                                  (apply old-load-theme (car args) t (cddr args))))
 
 ;; Emacs loads init file first and the packages last normally. Forcing the
 ;; packages to load first makes configuring them in the init file possible.
