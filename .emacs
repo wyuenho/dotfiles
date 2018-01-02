@@ -851,29 +851,79 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (bind-keys ("C-x v C-h" . monky-status)))
 
-;; TODO:
-;; - always popup help buffers (first find out why it sometimes pop up but sometimes doesn't)
-;; - always focus on last selected window after pop up (compile log)
-;; - write a command that quickly moves point to pop up
-;; - always focus the edit window on startup, and last selected window on reset window config, undo/redo window config, and after deleting sibling windows
-;; Sane window management
+;; Saner window management
 (use-package window-purpose
   :after magit undo-tree
   :config
-  ;; Make sure undo-tree-visualizer-quit kills its window
+
+  ;; Pending https://github.com/bmag/emacs-purpose/pull/116
   (advice-add 'undo-tree-visualize :after
               (lambda (&rest _)
                 (let ((window (get-buffer-window undo-tree-visualizer-buffer-name)))
                   (set-window-dedicated-p window 'soft))))
-  (setq purpose-user-mode-purposes
-        (append purpose-user-mode-purposes
-                '((ag-mode . search)
-                  (rg-mode . search))))
-  (purpose-compile-user-configuration)
+
+  ;; Pending https://github.com/bmag/emacs-purpose/pull/117
+  (defvar purpose-x-code1-dired-buffer-name "*Files*")
+  (setq purpose-x-code1--window-layout
+        '(nil
+          (0 0 152 35)
+          (t
+           (0 0 29 35)
+           (:purpose code1-dired :purpose-dedicated t :width 0.16 :height 0.5 :edges
+                     (0.0 0.0 0.19333333333333333 0.5))
+           (:purpose buffers :purpose-dedicated t :width 0.16 :height 0.4722222222222222 :edges
+                     (0.0 0.5 0.19333333333333333 0.9722222222222222)))
+          (:purpose edit :purpose-dedicated t :width 0.6 :height 0.9722222222222222 :edges
+                    (0.19333333333333333 0.0 0.8266666666666667 0.9722222222222222))
+          (:purpose ilist :purpose-dedicated t :width 0.15333333333333332 :height 0.9722222222222222 :edges
+                    (0.8266666666666667 0.0 1.0133333333333334 0.9722222222222222))))
+
+  (setq purpose-x-code1-purpose-config
+        (purpose-conf "purpose-x-code1"
+                      :mode-purposes
+                      '((ibuffer-mode . buffers)
+                        (imenu-list-major-mode . ilist))
+                      :name-purposes
+                      `((,purpose-x-code1-dired-buffer-name . code1-dired))))
+
+  (advice-add 'purpose-x-code1-update-dired :override
+              (lambda ()
+                (save-selected-window
+                  (let ((file-path (buffer-file-name)))
+                    (when (and file-path
+                               (cl-delete-if #'window-dedicated-p
+                                             (purpose-windows-with-purpose 'code1-dired)))
+                      ;; Prevents immediately closing the newly created popup help window
+                      (letf (((symbol-value 'purpose-select-buffer-hook) nil))
+                        (let ((buffer (dired-noselect (file-name-directory file-path))))
+                          ;; Make sure code1 only creates 1 dired buffer
+                          (dolist (other-buf (purpose-buffers-with-purpose 'code1-dired))
+                            (when (and (not (eq buffer other-buf))
+                                       (not (string= (buffer-name other-buf)
+                                                     (purpose--dummy-buffer-name 'code1-dired))))
+                              (kill-buffer other-buf)))
+                          (with-current-buffer buffer
+                            (rename-buffer purpose-x-code1-dired-buffer-name))
+                          (switch-to-buffer buffer)
+                          (dired-goto-file file-path)
+                          (when (fboundp 'dired-hide-details-mode)
+                            (dired-hide-details-mode))
+                          (bury-buffer (current-buffer)))))))))
+
+  (advice-add 'purpose-x-code1-update-change :override
+              (lambda ()
+                (when (and
+                       (frame-or-buffer-changed-p 'purpose-x-code1-buffers-changed)
+                       (not (memq (purpose-buffer-purpose (current-buffer)) '(code1-dired buffers ilist)))
+                       (not (minibufferp)))
+                  (purpose-x-code1-update-dired)
+                  (imenu-list-update-safe))))
+
   (purpose-x-code1-setup)
   (purpose-x-popwin-setup)
   (purpose-x-kill-setup)
-  (purpose-x-magit-single-on))
+  (purpose-x-magit-single-on)
+  (purpose-add-user-purposes :modes '((ag-mode . search) (rg-mode . search))))
 
 ;; Customize solarized theme
 (use-package solarized-theme

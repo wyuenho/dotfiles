@@ -33,6 +33,7 @@
  '(compilation-message-face (quote default))
  '(css-indent-offset 2)
  '(current-language-environment "English")
+ '(custom-buffer-done-kill t)
  '(custom-enabled-themes (quote (solarized-dark)))
  '(cwm-frame-internal-border 0)
  '(dabbrev-case-fold-search nil)
@@ -94,6 +95,7 @@
  '(ido-vertical-mode t)
  '(imenu-auto-rescan t)
  '(imenu-auto-rescan-maxout 524288)
+ '(imenu-list-auto-resize t)
  '(imenu-max-items 100)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
@@ -199,6 +201,7 @@
    (quote
     (2 4 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120)))
  '(tab-width 2)
+ '(temp-buffer-resize-mode t)
  '(tool-bar-mode nil)
  '(transient-mark-mode t)
  '(treemacs-change-root-without-asking t)
