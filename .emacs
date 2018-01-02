@@ -13,19 +13,17 @@
 
 ;; Maximize frame on startup and set up default fonts
 (when (display-graphic-p)
-  (let* ((preferred-font-families '("Noto Sans Mono"
-                                    "Roboto Mono"
-                                    "DejaVu Sans Mono"
-                                    "Bitstream Vera Sans Mono"
-                                    "Fira Mono"
-                                    "Monaco"
-                                    "Menlo"
-                                    "SF Mono"
-                                    "Hack"))
-         (font-family (seq-find
-                       (lambda (elt) (member elt (font-family-list)))
-                       preferred-font-families)))
-    (set-face-attribute 'default nil :family font-family :weight 'regular)
+  (let ((preferred-font-families '("Noto Sans Mono"
+                                   "Roboto Mono"
+                                   "DejaVu Sans Mono"
+                                   "Bitstream Vera Sans Mono"
+                                   "Fira Mono"
+                                   "Monaco"
+                                   "Menlo"
+                                   "SF Mono"
+                                   "Hack")))
+    (set-face-attribute 'default nil :family (car preferred-font-families) :weight 'regular)
+    (add-to-list 'face-font-family-alternatives preferred-font-families)
     (set-frame-parameter nil 'fullscreen 'maximized)
     (with-eval-after-load 'linum
       (set-face-attribute 'linum nil :weight 'thin))))
