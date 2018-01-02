@@ -195,6 +195,10 @@ Optional argument ARG same as `comment-dwim''s."
                   (setq mode-name icon))))))
 
 ;; Saner dired
+(use-package dired
+  :config
+  (add-minor-mode 'dired-hide-details-mode ""))
+
 (use-package all-the-icons-dired
   :after all-the-icons
   :config
@@ -907,6 +911,8 @@ Optional argument ARG same as `comment-dwim''s."
                           (switch-to-buffer buffer)
                           (dired-goto-file file-path)
                           (when (fboundp 'dired-hide-details-mode)
+                            (when (not (assq 'dired-hide-details-mode minor-mode-alist))
+                              (add-minor-mode 'dired-hide-details-mode ""))
                             (dired-hide-details-mode))
                           (bury-buffer (current-buffer)))))))))
 
