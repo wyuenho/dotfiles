@@ -194,10 +194,48 @@ Optional argument ARG same as `comment-dwim''s."
                 (when (and icon (not (string= major-mode icon)))
                   (setq mode-name icon))))))
 
-;; Use icons in dired
+;; Saner dired
 (use-package all-the-icons-dired
   :after all-the-icons
-  :config (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+  :config
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              (all-the-icons-dired-mode 1))))
+
+(use-package dired-hide-dotfiles
+  :config
+  (bind-keys :map dired-mode-map
+             ("." . dired-hide-dotfiles-mode)))
+
+(use-package dired-single
+  :after dired-hide-dotfiles
+  :config
+  ;; Make sure dired-hide-details-mode is preserved when reusing the dired
+  ;; window
+  (advice-add 'find-alternate-file :around
+              (lambda (oldfun &rest args)
+                (let ((is-dired (derived-mode-p 'dired-mode))
+                      (hide-dotfiles (and (boundp 'dired-hide-dotfiles-mode) dired-hide-dotfiles-mode))
+                      (hide-details dired-hide-details-mode)
+                      (hide-information-lines dired-hide-details-hide-information-lines)
+                      (hide-symlink-targets dired-hide-details-hide-symlink-targets)
+                      (result (apply oldfun args)))
+                  (when hide-dotfiles (dired-hide-dotfiles-mode))
+                  (when is-dired
+                    (setq-local dired-hide-details-hide-information-lines hide-information-lines)
+                    (setq-local dired-hide-details-hide-symlink-targets hide-symlink-targets)
+                    (when hide-details (dired-hide-details-mode)))
+                  result)))
+  (bind-keys :map dired-mode-map
+             ("^"         . (lambda () (interactive) (dired-single-buffer "..")))
+             ("<mouse-1>" . dired-single-buffer-mouse)
+             ("\C-m"      . dired-single-buffer)))
+
+(use-package dired-collapse
+  :config
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              (dired-collapse-mode 1))))
 
 ;; Turn off useless mode lighters
 (use-package delight
