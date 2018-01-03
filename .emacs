@@ -934,10 +934,8 @@ Optional argument ARG same as `comment-dwim''s."
   (purpose-x-kill-setup)
   (purpose-x-magit-single-on)
   (purpose-add-user-purposes :modes '((ag-mode . search) (rg-mode . search)))
-  (add-hook 'after-init-hook
-            (lambda ()
-              (when (file-exists-p purpose-default-layout-file)
-                (purpose-load-window-layout-file)))))
+  (when (file-exists-p purpose-default-layout-file)
+    (purpose-load-window-layout-file)))
 
 ;; Customize solarized theme
 (use-package solarized-theme
