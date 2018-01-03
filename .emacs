@@ -294,6 +294,9 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Use ido for even more things than ido-everywhere
 (use-package ido-completing-read+)
 (use-package ido-vertical-mode)
+(use-package idomenu
+  :config
+  (bind-keys ("C-." . idomenu)))
 
 ;; Mark and edit multiple things at once
 (use-package multiple-cursors
@@ -419,7 +422,6 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package yasnippet
   :delight yas-minor-mode
   :config
-  (yas-reload-all)
   (dolist (hook '(prog-mode-hook text-mode))
     (add-hook hook 'yas-minor-mode))
   (bind-keys :map yas-minor-mode-map
