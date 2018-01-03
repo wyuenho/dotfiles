@@ -123,12 +123,16 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Always use M-g prefix to jump between errors
 (unbind-key "C-x `")
 
-;; Bind  useful things to keys
+;; Bind useful things to keys
 (bind-keys ("C-x f"     . follow-mode)
            ("<backtab>" . align)
            ("M-;"       . comment-dwim-line-or-region)
            ;; Replace default buffer menu with ibuffer
            ("C-x C-b"   . ibuffer))
+
+;; Replace zap-to-char with the hidden zap-up-to-char
+(autoload 'zap-up-to-char "misc")
+(bind-key "M-z" 'zap-up-to-char)
 
 (use-package undo-tree
   :config
@@ -927,7 +931,11 @@ Optional argument ARG same as `comment-dwim''s."
   (purpose-x-popwin-setup)
   (purpose-x-kill-setup)
   (purpose-x-magit-single-on)
-  (purpose-add-user-purposes :modes '((ag-mode . search) (rg-mode . search))))
+  (purpose-add-user-purposes :modes '((ag-mode . search) (rg-mode . search)))
+  (add-hook 'after-init-hook
+            (lambda ()
+              (when (file-exists-p purpose-default-layout-file)
+                (purpose-load-window-layout-file)))))
 
 ;; Customize solarized theme
 (use-package solarized-theme
