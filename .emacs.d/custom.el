@@ -181,6 +181,7 @@
  '(savehist-mode t nil (savehist))
  '(scroll-bar-mode nil)
  '(select-enable-clipboard t)
+ '(send-mail-function (quote smtpmail-send-it))
  '(server-mode t)
  '(shell-file-name "/opt/local/bin/bash")
  '(shift-select-mode nil)
