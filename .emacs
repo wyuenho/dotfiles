@@ -22,7 +22,7 @@
                                    "Menlo"
                                    "SF Mono"
                                    "Hack")))
-    (set-face-attribute 'default nil :family (car preferred-font-families) :weight 'regular)
+    (set-face-attribute 'default nil :family (car preferred-font-families) :weight 'regular :width 'semi-condensed)
     (add-to-list 'face-font-family-alternatives preferred-font-families)
     (set-frame-parameter nil 'fullscreen 'maximized)
     (with-eval-after-load 'linum
