@@ -66,10 +66,6 @@
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
 
-;; Turn on iMenu for code outlines for all prog and text modes, if possible
-(dolist (hook '(prog-mode-hook text-mode-hook))
-  (add-hook hook (lambda () (ignore-errors (imenu-add-menubar-index)))))
-
 ;; Save window config before ediff starts and restores it and cleans up when it quits, sanity!
 (defvar ediff-saved-window-configuration)
 (add-hook 'ediff-before-setup-hook
@@ -294,9 +290,15 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Use ido for even more things than ido-everywhere
 (use-package ido-completing-read+)
 (use-package ido-vertical-mode)
-(use-package idomenu
+
+;; Convenient iMenu entry search
+(use-package imenu-anywhere
   :config
-  (bind-keys ("C-." . idomenu)))
+  (bind-keys ("C-." . imenu-anywhere)))
+
+;; Turn on iMenu for code outlines for all prog and text modes, if possible
+(dolist (hook '(prog-mode-hook text-mode-hook))
+  (add-hook hook (lambda () (ignore-errors (imenu-add-menubar-index)))))
 
 ;; Mark and edit multiple things at once
 (use-package multiple-cursors
