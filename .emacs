@@ -685,7 +685,7 @@ Optional argument ARG same as `comment-dwim''s."
           (lambda ()
             (use-package anaconda-mode
               :delight
-              :after company-mode
+              :after company
               :config
               (anaconda-mode 1)
               (anaconda-eldoc-mode 1)
