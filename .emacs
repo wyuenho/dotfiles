@@ -535,8 +535,8 @@ Optional argument ARG same as `comment-dwim''s."
               :after yasnippet
               :config
               (bind-keys :map js-mode-map
-                         ("C-c d" . js-doc-insert-file-doc)
-                         ("C-c f" . js-doc-insert-function-doc-snippet)))
+                         ("C-c d m" . js-doc-insert-file-doc)
+                         ("C-c d f" . js-doc-insert-function-doc-snippet)))
 
             (use-package add-node-modules-path
               :config
@@ -588,7 +588,7 @@ Optional argument ARG same as `comment-dwim''s."
                          :config
                          (prettier-js-mode 1)
                          (bind-keys :map js-mode-map
-                                    ("C-c C-f" . prettier-js))))
+                                    ("C-c f" . prettier-js))))
 
                       ((eq style 'eslint)
                        (use-package eslintd-fix
@@ -596,14 +596,14 @@ Optional argument ARG same as `comment-dwim''s."
                          :config
                          (eslintd-fix-mode 1)
                          (bind-keys :map js-mode-map
-                                    ("C-c C-f" . eslintd-fix))))
+                                    ("C-c f" . eslintd-fix))))
 
                       ((memq style '(esfmt airbnb standard))
                        (use-package js-format
                          :config
                          (js-format-setup (symbol-name (find-js-format-style)))
                          (bind-keys :map js-mode-map
-                                    ("C-c C-f" . js-format-buffer)))))))
+                                    ("C-c f" . js-format-buffer)))))))
 
             (use-package nodejs-repl
               :config
@@ -668,11 +668,11 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'before-save-hook 'tide-format-before-save)
 
   (bind-keys :map typescript-mode-map
-             ("C-c C-f" . tide-format)
-             ("C-c n"   . tide-rename-symbol)
-             ("M-1"     . tide-fix)
-             ("M-?"     . tide-references)
-             ("C-h o"   . tide-documentation-at-point)))
+             ("C-c f" . tide-format)
+             ("C-c n" . tide-rename-symbol)
+             ("M-1"   . tide-fix)
+             ("M-?"   . tide-references)
+             ("C-h o" . tide-documentation-at-point)))
 
 ;; Python
 (use-package pyenv-mode
