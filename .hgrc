@@ -7,13 +7,14 @@ git = true
 [extdiff]
 cmd.ediff = sh
 opts.ediff = -c 'if [ -d $0 ]; then emacs --eval "(ediff-directories \"$0\" \"$1\" \"\")"; else emacs --eval "(ediff-files \"$0\" \"$1\")"; fi'
+cmd.opendiff = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh
 
 [merge-tools]
 emacs.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil 'kill-emacs)"
 
-filemerge.executable=/Applications/Xcode.app/Contents/Applications/FileMerge.app/Contents/MacOS/FileMerge
-filemerge.args=-left $other -right $local -ancestor $base -merge $output
-filemerge.gui=True
+filemerge.executable = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh
+filemerge.args = $local $other -ancestor $base -merge $output
+filemerge.gui = True
 
 [extensions]
 bookmarks =
@@ -22,20 +23,10 @@ hgext.extdiff =
 hgext.highlight =
 hgext.fetch =
 hggit = 
-graphlog =
 purge =
 mq =
-eol =
-color =
-progress =
-record =
 rebase =
-
-[patch]
-eol = lf
-
-[eol]
-only-consistent = False
+fsmonitor =
 
 [ui]
 username = Jimmy Yuen Ho Wong <wyuenho@gmail.com>
