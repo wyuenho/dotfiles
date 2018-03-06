@@ -44,7 +44,7 @@
    (quote
     (tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode)))
  '(desktop-path (quote ("~/.emacs.d")))
- '(desktop-restore-eager 10)
+ '(desktop-restore-eager t)
  '(desktop-save-mode t)
  '(diff-switches "-u -B")
  '(dired-auto-revert-buffer (quote dired-directory-changed-p))

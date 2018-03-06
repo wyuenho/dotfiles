@@ -444,7 +444,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package company
   :delight
   :config
-  (bind-key "M-/" 'company-complete company-mode-map)
+  (bind-key "M-/" 'company-manual-begin company-mode-map)
   (add-hook 'company-mode-hook
             (lambda ()
               (use-package company-statistics
