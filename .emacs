@@ -456,6 +456,10 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package company-flx
                 :config (company-flx-mode 1)))))
 
+;; Linting
+(with-eval-after-load 'flycheck
+  (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
+
 ;; Much faster PDF viewing
 (add-hook 'doc-view-mode-hook
           (lambda ()
