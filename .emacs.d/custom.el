@@ -95,7 +95,6 @@
  '(ido-vertical-mode t)
  '(imenu-auto-rescan t)
  '(imenu-auto-rescan-maxout 524288)
- '(imenu-list-auto-resize t)
  '(imenu-max-items 100)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
@@ -117,6 +116,7 @@
  '(mac-emulate-three-button-mouse t)
  '(mac-input-method-mode t)
  '(mac-print-mode t)
+ '(magit-diff-refine-hunk (quote all))
  '(magit-diff-use-overlays nil)
  '(markdown-code-lang-modes
    (quote
