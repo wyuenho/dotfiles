@@ -466,7 +466,7 @@ Optional argument ARG same as `comment-dwim''s."
             (when (fboundp 'pdf-tools-install)
               (pdf-tools-install))))
 
-;; Restclient
+;; REST API
 (use-package restclient
   :config
   (add-hook 'restclient-mode-hook
@@ -482,7 +482,7 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-c e c" . emacs-lisp-byte-compile)
            ("C-c e l" . emacs-lisp-byte-compile-and-load))
 
-;; Shell mode
+;; Term and shell
 (add-hook 'sh-mode-hook
           (lambda ()
             (use-package company-shell
@@ -490,7 +490,6 @@ Optional argument ARG same as `comment-dwim''s."
               :config
               (add-to-list 'company-backend '(company-shell company-shell-env)))))
 
-;; Term and shell
 (use-package bash-completion
   :config
   (dolist (hook '(shell-dynamic-complete-functions
@@ -501,7 +500,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (bind-keys ("M-T" . multi-term)))
 
-;; YAML mode
+;; YAML
 (use-package yaml-mode
   :config
   (add-hook 'yaml-mode-hook
@@ -759,7 +758,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
-;; Web stuff
+;; HTML templates and CSS
 (use-package rainbow-mode
   :config
   (add-hook 'css-mode-hook 'rainbow-mode))
