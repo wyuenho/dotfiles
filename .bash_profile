@@ -6,7 +6,6 @@ PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 
 # My Own things
 PATH="$HOME/packages/bin:$PATH"
-PATH="$HOME/packages/sshuuttle:$PATH"
 
 # ImageMagick
 export MAGICK_HOME
