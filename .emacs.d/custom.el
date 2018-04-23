@@ -167,6 +167,9 @@
     (add-node-modules-path ag all-the-icons all-the-icons-dired anaconda-mode ascii auto-compile bash-completion bind-key cargo company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes delight dired-collapse dired-hide-dotfiles dired-single docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region f flx-ido flx-isearch flycheck flycheck-popup-tip flycheck-rust flycheck-yamllint focus git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile graphviz-dot-mode ido-completing-read+ ido-vertical-mode imenu-anywhere import-js importmagic jq-mode js-doc js-format js2-refactor json-mode kill-or-bury-alive kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub markdown-mode mocha-snippets monky move-dup multi-term multiple-cursors nodejs-repl nose nvm origami package-build package-lint pager pager-default-keybindings pcre2el pdf-tools prettier-js projectile py-autopep8 py-isort pyenv-mode pyimport python python-docstring racer rainbow-mode restclient rg rjsx-mode rust-mode scss-mode smartparens smex smooth-scrolling solarized-theme sphinx-doc string-inflection tide try ts-comint undo-tree use-package visual-regexp visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose xref-js2 yaml-mode yarn-mode yasnippet-snippets zoom-frm)))
  '(purpose-mode t)
  '(pyenv-mode t)
+ '(rainbow-html-colors-major-mode-list
+   (quote
+    (html-mode css-mode php-mode nxml-mode xml-mode web-mode scss-mode)))
  '(reb-re-syntax (quote string))
  '(recentf-auto-cleanup (quote never))
  '(recentf-mode t)

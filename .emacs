@@ -753,6 +753,15 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 ;; Web stuff
+(use-package rainbow-mode
+  :config
+  (add-hook 'css-mode-hook 'rainbow-mode))
+
+(use-package scss-mode
+  :after rainbow
+  :config
+  (add-hook 'scss-mode-hook 'rainbow-mode))
+
 (use-package web-mode
   :functions web-mode-language-at-pos
   :mode ("\\.vue\\'"
