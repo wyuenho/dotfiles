@@ -10,3 +10,5 @@
 /.emacs.d/smex-items
 /.emacs.d/eshell/
 /.emacs.d/.mc-lists.el
+/.local/share/*
+!/.local/share/bash-completion
