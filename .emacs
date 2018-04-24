@@ -509,13 +509,6 @@ Optional argument ARG same as `comment-dwim''s."
                 :config
                 (flycheck-yamllint-setup)))))
 
-;; JSON
-(use-package json-mode
-  :config
-  (add-hook 'json-mode-hook
-            (lambda()
-              (add-hook 'before-save-hook 'json-mode-beautify nil t))))
-
 ;; Javascript
 (add-hook 'js-mode-hook
           (lambda ()
