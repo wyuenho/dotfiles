@@ -768,8 +768,8 @@ Optional argument ARG same as `comment-dwim''s."
          "\\.handlebars\\'"
          "\\.underscore\\'"
          "\\.html?\\'"
-         "\\.s?css'"
-         "\\.jinja'"
+         "\\.s?css\\'"
+         "\\.jinja\\'"
          "\\.mako\\'"
          "\\.dtl\\'"
          "\\.jsp\\'"
@@ -805,7 +805,7 @@ Optional argument ARG same as `comment-dwim''s."
                 :after company
                 :config
                 (setq-local company-backends
-                            '(company-tern company-web-html company-yasnippet company-files)))
+                            '(company-web-html company-tern company-yasnippet company-files)))
 
               (when (and (string-equal "tsx" (file-name-extension buffer-file-name))
                          (featurep 'tide))
