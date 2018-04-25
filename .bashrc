@@ -29,22 +29,25 @@ fi
 bind 'set match-hidden-files off'
 
 # Bash Completion
-if [ -f /opt/local/etc/bash_completion ]; then # MacPorts
-    source /opt/local/etc/bash_completion
-elif [ -f /usr/local/etc/bash_completion ]; then # Homebrew
-    source /usr/local/etc/bash_completion
+if [[ ( -z "$INSIDE_EMACS" || "$EMACS_BASH_COMPLETE" = "t" ) ]]; then
+    if [ -r /opt/local/etc/bash_completion ]; then # MacPorts
+        source /opt/local/etc/bash_completion
+    elif [ -r /usr/local/etc/bash_completion ]; then # Homebrew
+        source /usr/local/etc/bash_completion
+    fi
+
+    # NVM
+    [ -r "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+
+    # GVM
+    [ -r "$HOME/.gvm/scripts/completion" ] && source "$HOME/.gvm/scripts/completion"
+
+    # gcloud
+    if [ -f "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
+        source "$HOME/.google-cloud-sdk/completion.bash.inc";
+    fi
 fi
 
-# NVM
-[ -r "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
-
-# GVM
-[ -r "$HOME/.gvm/scripts/completion" ] && source "$HOME/.gvm/scripts/completion"
-
-# gcloud
-if [ -f "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
-    source "$HOME/.google-cloud-sdk/completion.bash.inc";
-fi
 
 # Better bash history search
 HH_CONFIG=hicolor,rawhistory # get more colors

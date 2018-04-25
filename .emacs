@@ -490,12 +490,6 @@ Optional argument ARG same as `comment-dwim''s."
               :config
               (add-to-list 'company-backend '(company-shell company-shell-env)))))
 
-(use-package bash-completion
-  :config
-  (dolist (hook '(shell-dynamic-complete-functions
-                  term-dynamic-complete-functions))
-    (add-hook hook 'bash-completion-dynamic-complete)))
-
 (use-package multi-term
   :config
   (bind-keys ("M-T" . multi-term)))
