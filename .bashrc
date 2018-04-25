@@ -47,11 +47,31 @@ if [ -f "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
 fi
 
 # Better bash history search
-export HH_CONFIG=hicolor,rawhistory # get more colors
-shopt -s histappend                 # append new history items to .bash_history
-export HISTCONTROL=ignorespace      # leading space hides commands from history
-export HISTFILESIZE=10000           # increase history file size (default is 500)
-export HISTSIZE=${HISTFILESIZE}     # increase history size (default is 500)
-export PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"   # mem/file sync
+HH_CONFIG=hicolor,rawhistory # get more colors
+export HH_CONFIG
+
+# append new history items to .bash_history
+shopt -s histappend
+
+# leading space hides commands from history
+HISTCONTROL=ignorespace
+export HISTCONTROL
+
+# increase history file size (default is 500)
+HISTFILESIZE=10000
+export HISTFILESIZE
+
+# increase history size (default is 500)
+HISTSIZE=${HISTFILESIZE}
+export HISTSIZE
+
+# mem/file sync
+PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
+# Magic fix for command not found error lifted from
+# https://github.com/Bash-it/bash-it/pull/709
+declared="$(declare -p PROMPT_COMMAND)"
+[[ "$declared" =~ \ -[aAilrtu]*x[aAilrtu]*\  ]] 2>/dev/null
+[[ $? -eq 0 ]] && export PROMPT_COMMAND
+
 # if this is interactive shell, then bind hh to Ctrl-r (for Vi mode check doc)
 if [[ $- =~ .*i.* && "$(type -fp hh)" ]]; then bind '"\C-r": "\C-a hh -- \C-j"'; fi
