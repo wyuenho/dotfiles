@@ -686,6 +686,13 @@ Optional argument ARG same as `comment-dwim''s."
 
 (add-hook 'python-mode-hook
           (lambda ()
+            (use-package pipenv
+              :delight
+              :after projectile
+              :config
+              (pipenv-mode 1)
+              (pipenv-activate))
+
             (use-package anaconda-mode
               :delight
               :after company
@@ -948,7 +955,14 @@ Optional argument ARG same as `comment-dwim''s."
   (purpose-x-popwin-setup)
   (purpose-x-kill-setup)
   (purpose-x-magit-single-on)
-  (purpose-add-user-purposes :modes '((ag-mode . search) (rg-mode . search)))
+
+  (purpose-add-user-purposes
+   :modes '((ag-mode              . search)
+            (rg-mode              . search)
+            (shell-mode           . terminal)
+            (inferior-python-mode . terminal))
+   :names '(("*Pipenv shell*" . terminal)))
+
   (when (file-exists-p purpose-default-layout-file)
     (purpose-load-window-layout-file)))
 
