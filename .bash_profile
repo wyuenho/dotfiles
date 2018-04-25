@@ -58,8 +58,8 @@ fi
 PATH="$HOME/.cargo/bin:$PATH"
 
 # Google Cloud SDK
-CLOUDSDK_PYTHON="python"
 export CLOUDSDK_PYTHON
+CLOUDSDK_PYTHON="python"
 if [ -f "$HOME/.google-cloud-sdk/path.bash.inc" ]; then
     source "$HOME/.google-cloud-sdk/path.bash.inc"
 fi
@@ -67,4 +67,4 @@ fi
 # PWD
 PATH=".:$PATH"
 
-if [ -f ~/.bashrc ]; then source ~/.bashrc; fi
+if [ -r ~/.bashrc ]; then source ~/.bashrc; fi
