@@ -176,7 +176,7 @@ Optional argument ARG same as `comment-dwim''s."
              ([remap next-line]                . next-logical-line)
              ([remap previous-line]            . previous-logical-line))))
 
-;; Sane scrolling
+;; Sane keyboard scrolling
 (use-package pager-default-keybindings)
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X and Linux.
@@ -423,9 +423,10 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Quick Snippets
 (use-package yasnippet
   :delight yas-minor-mode
+  :commands yas-minor-mode
+  :hook ((prog-mode text-mode) . yas-minor-mode)
   :config
-  (dolist (hook '(prog-mode-hook text-mode))
-    (add-hook hook 'yas-minor-mode))
+  (yas-reload-all)
   (bind-keys :map yas-minor-mode-map
              ("TAB"   . nil)
              ("<tab>" . nil)
@@ -458,6 +459,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Linting
 (with-eval-after-load 'flycheck
+  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
   (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
 
 ;; Much faster PDF viewing
@@ -468,6 +470,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; REST API
 (use-package restclient
+  :commands restclient-mode
+  :mode (("\\.http\\'" . restclient-mode))
   :config
   (add-hook 'restclient-mode-hook
             (lambda ()
