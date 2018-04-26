@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# uuid: d1005984-0762-4f69-8029-6fae4daf1568
+# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
+# name: Redux Reducer
+# key: rrd
+# --
+
+export default (state = $1, action) => {
+	switch (action.type) {
+		case $2:
+			$3
+		default:
+			return state;
+	}
+};

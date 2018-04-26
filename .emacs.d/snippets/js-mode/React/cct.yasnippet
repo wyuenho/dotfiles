@@ -1,0 +1,24 @@
+# -*- mode: snippet -*-
+# uuid: aa59b4ef-8233-4ccf-b7e2-40bf2211ea09
+# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
+# name: Create Context
+# key: cct
+# --
+
+const $1Context = createContext($2);
+
+class $1Provider extends Component {
+	state = {
+		$3
+	}
+
+	render() {
+		return (
+			<$1Context.Provider value={{ state: { $3 }, actions: {} }}>
+				{this.props.children}
+			</$1Context.Provider>
+		);
+	}
+}
+
+export default $1Provider;

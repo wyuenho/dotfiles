@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# uuid: 1cc27a5b-a534-4d47-aed5-83ef9489935e
+# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
+# name: PureComponent Class
+# key: pcs
+# --
+
+class $1 extends PureComponent {
+	state = { $2 }
+	render() {
+		return (
+			$3
+		);
+	}
+}
+
+export default $1;

@@ -1,0 +1,25 @@
+# -*- mode: snippet -*-
+# uuid: ea50f6c8-2d2e-4902-b1e5-b657aebef8f2
+# contributor: Jimmy Yuen Ho Wong <wyuenho@gmail.com>
+# name: PureComponent Class FlowType
+# key: pcsf
+# --
+
+type P = {
+	$1
+};
+
+type S = {
+	$2
+};
+
+class $3 extends PureComponent<P, S> {
+	state = { $4 }
+	render() {
+		return (
+			$5
+		);
+	}
+}
+
+export default $3;
