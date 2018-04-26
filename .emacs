@@ -103,6 +103,7 @@ Optional argument ARG same as `comment-dwim''s."
     (comment-dwim arg)))
 
 (eval-when-compile (require 'use-package))
+(setq use-package-compute-statistics t)
 (require 'bind-key)
 
 ;; I hate X mouse bindings
@@ -816,7 +817,13 @@ Optional argument ARG same as `comment-dwim''s."
                          (featurep 'tide))
                 (flycheck-add-mode 'typescript-tslint 'web-mode)
                 (tide-setup)
-                (tide-hl-identifier-mode 1)))))
+                (tide-hl-identifier-mode 1))
+
+              (when (string-equal "css" (file-name-extension buffer-file-name))
+                (flycheck-add-mode 'css-stylelint 'web-mode))
+
+              (when (string-equal "scss" (file-name-extension buffer-file-name))
+                (flycheck-add-mode 'scss-stylelint 'web-mode)))))
 
 (use-package emmet-mode
   :delight
