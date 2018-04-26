@@ -820,20 +820,15 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package emmet-mode
   :delight
-  :after web-mode
+  :after (:any web-mode js2-mode rjsx-mode)
+  :hook (sgml-mode nxml-mode web-mode js-jsx-mode js2-jsx-mode rjsx-mode)
   :config
-  (dolist (hook '(sgml-mode-hook
-                  nxml-mode-hook
-                  web-mode-hook
-                  js-jsx-mode-hook
-                  js2-jsx-mode
-                  rjsx-mode-hook))
-    (add-hook hook (lambda ()
-                     (emmet-mode 1)
-                     (when (or (member major-mode '(js-jsx-mode js2-jsx-mode rjsx-mode))
-                               (and (eq major-mode 'web-mode)
-                                    (string= (web-mode-language-at-pos) "jsx")))
-                       (setq-local emmet-expand-jsx-className? t))))))
+  (add-hook 'emmet-mode-hook
+            (lambda ()
+              (when (or (member major-mode '(js-jsx-mode js2-jsx-mode rjsx-mode))
+                        (and (eq major-mode 'web-mode)
+                             (string= (web-mode-language-at-pos) "jsx")))
+                (setq-local emmet-expand-jsx-className? t)))))
 
 ;; Project management, version control, file search and browser
 (use-package projectile
