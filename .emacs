@@ -13,20 +13,10 @@
 
 ;; Maximize frame on startup and set up default fonts
 (when (display-graphic-p)
-  (let ((preferred-font-families '("Noto Sans Mono"
-                                   "Roboto Mono"
-                                   "DejaVu Sans Mono"
-                                   "Bitstream Vera Sans Mono"
-                                   "Fira Mono"
-                                   "Monaco"
-                                   "Menlo"
-                                   "SF Mono"
-                                   "Hack")))
-    (set-face-attribute 'default nil :family (car preferred-font-families) :weight 'regular :width 'semi-condensed)
-    (add-to-list 'face-font-family-alternatives preferred-font-families)
-    (set-frame-parameter nil 'fullscreen 'maximized)
-    (with-eval-after-load 'linum
-      (set-face-attribute 'linum nil :weight 'thin))))
+  (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
+  (set-frame-parameter nil 'fullscreen 'maximized)
+  (with-eval-after-load 'linum
+    (set-face-attribute 'linum nil :weight 'thin)))
 
 ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
 ;; but it's not desirable on macOS because the window server will decide the
@@ -208,12 +198,15 @@ Optional argument ARG same as `comment-dwim''s."
               (all-the-icons-dired-mode 1))))
 
 (use-package dired-hide-dotfiles
-  :config
-  (bind-keys :map dired-mode-map
-             ("." . dired-hide-dotfiles-mode)))
+  :bind (:map dired-mode-map
+              ("." . dired-hide-dotfiles-mode)))
 
 (use-package dired-single
   :after dired-hide-dotfiles
+  :bind (:map dired-mode-map
+              ("^"         . (lambda () (interactive) (dired-single-buffer "..")))
+              ("<mouse-1>" . dired-single-buffer-mouse)
+              ("\C-m"      . dired-single-buffer))
   :config
   ;; Make sure dired-hide-details-mode is preserved when reusing the dired
   ;; window
@@ -230,17 +223,11 @@ Optional argument ARG same as `comment-dwim''s."
                     (setq-local dired-hide-details-hide-information-lines hide-information-lines)
                     (setq-local dired-hide-details-hide-symlink-targets hide-symlink-targets)
                     (when hide-details (dired-hide-details-mode)))
-                  result)))
-  (bind-keys :map dired-mode-map
-             ("^"         . (lambda () (interactive) (dired-single-buffer "..")))
-             ("<mouse-1>" . dired-single-buffer-mouse)
-             ("\C-m"      . dired-single-buffer)))
+                  result))))
 
 (use-package dired-collapse
-  :config
-  (add-hook 'dired-mode-hook
-            (lambda ()
-              (dired-collapse-mode 1))))
+  :commands dired-collapse-mode
+  :hook (dired-mode . dired-collapse-mode))
 
 ;; Turn off useless mode lighters
 (use-package delight
@@ -257,17 +244,15 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Adjust frame-wide font size
 (use-package zoom-frm
-  :config
-  (bind-keys ("C-x C-+" . zoom-in/out)
-             ("C-x C--" . zoom-in/out)
-             ("C-x C-=" . zoom-in/out)
-             ("C-x C-0" . zoom-in/out)))
+  :bind (("C-x C-+" . zoom-in/out)
+         ("C-x C--" . zoom-in/out)
+         ("C-x C-=" . zoom-in/out)
+         ("C-x C-0" . zoom-in/out)))
 
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
   :delight
-  :config
-  (bind-keys ("C-h b" . which-key-show-top-level)))
+  :bind (("C-h b" . which-key-show-top-level)))
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
@@ -276,17 +261,15 @@ Optional argument ARG same as `comment-dwim''s."
   (flx-ido-mode 1))
 
 (use-package flx-isearch
-  :config
-  (flx-isearch-mode 1)
-  (bind-keys ("C-M-s" . flx-isearch-forward)
-             ("C-M-r" . flx-isearch-backward)))
+  :bind (("C-M-s" . flx-isearch-forward)
+         ("C-M-r" . flx-isearch-backward))
+  :config (flx-isearch-mode 1))
 
 ;; Use ido with M-x
-(use-package smex
-  :config
-  (smex-initialize)
-  (bind-keys ("M-x" . smex)
-             ("M-X" . smex-major-mode-commands)))
+(use-package amx
+  :bind (("M-x" . amx)
+         ("M-X" . amx-major-mode-commands))
+  :config (amx-mode 1))
 
 ;; Use ido for even more things than ido-everywhere
 (use-package ido-completing-read+)
@@ -294,8 +277,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Convenient iMenu entry search
 (use-package imenu-anywhere
-  :config
-  (bind-keys ("C-." . imenu-anywhere)))
+  :bind (("C-." . imenu-anywhere)))
 
 ;; Turn on iMenu for code outlines for all prog and text modes, if possible
 (dolist (hook '(prog-mode-hook text-mode-hook))
@@ -303,97 +285,63 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Mark and edit multiple things at once
 (use-package multiple-cursors
-  :config
-  (bind-keys ("M-s M-e" . mc/edit-lines)
-             ("C->"     . mc/mark-next-like-this)
-             ("C-<"     . mc/mark-previous-like-this)
-             ("C-M->"   . mc/skip-to-next-like-this)
-             ("C-M-<"   . mc/skip-to-previous-like-this)
-             ("M-s C->" . mc/mark-all-dwim)))
+  :bind (("M-s M-e" . mc/edit-lines)
+         ("C->"     . mc/mark-next-like-this)
+         ("C-<"     . mc/mark-previous-like-this)
+         ("C-M->"   . mc/skip-to-next-like-this)
+         ("C-M-<"   . mc/skip-to-previous-like-this)
+         ("M-s C->" . mc/mark-all-dwim)))
 
 ;; Construct regexp and search visually and incrementally
 (use-package visual-regexp-steroids
-  :after multiple-cursors
-  :config
-  (bind-keys ("M-%"     . vr/replace)
-             ("C-M-%"   . vr/query-replace)
-             ("M-s C-s" . vr/isearch-forward)
-             ("M-s m"   . vr/mc-mark)))
+  :bind (("M-%"     . vr/replace)
+         ("C-M-%"   . vr/query-replace)
+         ("M-s C-s" . vr/isearch-forward)
+         ("M-s m"   . vr/mc-mark)))
 
 (use-package expand-region
-  :config
-  (bind-keys ("M-=" . er/expand-region)
-             ("M--" . er/contract-region)))
+  :bind (("M-=" . er/expand-region)
+         ("M--" . er/contract-region)))
 
 (use-package smartparens-config
-  :init
-  (require 'cl)
-  (defmacro def-pairs (pairs)
-    `(progn
-       ,@(loop for (key . val) in pairs
-               collect
-               `(defun ,(read (concat  "wrap-with-" (prin1-to-string key) "s"))
-                    (&optional _arg)
-                  (interactive "P")
-                  (sp-wrap-with-pair ,val)))))
+  :bind  (:map smartparens-mode-map
+               ("C-M-a" . sp-beginning-of-sexp)
+               ("C-M-e" . sp-end-of-sexp)
 
-  (def-pairs ((paren        . "(")
-              (bracket      . "[")
-              (brace        . "{")
-              (single-quote . "'")
-              (double-quote . "\"")
-              (underscore   . "_")
-              (back-quote   . "`")
-              (angle        . "<")))
+               ("C-M-f" . sp-forward-sexp)
+               ("C-M-b" . sp-backward-sexp)
 
-  :config
-  (bind-keys :map smartparens-mode-map
-             ("C-M-a" . sp-beginning-of-sexp)
-             ("C-M-e" . sp-end-of-sexp)
+               ("C-M-n" . sp-next-sexp)
+               ("C-M-p" . sp-previous-sexp)
 
-             ("C-M-f" . sp-forward-sexp)
-             ("C-M-b" . sp-backward-sexp)
+               ("C-M-d" . sp-down-sexp)
+               ("C-M-u" . sp-backward-up-sexp)
+               ("M-S-d" . sp-backward-down-sexp)
+               ("M-S-u" . sp-up-sexp)
 
-             ("C-M-n" . sp-next-sexp)
-             ("C-M-p" . sp-previous-sexp)
+               ("C-S-f" . sp-forward-symbol)
+               ("C-S-b" . sp-backward-symbol)
 
-             ("C-M-d" . sp-down-sexp)
-             ("C-M-u" . sp-backward-up-sexp)
-             ("M-S-d" . sp-backward-down-sexp)
-             ("M-S-u" . sp-up-sexp)
+               ("A-<right>" . sp-slurp-hybrid-sexp)
+               ("M-<right>" . sp-forward-barf-sexp)
+               ("A-<left>"  . sp-backward-slurp-sexp)
+               ("M-<left>"  . sp-backward-barf-sexp)
 
-             ("C-S-f" . sp-forward-symbol)
-             ("C-S-b" . sp-backward-symbol)
+               ("C-M-w"   . sp-copy-sexp)
+               ("C-M-S-t" . sp-push-hybrid-sexp)
+               ("C-M-t"   . sp-transpose-hybrid-sexp)
 
-             ("A-<right>" . sp-slurp-hybrid-sexp)
-             ("M-<right>" . sp-forward-barf-sexp)
-             ("A-<left>"  . sp-backward-slurp-sexp)
-             ("M-<left>"  . sp-backward-barf-sexp)
+               ("C-S-d" . sp-kill-symbol)
+               ("C-M-k" . sp-kill-sexp)
+               ("C-k"   . sp-kill-hybrid-sexp)
+               ("M-k"   . sp-backward-kill-sexp)
 
-             ("C-M-w"   . sp-copy-sexp)
-             ("C-M-S-t" . sp-push-hybrid-sexp)
-             ("C-M-t"   . sp-transpose-hybrid-sexp)
+               ("M-<backspace>"               . backward-kill-word)
+               ("C-<backspace>"               . sp-backward-kill-word)
+               ([remap sp-backward-kill-word] . backward-kill-word)
 
-             ("C-S-d" . sp-kill-symbol)
-             ("C-M-k" . sp-kill-sexp)
-             ("C-k"   . sp-kill-hybrid-sexp)
-             ("M-k"   . sp-backward-kill-sexp)
-
-             ("M-<backspace>"               . backward-kill-word)
-             ("C-<backspace>"               . sp-backward-kill-word)
-             ([remap sp-backward-kill-word] . backward-kill-word)
-
-             ("M-[" . sp-backward-unwrap-sexp)
-             ("M-]" . sp-unwrap-sexp)
-
-             ("C-c ("   . wrap-with-parens)
-             ("C-c ["   . wrap-with-brackets)
-             ("C-c {"   . wrap-with-braces)
-             ("C-c '"   . wrap-with-single-quotes)
-             ("C-c \""  . wrap-with-double-quotes)
-             ("C-c _"   . wrap-with-underscores)
-             ("C-c `"   . wrap-with-back-quotes)
-             ("C-c <"   . wrap-with-angles)))
+               ("M-[" . sp-backward-unwrap-sexp)
+               ("M-]" . sp-unwrap-sexp)))
 
 ;; Cycle thru most commonly programming identifier styles
 (use-package string-inflection
@@ -408,18 +356,16 @@ Optional argument ARG same as `comment-dwim''s."
            (string-inflection-all-cycle))))
   :config
   (setq string-inflection-skip-backward-when-done t)
-  (bind-keys ("C-x C-y" . inflect-string)))
+  :bind (("C-x C-y" . inflect-string)))
 
 ;; Cycle between quotes
 (use-package cycle-quotes
-  :config
-  (bind-keys ("C-x C-'" . cycle-quotes)))
+  :bind (("C-x C-'" . cycle-quotes)))
 
 ;; Vim-like increment and decrement
 (use-package evil-numbers
-  :config
-  (bind-keys ("C-x =" . evil-numbers/inc-at-pt)
-             ("C-x -" . evil-numbers/dec-at-pt)))
+  :bind (("C-x =" . evil-numbers/inc-at-pt)
+         ("C-x -" . evil-numbers/dec-at-pt)))
 
 ;; Quick Snippets
 (use-package yasnippet
@@ -428,25 +374,26 @@ Optional argument ARG same as `comment-dwim''s."
   :hook ((prog-mode text-mode) . yas-minor-mode)
   :config
   (yas-reload-all)
-  (bind-keys :map yas-minor-mode-map
-             ("TAB"   . nil)
-             ("<tab>" . nil)
-             ("C-c i" . yas-expand)))
+  :bind (:map yas-minor-mode-map
+              ("TAB"   . nil)
+              ("<tab>" . nil)
+              ("C-c i" . yas-expand)))
 
 ;; Modern code folding
 (use-package origami
   :config
   ;; Unbind hide/show mode's ridiculous keybindings
   (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
-  (bind-keys ("M-0"   . origami-open-all-nodes)
-             ("M-9"   . origami-close-all-nodes)
-             ("C-M-/" . origami-recursively-toggle-node)))
+  :bind (("M-0"   . origami-open-all-nodes)
+         ("M-9"   . origami-close-all-nodes)
+         ("C-M-/" . origami-recursively-toggle-node)))
 
 ;; Auto-completion
 (use-package company
   :delight
+  :bind (:map company-mode-map
+              ("M-/" . company-manual-begin))
   :config
-  (bind-key "M-/" 'company-manual-begin company-mode-map)
   (add-hook 'company-mode-hook
             (lambda ()
               (use-package company-statistics
@@ -496,11 +443,11 @@ Optional argument ARG same as `comment-dwim''s."
               (add-to-list 'company-backend '(company-shell company-shell-env)))))
 
 (use-package multi-term
-  :config
-  (bind-keys ("M-T" . multi-term)))
+  :bind (("M-T" . multi-term)))
 
 ;; YAML
 (use-package yaml-mode
+  :mode "\\.ya?ml\\'"
   :config
   (add-hook 'yaml-mode-hook
             (lambda ()
@@ -535,10 +482,9 @@ Optional argument ARG same as `comment-dwim''s."
 
             (use-package js-doc
               :after yasnippet
-              :config
-              (bind-keys :map js-mode-map
-                         ("C-c d m" . js-doc-insert-file-doc)
-                         ("C-c d f" . js-doc-insert-function-doc-snippet)))
+              :bind (:map js-mode-map
+                          ("C-c d m" . js-doc-insert-file-doc)
+                          ("C-c d f" . js-doc-insert-function-doc-snippet)))
 
             (use-package add-node-modules-path
               :config
@@ -547,10 +493,10 @@ Optional argument ARG same as `comment-dwim''s."
             (use-package import-js
               :config
               (run-import-js)
-              (bind-keys :map js-mode-map
-                         ("C-c t i"   . import-js-import)
-                         ("C-c t f"   . import-js-fix)
-                         ("C-c t M-." . import-js-goto)))
+              :bind (:map js-mode-map
+                          ("C-c t i"   . import-js-import)
+                          ("C-c t f"   . import-js-fix)
+                          ("C-c t M-." . import-js-goto)))
 
             (use-package f
               :preface
@@ -589,27 +535,26 @@ Optional argument ARG same as `comment-dwim''s."
                          :delight
                          :config
                          (prettier-js-mode 1)
-                         (bind-keys :map js-mode-map
-                                    ("C-c f" . prettier-js))))
+                         :bind (:map js-mode-map
+                                     ("C-c f" . prettier-js))))
 
                       ((eq style 'eslint)
                        (use-package eslintd-fix
                          :delight
                          :config
                          (eslintd-fix-mode 1)
-                         (bind-keys :map js-mode-map
-                                    ("C-c f" . eslintd-fix))))
+                         :bind (:map js-mode-map
+                                     ("C-c f" . eslintd-fix))))
 
                       ((memq style '(esfmt airbnb standard))
                        (use-package js-format
                          :config
                          (js-format-setup (symbol-name (find-js-format-style)))
-                         (bind-keys :map js-mode-map
-                                    ("C-c f" . js-format-buffer)))))))
+                         :bind (:map js-mode-map
+                                     ("C-c f" . js-format-buffer)))))))
 
             (use-package nodejs-repl
-              :config
-              (bind-keys :map js-mode-map
+              :bind(:map js-mode-map
                          ("C-x C-e" . nodejs-repl-send-last-expression)
                          ("C-c r"   . nodejs-repl-send-region)
                          ("C-c b"   . nodejs-repl-send-buffer)
@@ -619,6 +564,7 @@ Optional argument ARG same as `comment-dwim''s."
             (define-key js-mode-map [menu-bar] nil)))
 
 (use-package js2-mode
+  :defer
   :config
   (add-hook 'js2-mode-hook
             (lambda ()
@@ -639,25 +585,24 @@ Optional argument ARG same as `comment-dwim''s."
 
               (use-package js2-imenu-extras
                 :delight
-                :config
-                (js2-imenu-extras-mode 1)))))
+                :config (js2-imenu-extras-mode 1)))))
 
 (use-package rjsx-mode
   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
 ;; TypeScript
-(use-package typescript-mode)
+(use-package typescript-mode
+  :mode ("\\.ts\\'" "\\.mts\\'"))
 
 (use-package ts-comint
   :after typescript-mode
-  :config
-  (bind-keys :map typescript-mode-map
-             ("C-x C-e" . ts-send-last-sexp)
-             ("C-M-x"   . ts-send-last-sexp-and-go)
-             ("C-c r"   . ts-send-region-and-go)
-             ("C-c b"   . ts-send-buffer-and-go)
-             ("C-c l"   . ts-load-file-and-go)
-             ("C-c z"   . switch-to-ts)))
+  :bind (:map typescript-mode-map
+              ("C-x C-e" . ts-send-last-sexp)
+              ("C-M-x"   . ts-send-last-sexp-and-go)
+              ("C-c r"   . ts-send-region-and-go)
+              ("C-c b"   . ts-send-buffer-and-go)
+              ("C-c l"   . ts-load-file-and-go)
+              ("C-c z"   . switch-to-ts)))
 
 (use-package tide
   :after typescript-mode
@@ -669,19 +614,18 @@ Optional argument ARG same as `comment-dwim''s."
 
   (add-hook 'before-save-hook 'tide-format-before-save)
 
-  (bind-keys :map typescript-mode-map
-             ("C-c f" . tide-format)
-             ("C-c n" . tide-rename-symbol)
-             ("M-1"   . tide-fix)
-             ("M-?"   . tide-references)
-             ("C-h o" . tide-documentation-at-point)))
+  :bind (:map typescript-mode-map
+              ("C-c f" . tide-format)
+              ("C-c n" . tide-rename-symbol)
+              ("M-1"   . tide-fix)
+              ("M-?"   . tide-references)
+              ("C-h o" . tide-documentation-at-point)))
 
 ;; Python
 (use-package pyenv-mode
-  :config
-  (bind-keys :map pyenv-mode-map
-             ("C-c C-s" . nil)
-             ("C-c C-u" . nil)))
+  :bind (:map pyenv-mode-map
+              ("C-c C-s" . nil)
+              ("C-c C-u" . nil)))
 
 (add-hook 'python-mode-hook
           (lambda ()
@@ -699,12 +643,12 @@ Optional argument ARG same as `comment-dwim''s."
               (anaconda-mode 1)
               (anaconda-eldoc-mode 1)
               (add-to-list 'company-backends '(company-anaconda :with company-capf))
-              (bind-keys :map anaconda-mode-map
-                         ("M-r"   . nil)
-                         ("M-\""  . anaconda-mode-find-assignments)
-                         ("M-?"   . anaconda-mode-find-references)
-                         ("M-,"   . anaconda-mode-go-back)
-                         ("C-h o" . anaconda-mode-show-doc)))
+              :bind (:map anaconda-mode-map
+                          ("M-r"   . nil)
+                          ("M-\""  . anaconda-mode-find-assignments)
+                          ("M-?"   . anaconda-mode-find-references)
+                          ("M-,"   . anaconda-mode-go-back)
+                          ("C-h o" . anaconda-mode-show-doc)))
 
             (use-package py-autopep8
               :config (py-autopep8-enable-on-save))
@@ -718,16 +662,16 @@ Optional argument ARG same as `comment-dwim''s."
               :config
               (setq importmagic-be-quiet t)
               (importmagic-mode 1)
-              (bind-keys :map importmagic-mode-map
-                         ("M-1" . importmagic-fix-imports)))
+              :bind (:map importmagic-mode-map
+                          ("M-1" . importmagic-fix-imports)))
 
             (use-package py-isort
-              :config
-              (bind-keys :map python-mode-map
-                         ("C-c s" . py-isort-buffer)))))
+              :bind (:map python-mode-map
+                          ("C-c s" . py-isort-buffer)))))
 
 ;; Go
 (use-package go-mode
+  :mode "\\.go\\'"
   :config
   (add-hook 'before-save-hook 'gofmt-before-save)
   (add-hook 'go-mode-hook
@@ -758,14 +702,13 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 ;; HTML templates and CSS
-(use-package rainbow-mode
-  :config
-  (add-hook 'css-mode-hook 'rainbow-mode))
-
 (use-package scss-mode
-  :after rainbow
-  :config
-  (add-hook 'scss-mode-hook 'rainbow-mode))
+  :mode "\\.scss\\'")
+
+(use-package rainbow-mode
+  :demand
+  :after scss-mode
+  :hook (css-mode scss-mode))
 
 (use-package web-mode
   :functions web-mode-language-at-pos
@@ -774,7 +717,7 @@ Optional argument ARG same as `comment-dwim''s."
          "\\.handlebars\\'"
          "\\.underscore\\'"
          "\\.html?\\'"
-         "\\.s?css\\'"
+         ;; "\\.s?css\\'"
          "\\.jinja\\'"
          "\\.mako\\'"
          "\\.dtl\\'"
@@ -855,8 +798,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Second fastest but the best find grep in terms of tooling support
 (use-package ag
-  :config
-  (bind-keys ("M-s a" . ag)))
+  :bind (("M-s a" . ag)))
 
 (use-package wgrep-ag
   :after ag)
@@ -869,19 +811,17 @@ Optional argument ARG same as `comment-dwim''s."
             (lambda ()
               (next-error-follow-minor-mode 0)
               (wgrep-ag-setup)))
-  (bind-keys ("M-s r" . rg))
-  (bind-keys :map projectile-command-map
-             ("s r" . rg-project)))
+  :bind (("M-s r" . rg)
+         :map projectile-command-map
+         ("s r" . rg-project)))
 
 ;; Git
 (use-package magit
-  :config
-  (bind-keys ("C-x v C-g" . magit-status)))
+  :bind (("C-x v C-g" . magit-status)))
 
 ;; Hg
 (use-package monky
-  :config
-  (bind-keys ("C-x v C-h" . monky-status)))
+  :bind (("C-x v C-h" . monky-status)))
 
 ;; Saner window management
 (use-package window-purpose
@@ -961,7 +901,7 @@ Optional argument ARG same as `comment-dwim''s."
             (rg-mode              . search)
             (shell-mode           . terminal)
             (inferior-python-mode . terminal))
-   :names '(("*Pipenv shell*" . terminal)))
+   :names '(("*Pipenv shell*"     . terminal)))
 
   (when (file-exists-p purpose-default-layout-file)
     (purpose-load-window-layout-file)))
