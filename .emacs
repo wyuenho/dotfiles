@@ -261,9 +261,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
-  :config
-  (setq flx-ido-use-faces nil)
-  (flx-ido-mode 1))
+  :config (flx-ido-mode 1))
 
 (use-package flx-isearch
   :bind (("C-M-s" . flx-isearch-forward)
@@ -682,7 +680,6 @@ Optional argument ARG same as `comment-dwim''s."
             (use-package importmagic
               :delight
               :config
-              (setq importmagic-be-quiet t)
               (importmagic-mode 1)
               :bind (:map importmagic-mode-map
                           ("M-1" . importmagic-fix-imports)))

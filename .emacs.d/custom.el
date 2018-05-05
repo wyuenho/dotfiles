@@ -67,9 +67,11 @@
  '(exec-path-from-shell-variables (quote ("PATH" "MANPATH" "GOPATH")))
  '(explicit-shell-file-name "/opt/local/bin/bash")
  '(fill-column 80)
+ '(flx-ido-mode t)
+ '(flx-ido-use-faces t)
  '(flycheck-global-modes
    (quote
-    (sh-mode json-mode yaml-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode typescript-mode python-mode go-mode web-mode css-mode scss-mode)))
+    (sh-mode json-mode yaml-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode typescript-mode python-mode go-mode web-mode css-mode scss-mode rust-mode)))
  '(gc-cons-threshold 20000000)
  '(global-company-mode t)
  '(global-flycheck-mode t)
@@ -96,6 +98,7 @@
  '(imenu-auto-rescan-maxout 524288)
  '(imenu-list-auto-resize t)
  '(imenu-max-items 100)
+ '(importmagic-be-quiet t)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(ispell-program-name "hunspell")
