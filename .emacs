@@ -321,45 +321,48 @@ Optional argument ARG same as `comment-dwim''s."
   (with-eval-after-load 'rjsx-mode
     (add-hook 'rjsx-mode-hook (load-html-mode-expansions 'rjsx-mode))))
 
-(use-package smartparens-config
-  :bind  (:map smartparens-mode-map
-               ("C-M-a" . sp-beginning-of-sexp)
-               ("C-M-e" . sp-end-of-sexp)
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (use-package smartparens-config
+              :config
+              (bind-keys :map smartparens-mode-map
+                         ("C-M-a" . sp-beginning-of-sexp)
+                         ("C-M-e" . sp-end-of-sexp)
 
-               ("C-M-f" . sp-forward-sexp)
-               ("C-M-b" . sp-backward-sexp)
+                         ("C-M-f" . sp-forward-sexp)
+                         ("C-M-b" . sp-backward-sexp)
 
-               ("C-M-n" . sp-next-sexp)
-               ("C-M-p" . sp-previous-sexp)
+                         ("C-M-n" . sp-next-sexp)
+                         ("C-M-p" . sp-previous-sexp)
 
-               ("C-M-d" . sp-down-sexp)
-               ("C-M-u" . sp-backward-up-sexp)
-               ("M-S-d" . sp-backward-down-sexp)
-               ("M-S-u" . sp-up-sexp)
+                         ("C-M-d" . sp-down-sexp)
+                         ("C-M-u" . sp-backward-up-sexp)
+                         ("M-S-d" . sp-backward-down-sexp)
+                         ("M-S-u" . sp-up-sexp)
 
-               ("C-S-f" . sp-forward-symbol)
-               ("C-S-b" . sp-backward-symbol)
+                         ("C-S-f" . sp-forward-symbol)
+                         ("C-S-b" . sp-backward-symbol)
 
-               ("A-<right>" . sp-slurp-hybrid-sexp)
-               ("M-<right>" . sp-forward-barf-sexp)
-               ("A-<left>"  . sp-backward-slurp-sexp)
-               ("M-<left>"  . sp-backward-barf-sexp)
+                         ("A-<right>" . sp-slurp-hybrid-sexp)
+                         ("M-<right>" . sp-forward-barf-sexp)
+                         ("A-<left>"  . sp-backward-slurp-sexp)
+                         ("M-<left>"  . sp-backward-barf-sexp)
 
-               ("C-M-w"   . sp-copy-sexp)
-               ("C-M-S-t" . sp-push-hybrid-sexp)
-               ("C-M-t"   . sp-transpose-hybrid-sexp)
+                         ("C-M-w"   . sp-copy-sexp)
+                         ("C-M-S-t" . sp-push-hybrid-sexp)
+                         ("C-M-t"   . sp-transpose-hybrid-sexp)
 
-               ("C-S-d" . sp-kill-symbol)
-               ("C-M-k" . sp-kill-sexp)
-               ("C-k"   . sp-kill-hybrid-sexp)
-               ("M-k"   . sp-backward-kill-sexp)
+                         ("C-S-d" . sp-kill-symbol)
+                         ("C-M-k" . sp-kill-sexp)
+                         ("C-k"   . sp-kill-hybrid-sexp)
+                         ("M-k"   . sp-backward-kill-sexp)
 
-               ("M-<backspace>"               . backward-kill-word)
-               ("C-<backspace>"               . sp-backward-kill-word)
-               ([remap sp-backward-kill-word] . backward-kill-word)
+                         ("M-<backspace>"               . backward-kill-word)
+                         ("C-<backspace>"               . sp-backward-kill-word)
+                         ([remap sp-backward-kill-word] . backward-kill-word)
 
-               ("M-[" . sp-backward-unwrap-sexp)
-               ("M-]" . sp-unwrap-sexp)))
+                         ("M-[" . sp-backward-unwrap-sexp)
+                         ("M-]" . sp-unwrap-sexp)))))
 
 ;; Cycle thru most commonly programming identifier styles
 (use-package string-inflection
