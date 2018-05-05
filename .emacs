@@ -440,7 +440,8 @@ Optional argument ARG same as `comment-dwim''s."
 ;; REST API
 (use-package restclient
   :commands restclient-mode
-  :mode (("\\.http\\'" . restclient-mode))
+  :mode (("\\.http\\'" . restclient-mode)
+         ("\\.rest\\'" . restclient-mode))
   :config
   (add-hook 'restclient-mode-hook
             (lambda ()
