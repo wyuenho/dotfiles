@@ -305,8 +305,21 @@ Optional argument ARG same as `comment-dwim''s."
          ("M-s m"   . vr/mc-mark)))
 
 (use-package expand-region
+  :demand
   :bind (("M-=" . er/expand-region)
-         ("M--" . er/contract-region)))
+         ("M--" . er/contract-region))
+  :init
+  (defun load-html-mode-expansions (mode)
+    (lambda ()
+      (use-package html-mode-expansions
+        :config
+        (er/enable-mode-expansions mode 'er/add-html-mode-expansions))))
+  :config
+  (add-hook 'js-jsx-mode-hook (load-html-mode-expansions 'js-jsx-mode))
+  (with-eval-after-load 'js2-mode
+    (add-hook 'js2-jsx-mode-hook (load-html-mode-expansions 'js2-jsx-mode)))
+  (with-eval-after-load 'rjsx-mode
+    (add-hook 'rjsx-mode-hook (load-html-mode-expansions 'rjsx-mode))))
 
 (use-package smartparens-config
   :bind  (:map smartparens-mode-map
