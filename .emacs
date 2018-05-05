@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t -*-
+
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
 (advice-add 'load-theme :around (lambda (old-load-theme &rest args)
@@ -77,20 +79,24 @@
                      (setq mode-line-format (remove 'mode-line-buffer-identification mode-line-format))))))
 
 ;; More sensible comment-dwim
-(defun comment-dwim-line-or-region (&optional arg)
-  "Replacement for the `comment-dwim' command.
+(advice-add 'comment-dwim :around
+            (lambda (comment-dwim &rest args)
+              "Replacement for the `comment-dwim' command.
 
-If no region is selected then comment the current line from the
-front, otherwise the commentable lines in the region.  Replaces
-the default behaviour of `comment-dwim', where it inserts comment
-at the end of the line.
+If no region is selected and point is not at the end of the line,
+comment the current line from the front, otherwise the
+commentable lines in the region.  Replaces the default behaviour
+of `comment-dwim', where it inserts comment at the end of the
+line if no region is defined.
 
 Optional argument ARG same as `comment-dwim''s."
-  (interactive "*P")
-  (comment-normalize-vars)
-  (if (and (not (use-region-p)))
-      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-    (comment-dwim arg)))
+
+              (interactive "*P")
+              (comment-normalize-vars)
+              (if (and (not (use-region-p))
+                       (not (looking-at "[ \t]*\n")))
+                  (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+                (apply comment-dwim args))))
 
 (eval-when-compile (require 'use-package))
 (setq use-package-compute-statistics t)
@@ -113,7 +119,6 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Bind useful things to keys
 (bind-keys ("C-x f"     . follow-mode)
            ("<backtab>" . align)
-           ("M-;"       . comment-dwim-line-or-region)
            ;; Replace default buffer menu with ibuffer
            ("C-x C-b"   . ibuffer))
 
