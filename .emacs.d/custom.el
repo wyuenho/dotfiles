@@ -10,9 +10,6 @@
  '(ag-ignore-list (quote ("*.min.js")))
  '(ag-reuse-buffers t)
  '(ag-reuse-window t)
- '(align-c++-modes
-   (quote
-    (c++-mode c-mode java-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode)))
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
  '(auto-package-update-delete-old-versions t)
@@ -102,6 +99,7 @@
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(ispell-program-name "hunspell")
+ '(js-chain-indent t)
  '(js-doc-author "Jimmy Yuen Ho Wong")
  '(js-doc-license "MIT @license")
  '(js-doc-mail-address "wyuenho@gmail.com")

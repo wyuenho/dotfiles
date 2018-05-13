@@ -7,7 +7,8 @@
 
 ;; Emacs loads init file first and the packages last normally. Forcing the
 ;; packages to load first makes configuring them in the init file possible.
-(package-initialize)
+(when (< emacs-major-version 26)
+  (package-initialize))
 
 ;; Tell Custom to write and find the custom settings elsewhere
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -92,7 +93,6 @@ line if no region is defined.
 Optional argument ARG same as `comment-dwim''s."
 
               (interactive "*P")
-              (comment-normalize-vars)
               (if (and (not (use-region-p))
                        (not (looking-at "[ \t]*\n")))
                   (comment-or-uncomment-region (line-beginning-position) (line-end-position))
@@ -302,6 +302,7 @@ Optional argument ARG same as `comment-dwim''s."
          ("M-s C-s" . vr/isearch-forward)
          ("M-s m"   . vr/mc-mark)))
 
+;; More convenient region selection
 (use-package expand-region
   :demand
   :bind (("M-=" . er/expand-region)
@@ -362,7 +363,7 @@ Optional argument ARG same as `comment-dwim''s."
                          ("M-[" . sp-backward-unwrap-sexp)
                          ("M-]" . sp-unwrap-sexp)))))
 
-;; Cycle thru most commonly programming identifier styles
+;; Cycle through most common programming identifier styles
 (use-package string-inflection
   :init
   (defun inflect-string ()
