@@ -133,6 +133,9 @@ Optional argument ARG same as `comment-dwim''s."
   ;; Map the usual undo key to undo-tree-visualize
   (bind-key "C-x u" 'undo-tree-visualize))
 
+;; Quiet down noisy config gracefully
+(use-package shut-up)
+
 ;; Move around windows with shifted arrow keys
 (use-package windmove
   :config
@@ -845,7 +848,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Saner window management
 (use-package window-purpose
-  :after magit undo-tree
+  :after magit undo-tree shut-up
   :config
 
   ;; Pending https://github.com/bmag/emacs-purpose/pull/116
@@ -885,7 +888,7 @@ Optional argument ARG same as `comment-dwim''s."
                     (when (and file-path
                                (cl-delete-if #'window-dedicated-p
                                              (purpose-windows-with-purpose 'code1-dired)))
-                      (let ((buffer (dired-noselect (file-name-directory file-path))))
+                      (let ((buffer (shut-up (dired-noselect (file-name-directory file-path)))))
                         (dolist (other-buf (purpose-buffers-with-purpose 'code1-dired))
                           (when (and (not (eq buffer other-buf))
                                      (not (string= (buffer-name other-buf)
