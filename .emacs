@@ -432,7 +432,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Linting
 (with-eval-after-load 'flycheck
   (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
-  (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
+  (flycheck-pos-tip-mode))
 
 ;; Much faster PDF viewing
 (add-hook 'doc-view-mode-hook
@@ -598,11 +598,6 @@ Optional argument ARG same as `comment-dwim''s."
               (bind-keys
                :map js2-mode-map
                ("C-k" . sp-kill-whole-line))
-
-              (use-package xref-js2
-                :config
-                (unbind-key "M-." js2-mode-map)
-                (add-hook 'xref-backend-functions 'xref-js2-xref-backend nil t))
 
               (use-package js2-refactor
                 :delight
@@ -841,6 +836,10 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("M-s r" . rg)
          :map projectile-command-map
          ("s r" . rg-project)))
+
+(use-package dumb-jump)
+
+(use-package dumb-diff)
 
 ;; Git
 (use-package magit
