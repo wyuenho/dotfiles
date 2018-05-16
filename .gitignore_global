@@ -60,6 +60,8 @@ pip-selfcheck.json
 auto-save-list
 tramp
 .\#*
+.dumbjump
+.dumbjumpignore
 
 # Org-mode
 .org-id-locations
