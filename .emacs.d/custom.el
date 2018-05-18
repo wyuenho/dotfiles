@@ -39,6 +39,7 @@
    (quote
     (tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode)))
  '(desktop-path (quote ("~/.emacs.d")))
+ '(desktop-restore-frames nil)
  '(desktop-save-mode t)
  '(diff-switches "-u -B")
  '(dired-auto-revert-buffer (quote dired-directory-changed-p))
@@ -116,6 +117,7 @@
  '(mac-emulate-three-button-mouse t)
  '(mac-input-method-mode t)
  '(mac-print-mode t)
+ '(mac-system-move-file-to-trash-use-finder t)
  '(magit-diff-refine-hunk (quote all))
  '(magit-diff-use-overlays nil)
  '(markdown-code-lang-modes

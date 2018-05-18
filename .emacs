@@ -106,8 +106,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; I hate X mouse bindings
 (when (and (display-graphic-p)
            (not (memq (window-system) '(x))))
-  (bind-key "<mouse-2>" 'mouse-buffer-menu)
-  (unbind-key "<mouse-3>"))
+  (bind-key "<mouse-3>" 'mouse-buffer-menu))
 
 ;; Completely unbind annoying abbrev, dabbrev, expand, hippie-expand. These
 ;; ancient completion commands are just too stupid for this day and age
@@ -850,8 +849,16 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("C-x v C-h" . monky-status)))
 
 ;; Saner window management
+(use-package imenu-list
+  :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
+
 (use-package window-purpose
-  :after magit undo-tree shut-up
+  :quelpa (window-purpose
+           :fetcher github
+           :repo "wyuenho/emacs-purpose"
+           :branch "improve-code1"
+           :files (:defaults "layouts"))
+  :after magit undo-tree imenu-list
   :config
 
   ;; Pending https://github.com/bmag/emacs-purpose/pull/116
@@ -860,68 +867,6 @@ Optional argument ARG same as `comment-dwim''s."
                 (let ((window (get-buffer-window undo-tree-visualizer-buffer-name)))
                   (set-window-dedicated-p window 'soft))))
 
-  ;; Pending https://github.com/bmag/emacs-purpose/pull/117
-  (defvar purpose-x-code1-dired-buffer-name "*Files*")
-  (setq purpose-x-code1--window-layout
-        '(nil
-          (0 0 152 35)
-          (t
-           (0 0 29 35)
-           (:purpose code1-dired :purpose-dedicated t :width 0.16 :height 0.5 :edges
-                     (0.0 0.0 0.19333333333333333 0.5))
-           (:purpose buffers :purpose-dedicated t :width 0.16 :height 0.4722222222222222 :edges
-                     (0.0 0.5 0.19333333333333333 0.9722222222222222)))
-          (:purpose edit :purpose-dedicated t :width 0.6 :height 0.9722222222222222 :edges
-                    (0.19333333333333333 0.0 0.8266666666666667 0.9722222222222222))
-          (:purpose ilist :purpose-dedicated t :width 0.15333333333333332 :height 0.9722222222222222 :edges
-                    (0.8266666666666667 0.0 1.0133333333333334 0.9722222222222222))))
-
-  (setq purpose-x-code1-purpose-config
-        (purpose-conf "purpose-x-code1"
-                      :mode-purposes
-                      '((ibuffer-mode . buffers)
-                        (imenu-list-major-mode . ilist))
-                      :name-purposes
-                      `((,purpose-x-code1-dired-buffer-name . code1-dired))))
-
-  (advice-add 'purpose-x-code1-update-dired :override
-              (lambda ()
-                (save-selected-window
-                  (let ((file-path (buffer-file-name)))
-                    (when (and file-path
-                               (cl-delete-if #'window-dedicated-p
-                                             (purpose-windows-with-purpose 'code1-dired)))
-                      (let ((buffer (shut-up (dired-noselect (file-name-directory file-path)))))
-                        (dolist (other-buf (purpose-buffers-with-purpose 'code1-dired))
-                          (when (and (not (eq buffer other-buf))
-                                     (not (string= (buffer-name other-buf)
-                                                   (purpose--dummy-buffer-name 'code1-dired))))
-                            (kill-buffer other-buf)))
-                        (with-current-buffer buffer
-                          (rename-buffer purpose-x-code1-dired-buffer-name))
-                        (letf (((symbol-value 'purpose-select-buffer-hook) nil))
-                          (switch-to-buffer buffer))
-                        (dired-goto-file file-path)
-                        (when (fboundp 'dired-hide-details-mode)
-                          (when (not (assq 'dired-hide-details-mode minor-mode-alist))
-                            (add-minor-mode 'dired-hide-details-mode ""))
-                          (dired-hide-details-mode))
-                        (bury-buffer (current-buffer))))))))
-
-  (advice-add 'purpose-x-code1-update-change :override
-              (lambda ()
-                (when (and
-                       (frame-or-buffer-changed-p 'purpose-x-code1-buffers-changed)
-                       (not (memq (purpose-buffer-purpose (current-buffer)) '(code1-dired buffers ilist)))
-                       (not (minibufferp)))
-                  (purpose-x-code1-update-dired)
-                  (imenu-list-update-safe))))
-
-  (purpose-x-code1-setup)
-  (purpose-x-popwin-setup)
-  (purpose-x-kill-setup)
-  (purpose-x-magit-single-on)
-
   (purpose-add-user-purposes
    :modes '((ag-mode              . search)
             (rg-mode              . search)
@@ -929,8 +874,16 @@ Optional argument ARG same as `comment-dwim''s."
             (inferior-python-mode . terminal))
    :names '(("*Pipenv shell*"     . terminal)))
 
-  (when (file-exists-p purpose-default-layout-file)
-    (purpose-load-window-layout-file)))
+  (purpose-x-code1-setup)
+  (purpose-x-popwin-setup)
+  (purpose-x-kill-setup)
+  (purpose-x-magit-single-on)
+
+  (add-hook 'after-init-hook
+            (lambda ()
+              (when (file-exists-p purpose-default-layout-file)
+                (purpose-load-window-layout-file)))
+            t))
 
 ;; Customize solarized theme
 (use-package solarized-theme
