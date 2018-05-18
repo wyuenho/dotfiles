@@ -30,10 +30,6 @@
 ;; Set file, keyboard and terminal coding systems automatically
 (prefer-coding-system 'utf-8)
 
-;; Enable initially disabled keys
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -99,7 +95,6 @@ Optional argument ARG same as `comment-dwim''s."
                 (apply comment-dwim args))))
 
 (eval-when-compile (require 'use-package))
-(setq use-package-compute-statistics t)
 (require 'bind-key)
 (require 'quelpa-use-package)
 
@@ -116,8 +111,22 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Always use M-g prefix to jump between errors
 (unbind-key "C-x `")
 
+(defun upcase-region-dwim (beg end)
+  "`upcase-region' when `transient-mark-mode' is on and region is active."
+  (interactive "*r")
+  (when (use-region-p)
+    (upcase-region beg end)))
+
+(defun downcase-region-dwim (beg end)
+  "`downcase-region' when `transient-mark-mode' is on and region is active."
+  (interactive "*r")
+  (when (use-region-p)
+    (downcase-region beg end)))
+
 ;; Bind useful things to keys
-(bind-keys ("C-x f"     . follow-mode)
+(bind-keys ("C-x C-u"   . upcase-region-dwim)
+           ("C-x C-l"   . downcase-region-dwim)
+           ("C-x f"     . follow-mode)
            ("<backtab>" . align)
            ;; Replace default buffer menu with ibuffer
            ("C-x C-b"   . ibuffer))
