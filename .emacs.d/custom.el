@@ -236,4 +236,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(imenu-list-entry-face-0 ((t (:inherit imenu-list-entry-face))))
+ '(imenu-list-entry-face-1 ((t (:inherit imenu-list-entry-face))))
+ '(imenu-list-entry-face-2 ((t (:inherit imenu-list-entry-face))))
+ '(imenu-list-entry-face-3 ((t (:inherit imenu-list-entry-face))))
+ '(imenu-list-entry-subalist-face-0 ((t (:inherit (imenu-list-entry-face-0 font-lock-type-face) :underline t :weight bold))))
+ '(imenu-list-entry-subalist-face-1 ((t (:inherit (imenu-list-entry-face-1 font-lock-function-name-face) :underline t :weight bold))))
+ '(imenu-list-entry-subalist-face-2 ((t (:inherit (imenu-list-entry-face-2 font-lock-variable-name-face) :underline t :weight bold))))
+ '(imenu-list-entry-subalist-face-3 ((t (:inherit (imenu-list-entry-face-3 font-lock-string-face) :underline t :weight bold)))))
