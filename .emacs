@@ -1,5 +1,22 @@
 ;;; -*- lexical-binding: t -*-
 
+;; A bug in the mac port saves the mouse color when `frameset-save' is called,
+;; but it's not desirable on macOS because the window server will decide the
+;; color of the cursor according to the background color.
+(when (memq (window-system) '(mac))
+  (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
+
+;; I don't know why this vars aren't customizable...
+(when (and (>= emacs-major-version 26)
+           (memq (window-system) '(ns)))
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  (setq frame-title-format nil
+        ns-use-proxy-icon nil
+        ns-use-thin-smoothing t
+        ns-mwheel-line-height 12
+        ns-use-mwheel-momentum t
+        ns-use-mwheel-acceleration t))
+
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
 (advice-add 'load-theme :around (lambda (old-load-theme &rest args)
@@ -21,12 +38,6 @@
   (with-eval-after-load 'linum
     (set-face-attribute 'linum nil :weight 'thin)))
 
-;; A bug in the mac port saves the mouse color when `frameset-save' is called,
-;; but it's not desirable on macOS because the window server will decide the
-;; color of the cursor according to the background color.
-(when (memq (window-system) '(mac))
-  (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
-
 ;; Set file, keyboard and terminal coding systems automatically
 (prefer-coding-system 'utf-8)
 
@@ -45,12 +56,18 @@
 (setq kill-buffer-query-functions
       (remq 'process-kill-buffer-query-function kill-buffer-query-functions))
 
+;; Only turn on `auto-revert-mode' for Mac on Emacs >= 26 because kqueue file
+;; notification is broken for Emacs < 26
+(when (and (>= emacs-major-version 26)
+           (memq (window-system) '(mac ns)))
+  (global-auto-revert-mode t))
+
 ;; Automatically wrap overly long lines for all text modes
-(add-hook 'text-mode-hook (lambda () (auto-fill-mode 1)))
+(add-hook 'text-mode-hook (lambda () (auto-fill-mode t)))
 
 ;; Turn on subword mode and linum mode for all prog and text modes
 (dolist (hook '(prog-mode-hook text-mode-hook))
-  (add-hook hook (lambda () (subword-mode 1) (linum-mode 1))))
+  (add-hook hook (lambda () (subword-mode t) (linum-mode t))))
 
 ;; Renumber the current buffer after reverting the buffer
 (add-hook 'after-revert-hook 'linum-update-current)
@@ -95,6 +112,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (apply comment-dwim args))))
 
 (eval-when-compile (require 'use-package))
+(setq use-package-compute-statistics t)
 (require 'bind-key)
 (require 'quelpa-use-package)
 
@@ -172,17 +190,17 @@ Optional argument ARG same as `comment-dwim''s."
                          ("p"   . compilation-previous-error)))))
 
 ;; Completely unbind visual-line-mode's stupid bindings
-(add-hook 'visual-line-mode-hook
-          (lambda ()
-            (bind-keys
-             :map visual-line-mode-map
-             ([remap move-beginning-of-line]   . nil)
-             ([remap move-end-of-line]         . nil)
-             ([remap beginning-of-visual-line] . move-beginning-of-line)
-             ([remap end-of-visual-line]       . move-end-of-line)
-             ([remap kill-line]                . nil)
-             ([remap next-line]                . next-logical-line)
-             ([remap previous-line]            . previous-logical-line))))
+;; (add-hook 'visual-line-mode-hook
+;;           (lambda ()
+;;             (bind-keys
+;;              :map visual-line-mode-map
+;;              ([remap move-beginning-of-line]   . nil)
+;;              ([remap move-end-of-line]         . nil)
+;;              ([remap beginning-of-visual-line] . move-beginning-of-line)
+;;              ([remap end-of-visual-line]       . move-end-of-line)
+;;              ([remap kill-line]                . nil)
+;;              ([remap next-line]                . next-logical-line)
+;;              ([remap previous-line]            . previous-logical-line))))
 
 ;; Sane keyboard scrolling
 (use-package pager-default-keybindings)
@@ -212,7 +230,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'dired-mode-hook
             (lambda ()
-              (all-the-icons-dired-mode 1))))
+              (all-the-icons-dired-mode t))))
 
 (use-package dired-hide-dotfiles
   :bind (:map dired-mode-map
@@ -256,11 +274,11 @@ Optional argument ARG same as `comment-dwim''s."
              (undo-tree-mode nil undo-tree)
              (auto-revert-mode nil autorevert)
              (visual-line-mode nil simple)
-             (subword-mode nil subword)
-             (rainbow-mode nil rainbow-mode))))
+             (subword-mode nil subword))))
 
 ;; Adjust frame-wide font size
 (use-package zoom-frm
+  :quelpa (zoom-frm :fetcher github :repo "emacsmirror/zoom-frm")
   :bind (("C-x C-+" . zoom-in/out)
          ("C-x C--" . zoom-in/out)
          ("C-x C-=" . zoom-in/out)
@@ -273,18 +291,18 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
-  :config (flx-ido-mode 1))
+  :config (flx-ido-mode t))
 
 (use-package flx-isearch
   :bind (("C-M-s" . flx-isearch-forward)
          ("C-M-r" . flx-isearch-backward))
-  :config (flx-isearch-mode 1))
+  :config (flx-isearch-mode t))
 
 ;; Use ido with M-x
 (use-package amx
   :bind (("M-x" . amx)
          ("M-X" . amx-major-mode-commands))
-  :config (amx-mode 1))
+  :config (amx-mode t))
 
 ;; Use ido for even more things than ido-everywhere
 (use-package ido-completing-read+)
@@ -316,15 +334,13 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; More convenient region selection
 (use-package expand-region
-  :demand
   :bind (("M-=" . er/expand-region)
          ("M--" . er/contract-region))
   :init
   (defun load-html-mode-expansions (mode)
     (lambda ()
-      (use-package html-mode-expansions
-        :config
-        (er/enable-mode-expansions mode 'er/add-html-mode-expansions))))
+      (require 'html-mode-expansions)
+      (er/enable-mode-expansions mode 'er/add-html-mode-expansions)))
   :config
   (add-hook 'js-jsx-mode-hook (load-html-mode-expansions 'js-jsx-mode))
   (with-eval-after-load 'js2-mode
@@ -334,46 +350,47 @@ Optional argument ARG same as `comment-dwim''s."
 
 (add-hook 'prog-mode-hook
           (lambda ()
-            (use-package smartparens-config
+            (use-package smartparens
               :config
-              (bind-keys :map smartparens-mode-map
-                         ("C-M-a" . sp-beginning-of-sexp)
-                         ("C-M-e" . sp-end-of-sexp)
+              (require 'smartparens-config)
+              :bind (:map smartparens-mode-map
+                          ("C-M-a" . sp-beginning-of-sexp)
+                          ("C-M-e" . sp-end-of-sexp)
 
-                         ("C-M-f" . sp-forward-sexp)
-                         ("C-M-b" . sp-backward-sexp)
+                          ("C-M-f" . sp-forward-sexp)
+                          ("C-M-b" . sp-backward-sexp)
 
-                         ("C-M-n" . sp-next-sexp)
-                         ("C-M-p" . sp-previous-sexp)
+                          ("C-M-n" . sp-next-sexp)
+                          ("C-M-p" . sp-previous-sexp)
 
-                         ("C-M-d" . sp-down-sexp)
-                         ("C-M-u" . sp-backward-up-sexp)
-                         ("M-S-d" . sp-backward-down-sexp)
-                         ("M-S-u" . sp-up-sexp)
+                          ("C-M-d" . sp-down-sexp)
+                          ("C-M-u" . sp-backward-up-sexp)
+                          ("M-S-d" . sp-backward-down-sexp)
+                          ("M-S-u" . sp-up-sexp)
 
-                         ("C-S-f" . sp-forward-symbol)
-                         ("C-S-b" . sp-backward-symbol)
+                          ("C-S-f" . sp-forward-symbol)
+                          ("C-S-b" . sp-backward-symbol)
 
-                         ("A-<right>" . sp-slurp-hybrid-sexp)
-                         ("M-<right>" . sp-forward-barf-sexp)
-                         ("A-<left>"  . sp-backward-slurp-sexp)
-                         ("M-<left>"  . sp-backward-barf-sexp)
+                          ("A-<right>" . sp-slurp-hybrid-sexp)
+                          ("M-<right>" . sp-forward-barf-sexp)
+                          ("A-<left>"  . sp-backward-slurp-sexp)
+                          ("M-<left>"  . sp-backward-barf-sexp)
 
-                         ("C-M-w"   . sp-copy-sexp)
-                         ("C-M-S-t" . sp-push-hybrid-sexp)
-                         ("C-M-t"   . sp-transpose-hybrid-sexp)
+                          ("C-M-w"   . sp-copy-sexp)
+                          ("C-M-S-t" . sp-push-hybrid-sexp)
+                          ("C-M-t"   . sp-transpose-hybrid-sexp)
 
-                         ("C-S-d" . sp-kill-symbol)
-                         ("C-M-k" . sp-kill-sexp)
-                         ("C-k"   . sp-kill-hybrid-sexp)
-                         ("M-k"   . sp-backward-kill-sexp)
+                          ("C-S-d" . sp-kill-symbol)
+                          ("C-M-k" . sp-kill-sexp)
+                          ("C-k"   . sp-kill-hybrid-sexp)
+                          ("M-k"   . sp-backward-kill-sexp)
 
-                         ("M-<backspace>"               . backward-kill-word)
-                         ("C-<backspace>"               . sp-backward-kill-word)
-                         ([remap sp-backward-kill-word] . backward-kill-word)
+                          ("M-<backspace>"               . backward-kill-word)
+                          ("C-<backspace>"               . sp-backward-kill-word)
+                          ([remap sp-backward-kill-word] . backward-kill-word)
 
-                         ("M-[" . sp-backward-unwrap-sexp)
-                         ("M-]" . sp-unwrap-sexp)))))
+                          ("M-[" . sp-backward-unwrap-sexp)
+                          ("M-]" . sp-unwrap-sexp)))))
 
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
@@ -398,6 +415,13 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package evil-numbers
   :bind (("C-x =" . evil-numbers/inc-at-pt)
          ("C-x -" . evil-numbers/dec-at-pt)))
+
+;; Cross-machine fomatting
+(use-package editorconfig
+  :delight
+  :config
+  (add-to-list 'editorconfig-indentation-alist
+               '(rjsx-mode js2-basic-offset sgml-basic-offset)))
 
 ;; Quick Snippets
 (use-package yasnippet
@@ -429,18 +453,20 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'company-mode-hook
             (lambda ()
               (use-package company-statistics
-                :config (company-statistics-mode 1))
+                :config (company-statistics-mode t))
 
               (use-package company-quickhelp
-                :config (company-quickhelp-mode 1))
+                :config (company-quickhelp-mode t))
 
               (use-package company-flx
-                :config (company-flx-mode 1)))))
+                :config (company-flx-mode t)))))
 
 ;; Linting
 (with-eval-after-load 'flycheck
-  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
-  (flycheck-pos-tip-mode))
+  (when (featurep 'flycheck-color-mode-line)
+    (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
+  (when (featurep 'flycheck-pos-tip)
+    (flycheck-pos-tip-mode)))
 
 ;; Much faster PDF viewing
 (add-hook 'doc-view-mode-hook
@@ -508,7 +534,7 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package tern
                 :delight
                 :config
-                (tern-mode 1)
+                (tern-mode t)
                 (unbind-key "C-c C-r" tern-mode-keymap))
 
               (use-package company-tern
@@ -570,7 +596,7 @@ Optional argument ARG same as `comment-dwim''s."
                          (use-package prettier-js
                            :delight
                            :config
-                           (prettier-js-mode 1)
+                           (prettier-js-mode t)
                            :bind (:map js-mode-map
                                        ("C-c f" . prettier-js))))
 
@@ -578,7 +604,7 @@ Optional argument ARG same as `comment-dwim''s."
                          (use-package eslintd-fix
                            :delight
                            :config
-                           (eslintd-fix-mode 1)
+                           (eslintd-fix-mode t)
                            :bind (:map js-mode-map
                                        ("C-c f" . eslintd-fix))))
 
@@ -603,6 +629,8 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'js2-mode-hook
             (lambda ()
+              (js2-imenu-extras-mode t)
+
               (bind-keys
                :map js2-mode-map
                ("C-k" . sp-kill-whole-line))
@@ -610,12 +638,8 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package js2-refactor
                 :delight
                 :config
-                (js2-refactor-mode 1)
-                (js2r-add-keybindings-with-prefix "C-c r"))
-
-              (use-package js2-imenu-extras
-                :delight
-                :config (js2-imenu-extras-mode 1)))))
+                (js2-refactor-mode t)
+                (js2r-add-keybindings-with-prefix "C-c r")))))
 
 (use-package rjsx-mode
   :quelpa (rjsx-mode :fetcher github :repo "wyuenho/rjsx-mode" :branch "indent-after-jsx-expr")
@@ -641,7 +665,7 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'typescript-mode-hook
             (lambda ()
               (tide-setup)
-              (tide-hl-identifier-mode 1)))
+              (tide-hl-identifier-mode t)))
 
   (add-hook 'before-save-hook 'tide-format-before-save)
 
@@ -664,15 +688,15 @@ Optional argument ARG same as `comment-dwim''s."
               :delight
               :after projectile
               :config
-              (pipenv-mode 1)
+              (pipenv-mode t)
               (pipenv-activate))
 
             (use-package anaconda-mode
               :delight
               :after company
               :config
-              (anaconda-mode 1)
-              (anaconda-eldoc-mode 1)
+              (anaconda-mode t)
+              (anaconda-eldoc-mode t)
               (add-to-list 'company-backends '(company-anaconda :with company-capf))
               :bind (:map anaconda-mode-map
                           ("M-r"   . nil)
@@ -686,12 +710,12 @@ Optional argument ARG same as `comment-dwim''s."
 
             (use-package python-docstring
               :delight
-              :config (python-docstring-mode 1))
+              :config (python-docstring-mode t))
 
             (use-package importmagic
               :delight
               :config
-              (importmagic-mode 1)
+              (importmagic-mode t)
               :bind (:map importmagic-mode-map
                           ("M-1" . importmagic-fix-imports)))
 
@@ -736,7 +760,7 @@ Optional argument ARG same as `comment-dwim''s."
   :mode "\\.scss\\'")
 
 (use-package rainbow-mode
-  :demand
+  :delight
   :after scss-mode
   :hook (css-mode scss-mode))
 
@@ -778,7 +802,7 @@ Optional argument ARG same as `comment-dwim''s."
                                     (if (or (string= web-mode-cur-language "javascript")
                                             (string= web-mode-cur-language "jsx"))
                                         (unless tern-mode (tern-mode))
-                                      (if tern-mode (tern-mode -1))))))))
+                                      (if tern-mode (tern-mode -t))))))))
 
               (use-package company-web-html
                 :after company
@@ -790,7 +814,7 @@ Optional argument ARG same as `comment-dwim''s."
                          (featurep 'tide))
                 (flycheck-add-mode 'typescript-tslint 'web-mode)
                 (tide-setup)
-                (tide-hl-identifier-mode 1))
+                (tide-hl-identifier-mode t))
 
               (when (string-equal "css" (file-name-extension buffer-file-name))
                 (flycheck-add-mode 'css-stylelint 'web-mode))
@@ -820,7 +844,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (pyenv-mode-set project)
               (pyenv-mode-unset))))
   :config
-  (projectile-mode 1)
+  (projectile-mode t)
   (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
 
 (use-package go-projectile
@@ -891,7 +915,8 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'after-init-hook
             (lambda ()
               (when (file-exists-p purpose-default-layout-file)
-                (purpose-load-window-layout-file)))
+                (purpose-load-window-layout-file))
+              (select-window (get-largest-window)))
             t))
 
 ;; Customize solarized theme
@@ -904,6 +929,6 @@ Optional argument ARG same as `comment-dwim''s."
   (set-face-background 'flycheck-fringe-error nil)
   (set-face-background 'flycheck-fringe-info nil)
   (set-face-background 'flycheck-fringe-warning nil)
-  (set-face-attribute 'mode-line nil :overline "#284b54" :underline nil :box nil)
-  (set-face-attribute 'mode-line-inactive nil :overline "#284b54" :underline nil :box nil)
-  (set-face-attribute 'header-line nil :box nil))
+  (set-face-attribute 'mode-line nil :overline nil :underline nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil :box nil)
+  (set-face-attribute 'header-line nil :overline nil :underline nil :box nil))
