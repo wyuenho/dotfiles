@@ -6,13 +6,12 @@
 (when (memq (window-system) '(mac))
   (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
 
-;; I don't know why this vars aren't customizable...
-(when (and (>= emacs-major-version 26)
-           (memq (window-system) '(ns)))
+;; Emacs 26 ns port new settings
+(when (and (< emacs-major-version 26)
+           (eq (window-system) 'ns))
+  (add-to-list 'default-frame-alist '(ns-appearance . dark))
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-  (setq frame-title-format nil
-        ns-use-proxy-icon nil
-        ns-use-thin-smoothing t
+  (setq ns-use-thin-smoothing t
         ns-mwheel-line-height 12
         ns-use-mwheel-momentum t
         ns-use-mwheel-acceleration t))
