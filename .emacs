@@ -277,12 +277,10 @@ Optional argument ARG same as `comment-dwim''s."
              (subword-mode nil subword))))
 
 ;; Adjust frame-wide font size
-(use-package zoom-frm
-  :quelpa (zoom-frm :fetcher github :repo "emacsmirror/zoom-frm")
-  :bind (("C-x C-+" . zoom-in/out)
-         ("C-x C--" . zoom-in/out)
-         ("C-x C-=" . zoom-in/out)
-         ("C-x C-0" . zoom-in/out)))
+(use-package default-text-scale
+  :bind (("C-x C-=" . default-text-scale-increase)
+         ("C-x C--" . default-text-scale-decrease)
+         ("C-x C-0" . default-text-scale-reset)))
 
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
