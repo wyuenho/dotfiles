@@ -936,4 +936,4 @@ Optional argument ARG same as `comment-dwim''s."
   (set-face-background 'flycheck-fringe-warning nil)
   (set-face-attribute 'mode-line nil :overline nil :underline nil :box nil)
   (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil :box nil)
-  (set-face-attribute 'header-line nil :overline nil :underline nil :box nil))
+  (set-face-attribute 'header-line nil :box nil))
