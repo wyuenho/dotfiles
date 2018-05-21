@@ -333,7 +333,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package expand-region
   :bind (("M-=" . er/expand-region)
          ("M--" . er/contract-region))
-  :init
+  :preface
   (defun load-html-mode-expansions (mode)
     (lambda ()
       (require 'html-mode-expansions)
@@ -391,7 +391,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
-  :init
+  :preface
   (defun inflect-string ()
     (interactive)
     (cond ((memq major-mode '(java-mode js-mode js2-mode rjsx-mode typescript-mode go-mode))
@@ -834,12 +834,13 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Project management, version control, file search and browser
 (use-package projectile
   :after pyenv-mode
-  :init (defun projectile-pyenv-mode-set ()
-          "Set pyenv version matching project name."
-          (let ((project (projectile-project-name)))
-            (if (member project (pyenv-mode-versions))
-                (pyenv-mode-set project)
-              (pyenv-mode-unset))))
+  :preface
+  (defun projectile-pyenv-mode-set ()
+    "Set pyenv version matching project name."
+    (let ((project (projectile-project-name)))
+      (if (member project (pyenv-mode-versions))
+          (pyenv-mode-set project)
+        (pyenv-mode-unset))))
   :config
   (projectile-mode t)
   (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
@@ -883,6 +884,13 @@ Optional argument ARG same as `comment-dwim''s."
   :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
 
 (use-package window-purpose
+  :preface
+  (defun purpose-after-init ()
+    (when (file-exists-p purpose-default-layout-file)
+      (purpose-load-window-layout-file))
+    (select-window (get-largest-window))
+    (purpose-x-code1-update-changed)
+    (remove-hook 'after-init-hook 'purpose-after-init))
   :quelpa (window-purpose
            :fetcher github
            :repo "wyuenho/emacs-purpose"
@@ -909,12 +917,7 @@ Optional argument ARG same as `comment-dwim''s."
   (purpose-x-kill-setup)
   (purpose-x-magit-single-on)
 
-  (add-hook 'after-init-hook
-            (lambda ()
-              (when (file-exists-p purpose-default-layout-file)
-                (purpose-load-window-layout-file))
-              (select-window (get-largest-window)))
-            t))
+  (add-hook 'after-init-hook 'purpose-after-init t))
 
 ;; Customize solarized theme
 (use-package solarized-theme
