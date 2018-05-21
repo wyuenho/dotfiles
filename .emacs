@@ -875,6 +875,11 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package magit
   :bind (("C-x v C-g" . magit-status)))
 
+(use-package magithub
+  :after magit
+  :config
+  (magithub-feature-autoinject t))
+
 ;; Hg
 (use-package monky
   :bind (("C-x v C-h" . monky-status)))
