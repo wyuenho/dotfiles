@@ -10,6 +10,7 @@
  '(ag-ignore-list '("*.min.js"))
  '(ag-reuse-buffers t)
  '(ag-reuse-window t)
+ '(auth-sources '("~/.authinfo.gpg"))
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
  '(auto-save-default nil)
