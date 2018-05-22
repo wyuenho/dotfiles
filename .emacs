@@ -367,8 +367,8 @@ Optional argument ARG same as `comment-dwim''s."
 
                           ("C-M-d" . sp-down-sexp)
                           ("C-M-u" . sp-backward-up-sexp)
-                          ("M-S-d" . sp-backward-down-sexp)
-                          ("M-S-u" . sp-up-sexp)
+                          ("M-D"   . sp-backward-down-sexp)
+                          ("M-U"   . sp-up-sexp)
 
                           ("C-S-f" . sp-forward-symbol)
                           ("C-S-b" . sp-backward-symbol)
