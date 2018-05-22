@@ -517,115 +517,112 @@ Optional argument ARG same as `comment-dwim''s."
                 (flycheck-yamllint-setup)))))
 
 ;; Javascript
-(use-package js
-  :quelpa (js :fetcher github :repo "wyuenho/js.el")
-  :config
-  (add-hook 'js-mode-hook
-            (lambda ()
-              ;; Make sure fontification in js-mode and derived modes is up to
-              ;; date with the latest ES2015 keywords
-              (font-lock-add-keywords
-               nil
-               '("\\_<async\\_>"
-                 "\\_<await\\_>"
-                 ("\\_<import\\_>"
-                  ("\\_<as\\_>" nil nil (0 font-lock-keyword-face))
-                  ("\\_<from\\_>" nil nil (0 font-lock-keyword-face)))
-                 ("\\_<for\\_>" "\\_<of\\_>" nil nil (0 font-lock-keyword-face))))
+(add-hook 'js-mode-hook
+          (lambda ()
+            ;; Make sure fontification in js-mode and derived modes is up to
+            ;; date with the latest ES2015 keywords
+            ;; (font-lock-add-keywords
+            ;;  nil
+            ;;  '("\\_<async\\_>"
+            ;;    "\\_<await\\_>"
+            ;;    ("\\_<import\\_>"
+            ;;     ("\\_<as\\_>" nil nil (0 font-lock-keyword-face))
+            ;;     ("\\_<from\\_>" nil nil (0 font-lock-keyword-face)))
+            ;;    ("\\_<for\\_>" "\\_<of\\_>" nil nil (0 font-lock-keyword-face))))
 
-              (use-package tern
-                :delight
-                :config
-                (tern-mode t)
-                (unbind-key "C-c C-r" tern-mode-keymap))
+            (use-package tern
+              :delight
+              :config
+              (tern-mode t)
+              (unbind-key "C-c C-r" tern-mode-keymap))
 
-              (use-package company-tern
-                :after company
-                :config
-                (add-to-list 'company-backends 'company-tern))
+            (use-package company-tern
+              :after company
+              :config
+              (add-to-list 'company-backends 'company-tern))
 
-              (use-package js-doc
-                :after yasnippet
-                :bind (:map js-mode-map
-                            ("C-c d m" . js-doc-insert-file-doc)
-                            ("C-c d f" . js-doc-insert-function-doc-snippet)))
+            (use-package js-doc
+              :after yasnippet
+              :bind (:map js-mode-map
+                          ("C-c d m" . js-doc-insert-file-doc)
+                          ("C-c d f" . js-doc-insert-function-doc-snippet)))
 
-              (use-package add-node-modules-path
-                :config
-                (add-node-modules-path))
+            (use-package add-node-modules-path
+              :config
+              (add-node-modules-path))
 
-              (use-package import-js
-                :config
-                (run-import-js)
-                :bind (:map js-mode-map
-                            ("C-c t i"   . import-js-import)
-                            ("C-c t f"   . import-js-fix)
-                            ("C-c t M-." . import-js-goto)))
+            (use-package import-js
+              :config
+              (run-import-js)
+              :bind (:map js-mode-map
+                          ("C-c t i"   . import-js-import)
+                          ("C-c t f"   . import-js-fix)
+                          ("C-c t M-." . import-js-goto)))
 
-              (use-package f
-                :preface
-                (defun find-js-format-style ()
-                  (let* ((package-json-dir
-                          (f-traverse-upwards
-                           (lambda (path)
-                             (f-exists? (f-expand "package.json" path)))
-                           (buffer-file-name)))
+            (use-package f
+              :preface
+              (defun find-js-format-style ()
+                (let* ((package-json-dir
+                        (f-traverse-upwards
+                         (lambda (path)
+                           (f-exists? (f-expand "package.json" path)))
+                         (buffer-file-name)))
 
-                         (package-json
-                          (if package-json-dir
-                              (json-read-file (f-join package-json-dir "package.json"))
-                            nil))
+                       (package-json
+                        (if package-json-dir
+                            (json-read-file (f-join package-json-dir "package.json"))
+                          nil))
 
-                         (devDependencies
-                          (if package-json
-                              (alist-get 'devDependencies package-json)
-                            nil))
+                       (devDependencies
+                        (if package-json
+                            (alist-get 'devDependencies package-json)
+                          nil))
 
-                         (formatter-styles
-                          '((prettier            . prettier)
-                            (eslint              . eslint)
-                            (esformatter         . esfmt)
-                            (babel-preset-airbnb . airbnb)
-                            (standard            . standard))))
+                       (formatter-styles
+                        '((prettier            . prettier)
+                          (eslint              . eslint)
+                          (esformatter         . esfmt)
+                          (babel-preset-airbnb . airbnb)
+                          (standard            . standard))))
 
-                    (cdr (car (map-filter
-                               (lambda (package _)
-                                 (map-contains-key devDependencies package))
-                               formatter-styles)))))
-                :config
-                (let ((style (find-js-format-style)))
-                  (cond ((eq style 'prettier)
-                         (use-package prettier-js
-                           :delight
-                           :config
-                           (prettier-js-mode t)
-                           :bind (:map js-mode-map
-                                       ("C-c f" . prettier-js))))
+                  (cdr (car (map-filter
+                             (lambda (package _)
+                               (map-contains-key devDependencies package))
+                             formatter-styles)))))
+              :config
+              (let ((style (find-js-format-style)))
+                (cond ((eq style 'prettier)
+                       (use-package prettier-js
+                         :delight
+                         :config
+                         (prettier-js-mode t)
+                         :bind (:map js-mode-map
+                                     ("C-c f" . prettier-js))))
 
-                        ((eq style 'eslint)
-                         (use-package eslintd-fix
-                           :delight
-                           :config
-                           (eslintd-fix-mode t)
-                           :bind (:map js-mode-map
-                                       ("C-c f" . eslintd-fix))))
+                      ((eq style 'eslint)
+                       (use-package eslintd-fix
+                         :delight
+                         :config
+                         (eslintd-fix-mode t)
+                         :bind (:map js-mode-map
+                                     ("C-c f" . eslintd-fix))))
 
-                        ((memq style '(esfmt airbnb standard))
-                         (use-package js-format
-                           :config
-                           (js-format-setup (symbol-name (find-js-format-style)))
-                           :bind (:map js-mode-map
-                                       ("C-c f" . js-format-buffer)))))))
+                      ((memq style '(esfmt airbnb standard))
+                       (use-package js-format
+                         :config
+                         (js-format-setup (symbol-name (find-js-format-style)))
+                         :bind (:map js-mode-map
+                                     ("C-c f" . js-format-buffer)))))))
 
-              (use-package nodejs-repl
-                :bind(:map js-mode-map
-                           ("C-x C-e" . nodejs-repl-send-last-expression)
-                           ("C-c r"   . nodejs-repl-send-region)
-                           ("C-c b"   . nodejs-repl-send-buffer)
-                           ("C-c l"   . nodejs-repl-load-file)
-                           ("C-c z"   . nodejs-repl-switch-to-repl)))
+            (use-package nodejs-repl
+              :bind(:map js-mode-map
+                         ("C-x C-e" . nodejs-repl-send-last-expression)
+                         ("C-c r"   . nodejs-repl-send-region)
+                         ("C-c b"   . nodejs-repl-send-buffer)
+                         ("C-c l"   . nodejs-repl-load-file)
+                         ("C-c z"   . nodejs-repl-switch-to-repl)))
 
-              (define-key js-mode-map [menu-bar] nil))))
+            (define-key js-mode-map [menu-bar] nil)))
 
 (use-package js2-mode
   :config
