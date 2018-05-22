@@ -767,7 +767,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package rainbow-mode
   :delight
-  :after scss-mode
   :hook (css-mode scss-mode))
 
 (use-package web-mode
