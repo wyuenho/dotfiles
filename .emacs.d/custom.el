@@ -154,7 +154,7 @@
  '(mouse-wheel-progressive-speed nil)
  '(multi-term-program "/opt/local/bin/bash")
  '(multi-term-program-switches "--login")
- '(ns-alternate-modifier 'none)
+ '(ns-alternate-modifier 'alt)
  '(ns-command-modifier 'meta)
  '(ns-pop-up-frames nil)
  '(package-archives
