@@ -24,7 +24,7 @@
  '(case-fold-search t)
  '(column-number-mode t)
  '(company-global-modes
-   '(lisp-mode emacs-lisp-mode restclient-mode js-mode js-jsx-mode js2-mode js2-rjsx-mode rjsx-mode python-mode go-mode web-mode c-mode c++-mode objc-mode))
+   '(lisp-mode emacs-lisp-mode restclient-mode js-mode js-jsx-mode js2-mode js2-rjsx-mode rjsx-mode python-mode go-mode web-mode c-mode c++-mode objc-mode css-mode scss-mode))
  '(compilation-message-face 'default)
  '(css-indent-offset 2)
  '(current-language-environment "English")
