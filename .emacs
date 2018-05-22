@@ -1,5 +1,10 @@
 ;;; -*- lexical-binding: t -*-
 
+;; (setq edebug-on-error t)
+
+;; So `edebug' will print something useful as opposed to some bytecode hex
+(fset 'edebug-prin1-to-string 'prin1-to-string)
+
 ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
 ;; but it's not desirable on macOS because the window server will decide the
 ;; color of the cursor according to the background color.
@@ -41,7 +46,7 @@
 (prefer-coding-system 'utf-8)
 
 ;; No more yes and no and y and n inconsistencies
-(fset 'yes-or-no-p 'y-or-n-p)
+(fset 'yes-or-no-p #'y-or-n-p)
 
 ;; Remove all query on exit flags on all processes before quitting
 (advice-add 'save-buffers-kill-emacs :before
@@ -111,7 +116,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (apply comment-dwim args))))
 
 (eval-when-compile (require 'use-package))
-(setq use-package-compute-statistics t)
+;; (setq use-package-compute-statistics t)
 (require 'bind-key)
 (require 'quelpa-use-package)
 
