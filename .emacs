@@ -125,6 +125,8 @@ Optional argument ARG same as `comment-dwim''s."
            (not (memq (window-system) '(x))))
   (bind-key "<mouse-3>" 'mouse-buffer-menu))
 
+(bind-key "C-x t" 'display-time-world)
+
 ;; Completely unbind annoying abbrev, dabbrev, expand, hippie-expand. These
 ;; ancient completion commands are just too stupid for this day and age
 (unbind-key "M-'")
@@ -900,11 +902,7 @@ Optional argument ARG same as `comment-dwim''s."
     (select-window (get-largest-window))
     (purpose-x-code1-update-changed)
     (remove-hook 'after-init-hook 'purpose-after-init))
-  :quelpa (window-purpose
-           :fetcher github
-           :repo "wyuenho/emacs-purpose"
-           :branch "improve-code1"
-           :files (:defaults "layouts"))
+  :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts"))
   :after magit undo-tree imenu-list
   :config
 
