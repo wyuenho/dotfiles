@@ -356,8 +356,10 @@ Optional argument ARG same as `comment-dwim''s."
               :config
               (require 'smartparens-config)
               :bind (:map smartparens-mode-map
-                          ("C-M-a" . sp-beginning-of-sexp)
-                          ("C-M-e" . sp-end-of-sexp)
+                          ("C-M-a"                      . sp-beginning-of-sexp)
+                          ([remap sp-beginning-of-sexp] . beginning-of-defun)
+                          ("C-M-e"                      . sp-end-of-sexp)
+                          ([remap sp-end-of-sexp]       . end-of-defun)
 
                           ("C-M-f" . sp-forward-sexp)
                           ("C-M-b" . sp-backward-sexp)
