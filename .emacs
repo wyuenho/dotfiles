@@ -7,14 +7,14 @@
   (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
 
 ;; Emacs 26 ns port new settings
-(when (and (< emacs-major-version 26)
-           (eq (window-system) 'ns))
-  (add-to-list 'default-frame-alist '(ns-appearance . dark))
-  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-  (setq ns-use-thin-smoothing t
-        ns-mwheel-line-height 12
-        ns-use-mwheel-momentum t
-        ns-use-mwheel-acceleration t))
+(dolist (pair '((ns-transparent-titlebar . t) (ns-appearance . dark)))
+  (push pair (alist-get 'ns window-system-default-frame-alist nil))
+  (set-frame-parameter nil (car pair) (cdr pair)))
+(setq frame-title-format nil
+      ns-use-proxy-icon nil
+      ns-use-thin-smoothing t
+      ns-use-mwheel-momentum t
+      ns-use-mwheel-acceleration t)
 
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
