@@ -212,10 +212,13 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package pager-default-keybindings)
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X and Linux.
-(use-package exec-path-from-shell
-  :if (memq (window-system) '(mac ns x))
-  :config
-  (exec-path-from-shell-initialize))
+(run-with-idle-timer 1 nil
+                     (lambda ()
+                       (use-package exec-path-from-shell
+                         :if (memq (window-system) '(mac ns x))
+                         :config
+                         (exec-path-from-shell-initialize))
+                       (message "exec-path-from-shell loaded")))
 
 ;; Replace the major mode name with its icon and
 (use-package all-the-icons
