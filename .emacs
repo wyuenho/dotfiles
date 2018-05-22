@@ -46,7 +46,7 @@
 (prefer-coding-system 'utf-8)
 
 ;; No more yes and no and y and n inconsistencies
-(fset 'yes-or-no-p #'y-or-n-p)
+(fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Remove all query on exit flags on all processes before quitting
 (advice-add 'save-buffers-kill-emacs :before
@@ -805,7 +805,7 @@ Optional argument ARG same as `comment-dwim''s."
                                     (if (or (string= web-mode-cur-language "javascript")
                                             (string= web-mode-cur-language "jsx"))
                                         (unless tern-mode (tern-mode))
-                                      (if tern-mode (tern-mode -t))))))))
+                                      (if tern-mode (tern-mode t))))))))
 
               (use-package company-web-html
                 :after company
