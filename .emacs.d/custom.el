@@ -70,6 +70,7 @@
  '(flycheck-global-modes
    (quote
     (sh-mode json-mode yaml-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode typescript-mode python-mode go-mode web-mode css-mode scss-mode rust-mode)))
+ '(flycheck-pos-tip-max-width 80)
  '(gc-cons-threshold 20000000)
  '(global-company-mode t)
  '(global-flycheck-mode t)
