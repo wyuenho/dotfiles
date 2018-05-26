@@ -615,11 +615,13 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Python
 (use-package pyenv-mode
+  :delight
   :bind (:map pyenv-mode-map
               ("C-c C-s" . nil)
               ("C-c C-u" . nil)))
 
 (use-package pipenv
+  :delight
   :hook (python-mode . pipenv-mode)
   :init
   (setq pipenv-projectile-after-switch-function
@@ -655,6 +657,7 @@ Optional argument ARG same as `comment-dwim''s."
               ("M-1" . importmagic-fix-imports)))
 
 (use-package blacken
+  :delight
   :hook (python-mode . blacken-mode))
 
 ;; Go
