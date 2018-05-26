@@ -1,9 +1,9 @@
 ;;; -*- lexical-binding: t -*-
 
-;; (setq edebug-on-error t)
+;; (setq debug-on-error t)
 
 ;; So `edebug' will print something useful as opposed to some bytecode hex
-(fset 'edebug-prin1-to-string 'prin1-to-string)
+;; (fset 'edebug-prin1-to-string 'prin1-to-string)
 
 ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
 ;; but it's not desirable on macOS because the window server will decide the
@@ -26,10 +26,7 @@
 (advice-add 'load-theme :around (lambda (old-load-theme &rest args)
                                   (apply old-load-theme (car args) t (cddr args))))
 
-;; Emacs loads init file first and the packages last normally. Forcing the
-;; packages to load first makes configuring them in the init file possible.
-(when (< emacs-major-version 26)
-  (package-initialize))
+(package-initialize)
 
 ;; Tell Custom to write and find the custom settings elsewhere
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -159,21 +156,6 @@ Optional argument ARG same as `comment-dwim''s."
 (autoload 'zap-up-to-char "misc")
 (bind-key "M-z" 'zap-up-to-char)
 
-(use-package undo-tree
-  :config
-  ;; Unmap extraneous undo-tree mode keys
-  (assq-delete-all 'undo-tree-mode minor-mode-map-alist)
-  ;; Map the usual undo key to undo-tree-visualize
-  (bind-key "C-x u" 'undo-tree-visualize))
-
-;; Quiet down noisy config gracefully
-(use-package shut-up)
-
-;; Move around windows with shifted arrow keys
-(use-package windmove
-  :config
-  (windmove-default-keybindings))
-
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
 (add-hook 'occur-mode-hook
@@ -184,29 +166,44 @@ Optional argument ARG same as `comment-dwim''s."
                        ("n"   . occur-next)
                        ("p"   . occur-prev))))
 
+;; Turn off useless mode lighters
+(use-package delight
+  :config
+  (delight '((move-dup-mode nil move-dup)
+             (smartparens-mode nil smartparens)
+             (which-key-mode nil which-key)
+             (whitespace-cleanup-mode nil whitespace)
+             (undo-tree-mode nil undo-tree)
+             (auto-revert-mode nil autorevert)
+             (visual-line-mode nil simple)
+             (subword-mode nil subword))))
+
+;; Turn on keyboard shortcut remainder
+(use-package which-key
+  :delight
+  :bind (("C-h b" . which-key-show-top-level)))
+
 ;; I use compilation mode more, so of course I have to do the same thing as
 ;; occur mode
-(with-eval-after-load 'compile
-  (add-hook 'compilation-mode-hook
-            (lambda ()
-              (bind-keys :map compilation-mode-map
-                         ("M-n" . nil)
-                         ("M-p" . nil)
-                         ("n"   . compilation-next-error)
-                         ("p"   . compilation-previous-error)))))
+(use-package compile
+  :defer t
+  :bind (:map compilation-mode-map
+              ("M-n" . nil)
+              ("M-p" . nil)
+              ("n"   . compilation-next-error)
+              ("p"   . compilation-previous-error)))
 
 ;; Completely unbind visual-line-mode's stupid bindings
-;; (add-hook 'visual-line-mode-hook
-;;           (lambda ()
-;;             (bind-keys
-;;              :map visual-line-mode-map
-;;              ([remap move-beginning-of-line]   . nil)
-;;              ([remap move-end-of-line]         . nil)
-;;              ([remap beginning-of-visual-line] . move-beginning-of-line)
-;;              ([remap end-of-visual-line]       . move-end-of-line)
-;;              ([remap kill-line]                . nil)
-;;              ([remap next-line]                . next-logical-line)
-;;              ([remap previous-line]            . previous-logical-line))))
+;; (use-package visual-line-mode
+;;   :defer t
+;;   :bind (:map visual-line-mode-map
+;;               ([remap move-beginning-of-line]   . nil)
+;;               ([remap move-end-of-line]         . nil)
+;;               ([remap beginning-of-visual-line] . move-beginning-of-line)
+;;               ([remap end-of-visual-line]       . move-end-of-line)
+;;               ([remap kill-line]                . nil)
+;;               ([remap next-line]                . next-logical-line)
+;;               ([remap previous-line]            . previous-logical-line)))
 
 ;; Sane keyboard scrolling
 (use-package pager-default-keybindings)
@@ -229,72 +226,11 @@ Optional argument ARG same as `comment-dwim''s."
                 (when (and icon (not (string= major-mode icon)))
                   (setq mode-name icon))))))
 
-;; Saner dired
-(use-package dired
-  :config
-  (add-minor-mode 'dired-hide-details-mode ""))
-
-(use-package all-the-icons-dired
-  :after all-the-icons
-  :config
-  (add-hook 'dired-mode-hook
-            (lambda ()
-              (all-the-icons-dired-mode t))))
-
-(use-package dired-hide-dotfiles
-  :bind (:map dired-mode-map
-              ("." . dired-hide-dotfiles-mode)))
-
-(use-package dired-single
-  :after dired-hide-dotfiles
-  :bind (:map dired-mode-map
-              ("^"         . (lambda () (interactive) (dired-single-buffer "..")))
-              ("<mouse-1>" . dired-single-buffer-mouse)
-              ("\C-m"      . dired-single-buffer))
-  :config
-  ;; Make sure dired-hide-details-mode is preserved when reusing the dired
-  ;; window
-  (advice-add 'find-alternate-file :around
-              (lambda (oldfun &rest args)
-                (let ((is-dired (derived-mode-p 'dired-mode))
-                      (hide-dotfiles (and (boundp 'dired-hide-dotfiles-mode) dired-hide-dotfiles-mode))
-                      (hide-details dired-hide-details-mode)
-                      (hide-information-lines dired-hide-details-hide-information-lines)
-                      (hide-symlink-targets dired-hide-details-hide-symlink-targets)
-                      (result (apply oldfun args)))
-                  (when hide-dotfiles (dired-hide-dotfiles-mode))
-                  (when is-dired
-                    (setq-local dired-hide-details-hide-information-lines hide-information-lines)
-                    (setq-local dired-hide-details-hide-symlink-targets hide-symlink-targets)
-                    (when hide-details (dired-hide-details-mode)))
-                  result))))
-
-(use-package dired-collapse
-  :commands dired-collapse-mode
-  :hook (dired-mode . dired-collapse-mode))
-
-;; Turn off useless mode lighters
-(use-package delight
-  :config
-  (delight '((move-dup-mode nil move-dup)
-             (smartparens-mode nil smartparens)
-             (which-key-mode nil which-key)
-             (whitespace-cleanup-mode nil whitespace)
-             (undo-tree-mode nil undo-tree)
-             (auto-revert-mode nil autorevert)
-             (visual-line-mode nil simple)
-             (subword-mode nil subword))))
-
 ;; Adjust frame-wide font size
 (use-package default-text-scale
   :bind (("C-x C-=" . default-text-scale-increase)
          ("C-x C--" . default-text-scale-decrease)
          ("C-x C-0" . default-text-scale-reset)))
-
-;; Turn on keyboard shortcut remainder
-(use-package which-key
-  :delight
-  :bind (("C-h b" . which-key-show-top-level)))
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
@@ -449,45 +385,44 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   ;; Unbind hide/show mode's ridiculous keybindings
   (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
-  :bind (("M-0"   . origami-open-all-nodes)
-         ("M-9"   . origami-close-all-nodes)
-         ("C-M-/" . origami-recursively-toggle-node)))
+  :bind (:map origami-mode-map
+              ("M-0"   . origami-open-all-nodes)
+              ("M-9"   . origami-close-all-nodes)
+              ("C-M-/" . origami-recursively-toggle-node)))
 
 ;; Auto-completion
 (use-package company
   :delight
   :bind (:map company-mode-map
-              ("M-/" . company-manual-begin))
-  :config
-  (add-hook 'company-mode-hook
-            (lambda ()
-              (use-package company-statistics
-                :config (company-statistics-mode t))
+              ("M-/" . company-manual-begin)))
 
-              (use-package company-quickhelp
-                :config (company-quickhelp-mode t))
+(use-package company-flx
+  :hook (company-mode . company-flx-mode))
 
-              (use-package company-flx
-                :config (company-flx-mode t)))))
+(use-package company-quickhelp
+  :hook (company-mode . company-quickhelp-mode))
+
+(use-package company-statistics
+  :hook (company-mode . company-statistics-mode))
 
 ;; Linting
-(with-eval-after-load 'flycheck
-  (when (featurep 'flycheck-color-mode-line)
-    (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
-  (when (featurep 'flycheck-pos-tip)
-    (flycheck-pos-tip-mode)))
+(use-package flycheck-color-mode-line
+  :hook (flycheck-mode . flycheck-color-mode-line-mode))
+
+(use-package flycheck-pos-tip
+  :hook (flycheck-mode . flycheck-pos-tip-mode))
 
 ;; Much faster PDF viewing
 (add-hook 'doc-view-mode-hook
           (lambda ()
-            (when (fboundp 'pdf-tools-install)
-              (pdf-tools-install))))
+            (use-package pdf-tools
+              :config (pdf-tools-install))))
 
 ;; REST API
 (use-package restclient
   :commands restclient-mode
-  :mode (("\\.http\\'" . restclient-mode)
-         ("\\.rest\\'" . restclient-mode))
+  :mode (("\\ . http\\'" . restclient-mode)
+         ("\\ . rest\\'" . restclient-mode))
   :config
   (add-hook 'restclient-mode-hook
             (lambda ()
@@ -515,13 +450,11 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; YAML
 (use-package yaml-mode
-  :mode "\\.ya?ml\\'"
-  :config
-  (add-hook 'yaml-mode-hook
-            (lambda ()
-              (use-package flycheck-yamllint
-                :config
-                (flycheck-yamllint-setup)))))
+  :mode "\\ . ya?ml\\'")
+
+(use-package flycheck-yamllint
+  :after yaml-mode
+  :config (flycheck-yamllint-setup))
 
 ;; Javascript
 (add-hook 'js-mode-hook
@@ -544,7 +477,7 @@ Optional argument ARG same as `comment-dwim''s."
               (unbind-key "C-c C-r" tern-mode-keymap))
 
             (use-package company-tern
-              :after company
+              :after company tern
               :config
               (add-to-list 'company-backends 'company-tern))
 
@@ -555,12 +488,10 @@ Optional argument ARG same as `comment-dwim''s."
                           ("C-c d f" . js-doc-insert-function-doc-snippet)))
 
             (use-package add-node-modules-path
-              :config
-              (add-node-modules-path))
+              :config (add-node-modules-path))
 
             (use-package import-js
-              :config
-              (run-import-js)
+              :config (run-import-js)
               :bind (:map js-mode-map
                           ("C-c t i"   . import-js-import)
                           ("C-c t f"   . import-js-fix)
@@ -632,28 +563,25 @@ Optional argument ARG same as `comment-dwim''s."
             (define-key js-mode-map [menu-bar] nil)))
 
 (use-package js2-mode
+  :defer t
   :config
-  (add-hook 'js2-mode-hook
-            (lambda ()
-              (js2-imenu-extras-mode t)
+  (js2-imenu-extras-mode t)
+  (when (fboundp 'sp-kill-whole-line)
+    (bind-key "C-k" 'sp-kill-whole-line js2-mode-map)))
 
-              (bind-keys
-               :map js2-mode-map
-               ("C-k" . sp-kill-whole-line))
-
-              (use-package js2-refactor
-                :delight
-                :config
-                (js2-refactor-mode t)
-                (js2r-add-keybindings-with-prefix "C-c r")))))
+(use-package js2-refactor
+  :after js2-mode
+  :delight
+  :hook (js2-mode . js2-refactor-mode)
+  :config (js2r-add-keybindings-with-prefix "C-c r"))
 
 (use-package rjsx-mode
   :quelpa (rjsx-mode :fetcher github :repo "wyuenho/rjsx-mode" :branch "indent-after-jsx-expr")
-  :mode ("\\.jsx?\\'" "\\.mjs\\'"))
+  :mode ("\\.jsx?\\'" "\\ . mjs\\'"))
 
 ;; TypeScript
 (use-package typescript-mode
-  :mode ("\\.ts\\'" "\\.mts\\'"))
+  :mode ("\\ . ts\\'" "\\.mts\\'"))
 
 (use-package ts-comint
   :after typescript-mode
@@ -667,14 +595,10 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package tide
   :after typescript-mode
+  :hook (typescript-mode . tide-setup)
   :config
-  (add-hook 'typescript-mode-hook
-            (lambda ()
-              (tide-setup)
-              (tide-hl-identifier-mode t)))
-
+  (add-hook 'typescript-mode-hook 'tide-hl-identifier-mode)
   (add-hook 'before-save-hook 'tide-format-before-save)
-
   :bind (:map typescript-mode-map
               ("C-c f" . tide-format)
               ("C-c n" . tide-rename-symbol)
@@ -688,46 +612,43 @@ Optional argument ARG same as `comment-dwim''s."
               ("C-c C-s" . nil)
               ("C-c C-u" . nil)))
 
+(use-package pipenv
+  :hook (python-mode . pipenv-mode)
+  :init
+  (setq pipenv-projectile-after-switch-function
+        'pipenv-projectile-after-switch-extended))
+
+(use-package anaconda-mode
+  :delight
+  :after company
+  :hook (python-mode   . anaconda-mode)
+  :config
+  (anaconda-eldoc-mode t)
+  (add-to-list 'company-backends '(company-anaconda :with company-capf))
+  :bind (:map anaconda-mode-map
+              ("M-r"   . nil)
+              ("M-\""  . anaconda-mode-find-assignments)
+              ("M-?"   . anaconda-mode-find-references)
+              ("M-,"   . anaconda-mode-go-back)
+              ("C-h o" . anaconda-mode-show-doc)))
+
 (add-hook 'python-mode-hook
           (lambda ()
-            (use-package pipenv
-              :delight
-              :after projectile
-              :config
-              (pipenv-mode t)
-              (pipenv-activate))
+            (use-package flycheck-mypy)))
 
-            (use-package anaconda-mode
-              :delight
-              :after company
-              :config
-              (anaconda-mode t)
-              (anaconda-eldoc-mode t)
-              (add-to-list 'company-backends '(company-anaconda :with company-capf))
-              :bind (:map anaconda-mode-map
-                          ("M-r"   . nil)
-                          ("M-\""  . anaconda-mode-find-assignments)
-                          ("M-?"   . anaconda-mode-find-references)
-                          ("M-,"   . anaconda-mode-go-back)
-                          ("C-h o" . anaconda-mode-show-doc)))
+(use-package python-docstring
+  :delight
+  :hook (python-mode . python-docstring-mode))
 
-            (use-package py-autopep8
-              :config (py-autopep8-enable-on-save))
+(use-package importmagic
+  :delight
+  :hook (python-mode . importmagic-mode)
+  :config
+  :bind (:map importmagic-mode-map
+              ("M-1" . importmagic-fix-imports)))
 
-            (use-package python-docstring
-              :delight
-              :config (python-docstring-mode t))
-
-            (use-package importmagic
-              :delight
-              :config
-              (importmagic-mode t)
-              :bind (:map importmagic-mode-map
-                          ("M-1" . importmagic-fix-imports)))
-
-            (use-package py-isort
-              :bind (:map python-mode-map
-                          ("C-c s" . py-isort-buffer)))))
+(use-package blacken
+  :hook (python-mode . blacken-mode))
 
 ;; Go
 (use-package go-mode
@@ -739,9 +660,14 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package company-go
                 :after company
                 :config
-                (setq-local company-backends '(company-go)))
+                (setq-local company-backends '(company-go))))))
 
-              (use-package go-eldoc :config (go-eldoc-setup)))))
+(use-package go-eldoc
+  :after go-mode
+  :hook (go-mode . go-eldoc-setup))
+
+(use-package go-projectile
+  :after go-mode projectile)
 
 ;; Rust
 (use-package rust-mode
@@ -750,16 +676,15 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package racer
   :delight
   :after rust-mode
+  :hook (rust-mode . racer-mode)
   :config
-  (add-hook 'rust-mode-hook 'racer-mode)
   (add-hook 'racer-mode-hook 'eldoc-mode)
   (add-hook 'racer-mode-hook 'company-mode))
 
 (use-package cargo
   :delight
   :after rust-mode
-  :config
-  (add-hook 'rust-mode-hook 'cargo-minor-mode))
+  :hook (rust-mode . cargo-minor-mode))
 
 ;; HTML templates and CSS
 (use-package scss-mode
@@ -815,17 +740,23 @@ Optional argument ARG same as `comment-dwim''s."
                 (setq-local company-backends
                             '(company-web-html company-tern company-yasnippet company-files)))
 
-              (when (and (string-equal "tsx" (file-name-extension buffer-file-name))
-                         (featurep 'tide))
-                (flycheck-add-mode 'typescript-tslint 'web-mode)
-                (tide-setup)
+              (use-package tide
+                :if (string-equal "tsx" (file-name-extension buffer-file-name))
+                :config
+                (add-hook 'before-save-hook 'tide-format-before-save)
+                (tide-setup t)
                 (tide-hl-identifier-mode t))
 
-              (when (string-equal "css" (file-name-extension buffer-file-name))
-                (flycheck-add-mode 'css-stylelint 'web-mode))
-
-              (when (string-equal "scss" (file-name-extension buffer-file-name))
-                (flycheck-add-mode 'scss-stylelint 'web-mode)))))
+              ;; Setup flycheck
+              (let ((ext (file-name-extension buffer-file-name)))
+                (when (fboundp 'flycheck-add-mode)
+                  (cond ((string-equal "tsx" ext)
+                         (flycheck-add-mode 'typescript-tslint 'web-mode))
+                        ((string-equal "css" ext)
+                         (flycheck-add-mode 'css-stylelint 'web-mode))
+                        ((string-equal "scss" ext)
+                         (flycheck-add-mode 'scss-stylelint 'web-mode))
+                        (t nil)))))))
 
 (use-package emmet-mode
   :delight
@@ -836,7 +767,7 @@ Optional argument ARG same as `comment-dwim''s."
             (lambda ()
               (when (or (member major-mode '(js-jsx-mode js2-jsx-mode rjsx-mode))
                         (and (eq major-mode 'web-mode)
-                             (string= (web-mode-language-at-pos) "jsx")))
+                             (member (web-mode-language-at-pos) '("jsx" "tsx"))))
                 (setq-local emmet-expand-jsx-className? t)))))
 
 ;; Project management, version control, file search and browser
@@ -852,9 +783,6 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (projectile-mode t)
   (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
-
-(use-package go-projectile
-  :after go-mode projectile)
 
 ;; Second fastest but the best find grep in terms of tooling support
 (use-package ag
@@ -892,7 +820,64 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package monky
   :bind (("C-x v C-h" . monky-status)))
 
-;; Saner window management
+;; File management
+(use-package dired
+  :defer t
+  :config
+  (add-minor-mode 'dired-hide-details-mode "")
+  (when (memq (window-system) '(mac ns))
+    (bind-key "z" (lambda ()
+                    (interactive)
+                    (let ((file-name (dired-get-file-for-visit)))
+                      (start-process "default-app" nil "open" file-name)))
+              dired-mode-map)))
+
+(use-package all-the-icons-dired
+  :after all-the-icons
+  :hook (dired-mode . all-the-icons-dired-mode))
+
+(use-package dired-hide-dotfiles
+  :bind (:map dired-mode-map
+              ("." . dired-hide-dotfiles-mode)))
+
+(use-package dired-single
+  :after dired-hide-dotfiles
+  :bind (:map dired-mode-map
+              ("^"         . (lambda () (interactive) (dired-single-buffer "..")))
+              ("<mouse-1>" . dired-single-buffer-mouse)
+              ("\C-m"      . dired-single-buffer))
+  :config
+  ;; Make sure dired-hide-details-mode is preserved when reusing the dired
+  ;; window
+  (advice-add 'find-alternate-file :around
+              (lambda (oldfun &rest args)
+                (let ((is-dired (derived-mode-p 'dired-mode))
+                      (hide-dotfiles (and (boundp 'dired-hide-dotfiles-mode) dired-hide-dotfiles-mode))
+                      (hide-details dired-hide-details-mode)
+                      (hide-information-lines dired-hide-details-hide-information-lines)
+                      (hide-symlink-targets dired-hide-details-hide-symlink-targets)
+                      (result (apply oldfun args)))
+                  (when hide-dotfiles (dired-hide-dotfiles-mode))
+                  (when is-dired
+                    (setq-local dired-hide-details-hide-information-lines hide-information-lines)
+                    (setq-local dired-hide-details-hide-symlink-targets hide-symlink-targets)
+                    (when hide-details (dired-hide-details-mode)))
+                  result))))
+
+(use-package dired-collapse
+  :hook (dired-mode . dired-collapse-mode))
+
+;; Edit the file as a sudoer
+(use-package sudo-edit
+  :bind ("C-x C-r" . sudo-edit))
+
+;; Window management
+
+;; Move around windows with shifted arrow keys
+(use-package windmove
+  :config
+  (windmove-default-keybindings))
+
 (use-package imenu-list
   :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
 
@@ -935,9 +920,10 @@ Optional argument ARG same as `comment-dwim''s."
                             :background "#00629D" :foreground "#FDF6E3")
                            (((class color) (min-colors 89) (background dark))
                             :background "#69B7F0" :foreground "#002B36")))
+  (set-face-attribute 'dired-header nil :underline t :background nil :foreground nil)
   (set-face-background 'flycheck-fringe-error nil)
   (set-face-background 'flycheck-fringe-info nil)
   (set-face-background 'flycheck-fringe-warning nil)
-  (set-face-attribute 'mode-line nil :overline nil :underline nil :box nil)
-  (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil :box nil)
-  (set-face-attribute 'header-line nil :box nil))
+  (set-face-attribute 'mode-line nil :overline nil :underline nil)
+  (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil)
+  (set-face-attribute 'header-line nil :overline nil :underline nil))
