@@ -383,8 +383,15 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Modern code folding
 (use-package origami
   :config
-  ;; Unbind hide/show mode's ridiculous keybindings
-  (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
+  (with-eval-after-load 'hideshow
+    ;; Unloading is unsafe, so this the best I can do to pretend `hideshow'
+    ;; never existed.
+    (setq minor-mode-map-alist
+          (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
+          minor-mode-alist
+          (assq-delete-all 'hs-minor-mode minor-mode-alist)
+          minor-mode-list
+          (delq 'hs-minor-mode minor-mode-list)))
   :bind (:map origami-mode-map
               ("M-0"   . origami-open-all-nodes)
               ("M-9"   . origami-close-all-nodes)
