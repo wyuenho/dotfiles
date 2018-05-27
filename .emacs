@@ -912,10 +912,10 @@ Optional argument ARG same as `comment-dwim''s."
   :config
 
   ;; Pending https://github.com/bmag/emacs-purpose/pull/116
-  (advice-add 'undo-tree-visualize :after
-              (lambda (&rest _)
-                (let ((window (get-buffer-window undo-tree-visualizer-buffer-name)))
-                  (set-window-dedicated-p window 'soft))))
+  ;; (advice-add 'undo-tree-visualize :after
+  ;;             (lambda (&rest _)
+  ;;               (let ((window (get-buffer-window undo-tree-visualizer-buffer-name)))
+  ;;                 (set-window-dedicated-p window 'soft))))
 
   (purpose-add-user-purposes
    :modes '((ag-mode              . search)
