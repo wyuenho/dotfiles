@@ -400,6 +400,8 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Auto-completion
 (use-package company
   :delight
+  :config
+  (company-tng-configure-default)
   :bind (:map company-mode-map
               ("M-/" . company-manual-begin)))
 
@@ -408,9 +410,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package company-quickhelp
   :hook (company-mode . company-quickhelp-mode))
-
-(use-package company-statistics
-  :hook (company-mode . company-statistics-mode))
 
 ;; Linting
 (use-package flycheck-color-mode-line

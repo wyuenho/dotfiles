@@ -24,9 +24,14 @@
  '(c-basic-offset 2)
  '(case-fold-search t)
  '(column-number-mode t)
+ '(company-auto-complete t)
  '(company-global-modes
    (quote
     (lisp-mode emacs-lisp-mode restclient-mode js-mode js-jsx-mode js2-mode js2-rjsx-mode rjsx-mode python-mode go-mode web-mode c-mode c++-mode objc-mode css-mode scss-mode)))
+ '(company-idle-delay 0.2)
+ '(company-require-match nil)
+ '(company-statistics-mode t)
+ '(company-tooltip-align-annotations t)
  '(compilation-message-face (quote default))
  '(css-indent-offset 2)
  '(current-language-environment "English")
