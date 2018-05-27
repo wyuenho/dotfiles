@@ -403,7 +403,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (company-tng-configure-default)
   :bind (:map company-mode-map
-              ("M-/" . company-manual-begin)))
+              ("M-/" . company-complete)))
 
 (use-package company-flx
   :hook (company-mode . company-flx-mode))
@@ -435,7 +435,7 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package company-restclient
                 :after company
                 :config
-                (add-to-list 'company-backends 'company-restclient)))))
+                (setq-local company-backends `(company-restclient))))))
 
 ;; Lisp
 (bind-keys :map emacs-lisp-mode-map
@@ -449,7 +449,8 @@ Optional argument ARG same as `comment-dwim''s."
             (use-package company-shell
               :after company
               :config
-              (add-to-list 'company-backend '(company-shell company-shell-env)))))
+              (setq-local company-backends
+                          (add-to-list 'company-backends '(company-shell company-shell-env))))))
 
 (use-package multi-term
   :bind (("M-T" . multi-term)))
@@ -485,7 +486,8 @@ Optional argument ARG same as `comment-dwim''s."
             (use-package company-tern
               :after company tern
               :config
-              (add-to-list 'company-backends 'company-tern))
+              (setq-local company-backends
+                          (add-to-list 'company-backends 'company-tern)))
 
             (use-package js-doc
               :after yasnippet
@@ -629,10 +631,13 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package anaconda-mode
   :delight
   :after company
-  :hook (python-mode   . anaconda-mode)
+  :hook (python-mode . anaconda-mode)
   :config
-  (anaconda-eldoc-mode t)
-  (add-to-list 'company-backends '(company-anaconda :with company-capf))
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (anaconda-eldoc-mode t)
+              (setq-local company-backends
+                          (add-to-list 'company-backends '(company-anaconda :with company-capf)))))
   :bind (:map anaconda-mode-map
               ("M-r"   . nil)
               ("M-\""  . anaconda-mode-find-assignments)
@@ -669,7 +674,8 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package company-go
                 :after company
                 :config
-                (setq-local company-backends '(company-go))))))
+                (setq-local company-backends
+                            (add-to-list 'company-backends 'company-go))))))
 
 (use-package go-eldoc
   :after go-mode
@@ -731,7 +737,7 @@ Optional argument ARG same as `comment-dwim''s."
                 :after company tern
                 :config
                 (setq-local company-backends
-                            '(company-tern company-yasnippet company-files))
+                            '(company-tern company-files))
 
                 (advice-add 'company-tern :before
                             (lambda (&rest _)
@@ -747,7 +753,7 @@ Optional argument ARG same as `comment-dwim''s."
                 :after company
                 :config
                 (setq-local company-backends
-                            '(company-web-html company-tern company-yasnippet company-files)))
+                            '(company-web-html company-css company-tern company-files)))
 
               (use-package tide
                 :if (string-equal "tsx" (file-name-extension buffer-file-name))
