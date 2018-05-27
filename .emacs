@@ -441,7 +441,10 @@ Optional argument ARG same as `comment-dwim''s."
 (bind-keys :map emacs-lisp-mode-map
            ("C-c e f" . byte-compile-file)
            ("C-c e c" . emacs-lisp-byte-compile)
-           ("C-c e l" . emacs-lisp-byte-compile-and-load))
+           ("C-c e l" . emacs-lisp-byte-compile-and-load)
+           ("C-c e b" . eval-buffer)
+           ("C-c e r" . eval-region)
+           ("C-c e e" . eval-print-last-sexp))
 
 ;; Term and shell
 (add-hook 'sh-mode-hook
