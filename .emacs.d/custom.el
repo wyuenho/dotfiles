@@ -27,7 +27,7 @@
  '(company-auto-complete t)
  '(company-global-modes
    (quote
-    (lisp-mode emacs-lisp-mode restclient-mode js-mode js-jsx-mode js2-mode js2-rjsx-mode rjsx-mode python-mode go-mode web-mode c-mode c++-mode objc-mode css-mode scss-mode)))
+    (lisp-mode emacs-lisp-mode restclient-mode js-mode js-jsx-mode js2-mode js2-rjsx-mode rjsx-mode python-mode go-mode web-mode c-mode c++-mode objc-mode css-mode scss-mode sh-mode)))
  '(company-idle-delay 0.2)
  '(company-require-match nil)
  '(company-statistics-mode t)
