@@ -428,8 +428,8 @@ Optional argument ARG same as `comment-dwim''s."
 ;; REST API
 (use-package restclient
   :commands restclient-mode
-  :mode (("\\ . http\\'" . restclient-mode)
-         ("\\ . rest\\'" . restclient-mode))
+  :mode (("\\.http\\'" . restclient-mode)
+         ("\\.rest\\'" . restclient-mode))
   :config
   (add-hook 'restclient-mode-hook
             (lambda ()
@@ -457,7 +457,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; YAML
 (use-package yaml-mode
-  :mode "\\ . ya?ml\\'")
+  :mode "\\.ya?ml\\'")
 
 (use-package flycheck-yamllint
   :after yaml-mode
@@ -584,11 +584,11 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package rjsx-mode
   :quelpa (rjsx-mode :fetcher github :repo "wyuenho/rjsx-mode" :branch "indent-after-jsx-expr")
-  :mode ("\\.jsx?\\'" "\\ . mjs\\'"))
+  :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
 ;; TypeScript
 (use-package typescript-mode
-  :mode ("\\ . ts\\'" "\\.mts\\'"))
+  :mode ("\\.ts\\'" "\\.mts\\'"))
 
 (use-package ts-comint
   :after typescript-mode
