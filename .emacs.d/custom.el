@@ -21,6 +21,7 @@
  '(bash-completion-args nil)
  '(bash-completion-prog "/opt/local/bin/bash")
  '(blink-cursor-mode t)
+ '(browse-url-chrome-program "chrome")
  '(c-basic-offset 2)
  '(case-fold-search t)
  '(column-number-mode t)
