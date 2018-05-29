@@ -177,7 +177,8 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Turn off useless mode lighters
 (use-package delight
   :config
-  (delight '((move-dup-mode nil move-dup)
+  (delight '((rainbow-mode)
+             (move-dup-mode nil move-dup)
              (smartparens-mode nil smartparens)
              (which-key-mode nil which-key)
              (whitespace-cleanup-mode nil whitespace)
@@ -717,7 +718,7 @@ Optional argument ARG same as `comment-dwim''s."
   :mode "\\.scss\\'")
 
 (use-package rainbow-mode
-  :delight
+  :if (< emacs-major-version 26)
   :hook (css-mode scss-mode))
 
 (use-package web-mode
