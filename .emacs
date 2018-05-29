@@ -905,6 +905,11 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (windmove-default-keybindings))
 
+;; Minimum Distraction
+(use-package olivetti
+  :delight
+  :bind ("C-c o" . olivetti-mode))
+
 (use-package imenu-list
   :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
 
