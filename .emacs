@@ -1,26 +1,5 @@
 ;;; -*- lexical-binding: t -*-
 
-;; (setq debug-on-error t)
-
-;; So `edebug' will print something useful as opposed to some bytecode hex
-;; (fset 'edebug-prin1-to-string 'prin1-to-string)
-
-;; A bug in the mac port saves the mouse color when `frameset-save' is called,
-;; but it's not desirable on macOS because the window server will decide the
-;; color of the cursor according to the background color.
-(when (memq (window-system) '(mac))
-  (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
-
-;; Emacs 26 ns port new settings
-(dolist (pair '((ns-transparent-titlebar . t) (ns-appearance . dark)))
-  (push pair (alist-get 'ns window-system-default-frame-alist nil))
-  (set-frame-parameter nil (car pair) (cdr pair)))
-(setq frame-title-format nil
-      ns-use-proxy-icon nil
-      ns-use-thin-smoothing t
-      ns-use-mwheel-momentum t
-      ns-use-mwheel-acceleration t)
-
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
 (advice-add 'load-theme :around (lambda (old-load-theme &rest args)
@@ -32,18 +11,44 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
-;; Maximize frame on startup and set up default fonts
-(when (display-graphic-p)
-  (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
-  (set-frame-parameter nil 'fullscreen 'maximized)
-  (with-eval-after-load 'linum
-    (set-face-attribute 'linum nil :weight 'thin)))
-
 ;; Set file, keyboard and terminal coding systems automatically
 (prefer-coding-system 'utf-8)
 
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
+
+;; (setq debug-on-error t)
+
+;; So `edebug' will print something useful as opposed to some bytecode hex
+;; (fset 'edebug-prin1-to-string 'prin1-to-string)
+
+;; Maximize frame on startup and set up default fonts
+(when (display-graphic-p)
+  (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
+  (with-eval-after-load 'linum
+    (set-face-attribute 'linum nil :weight 'thin))
+  (with-eval-after-load 'display-line-numbers
+    (set-face-attribute 'line-number nil :weight 'thin))
+
+  (let ((win-sys (window-system)))
+    (cond
+     ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
+     ;; but it's not desirable on macOS because the window server will decide the
+     ;; color of the cursor according to the background color.
+     ((eq win-sys 'mac)
+      (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
+     ;; Emacs 26 ns port new settings
+     ((eq win-sys 'ns)
+      (dolist (pair '((ns-transparent-titlebar . t) (ns-appearance . dark)))
+        (push pair (alist-get 'ns window-system-default-frame-alist nil))
+        (set-frame-parameter nil (car pair) (cdr pair)))
+      (setq frame-title-format nil
+            ns-use-proxy-icon nil
+            ns-use-thin-smoothing t
+            ns-use-mwheel-momentum t
+            ns-use-mwheel-acceleration t))))
+
+  (set-frame-parameter nil 'fullscreen 'maximized))
 
 ;; Remove all query on exit flags on all processes before quitting
 (advice-add 'save-buffers-kill-emacs :before
@@ -68,10 +73,13 @@
 
 ;; Turn on subword mode and linum mode for all prog and text modes
 (dolist (hook '(prog-mode-hook text-mode-hook))
-  (add-hook hook (lambda () (subword-mode t) (linum-mode t))))
-
-;; Renumber the current buffer after reverting the buffer
-(add-hook 'after-revert-hook 'linum-update-current)
+  (add-hook hook (lambda ()
+                   (subword-mode t)
+                   (if (>= emacs-major-version 26)
+                       (display-line-numbers-mode t)
+                     (linum-mode t)
+                     ;; Renumber the current buffer after reverting the buffer
+                     (add-hook 'after-revert-hook 'linum-update-current)))))
 
 ;; Save window config before ediff starts and restores it and cleans up when it quits, sanity!
 (defvar ediff-saved-window-configuration)

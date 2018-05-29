@@ -49,6 +49,7 @@
  '(desktop-save-mode t)
  '(diff-switches "-u -B")
  '(dired-auto-revert-buffer (quote dired-directory-changed-p))
+ '(display-line-numbers-width-start t)
  '(display-time-mode t)
  '(display-time-world-list
    (quote
