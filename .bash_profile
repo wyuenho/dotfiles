@@ -7,13 +7,6 @@ PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 # My Own things
 PATH="$HOME/packages/bin:$PATH"
 
-# ImageMagick
-export MAGICK_HOME
-MAGICK_HOME="$HOME/packages/ImageMagick"
-export DYLD_LIBRARY_PATH
-DYLD_LIBRARY_PATH="$MAGICK_HOME/lib/"
-PATH="$MAGICK_HOME/bin:$PATH"
-
 # C/C++
 export CC
 CC="cc"
