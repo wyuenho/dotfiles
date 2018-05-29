@@ -45,7 +45,6 @@
    (quote
     (tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode anaconda-mode)))
  '(desktop-path (quote ("~/.emacs.d")))
- '(desktop-restore-frames nil)
  '(desktop-save-mode t)
  '(diff-switches "-u -B")
  '(dired-auto-revert-buffer (quote dired-directory-changed-p))
@@ -181,9 +180,6 @@
     (add-node-modules-path ag all-the-icons all-the-icons-dired amx ascii auto-compile auto-yasnippet blacken cargo company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes default-text-scale delight dired dired-collapse dired-hide-dotfiles dired-single docker dockerfile-mode dumb-diff dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck-color-mode-line flycheck-mypy flycheck-pos-tip flycheck-rust flycheck-yamllint focus fontify-face git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-mode go-projectile graphviz-dot-mode html-mode-expansions ido-completing-read+ ido-vertical-mode imenu-anywhere imenu-list import-js importmagic jq-mode js-doc js-format js2-imenu-extras js2-mode js2-refactor kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub monky move-dup multi-term multiple-cursors nodejs-repl nvm olivetti origami package-build package-lint pager-default-keybindings pcre2el pdf-tools pipenv prettier-js projectile pyenv-mode pyimport python-docstring quelpa quelpa-use-package racer rainbow-mode restclient rg rjsx-mode rust-mode scss-mode smartparens smartparens-config smooth-scrolling solarized-theme sphinx-doc string-inflection sudo-edit tern tide try ts-comint typescript-mode undo-tree use-package visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose yaml-mode yarn-mode yasnippet yasnippet-snippets)))
  '(pixel-scroll-mode t)
  '(purpose-mode t)
- '(purpose-x-popwin-major-modes
-   (quote
-    (help-mode compilation-mode occur-mode display-time-world-mode)))
  '(pyenv-mode t)
  '(quelpa-checkout-melpa-p nil)
  '(quelpa-update-melpa-p nil)

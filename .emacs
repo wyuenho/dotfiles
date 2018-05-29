@@ -919,10 +919,9 @@ Optional argument ARG same as `comment-dwim''s."
     (when (file-exists-p purpose-default-layout-file)
       (purpose-load-window-layout-file))
     (select-window (get-largest-window))
-    (purpose-x-code1-update-changed)
     (remove-hook 'after-init-hook 'purpose-after-init))
-  :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts"))
-  :after magit undo-tree imenu-list
+  :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1")
+  :after magit imenu-list
   :config
 
   ;; Pending https://github.com/bmag/emacs-purpose/pull/116
