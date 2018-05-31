@@ -32,14 +32,14 @@
     (set-face-attribute 'line-number nil :weight 'thin))
 
   (let ((win-sys (window-system)))
-    (cond
-     ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
-     ;; but it's not desirable on macOS because the window server will decide the
-     ;; color of the cursor according to the background color.
-     ((eq win-sys 'mac)
+    (when (eq win-sys 'mac)
+      ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
+      ;; but it's not desirable on macOS because the window server will decide the
+      ;; color of the cursor according to the background color.
       (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
-     ;; Emacs 26 ns port new settings
-     ((eq win-sys 'ns)
+
+    ;; Emacs 26 ns port new settings
+    (when (eq win-sys 'ns)
       (dolist (pair '((ns-transparent-titlebar . t) (ns-appearance . dark)))
         (push pair (alist-get 'ns window-system-default-frame-alist nil))
         (set-frame-parameter nil (car pair) (cdr pair)))
@@ -47,7 +47,7 @@
             ns-use-proxy-icon nil
             ns-use-thin-smoothing t
             ns-use-mwheel-momentum t
-            ns-use-mwheel-acceleration t))))
+            ns-use-mwheel-acceleration t)))
 
   (set-frame-parameter nil 'fullscreen 'maximized))
 
