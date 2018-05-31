@@ -926,15 +926,7 @@ Optional argument ARG same as `comment-dwim''s."
     (select-window (get-largest-window))
     (remove-hook 'after-init-hook 'purpose-after-init))
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1")
-  :after magit imenu-list
   :config
-
-  ;; Pending https://github.com/bmag/emacs-purpose/pull/116
-  ;; (advice-add 'undo-tree-visualize :after
-  ;;             (lambda (&rest _)
-  ;;               (let ((window (get-buffer-window undo-tree-visualizer-buffer-name)))
-  ;;                 (set-window-dedicated-p window 'soft))))
-
   (purpose-add-user-purposes
    :modes '((ag-mode              . search)
             (rg-mode              . search)
