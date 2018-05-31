@@ -5,7 +5,8 @@
 (advice-add 'load-theme :around (lambda (old-load-theme &rest args)
                                   (apply old-load-theme (car args) t (cddr args))))
 
-(package-initialize)
+(when (< emacs-major-version 27)
+  (package-initialize))
 
 ;; Tell Custom to write and find the custom settings elsewhere
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
