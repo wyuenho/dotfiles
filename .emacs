@@ -345,8 +345,11 @@ Optional argument ARG same as `comment-dwim''s."
                           ("C-<backspace>"               . sp-backward-kill-word)
                           ([remap sp-backward-kill-word] . backward-kill-word)
 
-                          ("M-[" . sp-backward-unwrap-sexp)
-                          ("M-]" . sp-unwrap-sexp)))))
+                          ("M-(" . sp-wrap-round)
+                          ("M-[" . sp-wrap-square)
+                          ("M-{" . sp-wrap-curly)
+                          ("M-}" . sp-unwrap-sexp)
+                          ("M-]" . sp-backward-unwrap-sexp)))))
 
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
