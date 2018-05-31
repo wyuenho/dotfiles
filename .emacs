@@ -203,16 +203,17 @@ Optional argument ARG same as `comment-dwim''s."
               ("p"   . compilation-previous-error)))
 
 ;; Completely unbind visual-line-mode's stupid bindings
-;; (use-package visual-line-mode
-;;   :defer t
-;;   :bind (:map visual-line-mode-map
-;;               ([remap move-beginning-of-line]   . nil)
-;;               ([remap move-end-of-line]         . nil)
-;;               ([remap beginning-of-visual-line] . move-beginning-of-line)
-;;               ([remap end-of-visual-line]       . move-end-of-line)
-;;               ([remap kill-line]                . nil)
-;;               ([remap next-line]                . next-logical-line)
-;;               ([remap previous-line]            . previous-logical-line)))
+(use-package visual-line-mode
+  :hook (prog-mode text-mode)
+  ;; :bind (:map visual-line-mode-map
+  ;;             ([remap move-beginning-of-line]   . nil)
+  ;;             ([remap move-end-of-line]         . nil)
+  ;;             ([remap beginning-of-visual-line] . move-beginning-of-line)
+  ;;             ([remap end-of-visual-line]       . move-end-of-line)
+  ;;             ([remap kill-line]                . nil)
+  ;;             ([remap next-line]                . next-logical-line)
+  ;;             ([remap previous-line]            . previous-logical-line))
+  )
 
 ;; Sane keyboard scrolling
 (use-package pager-default-keybindings)

@@ -87,7 +87,6 @@
  '(global-origami-mode t)
  '(global-syntax-subword-mode t)
  '(global-undo-tree-mode t)
- '(global-visual-line-mode t)
  '(global-whitespace-cleanup-mode t)
  '(golden-ratio-mode t)
  '(history-length 250)
