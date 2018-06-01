@@ -18,13 +18,8 @@
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; (setq debug-on-error t)
-
-;; So `edebug' will print something useful as opposed to some bytecode hex
-;; (fset 'edebug-prin1-to-string 'prin1-to-string)
-
-;; Maximize frame on startup and set up default fonts
 (when (display-graphic-p)
+  ;; Set up default fonts
   (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
   (with-eval-after-load 'linum
     (set-face-attribute 'linum nil :weight 'thin))
@@ -52,16 +47,17 @@
   (set-frame-parameter nil 'fullscreen 'maximized))
 
 ;; Remove all query on exit flags on all processes before quitting
-(advice-add 'save-buffers-kill-emacs :before
-            (lambda (&rest _)
-              (defun processes-with-query (process)
-                (and (memq (process-status process) '(run stop open listen))
+(unless (boundp 'confirm-kill-processes) ;; new on Emacs 26
+  (advice-add 'save-buffers-kill-emacs :before
+              (lambda (&rest _)
+                (defun processes-with-query (process)
+                  (and (memq (process-status process) '(run stop open listen))
                      (process-query-on-exit-flag process)))
-              (let ((processes (seq-filter 'processes-with-query (process-list))))
+                (let ((processes (seq-filter 'processes-with-query (process-list))))
                 (dolist (process processes)
                   (set-process-query-on-exit-flag process nil)))))
-(setq kill-buffer-query-functions
-      (remq 'process-kill-buffer-query-function kill-buffer-query-functions))
+  (setq kill-buffer-query-functions
+        (remq 'process-kill-buffer-query-function kill-buffer-query-functions)))
 
 ;; Only turn on `auto-revert-mode' for Mac on Emacs >= 26 because kqueue file
 ;; notification is broken for Emacs < 26
@@ -76,7 +72,7 @@
 (dolist (hook '(prog-mode-hook text-mode-hook))
   (add-hook hook (lambda ()
                    (subword-mode t)
-                   (if (>= emacs-major-version 26)
+                   (if (fboundp 'display-line-numbers-mode)
                        (display-line-numbers-mode t)
                      (linum-mode t)
                      ;; Renumber the current buffer after reverting the buffer
