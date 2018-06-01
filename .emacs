@@ -168,6 +168,11 @@ Optional argument ARG same as `comment-dwim''s."
                        ("n"   . occur-next)
                        ("p"   . occur-prev))))
 
+(use-package osx-trash
+  :if (and (eq system-type 'darwin)
+           (not (fboundp 'system-move-file-to-trash)))
+  :config (osx-trash-setup))
+
 ;; Turn off useless mode lighters
 (use-package delight
   :config
