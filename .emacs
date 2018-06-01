@@ -12,6 +12,8 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
+(require 'quelpa-use-package)
+
 ;; Set file, keyboard and terminal coding systems automatically
 (prefer-coding-system 'utf-8)
 
@@ -116,11 +118,6 @@ Optional argument ARG same as `comment-dwim''s."
                        (not (looking-at "[ \t]*\n")))
                   (comment-or-uncomment-region (line-beginning-position) (line-end-position))
                 (apply comment-dwim args))))
-
-(eval-when-compile (require 'use-package))
-;; (setq use-package-compute-statistics t)
-(require 'bind-key)
-(require 'quelpa-use-package)
 
 ;; I hate X mouse bindings
 (when (and (display-graphic-p)
