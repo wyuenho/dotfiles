@@ -217,7 +217,7 @@
  '(smartparens-global-mode t)
  '(smooth-scrolling-mode t)
  '(smtpmail-default-smtp-server "smtp.gmail.com")
- '(smtpmail-smtp-service 465)
+ '(smtpmail-smtp-service 587)
  '(smtpmail-smtp-user "wyuenho")
  '(smtpmail-stream-type (quote ssl))
  '(solarized-high-contrast-mode-line t)
