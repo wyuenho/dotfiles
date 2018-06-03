@@ -52,6 +52,7 @@
     (tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode anaconda-mode)))
  '(desktop-path (quote ("~/.emacs.d")))
  '(desktop-save-mode t)
+ '(diff-hl-draw-borders nil)
  '(diff-switches "-u -B")
  '(dired-auto-revert-buffer (quote dired-directory-changed-p))
  '(display-line-numbers-width-start t)
