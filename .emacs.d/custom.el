@@ -28,6 +28,7 @@
  '(column-number-indicator-zero-based nil)
  '(column-number-mode t)
  '(company-auto-complete t)
+ '(company-auto-complete-chars (quote (41 46)))
  '(company-global-modes
    (quote
     (lisp-mode emacs-lisp-mode restclient-mode js-mode js-jsx-mode js2-mode js2-rjsx-mode rjsx-mode python-mode go-mode web-mode c-mode c++-mode objc-mode css-mode scss-mode sh-mode)))
@@ -84,6 +85,7 @@
  '(flycheck-pos-tip-max-width 80)
  '(gc-cons-threshold 20000000)
  '(global-company-mode t)
+ '(global-diff-hl-mode t)
  '(global-flycheck-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(global-hl-line-mode t)
@@ -184,9 +186,8 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (add-node-modules-path ag all-the-icons all-the-icons-dired amx ascii auto-compile auto-yasnippet blacken cargo company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes default-text-scale delight dired dired-collapse dired-hide-dotfiles dired-single docker dockerfile-mode dumb-diff dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region f flx-ido flx-isearch flycheck-color-mode-line flycheck-mypy flycheck-pos-tip flycheck-rust flycheck-yamllint focus fontify-face git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-mode go-projectile graphviz-dot-mode html-mode-expansions ido-completing-read+ ido-vertical-mode imenu-anywhere import-js importmagic jq-mode js-doc js-format js2-imenu-extras js2-mode js2-refactor kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub monky move-dup multi-term multiple-cursors nodejs-repl nvm olivetti origami osx-trash package-build package-lint pager-default-keybindings pcre2el pdf-tools pipenv prettier-js projectile pyenv-mode pyimport python-docstring quelpa-use-package racer rainbow-mode restclient rg rjsx-mode rust-mode scss-mode smartparens smartparens-config smooth-scrolling solarized-theme sphinx-doc string-inflection sudo-edit tern tide try ts-comint typescript-mode undo-tree use-package visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose yaml-mode yarn-mode yasnippet yasnippet-snippets)))
+    (add-node-modules-path ag all-the-icons all-the-icons-dired amx ascii auto-compile auto-yasnippet blacken cargo company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web csv-mode cycle-quotes default-text-scale delight diff-hl dired dired-collapse dired-hide-dotfiles dired-single docker dockerfile-mode dumb-jump editorconfig emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region f flx-ido flx-isearch flycheck-color-mode-line flycheck-mypy flycheck-pos-tip flycheck-rust flycheck-yamllint focus fontify-face git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-mode go-projectile graphviz-dot-mode html-mode-expansions hydra ido-completing-read+ ido-vertical-mode imenu-anywhere import-js importmagic jq-mode js-doc js-format js2-imenu-extras js2-mode js2-refactor kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub monky move-dup multi-term multiple-cursors nodejs-repl nvm olivetti origami osx-trash package-build package-lint pager-default-keybindings pcre2el pdf-tools pipenv powerline prettier-js projectile pyenv-mode pyimport python-docstring quelpa-use-package racer rainbow-mode restclient rg rjsx-mode rust-mode scss-mode smartparens smartparens-config smooth-scrolling solarized-theme sphinx-doc string-inflection sudo-edit tern tide try ts-comint typescript-mode undo-tree use-package visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose yaml-mode yarn-mode yasnippet yasnippet-snippets)))
  '(pixel-scroll-mode t)
- '(purpose-mode t)
  '(pyenv-mode t)
  '(quelpa-checkout-melpa-p nil)
  '(quelpa-update-melpa-p nil)
@@ -256,11 +257,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(imenu-list-entry-face-0 ((t (:inherit imenu-list-entry-face))))
- '(imenu-list-entry-face-1 ((t (:inherit imenu-list-entry-face))))
- '(imenu-list-entry-face-2 ((t (:inherit imenu-list-entry-face))))
- '(imenu-list-entry-face-3 ((t (:inherit imenu-list-entry-face))))
- '(imenu-list-entry-subalist-face-0 ((t (:inherit (imenu-list-entry-face-0 font-lock-type-face) :underline t :weight bold))))
- '(imenu-list-entry-subalist-face-1 ((t (:inherit (imenu-list-entry-face-1 font-lock-function-name-face) :underline t :weight bold))))
- '(imenu-list-entry-subalist-face-2 ((t (:inherit (imenu-list-entry-face-2 font-lock-variable-name-face) :underline t :weight bold))))
- '(imenu-list-entry-subalist-face-3 ((t (:inherit (imenu-list-entry-face-3 font-lock-string-face) :underline t :weight bold)))))
+ )
