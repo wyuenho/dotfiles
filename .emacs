@@ -57,9 +57,24 @@
 ;;                      (setq header-line-format 'mode-line-buffer-identification)
 ;;                      (setq mode-line-format (remove 'mode-line-buffer-identification mode-line-format))))))
 
+;; Prettier mode line
 (use-package powerline
   :delight
   :config (powerline-default-theme))
+
+;; Replace the major mode name with its icon and
+(use-package all-the-icons
+  :config
+  (add-hook 'after-change-major-mode-hook
+            (lambda ()
+              (let* ((icon (all-the-icons-icon-for-mode major-mode))
+                     (face-prop (and (stringp icon) (purecopy (get-text-property 0 'face icon)))))
+                (when (and (stringp icon) (not (string= major-mode icon)) face-prop)
+                  (when (featurep 'powerline)
+                    (setq icon (copy-sequence icon))
+                    (plist-put face-prop :background (face-background 'powerline-active1))
+                    (put-text-property 0 (length icon) 'face face-prop icon))
+                  (setq mode-name icon))))))
 
 ;; Remove all query on exit flags on all processes before quitting
 (unless (boundp 'confirm-kill-processes) ;; new on Emacs 26
@@ -232,15 +247,6 @@ Optional argument ARG same as `comment-dwim''s."
                          :config
                          (exec-path-from-shell-initialize))
                        (message "exec-path-from-shell loaded")))
-
-;; Replace the major mode name with its icon and
-(use-package all-the-icons
-  :config
-  (add-hook 'after-change-major-mode-hook
-            (lambda ()
-              (let ((icon (all-the-icons-icon-for-mode major-mode)))
-                (when (and icon (not (string= major-mode icon)))
-                  (setq mode-name icon))))))
 
 ;; Adjust frame-wide font size
 (use-package default-text-scale
