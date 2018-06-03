@@ -849,7 +849,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Git
 (use-package magit
-  :bind (("C-x v C-g" . magit-status)))
+  :bind (("C-x v M-g" . magit-status)
+         ("C-x v M-b" . magit-blame)))
 
 (use-package magithub
   :after magit
@@ -858,7 +859,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Hg
 (use-package monky
-  :bind (("C-x v C-h" . monky-status)))
+  :bind (("C-x v M-m" . monky-status)))
 
 ;; File management
 (use-package dired
