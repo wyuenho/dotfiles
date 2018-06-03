@@ -50,6 +50,17 @@
 
   (set-frame-parameter nil 'fullscreen 'maximized))
 
+;; Move the buffer name from the mode line to the header line
+;; (dolist (hook '(window-configuration-change-hook after-change-major-mode-hook))
+;;   (add-hook hook (lambda ()
+;;                    (when (window-header-line-height)
+;;                      (setq header-line-format 'mode-line-buffer-identification)
+;;                      (setq mode-line-format (remove 'mode-line-buffer-identification mode-line-format))))))
+
+(use-package powerline
+  :delight
+  :config (powerline-default-theme))
+
 ;; Remove all query on exit flags on all processes before quitting
 (unless (boundp 'confirm-kill-processes) ;; new on Emacs 26
   (advice-add 'save-buffers-kill-emacs :before
@@ -94,13 +105,6 @@
           (lambda ()
             (eval-and-compile (require 'ediff-util))
             (ediff-janitor nil nil)) 'append)
-
-;; Move the buffer name from the mode line to the header line
-(dolist (hook '(window-configuration-change-hook after-change-major-mode-hook))
-  (add-hook hook (lambda ()
-                   (when (window-header-line-height)
-                     (setq header-line-format 'mode-line-buffer-identification)
-                     (setq mode-line-format (remove 'mode-line-buffer-identification mode-line-format))))))
 
 ;; More sensible comment-dwim
 (advice-add 'comment-dwim :around
