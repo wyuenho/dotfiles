@@ -835,7 +835,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (unless (display-graphic-p)
     (diff-hl-margin-mode t))
-  (add-hook 'dired-mode-hook diff-hl-dired-mode))
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
 
 (use-package magit
   :bind (("C-x v M-g" . magit-status)
