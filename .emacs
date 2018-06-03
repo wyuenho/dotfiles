@@ -67,10 +67,10 @@
               (lambda (&rest _)
                 (defun processes-with-query (process)
                   (and (memq (process-status process) '(run stop open listen))
-                     (process-query-on-exit-flag process)))
+                       (process-query-on-exit-flag process)))
                 (let ((processes (seq-filter 'processes-with-query (process-list))))
-                (dolist (process processes)
-                  (set-process-query-on-exit-flag process nil)))))
+                  (dolist (process processes)
+                    (set-process-query-on-exit-flag process nil)))))
   (setq kill-buffer-query-functions
         (remq 'process-kill-buffer-query-function kill-buffer-query-functions)))
 
