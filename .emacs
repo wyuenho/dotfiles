@@ -37,6 +37,8 @@
 
     ;; Emacs 26 ns port new settings
     (when (eq win-sys 'ns)
+      ;; Will at least display emojis if the multicolor font patch is applied
+      (set-fontset-font t 'symbol (font-spec :family "Apple Color Emoji") nil 'prepend)
       (dolist (pair '((ns-transparent-titlebar . t) (ns-appearance . dark)))
         (push pair (alist-get 'ns window-system-default-frame-alist nil))
         (set-frame-parameter nil (car pair) (cdr pair)))
