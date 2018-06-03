@@ -733,8 +733,10 @@ Optional argument ARG same as `comment-dwim''s."
   :mode "\\.scss\\'")
 
 (use-package rainbow-mode
-  :if (< emacs-major-version 26)
-  :hook (css-mode scss-mode emacs-lisp-mode))
+  :config
+  (when (< emacs-major-version 26)
+    (add-hook 'css-mode-hook (lambda () (rainbow-mode t))))
+  (add-hook 'emacs-lisp-mode-hook (lambda () (rainbow-mode t))))
 
 (use-package web-mode
   :functions web-mode-language-at-pos
