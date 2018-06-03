@@ -99,7 +99,7 @@
   (global-auto-revert-mode t))
 
 ;; Automatically wrap overly long lines for all text modes
-(add-hook 'text-mode-hook (lambda () (auto-fill-mode t)))
+(add-hook 'text-mode-hook 'auto-fill-mode)
 
 ;; Turn on subword mode and linum mode for all prog and text modes
 (dolist (hook '(prog-mode-hook text-mode-hook))
@@ -228,16 +228,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Completely unbind visual-line-mode's stupid bindings
 (use-package visual-line-mode
-  :hook (prog-mode text-mode)
-  ;; :bind (:map visual-line-mode-map
-  ;;             ([remap move-beginning-of-line]   . nil)
-  ;;             ([remap move-end-of-line]         . nil)
-  ;;             ([remap beginning-of-visual-line] . move-beginning-of-line)
-  ;;             ([remap end-of-visual-line]       . move-end-of-line)
-  ;;             ([remap kill-line]                . nil)
-  ;;             ([remap next-line]                . next-logical-line)
-  ;;             ([remap previous-line]            . previous-logical-line))
-  )
+  :hook (prog-mode text-mode))
 
 ;; Sane keyboard scrolling
 (use-package pager-default-keybindings)
@@ -496,17 +487,6 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Javascript
 (add-hook 'js-mode-hook
           (lambda ()
-            ;; Make sure fontification in js-mode and derived modes is up to
-            ;; date with the latest ES2015 keywords
-            ;; (font-lock-add-keywords
-            ;;  nil
-            ;;  '("\\_<async\\_>"
-            ;;    "\\_<await\\_>"
-            ;;    ("\\_<import\\_>"
-            ;;     ("\\_<as\\_>" nil nil (0 font-lock-keyword-face))
-            ;;     ("\\_<from\\_>" nil nil (0 font-lock-keyword-face)))
-            ;;    ("\\_<for\\_>" "\\_<of\\_>" nil nil (0 font-lock-keyword-face))))
-
             (use-package tern
               :delight
               :config
@@ -738,8 +718,8 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package rainbow-mode
   :config
   (when (< emacs-major-version 26)
-    (add-hook 'css-mode-hook (lambda () (rainbow-mode t))))
-  (add-hook 'emacs-lisp-mode-hook (lambda () (rainbow-mode t))))
+    (add-hook 'css-mode-hook 'rainbow-mode)
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-mode)))
 
 (use-package web-mode
   :functions web-mode-language-at-pos
@@ -748,7 +728,6 @@ Optional argument ARG same as `comment-dwim''s."
          "\\.handlebars\\'"
          "\\.underscore\\'"
          "\\.html?\\'"
-         ;; "\\.s?css\\'"
          "\\.jinja\\'"
          "\\.mako\\'"
          "\\.dtl\\'"
@@ -819,17 +798,16 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Project management, version control, file search and browser
 (use-package projectile
-  :after pyenv-mode
-  :preface
-  (defun projectile-pyenv-mode-set ()
-    "Set pyenv version matching project name."
-    (let ((project (projectile-project-name)))
-      (if (member project (pyenv-mode-versions))
-          (pyenv-mode-set project)
-        (pyenv-mode-unset))))
   :config
   (projectile-mode t)
-  (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set))
+  (with-eval-after-load 'pyenv-mode
+    (add-hook 'projectile-switch-project-hook
+              (lambda ()
+                "Set pyenv version matching project name."
+                (let ((project (projectile-project-name)))
+                  (if (member project (pyenv-mode-versions))
+                      (pyenv-mode-set project)
+                    (pyenv-mode-unset)))))))
 
 ;; Second fastest but the best find grep in terms of tooling support
 (use-package ag
@@ -852,13 +830,13 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package dumb-jump)
 
+;; Version Control
 (use-package diff-hl
   :config
   (unless (display-graphic-p)
     (diff-hl-margin-mode t))
-  (add-hook 'dired-mode-hook (lambda () (diff-hl-dired-mode t))))
+  (add-hook 'dired-mode-hook diff-hl-dired-mode))
 
-;; Git
 (use-package magit
   :bind (("C-x v M-g" . magit-status)
          ("C-x v M-b" . magit-blame)))
@@ -868,7 +846,6 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (magithub-feature-autoinject t))
 
-;; Hg
 (use-package monky
   :bind (("C-x v M-m" . monky-status)))
 
@@ -953,7 +930,13 @@ Optional argument ARG same as `comment-dwim''s."
   (purpose-x-kill-setup)
   (purpose-x-magit-single-on)
 
-  (purpose-mode t))
+  (purpose-mode t)
+
+  (add-hook 'after-init-hook
+            (lambda ()
+              (when (file-exists-p purpose-default-layout-file)
+                (purpose-load-window-layout-file))
+              (select-window (get-largest-window)))))
 
 ;; Customize solarized theme
 (use-package solarized-theme
