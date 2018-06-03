@@ -44,7 +44,9 @@
             ns-use-proxy-icon nil
             ns-use-thin-smoothing t
             ns-use-mwheel-momentum t
-            ns-use-mwheel-acceleration t)))
+            ns-use-mwheel-acceleration t
+            ;; MacPort emacs-app port bug
+            x-colors (ns-list-colors))))
 
   (set-frame-parameter nil 'fullscreen 'maximized))
 
