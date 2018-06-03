@@ -728,7 +728,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package rainbow-mode
   :if (< emacs-major-version 26)
-  :hook (css-mode scss-mode))
+  :hook (css-mode scss-mode emacs-lisp-mode))
 
 (use-package web-mode
   :functions web-mode-language-at-pos
