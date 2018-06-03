@@ -23,6 +23,7 @@
 (when (display-graphic-p)
   ;; Set up default fonts
   (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
+
   (with-eval-after-load 'linum
     (set-face-attribute 'linum nil :weight 'thin))
   (with-eval-after-load 'display-line-numbers
@@ -938,12 +939,6 @@ Optional argument ARG same as `comment-dwim''s."
   :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
 
 (use-package window-purpose
-  :preface
-  (defun purpose-after-init ()
-    (when (file-exists-p purpose-default-layout-file)
-      (purpose-load-window-layout-file))
-    (select-window (get-largest-window))
-    (remove-hook 'after-init-hook 'purpose-after-init))
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1")
   :config
   (purpose-add-user-purposes
@@ -957,10 +952,8 @@ Optional argument ARG same as `comment-dwim''s."
   (purpose-x-popwin-setup)
   (purpose-x-kill-setup)
   (purpose-x-magit-single-on)
-  (purpose-mode t)
 
-  ;; (add-hook 'after-init-hook 'purpose-after-init 'append)
-  )
+  (purpose-mode t))
 
 ;; Customize solarized theme
 (use-package solarized-theme
