@@ -420,7 +420,6 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package company
   :delight
   :config
-  (company-tng-configure-default)
   :bind (:map company-mode-map
               ("M-/" . company-complete)))
 
