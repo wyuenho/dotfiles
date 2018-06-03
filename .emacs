@@ -183,6 +183,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package delight
   :config
   (delight '((rainbow-mode)
+             (eldoc-mode nil eldoc)
              (move-dup-mode nil move-dup)
              (smartparens-mode nil smartparens)
              (which-key-mode nil which-key)
