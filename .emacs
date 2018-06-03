@@ -841,7 +841,11 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package dumb-jump)
 
-(use-package dumb-diff)
+(use-package diff-hl
+  :config
+  (unless (display-graphic-p)
+    (diff-hl-margin-mode t))
+  (add-hook 'dired-mode-hook (lambda () (diff-hl-dired-mode t))))
 
 ;; Git
 (use-package magit
