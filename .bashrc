@@ -2,7 +2,10 @@ export MBOX
 MBOX="$HOME/.mail/mbox"
 
 export EDITOR
-EDITOR="emacs -Q"
+EDITOR="emacsclient"
+
+export ALTERNATE_EDITOR
+ALTERNATE_EDITOR="emacs"
 
 # Aliases
 if [ "$(which ls)" == "/bin/ls" ]; then
