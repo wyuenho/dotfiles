@@ -793,16 +793,15 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("C-x v M-m" . monky-status)))
 
 ;; File management
-(use-package dired
-  :defer t
-  :config
-  (add-minor-mode 'dired-hide-details-mode "")
-  (when (memq (window-system) '(mac ns))
-    (bind-key "z" (lambda ()
-                    (interactive)
-                    (let ((file-name (dired-get-file-for-visit)))
-                      (start-process "default-app" nil "open" file-name)))
-              dired-mode-map)))
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (add-minor-mode 'dired-hide-details-mode "")
+            (when (memq (window-system) '(mac ns))
+              (bind-key "z" (lambda ()
+                              (interactive)
+                              (let ((file-name (dired-get-file-for-visit)))
+                                (start-process "default-app" nil "open" file-name)))
+                        dired-mode-map))))
 
 (use-package all-the-icons-dired
   :if (display-graphic-p)
