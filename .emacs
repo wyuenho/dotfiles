@@ -30,65 +30,6 @@
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(when (display-graphic-p)
-  ;; Set up default fonts
-  (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
-
-  (with-eval-after-load 'linum
-    (set-face-attribute 'linum nil :weight 'thin))
-  (with-eval-after-load 'display-line-numbers
-    (set-face-attribute 'line-number nil :weight 'thin))
-
-  (let ((win-sys (window-system)))
-    (when (eq win-sys 'mac)
-      ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
-      ;; but it's not desirable on macOS because the window server will decide the
-      ;; color of the cursor according to the background color.
-      (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
-
-    ;; Emacs 26 ns port new settings
-    (when (eq win-sys 'ns)
-      ;; Will at least display emojis if the multicolor font patch is applied
-      (set-fontset-font t 'symbol (font-spec :family "Apple Color Emoji") nil 'prepend)
-      (dolist (pair '((ns-transparent-titlebar . t) (ns-appearance . dark)))
-        (push pair (alist-get 'ns window-system-default-frame-alist nil))
-        (set-frame-parameter nil (car pair) (cdr pair)))
-      (setq frame-title-format nil
-            ns-use-proxy-icon nil
-            ns-use-thin-smoothing t
-            ns-use-mwheel-momentum t
-            ns-use-mwheel-acceleration t
-            ;; MacPort emacs-app port bug
-            x-colors (ns-list-colors))))
-
-  (set-frame-parameter nil 'fullscreen 'maximized))
-
-;; Move the buffer name from the mode line to the header line
-;; (dolist (hook '(window-configuration-change-hook after-change-major-mode-hook))
-;;   (add-hook hook (lambda ()
-;;                    (when (window-header-line-height)
-;;                      (setq header-line-format 'mode-line-buffer-identification)
-;;                      (setq mode-line-format (remove 'mode-line-buffer-identification mode-line-format))))))
-
-;; Prettier mode line
-(use-package powerline
-  :delight
-  :config (powerline-default-theme))
-
-;; Replace the major mode name with its icon and
-(use-package all-the-icons
-  :config
-  (add-hook 'after-change-major-mode-hook
-            (lambda ()
-              (let* ((icon (all-the-icons-icon-for-mode major-mode))
-                     (face-prop (and (stringp icon) (purecopy (get-text-property 0 'face icon)))))
-                (when (and (stringp icon) (not (string= major-mode icon)) face-prop)
-                  (when (featurep 'powerline)
-                    (setq icon (copy-sequence icon))
-                    (plist-put face-prop :background (face-background 'powerline-active1))
-                    (put-text-property 0 (length icon) 'face face-prop icon))
-                  (setq mode-name icon))))))
-
 ;; Remove all query on exit flags on all processes before quitting
 (unless (boundp 'confirm-kill-processes) ;; new on Emacs 26
   (advice-add 'save-buffers-kill-emacs :before
@@ -120,19 +61,6 @@
                      (linum-mode t)
                      ;; Renumber the current buffer after reverting the buffer
                      (add-hook 'after-revert-hook 'linum-update-current)))))
-
-;; Save window config before ediff starts and restores it and cleans up when it quits, sanity!
-(defvar ediff-saved-window-configuration)
-(add-hook 'ediff-before-setup-hook
-          (lambda () (setq ediff-saved-window-configuration (current-window-configuration))))
-(let ((restore-window-configuration
-       (lambda () (set-window-configuration ediff-saved-window-configuration))))
-  (add-hook 'ediff-quit-hook restore-window-configuration 'append)
-  (add-hook 'ediff-suspend-hook restore-window-configuration 'append))
-(add-hook 'ediff-cleanup-hook
-          (lambda ()
-            (eval-and-compile (require 'ediff-util))
-            (ediff-janitor nil nil)) 'append)
 
 ;; More sensible comment-dwim
 (advice-add 'comment-dwim :around
@@ -181,16 +109,24 @@ Optional argument ARG same as `comment-dwim''s."
     (downcase-region beg end)))
 
 ;; Bind useful things to keys
-(bind-keys ("C-x C-u"   . upcase-region-dwim)
+(bind-keys ("<backtab>" . align)
+           ("C-x C-u"   . upcase-region-dwim)
            ("C-x C-l"   . downcase-region-dwim)
            ("C-x f"     . follow-mode)
-           ("<backtab>" . align)
            ;; Replace default buffer menu with ibuffer
-           ("C-x C-b"   . ibuffer))
+           ("C-x C-b"   . ibuffer)
+           ("C-t"       . transpose-sexps))
 
 ;; Replace zap-to-char with the hidden zap-up-to-char
 (autoload 'zap-up-to-char "misc")
 (bind-key "M-z" 'zap-up-to-char)
+
+;; Other missing essentials that I don't want to write
+(use-package crux
+  :bind (("C-c D" . crux-delete-file-and-buffer)
+         ("C-c R" . crux-rename-file-and-buffer)
+         ("C-c I" . crux-find-user-init-file)
+         ("C-c S" . crux-find-shell-init-file)))
 
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
@@ -202,55 +138,53 @@ Optional argument ARG same as `comment-dwim''s."
                        ("n"   . occur-next)
                        ("p"   . occur-prev))))
 
-(use-package osx-trash
-  :if (and (eq system-type 'darwin)
-           (not (fboundp 'system-move-file-to-trash)))
-  :config (osx-trash-setup))
+;; I use compilation mode more, so of course I have to do the same thing as
+;; occur mode
+(add-hook 'compilation-mode-hook
+          (lambda ()
+            (bind-keys :map compilation-mode-map
+                       ("M-n" . nil)
+                       ("M-p" . nil)
+                       ("n"   . compilation-next-error)
+                       ("p"   . compilation-previous-error))))
 
 ;; Turn off useless mode lighters
 (use-package delight
   :config
   (delight '((rainbow-mode)
-             (eldoc-mode nil eldoc)
-             (move-dup-mode nil move-dup)
-             (smartparens-mode nil smartparens)
-             (which-key-mode nil which-key)
+             (purpose-mode            nil window-purpose)
+             (eldoc-mode              nil eldoc)
+             (move-dup-mode           nil move-dup)
+             (smartparens-mode        nil smartparens)
+             (which-key-mode          nil which-key)
              (whitespace-cleanup-mode nil whitespace)
-             (undo-tree-mode nil undo-tree)
-             (auto-revert-mode nil autorevert)
-             (visual-line-mode nil simple)
-             (subword-mode nil subword))))
+             (undo-tree-mode          nil undo-tree)
+             (auto-revert-mode        nil autorevert)
+             (visual-line-mode        nil simple)
+             (subword-mode            nil subword))))
+
+(use-package osx-trash
+  :if (and (eq system-type 'darwin)
+           (not (fboundp 'system-move-file-to-trash)))
+  :config (osx-trash-setup))
+
+(use-package ialign
+  :bind ("<A-tab>" . ialign))
+
+(use-package goto-chg
+  :bind (("C-," . goto-last-change)))
 
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
   :delight
   :bind (("C-h b" . which-key-show-top-level)))
 
-;; I use compilation mode more, so of course I have to do the same thing as
-;; occur mode
-(use-package compile
-  :defer t
-  :bind (:map compilation-mode-map
-              ("M-n" . nil)
-              ("M-p" . nil)
-              ("n"   . compilation-next-error)
-              ("p"   . compilation-previous-error)))
-
 ;; Completely unbind visual-line-mode's stupid bindings
 (use-package visual-line-mode
-  :hook (prog-mode text-mode))
+  :hook (prog-mode text-mode messages-buffer-mode))
 
 ;; Sane keyboard scrolling
 (use-package pager-default-keybindings)
-
-;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X and Linux.
-(run-with-idle-timer 1 nil
-                     (lambda ()
-                       (use-package exec-path-from-shell
-                         :if (memq (window-system) '(mac ns x))
-                         :config
-                         (exec-path-from-shell-initialize))
-                       (message "exec-path-from-shell loaded")))
 
 ;; Adjust frame-wide font size
 (use-package default-text-scale
@@ -366,6 +300,25 @@ Optional argument ARG same as `comment-dwim''s."
                           ("M-}" . sp-unwrap-sexp)
                           ("M-]" . sp-backward-unwrap-sexp)))))
 
+;; Cross-machine fomatting
+(use-package editorconfig
+  :delight
+  :config
+  (add-to-list 'editorconfig-indentation-alist
+               '(rjsx-mode js2-basic-offset sgml-basic-offset)))
+
+;; Quick Snippets
+(use-package yasnippet
+  :delight yas-minor-mode
+  :commands yas-minor-mode
+  :hook ((prog-mode text-mode) . yas-minor-mode)
+  :config
+  (yas-reload-all)
+  :bind (:map yas-minor-mode-map
+              ("TAB"   . nil)
+              ("<tab>" . nil)
+              ("C-c i" . yas-expand)))
+
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
   :preface
@@ -390,25 +343,6 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("C-x =" . evil-numbers/inc-at-pt)
          ("C-x -" . evil-numbers/dec-at-pt)))
 
-;; Cross-machine fomatting
-(use-package editorconfig
-  :delight
-  :config
-  (add-to-list 'editorconfig-indentation-alist
-               '(rjsx-mode js2-basic-offset sgml-basic-offset)))
-
-;; Quick Snippets
-(use-package yasnippet
-  :delight yas-minor-mode
-  :commands yas-minor-mode
-  :hook ((prog-mode text-mode) . yas-minor-mode)
-  :config
-  (yas-reload-all)
-  :bind (:map yas-minor-mode-map
-              ("TAB"   . nil)
-              ("<tab>" . nil)
-              ("C-c i" . yas-expand)))
-
 ;; Modern code folding
 (use-package origami
   :config
@@ -426,6 +360,17 @@ Optional argument ARG same as `comment-dwim''s."
               ("M-9"   . origami-close-all-nodes)
               ("C-M-/" . origami-recursively-toggle-node)))
 
+;; Minimum Distraction
+(use-package olivetti
+  :delight
+  :bind ("C-c o" . olivetti-mode))
+
+;; Much faster PDF viewing
+(add-hook 'doc-view-mode-hook
+          (lambda ()
+            (use-package pdf-tools
+              :config (pdf-tools-install))))
+
 ;; Auto-completion
 (use-package company
   :delight
@@ -440,17 +385,12 @@ Optional argument ARG same as `comment-dwim''s."
   :hook (company-mode . company-quickhelp-mode))
 
 ;; Linting
-(use-package flycheck-color-mode-line
-  :hook (flycheck-mode . flycheck-color-mode-line-mode))
+(use-package flycheck
+  :config
+  (global-flycheck-mode t))
 
 (use-package flycheck-pos-tip
   :hook (flycheck-mode . flycheck-pos-tip-mode))
-
-;; Much faster PDF viewing
-(add-hook 'doc-view-mode-hook
-          (lambda ()
-            (use-package pdf-tools
-              :config (pdf-tools-install))))
 
 ;; REST API
 (use-package restclient
@@ -464,15 +404,6 @@ Optional argument ARG same as `comment-dwim''s."
                 :after company
                 :config
                 (setq-local company-backends `(company-restclient))))))
-
-;; Lisp
-(bind-keys :map emacs-lisp-mode-map
-           ("C-c e f" . byte-compile-file)
-           ("C-c e c" . emacs-lisp-byte-compile)
-           ("C-c e l" . emacs-lisp-byte-compile-and-load)
-           ("C-c e b" . eval-buffer)
-           ("C-c e r" . eval-region)
-           ("C-c e e" . eval-print-last-sexp))
 
 ;; Term and shell
 (add-hook 'sh-mode-hook
@@ -493,6 +424,20 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package flycheck-yamllint
   :after yaml-mode
   :config (flycheck-yamllint-setup))
+
+;; Lisp
+(bind-keys :map emacs-lisp-mode-map
+           ("C-c e f" . byte-compile-file)
+           ("C-c e c" . emacs-lisp-byte-compile)
+           ("C-c e l" . emacs-lisp-byte-compile-and-load)
+           ("C-c e b" . eval-buffer)
+           ("C-c e r" . eval-region)
+           ("C-c e e" . eval-print-last-sexp))
+
+(use-package cl-lib-highlight
+  :config
+  (cl-lib-highlight-initialize)
+  (cl-lib-highlight-warn-cl-initialize))
 
 ;; Javascript
 (add-hook 'js-mode-hook
@@ -627,24 +572,23 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'typescript-mode-hook 'tide-hl-identifier-mode)
   (add-hook 'before-save-hook 'tide-format-before-save)
-  :bind (:map typescript-mode-map
+  :bind (:map tide-mode-map
               ("C-c f" . tide-format)
-              ("C-c n" . tide-rename-symbol)
-              ("M-1"   . tide-fix)
+              ("C-c r" . tide-rename-symbol)
+              ("C-c 1" . tide-fix)
               ("M-?"   . tide-references)
-              ("C-h o" . tide-documentation-at-point)))
+              ("C-c j" . tide-jsdoc-template)
+              ("C-h d" . tide-documentation-at-point)))
 
 ;; Python
 (use-package pyenv-mode
   :delight
-  :bind (:map pyenv-mode-map
-              ("C-c C-s" . nil)
-              ("C-c C-u" . nil)))
+  :hook (python-mode . pyenv-mode))
 
 (use-package pipenv
   :delight
   :hook (python-mode . pipenv-mode)
-  :init
+  :config
   (setq pipenv-projectile-after-switch-function
         'pipenv-projectile-after-switch-extended))
 
@@ -657,13 +601,7 @@ Optional argument ARG same as `comment-dwim''s."
             (lambda ()
               (anaconda-eldoc-mode t)
               (setq-local company-backends
-                          (add-to-list 'company-backends '(company-anaconda :with company-capf)))))
-  :bind (:map anaconda-mode-map
-              ("M-r"   . nil)
-              ("M-\""  . anaconda-mode-find-assignments)
-              ("M-?"   . anaconda-mode-find-references)
-              ("M-,"   . anaconda-mode-go-back)
-              ("C-h o" . anaconda-mode-show-doc)))
+                          (add-to-list 'company-backends '(company-anaconda :with company-capf))))))
 
 (add-hook 'python-mode-hook
           (lambda ()
@@ -721,7 +659,7 @@ Optional argument ARG same as `comment-dwim''s."
   :after rust-mode
   :hook (rust-mode . cargo-minor-mode))
 
-;; HTML templates and CSS
+;; Web
 (use-package scss-mode
   :mode "\\.scss\\'")
 
@@ -806,7 +744,7 @@ Optional argument ARG same as `comment-dwim''s."
                              (member (web-mode-language-at-pos) '("jsx" "tsx"))))
                 (setq-local emmet-expand-jsx-className? t)))))
 
-;; Project management, version control, file search and browser
+;; Project management
 (use-package projectile
   :config
   (projectile-mode t)
@@ -819,14 +757,13 @@ Optional argument ARG same as `comment-dwim''s."
                       (pyenv-mode-set project)
                     (pyenv-mode-unset)))))))
 
-;; Second fastest but the best find grep in terms of tooling support
+;; Search
 (use-package ag
   :bind (("M-s a" . ag)))
 
 (use-package wgrep-ag
   :after ag)
 
-;; Currently the fastest find grep
 (use-package rg
   :after wgrep-ag projectile
   :config
@@ -845,14 +782,10 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (unless (display-graphic-p)
     (diff-hl-margin-mode t))
+  (diff-hl-flydiff-mode t)
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
 
-(use-package magit
-  :bind (("C-x v M-g" . magit-status)
-         ("C-x v M-b" . magit-blame)))
-
 (use-package magithub
-  :after magit
   :config
   (magithub-feature-autoinject t))
 
@@ -872,7 +805,7 @@ Optional argument ARG same as `comment-dwim''s."
               dired-mode-map)))
 
 (use-package all-the-icons-dired
-  :after all-the-icons
+  :if (display-graphic-p)
   :hook (dired-mode . all-the-icons-dired-mode))
 
 (use-package dired-hide-dotfiles
@@ -906,10 +839,6 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package dired-collapse
   :hook (dired-mode . dired-collapse-mode))
 
-;; Edit the file as a sudoer
-(use-package sudo-edit
-  :bind ("C-x C-r" . sudo-edit))
-
 ;; Window management
 
 ;; Move around windows with shifted arrow keys
@@ -917,40 +846,108 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (windmove-default-keybindings))
 
-;; Minimum Distraction
-(use-package olivetti
-  :delight
-  :bind ("C-c o" . olivetti-mode))
+(use-package buffer-move
+  :bind (("C-c b <left>"  . buf-move-left)
+         ("C-c b <right>" . buf-move-right)
+         ("C-c b <up>"    . buf-move-up)
+         ("C-c b <down>"  . buf-move-down)))
 
-(use-package imenu-list
-  :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
+;; (use-package imenu-list
+;;   :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
 
-(use-package window-purpose
-  :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1")
+;; (use-package window-purpose
+;;   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1")
+;;   :config
+;;   (require 'window-purpose)
+;;   (purpose-add-user-purposes
+;;    :modes '((ag-mode              . search)
+;;             (rg-mode              . search)
+;;             (shell-mode           . terminal)
+;;             (inferior-python-mode . terminal))
+;;    :names '(("*Pipenv shell*"     . terminal)))
+
+;;   ;; (purpose-x-code1-setup)
+;;   (purpose-x-popwin-setup)
+;;   (purpose-x-kill-setup)
+;;   (purpose-x-magit-single-on)
+
+;;   (purpose-mode t)
+
+;;   (add-hook 'after-init-hook
+;;             (lambda ()
+;;               (when (file-exists-p purpose-default-layout-file)
+;;                 (purpose-load-window-layout-file))
+;;               (select-window (get-largest-window)))))
+
+;; GUI
+(when (display-graphic-p)
+  ;; Set up default fonts
+  (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular)
+
+  (with-eval-after-load 'linum
+    (set-face-attribute 'linum nil :weight 'thin))
+  (with-eval-after-load 'display-line-numbers
+    (set-face-attribute 'line-number nil :weight 'thin))
+
+  (let ((win-sys (window-system)))
+    (when (eq win-sys 'mac)
+      ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
+      ;; but it's not desirable on macOS because the window server will decide the
+      ;; color of the cursor according to the background color.
+      ;; (add-to-list 'frameset-filter-alist '(mouse-color . :never))
+
+      (bind-keys ("C-|" . mac-toggle-tab-group-overview)
+                 ("C-{" . mac-previous-tab-or-toggle-tab-bar)
+                 ("C-}" . mac-next-tab-or-toggle-tab-bar)))
+
+    ;; Emacs 26 ns port new settings
+    (when (eq win-sys 'ns)
+      ;; Will at least display emojis if the multicolor font patch is applied
+      (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend)
+      (dolist (pair '((ns-transparent-titlebar . t) (ns-appearance . dark)))
+        (push pair (alist-get 'ns window-system-default-frame-alist nil))
+        (set-frame-parameter nil (car pair) (cdr pair)))
+      (setq frame-title-format nil
+            ns-use-proxy-icon nil
+            ns-use-thin-smoothing t
+            ns-use-mwheel-momentum t
+            ns-use-mwheel-acceleration t
+            ;; MacPorts emacs-app port bug
+            x-colors (ns-list-colors)))
+
+    ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X
+    (when (memq win-sys '(mac ns))
+      (run-with-idle-timer 1 nil
+                           (lambda ()
+                             (use-package exec-path-from-shell
+                               :if (memq (window-system) '(mac ns x))
+                               :config
+                               (exec-path-from-shell-initialize))
+                             (message "exec-path-from-shell loaded")))))
+
+  (set-frame-parameter nil 'fullscreen 'maximized))
+
+(use-package spaceline
   :config
-  (purpose-add-user-purposes
-   :modes '((ag-mode              . search)
-            (rg-mode              . search)
-            (shell-mode           . terminal)
-            (inferior-python-mode . terminal))
-   :names '(("*Pipenv shell*"     . terminal)))
+  (require 'spaceline-config)
+  (spaceline-spacemacs-theme)
+  (spaceline-toggle-buffer-encoding-abbrev-off))
 
-  (purpose-x-code1-setup)
-  (purpose-x-popwin-setup)
-  (purpose-x-kill-setup)
-  (purpose-x-magit-single-on)
-
-  (purpose-mode t)
-
-  (add-hook 'after-init-hook
+;; Replace the major mode name with its icon and
+(use-package all-the-icons
+  :if (display-graphic-p)
+  :config
+  (add-hook 'after-change-major-mode-hook
             (lambda ()
-              (when (file-exists-p purpose-default-layout-file)
-                (purpose-load-window-layout-file))
-              (select-window (get-largest-window)))))
+              (let* ((icon (all-the-icons-icon-for-mode major-mode))
+                     (face-prop (and (stringp icon) (purecopy (get-text-property 0 'face icon)))))
+                (when (and (stringp icon) (not (string= major-mode icon)) face-prop)
+                  (setq mode-name icon))))))
 
-;; Customize solarized theme
 (use-package solarized-theme
+  :if (display-graphic-p)
   :config
+  (load-theme 'solarized-dark)
   (dolist (entry '((region . ((((class color) (background light))
                                :background "#00629D" :foreground "#FDF6E3")
                               (((class color) (background dark))
@@ -1023,9 +1020,6 @@ Optional argument ARG same as `comment-dwim''s."
       (put face 'face-alias alias)))
 
   (set-face-attribute 'dired-header nil :underline t :background nil :foreground nil)
-  (set-face-background 'flycheck-fringe-error nil)
-  (set-face-background 'flycheck-fringe-info nil)
-  (set-face-background 'flycheck-fringe-warning nil)
   (set-face-attribute 'mode-line nil :overline nil :underline nil :box nil)
   (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil :box nil)
   (set-face-attribute 'header-line nil :overline nil :underline nil :box nil))
