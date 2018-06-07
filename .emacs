@@ -894,7 +894,7 @@ Optional argument ARG same as `comment-dwim''s."
       ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
       ;; but it's not desirable on macOS because the window server will decide the
       ;; color of the cursor according to the background color.
-      ;; (add-to-list 'frameset-filter-alist '(mouse-color . :never))
+      (add-to-list 'frameset-filter-alist '(mouse-color . :never))
 
       (bind-keys ("C-|" . mac-toggle-tab-group-overview)
                  ("C-{" . mac-previous-tab-or-toggle-tab-bar)
