@@ -906,8 +906,8 @@ Optional argument ARG same as `comment-dwim''s."
       (dolist (pair '((ns-transparent-titlebar . t) (ns-appearance . dark)))
         (push pair (alist-get 'ns window-system-default-frame-alist nil))
         (set-frame-parameter nil (car pair) (cdr pair)))
-      (setq frame-title-format nil
-            ns-use-proxy-icon nil
+      (setq frame-title-format "%b"
+            icon-title-format "%b"
             ns-use-thin-smoothing t
             ns-use-mwheel-momentum t
             ns-use-mwheel-acceleration t
