@@ -48,7 +48,7 @@
  '(delete-selection-mode t)
  '(desktop-modes-not-to-save
    (quote
-    (tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode anaconda-mode dired-mode)))
+    (tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode anaconda-mode)))
  '(desktop-path (quote ("~/.emacs.d")))
  '(desktop-save-mode t)
  '(diff-hl-draw-borders nil)
@@ -193,7 +193,7 @@
  '(quelpa-update-melpa-p nil)
  '(rainbow-html-colors-major-mode-list
    (quote
-    (html-mode css-mode php-mode nxml-mode xml-mode web-mode scss-mode)))
+    (html-mode php-mode nxml-mode xml-mode web-mode rjsx-mode mhtml-mode)))
  '(reb-re-syntax (quote string))
  '(recentf-auto-cleanup (quote never))
  '(recentf-mode t)
