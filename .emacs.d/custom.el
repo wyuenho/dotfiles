@@ -53,6 +53,7 @@
  '(desktop-save-mode t)
  '(diff-hl-draw-borders nil)
  '(diff-switches "-u -B")
+ '(dimmer-fraction 0.3)
  '(dired-auto-revert-buffer (quote dired-directory-changed-p))
  '(display-line-numbers-width-start t)
  '(display-time-world-list
