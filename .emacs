@@ -916,14 +916,10 @@ Optional argument ARG same as `comment-dwim''s."
             x-colors (ns-list-colors)))
 
     ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X
-    (when (memq win-sys '(mac ns))
-      (run-with-idle-timer 1 nil
-                           (lambda ()
-                             (use-package exec-path-from-shell
-                               :if (memq (window-system) '(mac ns x))
-                               :config
-                               (exec-path-from-shell-initialize))
-                             (message "exec-path-from-shell loaded")))))
+    (use-package exec-path-from-shell
+      :if (memq (window-system) '(mac ns x))
+      :config
+      (run-with-idle-timer 1 nil 'exec-path-from-shell-initialize)))
 
   (set-frame-parameter nil 'fullscreen 'maximized))
 
