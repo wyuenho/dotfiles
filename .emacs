@@ -852,32 +852,32 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-c b <up>"    . buf-move-up)
          ("C-c b <down>"  . buf-move-down)))
 
-;; (use-package imenu-list
-;;   :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
+(use-package imenu-list
+  :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
 
-;; (use-package window-purpose
-;;   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1")
-;;   :config
-;;   (require 'window-purpose)
-;;   (purpose-add-user-purposes
-;;    :modes '((ag-mode              . search)
-;;             (rg-mode              . search)
-;;             (shell-mode           . terminal)
-;;             (inferior-python-mode . terminal))
-;;    :names '(("*Pipenv shell*"     . terminal)))
+(use-package window-purpose
+  :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1")
+  :config
+  (require 'window-purpose)
+  (purpose-add-user-purposes
+   :modes '((ag-mode              . search)
+            (rg-mode              . search)
+            (shell-mode           . terminal)
+            (inferior-python-mode . terminal))
+   :names '(("*Pipenv shell*"     . terminal)))
 
-;;   ;; (purpose-x-code1-setup)
-;;   (purpose-x-popwin-setup)
-;;   (purpose-x-kill-setup)
-;;   (purpose-x-magit-single-on)
+  (purpose-x-code1-setup)
+  (purpose-x-popwin-setup)
+  (purpose-x-kill-setup)
+  (purpose-x-magit-single-on)
 
-;;   (purpose-mode t)
+  (purpose-mode t)
 
-;;   (add-hook 'after-init-hook
-;;             (lambda ()
-;;               (when (file-exists-p purpose-default-layout-file)
-;;                 (purpose-load-window-layout-file))
-;;               (select-window (get-largest-window)))))
+  (add-hook 'after-init-hook
+            (lambda ()
+              (when (file-exists-p purpose-default-layout-file)
+                (purpose-load-window-layout-file))
+              (select-window (get-largest-window)))))
 
 ;; GUI
 (when (display-graphic-p)
