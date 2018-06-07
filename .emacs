@@ -1,5 +1,8 @@
 ;;; -*- lexical-binding: t -*-
 
+;; Set file, keyboard and terminal coding systems automatically
+(prefer-coding-system 'utf-8)
+
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
 (advice-add 'load-theme :around (lambda (old-load-theme &rest args)
@@ -12,10 +15,17 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
-(require 'quelpa-use-package)
+;; Install missing packages
+(let ((missing (cl-set-difference package-selected-packages package-activated-list)))
+  (when missing
+    (package-refresh-contents)
+    (mapc (lambda (package)
+            (package-install package t)
+            (package-activate package))
+          missing)
+    (load custom-file)))
 
-;; Set file, keyboard and terminal coding systems automatically
-(prefer-coding-system 'utf-8)
+(require 'quelpa-use-package)
 
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
