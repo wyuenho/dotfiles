@@ -917,7 +917,7 @@ Optional argument ARG same as `comment-dwim''s."
 
     ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X
     (use-package exec-path-from-shell
-      :if (memq (window-system) '(mac ns x))
+      :if (memq (window-system) '(mac ns))
       :config
       (run-with-idle-timer 1 nil 'exec-path-from-shell-initialize)))
 
