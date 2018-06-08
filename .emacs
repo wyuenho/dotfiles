@@ -882,7 +882,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; GUI
 (when (display-graphic-p)
   ;; Set up default fonts
-  (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular)
+  (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
 
   (with-eval-after-load 'linum
     (set-face-attribute 'linum nil :weight 'thin))
