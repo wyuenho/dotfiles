@@ -177,7 +177,8 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
   :delight
-  :bind (("C-h b" . which-key-show-top-level)))
+  :bind (("C-h b" . which-key-show-top-level)
+         ("C-h m" . which-key-show-major-mode)))
 
 ;; Completely unbind visual-line-mode's stupid bindings
 (use-package visual-line-mode
