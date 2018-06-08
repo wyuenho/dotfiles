@@ -902,13 +902,14 @@ Optional argument ARG same as `comment-dwim''s."
 
     ;; Emacs 26 ns port new settings
     (when (eq win-sys 'ns)
-      ;; Will at least display emojis if the multicolor font patch is applied
-      (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend)
-      (dolist (pair '((ns-transparent-titlebar . t) (ns-appearance . dark)))
+      ;; Will at least display native Unicode emojis if the multicolor font
+      ;; patch is applied
+      (set-fontset-font "fontset-default" 'unicode "Apple Color Emoji" nil 'prepend)
+      (dolist (pair '((ns-transparent-titlebar . nil)
+                      (ns-appearance . dark)))
         (push pair (alist-get 'ns window-system-default-frame-alist nil))
         (set-frame-parameter nil (car pair) (cdr pair)))
       (setq frame-title-format "%b"
-            icon-title-format "%b"
             ns-use-thin-smoothing t
             ns-use-mwheel-momentum t
             ns-use-mwheel-acceleration t
