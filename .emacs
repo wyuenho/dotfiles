@@ -926,6 +926,15 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package spaceline
   :config
+  (setq powerline-image-apple-rgb
+        (and (eq (window-system) 'ns)
+             ns-use-srgb-colorspace
+             (< 11
+                (string-to-number
+                 (car
+                  (split-string
+                   (and (string-match "darwin\\([0-9]+\\.[0-9]+\\.[0-9]+\\)" system-configuration)
+                        (match-string-no-properties 1 system-configuration)) "\\."))))))
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
   (spaceline-toggle-buffer-encoding-abbrev-off))
