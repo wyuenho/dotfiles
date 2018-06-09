@@ -55,6 +55,7 @@
  '(diff-switches "-u -B")
  '(dimmer-fraction 0.3)
  '(dired-auto-revert-buffer (quote dired-directory-changed-p))
+ '(dired-dwim-target t)
  '(display-line-numbers-width-start t)
  '(display-time-world-list
    (quote
