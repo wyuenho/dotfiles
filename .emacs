@@ -149,21 +149,6 @@ Optional argument ARG same as `comment-dwim''s."
                        ("n"   . compilation-next-error)
                        ("p"   . compilation-previous-error))))
 
-;; Turn off useless mode lighters
-(use-package delight
-  :config
-  (delight '((rainbow-mode)
-             (purpose-mode            nil window-purpose)
-             (eldoc-mode              nil eldoc)
-             (move-dup-mode           nil move-dup)
-             (smartparens-mode        nil smartparens)
-             (which-key-mode          nil which-key)
-             (whitespace-cleanup-mode nil whitespace)
-             (undo-tree-mode          nil undo-tree)
-             (auto-revert-mode        nil autorevert)
-             (visual-line-mode        nil simple)
-             (subword-mode            nil subword))))
-
 (use-package osx-trash
   :if (and (eq system-type 'darwin)
            (not (fboundp 'system-move-file-to-trash)))
@@ -924,6 +909,21 @@ Optional argument ARG same as `comment-dwim''s."
       (run-with-idle-timer 1 nil 'exec-path-from-shell-initialize)))
 
   (set-frame-parameter nil 'fullscreen 'maximized))
+
+;; Turn off useless mode lighters
+(use-package delight
+  :config
+  (delight '((rainbow-mode)
+             (purpose-mode            nil window-purpose)
+             (eldoc-mode              nil eldoc)
+             (move-dup-mode           nil move-dup)
+             (smartparens-mode        nil smartparens)
+             (which-key-mode          nil which-key)
+             (whitespace-cleanup-mode nil whitespace)
+             (undo-tree-mode          nil undo-tree)
+             (auto-revert-mode        nil autorevert)
+             (visual-line-mode        nil simple)
+             (subword-mode            nil subword))))
 
 (use-package spaceline
   :config
