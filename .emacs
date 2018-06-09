@@ -1025,6 +1025,6 @@ Optional argument ARG same as `comment-dwim''s."
       (put face 'face-alias alias)))
 
   (set-face-attribute 'dired-header nil :underline t :background nil :foreground nil)
-  (set-face-attribute 'mode-line nil :overline nil :underline nil :box nil)
-  (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil :box nil)
-  (set-face-attribute 'header-line nil :overline nil :underline nil :box nil))
+  (set-face-attribute 'mode-line nil :overline nil :underline nil)
+  (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil)
+  (set-face-attribute 'header-line nil :overline nil :underline nil))
