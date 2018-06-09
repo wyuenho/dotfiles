@@ -123,10 +123,11 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Other missing essentials that I don't want to write
 (use-package crux
-  :bind (("C-c D" . crux-delete-file-and-buffer)
-         ("C-c R" . crux-rename-file-and-buffer)
-         ("C-c I" . crux-find-user-init-file)
-         ("C-c S" . crux-find-shell-init-file)))
+  :bind (("C-c d" . crux-delete-file-and-buffer)
+         ("C-c r" . crux-rename-file-and-buffer)
+         ("C-c u" . crux-find-user-init-file)
+         ("C-c s" . crux-find-shell-init-file)
+         ("C-c c" . crux-copy-file-preserve-attributes)))
 
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
