@@ -932,10 +932,8 @@ Optional argument ARG same as `comment-dwim''s."
              ns-use-srgb-colorspace
              (< 11
                 (string-to-number
-                 (car
-                  (split-string
-                   (and (string-match "darwin\\([0-9]+\\.[0-9]+\\.[0-9]+\\)" system-configuration)
-                        (match-string-no-properties 1 system-configuration)) "\\."))))))
+                 (and (string-match "darwin\\([0-9]+\\)" system-configuration)
+                      (match-string-no-properties 1 system-configuration))))))
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
   (spaceline-toggle-buffer-encoding-abbrev-off))
