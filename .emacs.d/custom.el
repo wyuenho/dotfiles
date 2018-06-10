@@ -33,6 +33,7 @@
    (quote
     (lisp-mode emacs-lisp-mode restclient-mode js-mode js-jsx-mode js2-mode js2-rjsx-mode rjsx-mode python-mode go-mode web-mode c-mode c++-mode objc-mode css-mode scss-mode sh-mode)))
  '(company-idle-delay 0.2)
+ '(company-lsp-enable-recompletion t)
  '(company-require-match nil)
  '(company-statistics-mode t)
  '(company-tooltip-align-annotations t)
@@ -50,6 +51,7 @@
    (quote
     (tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode anaconda-mode)))
  '(desktop-path (quote ("~/.emacs.d")))
+ '(desktop-save (quote if-exists))
  '(desktop-save-mode t)
  '(diff-hl-draw-borders nil)
  '(diff-switches "-u -B")
@@ -135,6 +137,7 @@
  '(linum-delay t)
  '(linum-format "%4d ")
  '(load-prefer-newer t)
+ '(lsp-response-timeout 30)
  '(mac-emulate-three-button-mouse t)
  '(mac-input-method-mode t)
  '(mac-mouse-wheel-mode t)
@@ -191,8 +194,8 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (add-node-modules-path ag all-the-icons all-the-icons-dired amx anaconda-mode auto-compile auto-yasnippet blacken browse-kill-ring buffer-move cargo cl-lib-highlight company company-anaconda company-flx company-go company-quickhelp company-restclient company-shell company-statistics company-tern company-web crux csv-mode cycle-quotes default-text-scale delight diff-hl dimmer dired-collapse dired-hide-dotfiles dired-single docker dockerfile-mode dumb-jump editorconfig eldoc-eval emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region f flx-ido flx-isearch flycheck flycheck-mypy flycheck-pos-tip flycheck-rust flycheck-yamllint focus fontify-face form-feed git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile goto-chg graphviz-dot-mode ialign ido-completing-read+ ido-vertical-mode imenu-anywhere import-js importmagic jq-mode js-doc js-format js2-mode js2-refactor kurecolor lorem-ipsum macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub monky move-dup multi-term multiple-cursors nodejs-repl nvm olivetti origami osx-trash package-build package-lint pager-default-keybindings pcre2el pdf-tools persp-mode persp-mode-projectile-bridge pipenv prettier-js projectile pyenv-mode pyimport python-docstring quelpa-use-package racer rainbow-mode restclient rg rust-mode scss-mode smartparens smooth-scrolling solarized-theme spaceline sphinx-doc string-inflection tern tide try ts-comint typescript-mode undo-tree use-package visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode yaml-mode yarn-mode yasnippet yasnippet-snippets)))
- '(pixel-scroll-mode nil)
+    (add-node-modules-path ag all-the-icons all-the-icons-dired amx anaconda-mode auto-compile auto-yasnippet blacken browse-kill-ring buffer-move cargo cl-lib-highlight company company-anaconda company-flx company-go company-lsp company-quickhelp company-restclient company-shell company-statistics company-web cquery crux csv-mode cycle-quotes default-text-scale delight diff-hl dimmer dired-collapse dired-hide-dotfiles dired-single docker dockerfile-mode dumb-jump editorconfig eldoc-eval emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region f flx-ido flx-isearch flycheck flycheck-mypy flycheck-pos-tip flycheck-rust flycheck-yamllint focus fontify-face form-feed git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile goto-chg graphviz-dot-mode ialign ido-completing-read+ ido-vertical-mode imenu-anywhere import-js importmagic jq-mode js-doc js-format js2-mode js2-refactor kurecolor lorem-ipsum lsp-javascript-flow lsp-go lsp-ui macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magithub monky move-dup multi-term multiple-cursors nodejs-repl nvm olivetti origami osx-trash package-build package-lint pager-default-keybindings pcre2el pdf-tools persp-mode persp-mode-projectile-bridge pipenv prettier-js projectile pyenv-mode pyimport python-docstring quelpa-use-package racer rainbow-mode restclient rg rust-mode scss-mode smartparens smooth-scrolling solarized-theme spaceline sphinx-doc string-inflection tide try ts-comint typescript-mode undo-tree use-package visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode yaml-mode yarn-mode yasnippet yasnippet-snippets)))
+ '(pixel-scroll-mode t)
  '(pyenv-mode t)
  '(quelpa-checkout-melpa-p nil)
  '(quelpa-update-melpa-p nil)
@@ -256,6 +259,7 @@
  '(web-mode-script-padding 2)
  '(web-mode-style-padding 2)
  '(which-function-mode t)
+ '(which-key-idle-secondary-delay 0.0)
  '(which-key-mode t)
  '(winner-mode t))
 (custom-set-faces

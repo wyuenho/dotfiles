@@ -6,6 +6,7 @@
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
 (advice-add 'load-theme :around (lambda (old-load-theme &rest args)
+                                  "Don't ask for confirmation when loading a theme."
                                   (apply old-load-theme (car args) t (cddr args))))
 
 (when (< emacs-major-version 27)
@@ -358,6 +359,14 @@ Optional argument ARG same as `comment-dwim''s."
             (use-package pdf-tools
               :config (pdf-tools-install))))
 
+;; Static Analysis
+(use-package lsp-mode
+  :delight
+  :defer t)
+
+(use-package lsp-ui
+  :hook (lsp-after-initialize . lsp-ui-mode))
+
 ;; Auto-completion
 (use-package company
   :delight
@@ -373,6 +382,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Linting
 (use-package flycheck
+  :delight
   :config
   (global-flycheck-mode t))
 
@@ -426,37 +436,64 @@ Optional argument ARG same as `comment-dwim''s."
   (cl-lib-highlight-initialize)
   (cl-lib-highlight-warn-cl-initialize))
 
+;; C/C++/Objective-C
+(use-package cquery
+  :hook ((c-mode-common . (lambda ()
+                            (lsp-cquery-enable)
+                            (push 'company-lsp company-backends)))))
+
 ;; Javascript
+(use-package lsp-javascript-flow
+  :init
+  (defun lsp-js-find-symbol ()
+    (interactive)
+    (let ((pattern (or (symbol-at-point) (thing-at-point 'defun))))
+      (when pattern
+        (lsp-ui-peek-find-workspace-symbol (substring-no-properties pattern)))))
+
+  :hook ((rjsx-mode . lsp-javascript-flow-enable)
+         (js2-mode  . lsp-javascript-flow-enable)
+         (js-mode   . lsp-javascript-flow-enable))
+
+  :config
+  (dolist (entry '((js-mode-hook   . js-mode-map)
+                   (js2-mode-hook  . js2-mode-map)
+                   (rjsx-mode-hook . rjsx-mode-map)))
+    (add-hook (car entry)
+              (lambda ()
+                (bind-keys :map (symbol-value (cdr entry))
+                           ("M-."   . lsp-ui-peek-find-definitions)
+                           ("M-?"   . lsp-ui-peek-find-references)
+                           ("M-,"   . lsp-ui-peek-jump-backward)
+                           ("C-M-." . lsp-js-find-symbol))))))
+
+(use-package import-js
+  :hook (js-mode . run-import-js)
+  :config (run-import-js)
+  :bind (:map js-mode-map
+              ("C-c t i"   . import-js-import)
+              ("C-c t f"   . import-js-fix)
+              ("C-c t M-." . import-js-goto)))
+
+(use-package add-node-modules-path
+  :hook (js-mode . add-node-modules-path))
+
+(use-package js-doc
+  :after yasnippet
+  :bind (:map js-mode-map
+              ("C-c d m" . js-doc-insert-file-doc)
+              ("C-c d f" . js-doc-insert-function-doc-snippet)))
+
+(use-package nodejs-repl
+  :bind(:map js-mode-map
+             ("C-x C-e" . nodejs-repl-send-last-expression)
+             ("C-c r"   . nodejs-repl-send-region)
+             ("C-c b"   . nodejs-repl-send-buffer)
+             ("C-c l"   . nodejs-repl-load-file)
+             ("C-c z"   . nodejs-repl-switch-to-repl)))
+
 (add-hook 'js-mode-hook
           (lambda ()
-            (use-package tern
-              :delight
-              :config
-              (tern-mode t)
-              (unbind-key "C-c C-r" tern-mode-keymap))
-
-            (use-package company-tern
-              :after company tern
-              :config
-              (setq-local company-backends
-                          (add-to-list 'company-backends 'company-tern)))
-
-            (use-package js-doc
-              :after yasnippet
-              :bind (:map js-mode-map
-                          ("C-c d m" . js-doc-insert-file-doc)
-                          ("C-c d f" . js-doc-insert-function-doc-snippet)))
-
-            (use-package add-node-modules-path
-              :config (add-node-modules-path))
-
-            (use-package import-js
-              :config (run-import-js)
-              :bind (:map js-mode-map
-                          ("C-c t i"   . import-js-import)
-                          ("C-c t f"   . import-js-fix)
-                          ("C-c t M-." . import-js-goto)))
-
             (use-package f
               :preface
               (defun find-js-format-style ()
@@ -512,18 +549,10 @@ Optional argument ARG same as `comment-dwim''s."
                          :bind (:map js-mode-map
                                      ("C-c f" . js-format-buffer)))))))
 
-            (use-package nodejs-repl
-              :bind(:map js-mode-map
-                         ("C-x C-e" . nodejs-repl-send-last-expression)
-                         ("C-c r"   . nodejs-repl-send-region)
-                         ("C-c b"   . nodejs-repl-send-buffer)
-                         ("C-c l"   . nodejs-repl-load-file)
-                         ("C-c z"   . nodejs-repl-switch-to-repl)))
-
             (define-key js-mode-map [menu-bar] nil)))
 
 (use-package js2-mode
-  :defer t
+  :interpreter ("node" . js2-mode)
   :config
   (js2-imenu-extras-mode t)
   (when (fboundp 'sp-kill-whole-line)
@@ -622,9 +651,8 @@ Optional argument ARG same as `comment-dwim''s."
                 (setq-local company-backends
                             (add-to-list 'company-backends 'company-go))))))
 
-(use-package go-eldoc
-  :after go-mode
-  :hook (go-mode . go-eldoc-setup))
+(use-package lsp-go
+  :hook (go-mode . lsp-go-enable))
 
 (use-package go-projectile
   :after go-mode projectile)
@@ -844,7 +872,6 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package window-purpose
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1")
   :config
-  (require 'window-purpose)
   (purpose-add-user-purposes
    :modes '((ag-mode              . search)
             (rg-mode              . search)
@@ -914,6 +941,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package delight
   :config
   (delight '((rainbow-mode)
+             (abbrev-mode             nil abbrev)
              (purpose-mode            nil window-purpose)
              (eldoc-mode              nil eldoc)
              (move-dup-mode           nil move-dup)
