@@ -375,12 +375,8 @@ Optional argument ARG same as `comment-dwim''s."
               :config (pdf-tools-install))))
 
 ;; Static Analysis
-(use-package lsp-mode
-  :delight
-  :defer t)
-
 (use-package lsp-ui
-  :hook (lsp-after-initialize . lsp-ui-mode))
+  :hook (lsp-after-diagnostics . lsp-ui-mode))
 
 ;; Auto-completion
 (use-package company
@@ -459,10 +455,10 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Javascript
 (use-package lsp-javascript-flow
-  :init
+  :preface
   (defun lsp-js-find-symbol ()
     (interactive)
-    (let ((pattern (or (symbol-at-point) (thing-at-point 'defun))))
+    (let ((pattern (word-at-point)))
       (when pattern
         (lsp-ui-peek-find-workspace-symbol (substring-no-properties pattern)))))
 
@@ -956,6 +952,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package delight
   :config
   (delight '((rainbow-mode)
+             (lsp-mode)
              (abbrev-mode             nil abbrev)
              (purpose-mode            nil window-purpose)
              (eldoc-mode              nil eldoc)
