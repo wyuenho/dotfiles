@@ -208,9 +208,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Use ido with M-x
 (use-package amx
-  :bind (("M-x" . amx)
-         ("M-X" . amx-major-mode-commands))
-  :config (amx-mode t))
+  :bind (("M-X" . amx-major-mode-commands)))
 
 ;; Use ido for even more things than ido-everywhere
 (use-package ido-completing-read+)
