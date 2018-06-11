@@ -329,8 +329,8 @@ Optional argument ARG same as `comment-dwim''s."
     (interactive)
     (cond ((memq major-mode '(java-mode js-mode js2-mode rjsx-mode typescript-mode go-mode))
            (string-inflection-java-style-cycle))
-          ((memq major-mode '(python-mode ruby-mode))
-           (string-inflection-ruby-style-cycle))
+          ((memq major-mode '(python-mode ruby-mode c-mode rust-mode))
+           (string-inflection-python-style-cycle))
           ((derived-mode-p major-mode 'prog-mode)
            (string-inflection-all-cycle))))
   :config
