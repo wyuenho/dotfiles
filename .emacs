@@ -433,7 +433,7 @@ Optional argument ARG same as `comment-dwim''s."
   :after yaml-mode
   :config (flycheck-yamllint-setup))
 
-;; Lisp
+;; Emacs Lisp
 (bind-keys :map emacs-lisp-mode-map
            ("C-c e f" . byte-compile-file)
            ("C-c e c" . emacs-lisp-byte-compile)
@@ -446,6 +446,25 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (cl-lib-highlight-initialize)
   (cl-lib-highlight-warn-cl-initialize))
+
+(use-package elisp-def
+  :delight
+  :hook (emacs-lisp-mode . elisp-def-mode))
+
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            (setq imenu-generic-expression
+                  (add-to-list
+                   'lisp-imenu-generic-expression
+                   '("Packages" "^\\s-*(use-package\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 1)
+                   t))))
+
+(use-package helpful
+  :bind (("C-h f" . helpful-callable)
+         ("C-h v" . helpful-variable)
+         ("C-h k" . helpful-key)
+         ("C-h o" . helpful-symbol)
+         ("C-h p" . helpful-at-point)))
 
 ;; C/C++/Objective-C
 (use-package cquery
