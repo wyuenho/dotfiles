@@ -12,5 +12,5 @@
 (setq nnheader-file-name-translation-alist '((?[ . ?_) (?] . ?_)) )
 
 (setq smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-service 465
+      smtpmail-smtp-service 587
       gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
