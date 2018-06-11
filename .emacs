@@ -97,26 +97,13 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Always use M-g prefix to jump between errors
 (unbind-key "C-x `")
 
-(defun upcase-region-dwim (beg end)
-  "`upcase-region' when `transient-mark-mode' is on and region is active."
-  (interactive "*r")
-  (when (use-region-p)
-    (upcase-region beg end)))
-
-(defun downcase-region-dwim (beg end)
-  "`downcase-region' when `transient-mark-mode' is on and region is active."
-  (interactive "*r")
-  (when (use-region-p)
-    (downcase-region beg end)))
-
 ;; Bind useful things to keys
 (bind-keys ("<backtab>" . align)
-           ("C-x C-u"   . upcase-region-dwim)
-           ("C-x C-l"   . downcase-region-dwim)
            ("C-x f"     . follow-mode)
            ;; Replace default buffer menu with ibuffer
            ("C-x C-b"   . ibuffer)
-           ("C-t"       . transpose-sexps))
+           ("C-t"       . transpose-sexps)
+           ("M-:"       . ielm))
 
 ;; Replace zap-to-char with the hidden zap-up-to-char
 (autoload 'zap-up-to-char "misc")
@@ -124,11 +111,41 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Other missing essentials that I don't want to write
 (use-package crux
-  :bind (("C-c d" . crux-delete-file-and-buffer)
-         ("C-c r" . crux-rename-file-and-buffer)
-         ("C-c u" . crux-find-user-init-file)
-         ("C-c s" . crux-find-shell-init-file)
-         ("C-c c" . crux-copy-file-preserve-attributes)))
+  :preface
+  (defun crux-find-user-custom-file ()
+    "Edit the `custom-file', in another window."
+    (interactive)
+    (if custom-file
+        (find-file-other-window custom-file)
+      (message "No custom file found.")))
+
+  (defun crux-upcase-region (beg end)
+    "`upcase-region' when `transient-mark-mode' is on and region is active."
+    (interactive "*r")
+    (when (use-region-p)
+      (upcase-region beg end)))
+
+  (defun crux-downcase-region (beg end)
+    "`downcase-region' when `transient-mark-mode' is on and region is active."
+    (interactive "*r")
+    (when (use-region-p)
+      (downcase-region beg end)))
+
+  (defun crux-capitalize-region (beg end)
+    "`capitalize-region' when `transient-mark-mode' is on and region is active."
+    (interactive "*r")
+    (when (use-region-p)
+      (capitalize-region beg end)))
+
+  :bind (("C-x C-u" . crux-upcase-region)
+         ("C-x C-l" . crux-downcase-region)
+         ("C-x M-c" . crux-capitalize-region)
+         ("C-c d"   . crux-delete-file-and-buffer)
+         ("C-c r"   . crux-rename-file-and-buffer)
+         ("C-c c"   . crux-copy-file-preserve-attributes)
+         ("C-c u"   . crux-find-user-init-file)
+         ("C-c ,"   . crux-find-user-custom-file)
+         ("C-c s"   . crux-find-shell-init-file)))
 
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
