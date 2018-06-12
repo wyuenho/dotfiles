@@ -606,15 +606,11 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Python
 (use-package pyenv-mode
-  :delight
-  :hook (python-mode . pyenv-mode))
+  :quelpa (pyenv-mode :fetcher github :repo "wyuenho/pyenv-mode" :branch "local-mode"))
 
 (use-package pipenv
   :delight
-  :hook (python-mode . pipenv-mode)
-  :config
-  (setq pipenv-projectile-after-switch-function
-        'pipenv-projectile-after-switch-extended))
+  :hook (python-mode . pipenv-mode))
 
 (use-package anaconda-mode
   :delight
@@ -768,17 +764,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (setq-local emmet-expand-jsx-className? t)))))
 
 ;; Project management
-(use-package projectile
-  :config
-  (projectile-mode t)
-  (with-eval-after-load 'pyenv-mode
-    (add-hook 'projectile-switch-project-hook
-              (lambda ()
-                "Set pyenv version matching project name."
-                (let ((project (projectile-project-name)))
-                  (if (member project (pyenv-mode-versions))
-                      (pyenv-mode-set project)
-                    (pyenv-mode-unset)))))))
+(use-package projectile)
 
 ;; Search
 (use-package ag
