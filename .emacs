@@ -354,7 +354,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Static Analysis
 (use-package lsp-ui
-  :hook (lsp-after-diagnostics . lsp-ui-mode))
+  :hook (lsp-after-initialize . lsp-ui-mode))
 
 ;; Auto-completion
 (use-package company
