@@ -103,7 +103,11 @@ Optional argument ARG same as `comment-dwim''s."
            ;; Replace default buffer menu with ibuffer
            ("C-x C-b"   . ibuffer)
            ("C-t"       . transpose-sexps)
-           ("M-:"       . ielm))
+           ("M-:"       . ielm)
+           ("C-x ^"     . nil)
+           ("C-{"       . enlarge-window)
+           ("C-}"       . shrink-window)
+           ("C-c l"     . browse-url-at-point))
 
 ;; Replace zap-to-char with the hidden zap-up-to-char
 (autoload 'zap-up-to-char "misc")
