@@ -115,32 +115,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Other missing essentials that I don't want to write
 (use-package crux
-  :preface
-  (defun crux-find-user-custom-file ()
-    "Edit the `custom-file', in another window."
-    (interactive)
-    (if custom-file
-        (find-file-other-window custom-file)
-      (message "No custom file found.")))
-
-  (defun crux-upcase-region (beg end)
-    "`upcase-region' when `transient-mark-mode' is on and region is active."
-    (interactive "*r")
-    (when (use-region-p)
-      (upcase-region beg end)))
-
-  (defun crux-downcase-region (beg end)
-    "`downcase-region' when `transient-mark-mode' is on and region is active."
-    (interactive "*r")
-    (when (use-region-p)
-      (downcase-region beg end)))
-
-  (defun crux-capitalize-region (beg end)
-    "`capitalize-region' when `transient-mark-mode' is on and region is active."
-    (interactive "*r")
-    (when (use-region-p)
-      (capitalize-region beg end)))
-
   :bind (("C-x C-u" . crux-upcase-region)
          ("C-x C-l" . crux-downcase-region)
          ("C-x M-c" . crux-capitalize-region)
