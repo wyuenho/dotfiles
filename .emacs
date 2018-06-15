@@ -173,7 +173,6 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("C-h b" . which-key-show-top-level)
          ("C-h m" . which-key-show-major-mode)))
 
-;; Completely unbind visual-line-mode's stupid bindings
 (use-package visual-line-mode
   :hook (prog-mode text-mode messages-buffer-mode))
 
