@@ -26,6 +26,12 @@
           missing)
     (load custom-file)))
 
+;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This is
+;; should be done ASAP on init.
+(use-package exec-path-from-shell
+  :if (memq (window-system) '(mac ns))
+  :config (exec-path-from-shell-initialize))
+
 (require 'quelpa-use-package)
 
 ;; No more yes and no and y and n inconsistencies
@@ -921,13 +927,7 @@ Optional argument ARG same as `comment-dwim''s."
             ns-use-mwheel-momentum t
             ns-use-mwheel-acceleration t
             ;; MacPorts emacs-app port bug
-            x-colors (ns-list-colors)))
-
-    ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X
-    (use-package exec-path-from-shell
-      :if (memq (window-system) '(mac ns))
-      :config
-      (run-with-idle-timer 1 nil 'exec-path-from-shell-initialize)))
+            x-colors (ns-list-colors))))
 
   (set-frame-parameter nil 'fullscreen 'maximized))
 
