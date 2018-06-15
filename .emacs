@@ -448,7 +448,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
-            (make-variable-buffer-local 'lisp-imenu-generic-expression)
+            (make-local-variable 'lisp-imenu-generic-expression)
             (setq imenu-generic-expression
                   (add-to-list
                    'lisp-imenu-generic-expression
