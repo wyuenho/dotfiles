@@ -998,10 +998,11 @@ Optional argument ARG same as `comment-dwim''s."
   :if (display-graphic-p)
   :config
   (load-theme 'solarized-dark)
-  (dolist (entry '((region . ((((class color) (background light))
-                               :background "#00629D" :foreground "#FDF6E3")
-                              (((class color) (background dark))
-                               :background "#69B7F0" :foreground "#002B36")))
+
+  (dolist (entry '((region . ((((type ns) (class color) (background light))
+                               (:background "selectedTextBackgroundColor"))
+                              (((type ns) (class color) (background dark))
+                               (:background "#00003d437f7f"))))
                    (ediff-current-diff-C . ((((class color) (background light))
                                              (:background "#DDEEFF" :foreground "#005588"))
                                             (((class color) (background dark))
