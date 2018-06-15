@@ -222,10 +222,11 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Construct regexp and search visually and incrementally
 (use-package visual-regexp-steroids
-  :bind (("M-%"     . vr/replace)
-         ("C-M-%"   . vr/query-replace)
-         ("M-s C-s" . vr/isearch-forward)
-         ("M-s m"   . vr/mc-mark)))
+  :bind (("M-%"   . vr/replace)
+         ("C-M-%" . vr/query-replace)
+         ("C-s"   . vr/isearch-forward)
+         ("C-r"   . vr/isearch-backward)
+         ("M-s m" . vr/mc-mark)))
 
 ;; More convenient region selection
 (use-package expand-region
