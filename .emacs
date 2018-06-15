@@ -37,6 +37,9 @@
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
 
+(setq backup-directory-alist
+      `(("." . ,(concat user-emacs-directory "backups"))))
+
 ;; Remove all query on exit flags on all processes before quitting
 (unless (boundp 'confirm-kill-processes) ;; new on Emacs 26
   (advice-add 'save-buffers-kill-emacs :before
