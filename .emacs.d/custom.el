@@ -172,6 +172,7 @@
    (quote
     ("https://cdn.rawgit.com/aahan/pygments-github-style/master/github.css" "https://unpkg.com/github-markdown-css@2.9.0/github-markdown.css")))
  '(markdown-fontify-code-blocks-natively t)
+ '(markdown-indent-on-enter nil)
  '(markdown-xhtml-body-epilogue "</article>")
  '(markdown-xhtml-body-preamble "<article class=\"markdown-body\">")
  '(menu-bar-mode t)
