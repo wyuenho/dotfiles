@@ -1033,10 +1033,10 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (load-theme 'solarized-dark)
 
-  (dolist (entry '((region . ((((type ns) (class color) (background light))
+  (dolist (entry `((region . ((((type ns) (class color) (background light))
                                (:background "selectedTextBackgroundColor"))
                               (((type ns) (class color) (background dark))
-                               (:background "#00003d437f7f"))))
+                               (:background ,(color-darken-name "selectedTextBackgroundColor" 50)))))
                    (ediff-current-diff-C . ((((class color) (background light))
                                              (:background "#DDEEFF" :foreground "#005588"))
                                             (((class color) (background dark))
