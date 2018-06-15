@@ -197,6 +197,10 @@
  '(pixel-scroll-mode t)
  '(projectile-mode t nil (projectile))
  '(pyenv-mode t)
+ '(purpose-x-code1-dired-goto-file t)
+ '(purpose-x-popwin-major-modes
+   (quote
+    (help-mode compilation-mode occur-mode helpful-mode)))
  '(quelpa-checkout-melpa-p nil)
  '(quelpa-update-melpa-p nil)
  '(rainbow-html-colors-major-mode-list
