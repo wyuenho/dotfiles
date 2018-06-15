@@ -432,6 +432,10 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-c e r" . eval-region)
            ("C-c e e" . eval-print-last-sexp))
 
+(use-package macrostep
+  :bind (:map emacs-lisp-mode-map
+              ("C-c e x" . macrostep-expand)))
+
 (use-package cl-lib-highlight
   :config
   (cl-lib-highlight-initialize)
@@ -443,11 +447,20 @@ Optional argument ARG same as `comment-dwim''s."
 
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
+            (make-variable-buffer-local 'lisp-imenu-generic-expression)
             (setq imenu-generic-expression
                   (add-to-list
                    'lisp-imenu-generic-expression
                    '("Packages" "^\\s-*(use-package\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 1)
                    t))))
+
+;; Emacs Lisp and Javascript Refactoring
+(use-package emr
+  :hook ((emacs-lisp-mode . emr-initialize)
+         (js2-mode        . emr-initialize)
+         (js2-jsx-mode    . emr-initialize)
+         (rjsx-mode       . emr-initialize))
+  :bind ("M-RET" . emr-show-refactor-menu))
 
 (use-package helpful
   :bind (("C-h f" . helpful-callable)
