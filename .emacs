@@ -372,15 +372,55 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Auto-completion
 (use-package company
   :delight
-  :config
+  :preface
+  (defun company-complete-common-or-cycle-next ()
+    (interactive)
+    (company-complete-common-or-cycle 1))
+  (defun company-complete-common-or-cycle-previous ()
+    (interactive)
+    (company-complete-common-or-cycle -1))
   :bind (:map company-mode-map
-              ("M-/" . company-complete)))
-
-(use-package company-flx
-  :hook (company-mode . company-flx-mode))
+              ("M-/" . company-manual-begin)
+              :map company-active-map
+              ("M-n" . company-complete-common-or-cycle-next)
+              ("M-p" . company-complete-common-or-cycle-previous)
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous))
+  :config
+  (if (fboundp 'company-flx-mode)
+      (company-flx-mode))
+  (setq company-backends
+        `((company-eclim company-semantic company-clang)
+          company-xcode
+          company-cmake
+          company-files
+          ,@(if (and (memq (window-system) '(ns mac))
+                       (fboundp 'company-emoji))
+                '((company-emoji :separate company-capf :separate company-yasnippet))
+              '(company-capf :separate company-yasnippet))
+          (company-dabbrev-code
+           company-gtags
+           company-etags
+           company-keywords))))
 
 (use-package company-quickhelp
   :hook (company-mode . company-quickhelp-mode))
+
+(use-package company-lsp
+  :quelpa (company-lsp :fetcher github :repo "wyuenho/company-lsp" :branch "give-company-files-a-chance")
+  :config
+  (add-hook 'lsp-after-initialize-hook
+            (lambda ()
+              (make-local-variable 'company-transformers)
+              (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
+              (setq company-transformers (remq 'company-flx-transformer company-transformers))
+              (setq-local company-backends `(,@(if (and (memq (window-system) '(ns mac))
+                                                        (fboundp 'company-emoji))
+                                                   '((company-emoji :separate company-lsp :separate company-yasnippet))
+                                                 '(company-lsp :separate company-yasnippet))
+                                             company-files
+                                             company-capf
+                                             company-keywords)))))
 
 ;; Linting
 (use-package flycheck
@@ -411,7 +451,7 @@ Optional argument ARG same as `comment-dwim''s."
               :after company
               :config
               (setq-local company-backends
-                          (add-to-list 'company-backends '(company-shell company-shell-env))))))
+                          '(company-shell company-shell-env company-files company-capf)))))
 
 (use-package multi-term
   :bind (("M-T" . multi-term)))
@@ -472,9 +512,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; C/C++/Objective-C
 (use-package cquery
-  :hook ((c-mode-common . (lambda ()
-                            (lsp-cquery-enable)
-                            (push 'company-lsp company-backends)))))
+  :hook ((c-mode-common . lsp-cquery-enable)))
 
 ;; Javascript
 (use-package lsp-javascript-flow
@@ -485,49 +523,42 @@ Optional argument ARG same as `comment-dwim''s."
       (when pattern
         (lsp-ui-peek-find-workspace-symbol (substring-no-properties pattern)))))
 
-  :hook ((rjsx-mode . lsp-javascript-flow-enable)
-         (js2-mode  . lsp-javascript-flow-enable)
-         (js-mode   . lsp-javascript-flow-enable))
-
   :config
-  (dolist (entry '((js-mode-hook   . js-mode-map)
-                   (js2-mode-hook  . js2-mode-map)
-                   (rjsx-mode-hook . rjsx-mode-map)))
-    (add-hook (car entry)
-              (lambda ()
-                (bind-keys :map (symbol-value (cdr entry))
-                           ("M-."   . lsp-ui-peek-find-definitions)
-                           ("M-?"   . lsp-ui-peek-find-references)
-                           ("M-,"   . lsp-ui-peek-jump-backward)
-                           ("C-M-." . lsp-js-find-symbol))))))
-
-(use-package import-js
-  :hook (js-mode . run-import-js)
-  :config (run-import-js)
-  :bind (:map js-mode-map
-              ("C-c t i"   . import-js-import)
-              ("C-c t f"   . import-js-fix)
-              ("C-c t M-." . import-js-goto)))
-
-(use-package add-node-modules-path
-  :hook (js-mode . add-node-modules-path))
-
-(use-package js-doc
-  :after yasnippet
-  :bind (:map js-mode-map
-              ("C-c d m" . js-doc-insert-file-doc)
-              ("C-c d f" . js-doc-insert-function-doc-snippet)))
-
-(use-package nodejs-repl
-  :bind(:map js-mode-map
-             ("C-x C-e" . nodejs-repl-send-last-expression)
-             ("C-c r"   . nodejs-repl-send-region)
-             ("C-c b"   . nodejs-repl-send-buffer)
-             ("C-c l"   . nodejs-repl-load-file)
-             ("C-c z"   . nodejs-repl-switch-to-repl)))
+  (add-hook 'js-mode-hook
+            (lambda ()
+              (lsp-javascript-flow-enable)
+              (bind-keys :map js-mode-map
+                         ("M-."   . lsp-ui-peek-find-definitions)
+                         ("M-?"   . lsp-ui-peek-find-references)
+                         ("M-,"   . lsp-ui-peek-jump-backward)
+                         ("C-M-." . lsp-js-find-symbol)))
+            t))
 
 (add-hook 'js-mode-hook
           (lambda ()
+            (use-package add-node-modules-path
+              :config (add-node-modules-path))
+
+            (use-package import-js
+              :bind (:map js-mode-map
+                          ("C-c t i"   . import-js-import)
+                          ("C-c t f"   . import-js-fix)
+                          ("C-c t M-." . import-js-goto))
+              :config (run-import-js))
+
+            (use-package js-doc
+              :bind (:map js-mode-map
+                          ("C-c C-d m" . js-doc-insert-file-doc)
+                          ("C-c C-d f" . js-doc-insert-function-doc-snippet)))
+
+            (use-package nodejs-repl
+              :bind(:map js-mode-map
+                         ("C-c e e" . nodejs-repl-send-last-expression)
+                         ("C-c e r" . nodejs-repl-send-region)
+                         ("C-c e b" . nodejs-repl-send-buffer)
+                         ("C-c e l" . nodejs-repl-load-file)
+                         ("C-c M-:" . nodejs-repl-switch-to-repl)))
+
             (use-package f
               :preface
               (defun find-js-format-style ()
@@ -610,11 +641,11 @@ Optional argument ARG same as `comment-dwim''s."
   :after typescript-mode
   :bind (:map typescript-mode-map
               ("C-x C-e" . ts-send-last-sexp)
-              ("C-M-x"   . ts-send-last-sexp-and-go)
-              ("C-c r"   . ts-send-region-and-go)
-              ("C-c b"   . ts-send-buffer-and-go)
-              ("C-c l"   . ts-load-file-and-go)
-              ("C-c z"   . switch-to-ts)))
+              ("C-c e e" . ts-send-last-sexp-and-go)
+              ("C-c e r" . ts-send-region-and-go)
+              ("C-c e b" . ts-send-buffer-and-go)
+              ("C-c e l" . ts-load-file-and-go)
+              ("C-c M-:" . switch-to-ts)))
 
 (use-package tide
   :after typescript-mode
@@ -623,86 +654,82 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'typescript-mode-hook 'tide-hl-identifier-mode)
   (add-hook 'before-save-hook 'tide-format-before-save)
   :bind (:map tide-mode-map
-              ("C-c f" . tide-format)
-              ("C-c r" . tide-rename-symbol)
-              ("C-c 1" . tide-fix)
-              ("M-?"   . tide-references)
-              ("C-c j" . tide-jsdoc-template)
-              ("C-h d" . tide-documentation-at-point)))
+              ("C-c t f" . tide-organize-imports)
+              ("C-c f"   . tide-format)
+              ("C-c C-r" . tide-rename-symbol)
+              ("C-c 1"   . tide-fix)
+              ("M-?"     . tide-references)
+              ("C-c C-d" . tide-jsdoc-template)
+              ("M-RET"   . tide-refactor)
+              ("C-h d"   . tide-documentation-at-point)))
 
 ;; Python
 (use-package pyenv-mode
   :quelpa (pyenv-mode :fetcher github :repo "wyuenho/pyenv-mode" :branch "local-mode"))
 
-(use-package pipenv
-  :delight
-  :hook (python-mode . pipenv-mode))
-
-(use-package anaconda-mode
-  :delight
-  :after company
-  :hook (python-mode . anaconda-mode)
-  :config
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (anaconda-eldoc-mode t)
-              (setq-local company-backends
-                          (add-to-list 'company-backends '(company-anaconda :with company-capf))))))
-
 (add-hook 'python-mode-hook
           (lambda ()
-            (use-package flycheck-mypy)))
+            (use-package lsp-python
+              :config
+              (lsp-python-enable))
 
-(use-package python-docstring
-  :delight
-  :hook (python-mode . python-docstring-mode))
+            (use-package py-isort
+              :config
+              (add-hook 'before-save-hook 'py-isort-before-save))
 
-(use-package importmagic
-  :delight
-  :hook (python-mode . importmagic-mode)
-  :config
-  :bind (:map importmagic-mode-map
-              ("M-1" . importmagic-fix-imports)))
+            (use-package python-docstring
+              :delight
+              :config (python-docstring-mode))
 
-(use-package blacken
-  :delight
-  :hook (python-mode . blacken-mode))
+            (use-package importmagic
+              :delight
+              :config (importmagic-mode)
+              :bind (:map importmagic-mode-map
+                          ("M-1" . importmagic-fix-imports)))
+
+            (let ((python-version (shell-command-to-string
+                                   (string-join `(,python-shell-interpreter "--version") " "))))
+              (if (and (string-match "\\([0-9]+\\)\.[0-9]+\.[0-9]+" python-version)
+                       (>= (string-to-number (match-string-no-properties 1 python-version)) 3))
+                  (use-package blacken :delight)
+                (use-package py-autopep8 :hook (python-mode . py-autopep8-enable-on-save))))))
 
 ;; Go
 (use-package go-mode
   :mode "\\.go\\'"
   :config
   (add-hook 'before-save-hook 'gofmt-before-save)
+
   (add-hook 'go-mode-hook
             (lambda ()
               (use-package company-go
-                :after company
+                :after company go-mode
                 :config
-                (setq-local company-backends
-                            (add-to-list 'company-backends 'company-go))))))
+                (setq-local company-backends '(company-go)))
 
-(use-package lsp-go
-  :hook (go-mode . lsp-go-enable))
+              (use-package lsp-go
+                :config (lsp-go-enable))
 
-(use-package go-projectile
-  :after go-mode projectile)
+              (use-package go-projectile
+                :after projectile))))
 
 ;; Rust
 (use-package rust-mode
-  :mode "\\.rs\\'")
-
-(use-package racer
-  :delight
-  :after rust-mode
-  :hook (rust-mode . racer-mode)
+  :mode "\\.rs\\'"
   :config
-  (add-hook 'racer-mode-hook 'eldoc-mode)
-  (add-hook 'racer-mode-hook 'company-mode))
+  (add-hook 'rust-mode-hook
+            (lambda ()
+              (use-package racer
+                :delight
+                :after company
+                :config
+                (add-hook 'racer-mode-hook 'eldoc-mode)
+                (add-hook 'racer-mode-hook 'company-mode)
+                (racer-mode))
 
-(use-package cargo
-  :delight
-  :after rust-mode
-  :hook (rust-mode . cargo-minor-mode))
+              (use-package cargo
+                :delight
+                :config (cargo-minor-mode)))))
 
 ;; Web
 (use-package scss-mode
@@ -757,7 +784,12 @@ Optional argument ARG same as `comment-dwim''s."
                 :after company
                 :config
                 (setq-local company-backends
-                            '(company-web-html company-css company-tern company-files)))
+                            `(company-tern
+                              company-web-html
+                              ,@(unless (version<= "26" emacs-version)
+                                  (list 'company-css))
+                              company-yasnippet
+                              company-files)))
 
               (use-package tide
                 :if (string-equal "tsx" (file-name-extension buffer-file-name))
