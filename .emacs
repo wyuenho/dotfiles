@@ -132,7 +132,9 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-c c"   . crux-copy-file-preserve-attributes)
          ("C-c u"   . crux-find-user-init-file)
          ("C-c ,"   . crux-find-user-custom-file)
-         ("C-c s"   . crux-find-shell-init-file)))
+         ("C-c s"   . crux-find-shell-init-file)
+         ("C-c C-u" . crux-sudo-edit)
+         ("C-c M-o" . crux-open-with)))
 
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's

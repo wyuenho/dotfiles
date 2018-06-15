@@ -37,7 +37,6 @@
  '(company-tooltip-align-annotations t)
  '(compilation-message-face (quote default))
  '(confirm-kill-processes nil)
- '(crux-reopen-as-root-mode t)
  '(create-lockfiles nil)
  '(css-indent-offset 2)
  '(current-language-environment "English")
