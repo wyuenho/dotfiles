@@ -821,6 +821,7 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
 
 (use-package magithub
+  :quelpa (magithub :fetcher github :repo "wyuenho/magithub" :branch "patch-1")
   :config
   (magithub-feature-autoinject t))
 
