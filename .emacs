@@ -310,7 +310,7 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (:map yas-minor-mode-map
               ("TAB"   . nil)
               ("<tab>" . nil)
-              ("C-c i" . yas-expand)))
+              ("C-c i" . yas-expand-from-trigger-key)))
 
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
