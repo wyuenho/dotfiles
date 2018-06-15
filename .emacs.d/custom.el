@@ -203,7 +203,6 @@
     (help-mode compilation-mode occur-mode helpful-mode)))
  '(quelpa-checkout-melpa-p nil)
  '(quelpa-self-upgrade-p nil)
- '(quelpa-upgrade-p t)
  '(rainbow-html-colors-major-mode-list
    (quote
     (html-mode php-mode nxml-mode xml-mode web-mode rjsx-mode mhtml-mode)))
