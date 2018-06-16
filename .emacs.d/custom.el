@@ -15,6 +15,8 @@
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
  '(auto-hscroll-mode (quote current-line))
+ '(auto-save-interval 0)
+ '(auto-save-timeout 10)
  '(backup-by-copying t)
  '(backup-directory-alist (quote (("." . "~/.emacs.d/backups"))))
  '(bash-completion-args nil)
