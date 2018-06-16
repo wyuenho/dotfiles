@@ -311,6 +311,12 @@ Optional argument ARG same as `comment-dwim''s."
               ("<tab>" . nil)
               ("C-c i" . yas-expand-from-trigger-key)))
 
+;; No sane person will program from right to left, so turn this major perf
+;; bottleneck off
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (setq-local bidi-display-reordering nil)))
+
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
   :preface
