@@ -145,6 +145,7 @@
  '(mac-system-move-file-to-trash-use-finder t)
  '(magit-diff-refine-hunk (quote all))
  '(magit-diff-use-overlays nil)
+ '(magithub-clone-default-directory "~/Documents/workspace")
  '(markdown-code-lang-modes
    (quote
     (("ocaml" . tuareg-mode)
