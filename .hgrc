@@ -10,7 +10,8 @@ opts.ediff = -c 'if [ -d $0 ]; then emacs --eval "(ediff-directories \"$0\" \"$1
 cmd.opendiff = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh
 
 [merge-tools]
-emacs.args = -q --eval "(emerge-files-with-ancestor nil \"$local\" \"$other\" \"$base\" \"$output\" nil 'kill-emacs)"
+emacs.args = -q --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
+emacsclient.args = --eval "(ediff-merge-with-ancestor \"$local\" \"$other\" \"$base\" nil \"$output\")"
 
 filemerge.executable = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh
 filemerge.args = $local $other -ancestor $base -merge $output
@@ -30,5 +31,5 @@ fsmonitor =
 
 [ui]
 username = Jimmy Yuen Ho Wong <wyuenho@gmail.com>
-merge = emacs
+merge = emacsclient
 ignore = ~/.hgignore_global

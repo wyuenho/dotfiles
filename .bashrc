@@ -7,6 +7,9 @@ EDITOR="emacsclient"
 export ALTERNATE_EDITOR
 ALTERNATE_EDITOR="emacs"
 
+export HGMERGE
+HGMERGE="emacsclient"
+
 # Aliases
 if [ "$(which ls)" == "/bin/ls" ]; then
     alias ls="ls -FhG"
