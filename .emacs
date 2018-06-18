@@ -667,15 +667,24 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package pyenv-mode
   :quelpa (pyenv-mode :fetcher github :repo "wyuenho/pyenv-mode" :branch "local-mode"))
 
-(use-package eglot
-  :hook (python-mode . eglot)
-  :bind (:map eglot-mode-map
-              ("C-h o"   . eglot-help-at-point)
-              ("C-c C-r" . eglot-rename)
-              ("M-1"     . eglot-code-actions)))
-
 (add-hook 'python-mode-hook
           (lambda ()
+            (use-package eglot
+              :demand
+              :bind (:map eglot-mode-map
+                          ("C-h o"   . eglot-help-at-point)
+                          ("C-c C-r" . eglot-rename)
+                          ("M-1"     . eglot-code-actions))
+              :config
+              (setq eglot--managed-mode-hook '(eldoc-mode))
+              (call-interactively 'eglot)
+              (with-eval-after-load 'company
+                (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
+                (setq company-transformers (remq 'company-flx-transformer company-transformers))
+                (setq-local company-backends '((company-capf :separate company-yasnippet :separate company-files)
+                                               company-files
+                                               company-keywords))))
+
             (use-package py-isort
               :config
               (add-hook 'before-save-hook 'py-isort-before-save))
