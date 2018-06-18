@@ -28,7 +28,7 @@ _rustup() {
             default)
                 cmd+="__default"
                 ;;
-            default__host)
+            default-host)
                 cmd+="__default__host"
                 ;;
             disable)
@@ -94,7 +94,7 @@ _rustup() {
             update)
                 cmd+="__update"
                 ;;
-            upgrade__data)
+            upgrade-data)
                 cmd+="__upgrade__data"
                 ;;
             which)
@@ -161,11 +161,11 @@ _rustup() {
             case "${prev}" in
                 
                 --toolchain)
-                    COMPREPLY=("<toolchain>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 --target)
-                    COMPREPLY=("<target>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -199,7 +199,7 @@ _rustup() {
             case "${prev}" in
                 
                 --toolchain)
-                    COMPREPLY=("<toolchain>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -218,11 +218,11 @@ _rustup() {
             case "${prev}" in
                 
                 --toolchain)
-                    COMPREPLY=("<toolchain>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 --target)
-                    COMPREPLY=("<target>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -316,7 +316,7 @@ _rustup() {
             case "${prev}" in
                 
                 --toolchain)
-                    COMPREPLY=("<toolchain>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -395,7 +395,7 @@ _rustup() {
             case "${prev}" in
                 
                 --path)
-                    COMPREPLY=("<path>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -429,7 +429,7 @@ _rustup() {
             case "${prev}" in
                 
                 --path)
-                    COMPREPLY=("<path>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -440,7 +440,7 @@ _rustup() {
             return 0
             ;;
         rustup__run)
-            opts=" -h -V  --help --version  <toolchain> <command>... "
+            opts=" -h -V  --install --help --version  <toolchain> <command>... "
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                 return 0
@@ -613,7 +613,7 @@ _rustup() {
             case "${prev}" in
                 
                 --toolchain)
-                    COMPREPLY=("<toolchain>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -647,7 +647,7 @@ _rustup() {
             case "${prev}" in
                 
                 --toolchain)
-                    COMPREPLY=("<toolchain>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -666,7 +666,7 @@ _rustup() {
             case "${prev}" in
                 
                 --toolchain)
-                    COMPREPLY=("<toolchain>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -685,7 +685,7 @@ _rustup() {
             case "${prev}" in
                 
                 --toolchain)
-                    COMPREPLY=("<toolchain>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -704,7 +704,7 @@ _rustup() {
             case "${prev}" in
                 
                 --toolchain)
-                    COMPREPLY=("<toolchain>")
+                    COMPREPLY=($(compgen -f ${cur}))
                     return 0
                     ;;
                 *)
@@ -940,7 +940,7 @@ _rustup() {
             return 0
             ;;
         rustup__update)
-            opts=" -h -V  --no-self-update --help --version  <toolchain>... "
+            opts=" -h -V  --no-self-update --force --help --version  <toolchain>... "
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                 return 0
