@@ -681,8 +681,8 @@ Optional argument ARG same as `comment-dwim''s."
               (with-eval-after-load 'company
                 (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
                 (setq company-transformers (remq 'company-flx-transformer company-transformers))
-                (setq-local company-backends '((company-capf :separate company-yasnippet :separate company-files)
-                                               company-files
+                (setq-local company-backends '(company-files
+                                               (company-capf :separate company-yasnippet)
                                                company-keywords))))
 
             (use-package py-isort
@@ -704,7 +704,7 @@ Optional argument ARG same as `comment-dwim''s."
               (if (and (string-match "\\([0-9]+\\)\.[0-9]+\.[0-9]+" python-version)
                        (>= (string-to-number (match-string-no-properties 1 python-version)) 3))
                   (use-package blacken :delight)
-                (use-package py-autopep8 :hook (python-mode . py-autopep8-enable-on-save))))))
+                (use-package py-autopep8 :config (py-autopep8-enable-on-save))))))
 
 ;; Go
 (use-package go-mode
