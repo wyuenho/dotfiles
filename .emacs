@@ -400,7 +400,7 @@ Optional argument ARG same as `comment-dwim''s."
           company-cmake
           company-files
           ,@(if (and (memq (window-system) '(ns mac))
-                       (fboundp 'company-emoji))
+                     (fboundp 'company-emoji))
                 '((company-emoji :separate company-capf :separate company-yasnippet))
               '(company-capf :separate company-yasnippet))
           (company-dabbrev-code
@@ -539,6 +539,32 @@ Optional argument ARG same as `comment-dwim''s."
                          ("C-M-." . lsp-js-find-symbol)))
             t))
 
+(defun find-js-format-style ()
+  (let* ((package-json-dir
+          (locate-dominating-file (buffer-file-name) "package.json"))
+
+         (package-json
+          (if package-json-dir
+              (json-read-file (f-join package-json-dir "package.json"))
+            nil))
+
+         (devDependencies
+          (if package-json
+              (alist-get 'devDependencies package-json)
+            nil))
+
+         (formatter-styles
+          '((prettier            . prettier)
+            (eslint              . eslint)
+            (esformatter         . esfmt)
+            (babel-preset-airbnb . airbnb)
+            (standard            . standard))))
+
+    (cdr (car (map-filter
+               (lambda (package _)
+                 (map-contains-key devDependencies package))
+               formatter-styles)))))
+
 (add-hook 'js-mode-hook
           (lambda ()
             (use-package add-node-modules-path
@@ -564,60 +590,29 @@ Optional argument ARG same as `comment-dwim''s."
                          ("C-c e l" . nodejs-repl-load-file)
                          ("C-c M-:" . nodejs-repl-switch-to-repl)))
 
-            (use-package f
-              :preface
-              (defun find-js-format-style ()
-                (let* ((package-json-dir
-                        (f-traverse-upwards
-                         (lambda (path)
-                           (f-exists? (f-expand "package.json" path)))
-                         (buffer-file-name)))
+            (let ((style (find-js-format-style)))
+              (cond ((eq style 'prettier)
+                     (use-package prettier-js
+                       :delight
+                       :config
+                       (prettier-js-mode t)
+                       :bind (:map js-mode-map
+                                   ("C-c f" . prettier-js))))
 
-                       (package-json
-                        (if package-json-dir
-                            (json-read-file (f-join package-json-dir "package.json"))
-                          nil))
+                    ((eq style 'eslint)
+                     (use-package eslintd-fix
+                       :delight
+                       :config
+                       (eslintd-fix-mode t)
+                       :bind (:map js-mode-map
+                                   ("C-c f" . eslintd-fix))))
 
-                       (devDependencies
-                        (if package-json
-                            (alist-get 'devDependencies package-json)
-                          nil))
-
-                       (formatter-styles
-                        '((prettier            . prettier)
-                          (eslint              . eslint)
-                          (esformatter         . esfmt)
-                          (babel-preset-airbnb . airbnb)
-                          (standard            . standard))))
-
-                  (cdr (car (map-filter
-                             (lambda (package _)
-                               (map-contains-key devDependencies package))
-                             formatter-styles)))))
-              :config
-              (let ((style (find-js-format-style)))
-                (cond ((eq style 'prettier)
-                       (use-package prettier-js
-                         :delight
-                         :config
-                         (prettier-js-mode t)
-                         :bind (:map js-mode-map
-                                     ("C-c f" . prettier-js))))
-
-                      ((eq style 'eslint)
-                       (use-package eslintd-fix
-                         :delight
-                         :config
-                         (eslintd-fix-mode t)
-                         :bind (:map js-mode-map
-                                     ("C-c f" . eslintd-fix))))
-
-                      ((memq style '(esfmt airbnb standard))
-                       (use-package js-format
-                         :config
-                         (js-format-setup (symbol-name (find-js-format-style)))
-                         :bind (:map js-mode-map
-                                     ("C-c f" . js-format-buffer)))))))
+                    ((memq style '(esfmt airbnb standard))
+                     (use-package js-format
+                       :config
+                       (js-format-setup (symbol-name (find-js-format-style)))
+                       :bind (:map js-mode-map
+                                   ("C-c f" . js-format-buffer))))))
 
             (define-key js-mode-map [menu-bar] nil)))
 
