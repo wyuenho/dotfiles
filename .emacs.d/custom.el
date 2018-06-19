@@ -114,6 +114,7 @@
  '(ido-ubiquitous-mode t)
  '(ido-vertical-define-keys (quote C-n-C-p-up-down-left-right))
  '(ido-vertical-mode t)
+ '(imagemagick-render-type 1)
  '(imenu-auto-rescan t)
  '(imenu-auto-rescan-maxout 524288)
  '(imenu-list-size 0.2)
