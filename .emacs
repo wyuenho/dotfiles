@@ -412,7 +412,6 @@ Optional argument ARG same as `comment-dwim''s."
   :hook (company-mode . company-quickhelp-mode))
 
 (use-package company-lsp
-  :quelpa (company-lsp :fetcher github :repo "wyuenho/company-lsp" :branch "give-company-files-a-chance")
   :config
   (add-hook 'lsp-after-initialize-hook
             (lambda ()
