@@ -15,6 +15,7 @@
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
  '(auto-hscroll-mode (quote current-line))
+ '(auto-save-default nil)
  '(auto-save-interval 0)
  '(auto-save-timeout 10)
  '(backup-by-copying t)
