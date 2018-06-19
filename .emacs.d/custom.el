@@ -278,7 +278,8 @@
  '(which-function-mode t)
  '(which-key-idle-secondary-delay 0.0)
  '(which-key-mode t)
- '(winner-mode t))
+ '(winner-mode t)
+ '(x-underline-at-descent-line t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
