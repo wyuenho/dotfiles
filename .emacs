@@ -957,7 +957,8 @@ Optional argument ARG same as `comment-dwim''s."
   (define-key purpose-mode-map (kbd "C-c w") purpose-mode-prefix-map)
 
   (purpose-add-user-purposes
-   :modes '((ag-mode              . search)
+   :modes '((message-mode         . edit)
+            (ag-mode              . search)
             (rg-mode              . search)
             (shell-mode           . terminal)
             (inferior-python-mode . terminal))
