@@ -471,6 +471,7 @@ Optional argument ARG same as `comment-dwim''s."
          :map projectile-command-map
          ("x T" . multi-term)))
 
+(setq eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
 ;; YAML
 (use-package yaml-mode
