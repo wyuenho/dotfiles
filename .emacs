@@ -302,6 +302,12 @@ Optional argument ARG same as `comment-dwim''s."
   (add-to-list 'editorconfig-indentation-alist
                '(rjsx-mode js2-basic-offset sgml-basic-offset)))
 
+;; Prettier form-feeds
+(use-package form-feed
+  :delight
+  :hook ((prog-mode . form-feed-mode)
+         (text-mode . form-feed-mode)))
+
 ;; Quick Snippets
 (use-package yasnippet
   :delight yas-minor-mode
