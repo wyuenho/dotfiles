@@ -62,6 +62,10 @@
 ;; Automatically wrap overly long lines for all text modes
 (add-hook 'text-mode-hook 'auto-fill-mode)
 
+;; Turn on line wrapping for programming, text and message buffers
+(dolist (hook '(prog-mode-hook text-mode-hook messages-buffer-mode-hook))
+  (add-hook hook 'visual-line-mode))
+
 ;; Turn on subword mode and linum mode for all prog and text modes
 (dolist (hook '(prog-mode-hook text-mode-hook))
   (add-hook hook (lambda ()
@@ -122,20 +126,6 @@ Optional argument ARG same as `comment-dwim''s."
 (autoload 'zap-up-to-char "misc")
 (bind-key "M-z" 'zap-up-to-char)
 
-;; Other missing essentials that I don't want to write
-(use-package crux
-  :bind (("C-x C-u" . crux-upcase-region)
-         ("C-x C-l" . crux-downcase-region)
-         ("C-x M-c" . crux-capitalize-region)
-         ("C-c d"   . crux-delete-file-and-buffer)
-         ("C-c r"   . crux-rename-file-and-buffer)
-         ("C-c c"   . crux-copy-file-preserve-attributes)
-         ("C-c u"   . crux-find-user-init-file)
-         ("C-c ,"   . crux-find-user-custom-file)
-         ("C-c s"   . crux-find-shell-init-file)
-         ("C-c C-u" . crux-sudo-edit)
-         ("C-c M-o" . crux-open-with)))
-
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
 (add-hook 'occur-mode-hook
@@ -161,20 +151,33 @@ Optional argument ARG same as `comment-dwim''s."
            (not (fboundp 'system-move-file-to-trash)))
   :config (osx-trash-setup))
 
-(use-package ialign
-  :bind ("<A-tab>" . ialign))
-
-(use-package goto-chg
-  :bind (("C-," . goto-last-change)))
-
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
   :delight
   :bind (("C-h b" . which-key-show-top-level)
          ("C-h m" . which-key-show-major-mode)))
 
-(use-package visual-line-mode
-  :hook (prog-mode text-mode messages-buffer-mode))
+;; Visual alignment
+(use-package ialign
+  :bind ("<A-tab>" . ialign))
+
+;; Other missing essentials that I don't want to write
+(use-package crux
+  :bind (("C-x C-u" . crux-upcase-region)
+         ("C-x C-l" . crux-downcase-region)
+         ("C-x M-c" . crux-capitalize-region)
+         ("C-c d"   . crux-delete-file-and-buffer)
+         ("C-c r"   . crux-rename-file-and-buffer)
+         ("C-c c"   . crux-copy-file-preserve-attributes)
+         ("C-c u"   . crux-find-user-init-file)
+         ("C-c ,"   . crux-find-user-custom-file)
+         ("C-c s"   . crux-find-shell-init-file)
+         ("C-c C-u" . crux-sudo-edit)
+         ("C-c M-o" . crux-open-with)))
+
+;; So I can see past kills that I can yank
+(use-package browse-kill-ring
+  :config (browse-kill-ring-default-keybindings))
 
 ;; Sane keyboard scrolling
 (use-package pager-default-keybindings)
