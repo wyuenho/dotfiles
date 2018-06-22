@@ -259,7 +259,7 @@
  '(tls-checktrust t)
  '(tls-program
    (quote
-    ("openssl s_client -connect %h:%p -no_ssl3 -no_ssl2 -ign_eof -CAfile %t" "gnutls-cli --x509cafile %t -p %p %h")))
+    ("openssl s_client -connect %h:%p -no_ssl3 -no_ssl2 -ign_eof -CAfile %t" "gnutls-cli --x509cafile %t -p %p --dh-bits=2048 %h")))
  '(tool-bar-mode nil)
  '(treemacs-change-root-without-asking t)
  '(treemacs-collapse-dirs 3)
