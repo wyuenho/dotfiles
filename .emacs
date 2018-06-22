@@ -899,6 +899,7 @@ Optional argument ARG same as `comment-dwim''s."
                         dired-mode-map))))
 
 (use-package all-the-icons-dired
+  :after all-the-icons
   :if (display-graphic-p)
   :hook (dired-mode . all-the-icons-dired-mode))
 
@@ -980,21 +981,12 @@ Optional argument ARG same as `comment-dwim''s."
   ;; Set up default fonts
   (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
 
-  (with-eval-after-load 'linum
-    (set-face-attribute 'linum nil :weight 'thin))
-  (with-eval-after-load 'display-line-numbers
-    (set-face-attribute 'line-number nil :weight 'thin))
-
   (let ((win-sys (window-system)))
     (when (eq win-sys 'mac)
       ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
       ;; but it's not desirable on macOS because the window server will decide the
       ;; color of the cursor according to the background color.
-      (add-to-list 'frameset-filter-alist '(mouse-color . :never))
-
-      (bind-keys ("C-|" . mac-toggle-tab-group-overview)
-                 ("C-{" . mac-previous-tab-or-toggle-tab-bar)
-                 ("C-}" . mac-next-tab-or-toggle-tab-bar)))
+      (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
 
     ;; Emacs 26 ns port new settings
     (when (eq win-sys 'ns)
@@ -1019,6 +1011,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (delight '((rainbow-mode)
              (lsp-mode)
+             (isearch-mode            nil isearch)
              (abbrev-mode             nil abbrev)
              (purpose-mode            nil window-purpose)
              (eldoc-mode              nil eldoc)
@@ -1031,6 +1024,7 @@ Optional argument ARG same as `comment-dwim''s."
              (visual-line-mode        nil simple)
              (subword-mode            nil subword))))
 
+;; Fancy mode line
 (use-package spaceline
   :config
   (setq powerline-image-apple-rgb
@@ -1044,50 +1038,32 @@ Optional argument ARG same as `comment-dwim''s."
   (spaceline-spacemacs-theme)
   (spaceline-toggle-buffer-encoding-abbrev-off))
 
-;; Replace the major mode name with its icon and
+;; Replace the major mode name with its icon
 (use-package all-the-icons
   :if (display-graphic-p)
   :config
   (add-hook 'after-change-major-mode-hook
             (lambda ()
               (let* ((icon (all-the-icons-icon-for-mode major-mode))
-                     (face-prop (and (stringp icon) (purecopy (get-text-property 0 'face icon)))))
+                     (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
                 (when (and (stringp icon) (not (string= major-mode icon)) face-prop)
-                  (setq mode-name icon))))))
+                  (setq mode-name (propertize icon 'display '(:ascent center))))))))
 
 (use-package solarized-theme
   :if (display-graphic-p)
   :config
   (load-theme 'solarized-dark)
 
-  (dolist (entry `((region . ((((type ns) (class color) (background light))
-                               (:background "selectedTextBackgroundColor"))
-                              (((type ns) (class color) (background dark))
-                               (:background ,(color-darken-name "selectedTextBackgroundColor" 50)))))
+  (dolist (entry `((region . ((((type ns))
+                               (:background "selectedTextBackgroundColor" :foreground "selectedTextColor"))))
                    (ediff-current-diff-C . ((((class color) (background light))
-                                             (:background "#DDEEFF" :foreground "#005588"))
+                                             (:background "#DDDDFF" :foreground "#333355"))
                                             (((class color) (background dark))
-                                             (:background "#005588" :foreground "#DDEEFF"))))
+                                             (:background "#333355" :foreground "#DDDDFF"))))
                    (ediff-fine-diff-C . ((((class color) (background light))
-                                          (:background "#EEFFFF" :foreground "#006699"))
+                                          (:background "#CCCCEE" :foreground "#444466"))
                                          (((class color) (background dark))
-                                          (:background "#006699" :foreground "#EEFFFF"))))
-                   (imenu-list-entry-face-0 . ((t (:inherit
-                                                   (imenu-list-entry-face font-lock-type-face)
-                                                   :foreground nil))))
-                   (imenu-list-entry-face-1 . ((t (:inherit
-                                                   (imenu-list-entry-face font-lock-function-name-face)
-                                                   :foreground nil))))
-                   (imenu-list-entry-face-2 . ((t (:inherit
-                                                   (imenu-list-entry-face font-lock-variable-name-face)
-                                                   :foreground nil))))
-                   (imenu-list-entry-face-3 . ((t (:inherit
-                                                   (imenu-list-entry-face font-lock-string-face)
-                                                   :foreground nil))))
-                   (imenu-list-entry-subalist-face-0 . ((t (:inherit imenu-list-entry-face-0))))
-                   (imenu-list-entry-subalist-face-1 . ((t (:inherit imenu-list-entry-face-1))))
-                   (imenu-list-entry-subalist-face-2 . ((t (:inherit imenu-list-entry-face-2))))
-                   (imenu-list-entry-subalist-face-3 . ((t (:inherit imenu-list-entry-face-3))))))
+                                          (:background "#444466" :foreground "#CCCCEE"))))))
     (let ((face (car entry))
           (spec (cdr entry)))
       (put face 'theme-face nil)
@@ -1131,7 +1107,8 @@ Optional argument ARG same as `comment-dwim''s."
       (put face 'theme-face nil)
       (put face 'face-alias alias)))
 
-  (set-face-attribute 'dired-header nil :underline t :background nil :foreground nil)
-  (set-face-attribute 'mode-line nil :overline nil :underline nil)
-  (set-face-attribute 'mode-line-inactive nil :overline nil :underline nil)
-  (set-face-attribute 'header-line nil :overline nil :underline nil))
+  (let ((line (face-attribute 'mode-line :underline)))
+    (set-face-attribute 'mode-line nil :overline line :box nil)
+    (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil))
+
+  (set-face-attribute 'dired-header nil :underline t :background nil :foreground nil))
