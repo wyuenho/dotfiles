@@ -103,6 +103,11 @@
  '(global-syntax-subword-mode t)
  '(global-undo-tree-mode t)
  '(global-whitespace-cleanup-mode t)
+ '(gnutls-min-prime-bits 2048)
+ '(gnutls-trustfiles
+   (quote
+    ("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt")))
+ '(gnutls-verify-error t)
  '(history-length 250)
  '(ibuffer-elide-long-columns t)
  '(ibuffer-expert t)
@@ -251,9 +256,10 @@
  '(tab-width 2)
  '(temp-buffer-resize-mode t)
  '(timer-max-repeats 1)
+ '(tls-checktrust t)
  '(tls-program
    (quote
-    ("openssl s_client -connect %h:%p -no_ssl3 -no_ssl2 -ign_eof" "gnutls-cli --x509cafile %t -p %p %h")))
+    ("openssl s_client -connect %h:%p -no_ssl3 -no_ssl2 -ign_eof -CAfile %t" "gnutls-cli --x509cafile %t -p %p %h")))
  '(tool-bar-mode nil)
  '(treemacs-change-root-without-asking t)
  '(treemacs-collapse-dirs 3)
