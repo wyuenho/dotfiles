@@ -467,7 +467,10 @@ Optional argument ARG same as `comment-dwim''s."
                           '(company-shell company-shell-env company-files company-capf)))))
 
 (use-package multi-term
-  :bind (("M-T" . multi-term)))
+  :bind (("M-T" . multi-term)
+         :map projectile-command-map
+         ("x T" . multi-term)))
+
 
 ;; YAML
 (use-package yaml-mode
