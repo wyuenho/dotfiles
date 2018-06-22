@@ -490,6 +490,17 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-c e r" . eval-region)
            ("C-c e e" . eval-print-last-sexp))
 
+(add-hook 'ielm-mode-hook
+          (lambda ()
+            (let ((proc (get-buffer-process (current-buffer))))
+              (when proc
+                (setq-local comint-input-ring-file-name
+                            (expand-file-name ".ielm-history" user-emacs-directory))
+                (comint-read-input-ring)
+                (set-process-sentinel proc (lambda (process state)
+                                             (comint-write-input-ring)
+                                             (kill-buffer-and-window)))))))
+
 (use-package macrostep
   :bind (:map emacs-lisp-mode-map
               ("C-c e x" . macrostep-expand)))
