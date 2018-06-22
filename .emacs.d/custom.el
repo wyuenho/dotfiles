@@ -194,9 +194,11 @@
  '(mouse-wheel-tilt-scroll t)
  '(multi-term-program "/opt/local/bin/bash")
  '(multi-term-program-switches "--login")
+ '(network-security-level (quote high))
  '(ns-alternate-modifier (quote alt))
  '(ns-command-modifier (quote meta))
  '(ns-pop-up-frames nil)
+ '(nsm-save-host-names t)
  '(olivetti-body-width 120)
  '(package-archives
    (quote
