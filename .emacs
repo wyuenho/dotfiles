@@ -523,14 +523,6 @@ Optional argument ARG same as `comment-dwim''s."
                    '("Packages" "^\\s-*(use-package\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 1)
                    t))))
 
-;; Emacs Lisp and Javascript Refactoring
-(use-package emr
-  :hook ((emacs-lisp-mode . emr-initialize)
-         (js2-mode        . emr-initialize)
-         (js2-jsx-mode    . emr-initialize)
-         (rjsx-mode       . emr-initialize))
-  :bind ("M-RET" . emr-show-refactor-menu))
-
 (use-package helpful
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
