@@ -539,9 +539,26 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-h o" . helpful-symbol)
          ("C-h p" . helpful-at-point)))
 
-;; C/C++/Objective-C
-(use-package cquery
-  :hook ((c-mode-common . lsp-cquery-enable)))
+;; LSP for C/C++/Objective-C and Python
+(dolist (hook '(c-mode-common-hook python-mode-hook))
+  (add-hook hook
+            (lambda ()
+              (use-package eglot
+                :after company
+                :demand
+                :bind (:map eglot-mode-map
+                            ("C-h o"   . eglot-help-at-point)
+                            ("C-c C-r" . eglot-rename)
+                            ("M-1"     . eglot-code-actions))
+                :config
+                (setq eglot--managed-mode-hook '(eldoc-mode))
+                (call-interactively 'eglot)
+                (with-eval-after-load 'company
+                  (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
+                  (setq company-transformers (remq 'company-flx-transformer company-transformers))
+                  (setq-local company-backends '(company-files
+                                                 (company-capf :separate company-yasnippet)
+                                                 company-keywords)))))))
 
 ;; Javascript
 (use-package lsp-javascript-flow
@@ -693,22 +710,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 (add-hook 'python-mode-hook
           (lambda ()
-            (use-package eglot
-              :demand
-              :bind (:map eglot-mode-map
-                          ("C-h o"   . eglot-help-at-point)
-                          ("C-c C-r" . eglot-rename)
-                          ("M-1"     . eglot-code-actions))
-              :config
-              (setq eglot--managed-mode-hook '(eldoc-mode))
-              (call-interactively 'eglot)
-              (with-eval-after-load 'company
-                (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
-                (setq company-transformers (remq 'company-flx-transformer company-transformers))
-                (setq-local company-backends '(company-files
-                                               (company-capf :separate company-yasnippet)
-                                               company-keywords))))
-
             (use-package py-isort
               :config
               (add-hook 'before-save-hook 'py-isort-before-save))
