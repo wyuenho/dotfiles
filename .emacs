@@ -544,15 +544,14 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook hook
             (lambda ()
               (use-package eglot
-                :after company
-                :demand
-                :bind (:map eglot-mode-map
-                            ("C-h o"   . eglot-help-at-point)
-                            ("C-c C-r" . eglot-rename)
-                            ("M-1"     . eglot-code-actions))
                 :config
-                (setq eglot--managed-mode-hook '(eldoc-mode))
-                (call-interactively 'eglot)
+                (remove-hook 'eglot--managed-mode-hook 'flymake-mode)
+                (add-hook 'eglot--managed-mode-hook
+                          (lambda ()
+                            (bind-keys :map eglot-mode-map
+                                       ("C-h o"   . eglot-help-at-point)
+                                       ("C-c C-r" . eglot-rename)
+                                       ("M-1"     . eglot-code-actions))))
                 (with-eval-after-load 'company
                   (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
                   (setq company-transformers (remq 'company-flx-transformer company-transformers))
