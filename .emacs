@@ -326,6 +326,15 @@ Optional argument ARG same as `comment-dwim''s."
           (lambda ()
             (setq-local bidi-display-reordering nil)))
 
+(let ((modes `(emacs-lisp-mode
+               web-mode
+               js-mode
+               typescript-mode
+               ,@(if (< emacs-major-version 26)
+                     css-mode))))
+  (use-package rainbow-mode
+    :hook modes))
+
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
   :preface
@@ -761,12 +770,6 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Web
 (use-package scss-mode
   :mode "\\.scss\\'")
-
-(use-package rainbow-mode
-  :hook prog-mode
-  :config
-  (when (< emacs-major-version 26)
-    (add-hook 'css-mode-hook 'rainbow-mode)))
 
 (use-package web-mode
   :functions web-mode-language-at-pos
