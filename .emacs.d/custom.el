@@ -109,7 +109,6 @@
  '(gnutls-trustfiles
    (quote
     ("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt")))
- '(gnutls-verify-error t)
  '(history-length 250)
  '(ibuffer-elide-long-columns t)
  '(ibuffer-expert t)
