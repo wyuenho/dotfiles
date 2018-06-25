@@ -326,14 +326,17 @@ Optional argument ARG same as `comment-dwim''s."
           (lambda ()
             (setq-local bidi-display-reordering nil)))
 
-(let ((modes `(emacs-lisp-mode
-               web-mode
-               js-mode
-               typescript-mode
-               ,@(if (< emacs-major-version 26)
-                     css-mode))))
-  (use-package rainbow-mode
-    :hook modes))
+;; Turn on background color for HEX for specific modes
+(dolist (hook `(emacs-lisp-mode-hook
+                web-mode-hook
+                js-mode-hook
+                typescript-mode-hook
+                sh-mode-hook
+                ,@(if (< emacs-major-version 26)
+                      css-mode-hook)))
+  (add-hook hook (lambda ()
+                   (use-package rainbow-mode
+                     :config (rainbow-mode)))))
 
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
