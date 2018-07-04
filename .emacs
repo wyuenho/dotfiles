@@ -90,8 +90,7 @@ line if no region is defined.
 Optional argument ARG same as `comment-dwim''s."
 
               (interactive "*P")
-              (if (and (not (use-region-p))
-                       (not (looking-at "[ \t]*\n")))
+              (if (and (not (use-region-p)))
                   (comment-or-uncomment-region (line-beginning-position) (line-end-position))
                 (apply comment-dwim args))))
 
