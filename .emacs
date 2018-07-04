@@ -145,6 +145,25 @@ Optional argument ARG same as `comment-dwim''s."
                        ("n"   . compilation-next-error)
                        ("p"   . compilation-previous-error))))
 
+;; Persistent history for all the inferior modes
+(add-hook 'comint-mode-hook
+          (lambda ()
+            (let ((proc (get-buffer-process (current-buffer))))
+              (when proc
+                (setq-local comint-input-ring-file-name
+                            (expand-file-name
+                             (format ".%s-history" major-mode)
+                             user-emacs-directory))
+                (when (file-exists-p comint-input-ring-file-name)
+                  (let ((comint-input-ring-separator ""))
+                    (comint-read-input-ring)))
+                (set-process-sentinel
+                 proc
+                 (lambda (process state)
+                   (let ((comint-input-ring-separator ""))
+                     (comint-write-input-ring))
+                   (kill-buffer-and-window)))))))
+
 (use-package osx-trash
   :if (and (eq system-type 'darwin)
            (not (fboundp 'system-move-file-to-trash)))
@@ -500,17 +519,6 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-c e b" . eval-buffer)
            ("C-c e r" . eval-region)
            ("C-c e e" . eval-print-last-sexp))
-
-(add-hook 'ielm-mode-hook
-          (lambda ()
-            (let ((proc (get-buffer-process (current-buffer))))
-              (when proc
-                (setq-local comint-input-ring-file-name
-                            (expand-file-name ".ielm-history" user-emacs-directory))
-                (comint-read-input-ring)
-                (set-process-sentinel proc (lambda (process state)
-                                             (comint-write-input-ring)
-                                             (kill-buffer-and-window)))))))
 
 (use-package macrostep
   :bind (:map emacs-lisp-mode-map
