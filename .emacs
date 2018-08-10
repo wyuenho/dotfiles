@@ -899,8 +899,12 @@ Optional argument ARG same as `comment-dwim''s."
   (diff-hl-flydiff-mode t)
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
 
+(use-package magit)
+
 (use-package magithub
   :config (magithub-feature-autoinject t))
+
+(use-package magit-todos)
 
 (use-package monky
   :bind (("C-x v M-m" . monky-status)))
