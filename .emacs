@@ -723,9 +723,6 @@ Optional argument ARG same as `comment-dwim''s."
               ("C-h d"   . tide-documentation-at-point)))
 
 ;; Python
-(use-package pyenv-mode
-  :quelpa (pyenv-mode :fetcher github :repo "wyuenho/pyenv-mode" :branch "local-mode"))
-
 (add-hook 'python-mode-hook
           (lambda ()
             (use-package py-isort
