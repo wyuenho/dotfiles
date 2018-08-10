@@ -868,7 +868,8 @@ Optional argument ARG same as `comment-dwim''s."
                 (setq-local emmet-expand-jsx-className? t)))))
 
 ;; Project management
-(use-package projectile)
+(use-package projectile
+  :bind-keymap ("C-c p" . projectile-command-map))
 
 ;; Search
 (use-package ag
