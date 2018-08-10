@@ -554,7 +554,6 @@ Optional argument ARG same as `comment-dwim''s."
             (lambda ()
               (use-package eglot
                 :config
-                (remove-hook 'eglot--managed-mode-hook 'flymake-mode)
                 (add-hook 'eglot--managed-mode-hook
                           (lambda ()
                             (bind-keys :map eglot-mode-map
@@ -562,11 +561,21 @@ Optional argument ARG same as `comment-dwim''s."
                                        ("C-c C-r" . eglot-rename)
                                        ("M-1"     . eglot-code-actions))))
                 (with-eval-after-load 'company
-                  (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
                   (setq company-transformers (remq 'company-flx-transformer company-transformers))
                   (setq-local company-backends '(company-files
                                                  (company-capf :separate company-yasnippet)
-                                                 company-keywords)))))))
+                                                 company-keywords)))
+                (eglot-ensure)))))
+
+;; C/C++/Objective-C
+(use-package flycheck-clang-analyzer
+  :hook (flycheck-mode . flycheck-clang-analyzer-setup))
+
+(use-package flycheck-objc-clang
+  :hook (flycheck-mode . flycheck-objc-clang-setup))
+
+(use-package cmake-font-lock
+  :hook (cmake-mode . cmake-font-lock-activate))
 
 ;; Javascript
 (use-package lsp-javascript-flow
