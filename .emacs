@@ -410,8 +410,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Static Analysis
 (use-package lsp-ui
-  :quelpa (lsp-ui :fetcher github :repo "wyuenho/lsp-ui" :branch "dont-request-hover-when-unavailable")
-  :hook (lsp-after-initialize . lsp-ui-mode))
+  :hook (lsp-mode . lsp-ui-mode))
 
 ;; Auto-completion
 (use-package company
