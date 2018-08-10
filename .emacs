@@ -155,14 +155,14 @@ Optional argument ARG same as `comment-dwim''s."
                              (format ".%s-history" major-mode)
                              user-emacs-directory))
                 (when (file-exists-p comint-input-ring-file-name)
-                  (let ((comint-input-ring-separator ""))
+                  (let ((comint-input-ring-separator "\n"))
                     (comint-read-input-ring)))
                 (set-process-sentinel
                  proc
                  (lambda (process state)
-                   (let ((comint-input-ring-separator ""))
+                   (let ((comint-input-ring-separator "\n"))
                      (comint-write-input-ring))
-                   (kill-buffer-and-window)))))))
+                   (quit-window 'kill)))))))
 
 (use-package osx-trash
   :if (and (eq system-type 'darwin)
