@@ -979,12 +979,9 @@ Optional argument ARG same as `comment-dwim''s."
   (define-key purpose-mode-map (kbd "C-c w") purpose-mode-prefix-map)
 
   (purpose-add-user-purposes
-   :modes '((message-mode         . edit)
-            (ag-mode              . search)
-            (rg-mode              . search)
-            (shell-mode           . terminal)
-            (inferior-python-mode . terminal))
-   :names '(("*Pipenv shell*"     . terminal)))
+   :modes '((message-mode . edit)
+            (ag-mode      . search)
+            (rg-mode      . search)))
 
   (purpose-x-code1-setup)
   (purpose-x-popwin-setup)
