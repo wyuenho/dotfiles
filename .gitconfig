@@ -1,6 +1,7 @@
 [user]
 	name = Jimmy Yuen Ho Wong
 	email = wyuenho@gmail.com
+	signingkey = 851DCF582E199A7C8B900354F63B916754790B33
 
 [core]
 	excludesfile = ~/.gitignore_global
@@ -50,5 +51,12 @@
 
 [diff]
 	submodule = log
+
 [github]
 	user = wyuenho@gmail.com
+
+[transfer]
+	fsckObjects = true
+
+[commit]
+	gpgsign = true
