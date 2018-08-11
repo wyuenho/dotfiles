@@ -28,12 +28,9 @@
  '(case-fold-search t)
  '(column-number-indicator-zero-based nil)
  '(column-number-mode t)
- '(company-auto-complete t)
- '(company-auto-complete-chars (quote (41 46)))
  '(company-global-modes
    (quote
     (lisp-mode emacs-lisp-mode restclient-mode js-mode js2-mode js-jsx-mode js2-jsx-mode rjsx-mode python-mode go-mode rust-mode web-mode c-mode c++-mode objc-mode css-mode sh-mode typescript-mode)))
- '(company-idle-delay 0.2)
  '(company-lsp-enable-recompletion t)
  '(company-require-match nil)
  '(company-statistics-mode t)
@@ -90,7 +87,7 @@
    (quote
     (sh-mode json-mode yaml-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode typescript-mode python-mode go-mode web-mode css-mode scss-mode rust-mode)))
  '(flycheck-pos-tip-max-width 80)
- '(gc-cons-threshold 33554432)
+ '(gc-cons-threshold 35000000)
  '(global-auto-revert-non-file-buffers t)
  '(global-company-mode t)
  '(global-diff-hl-mode t)
@@ -103,9 +100,10 @@
  '(global-syntax-subword-mode t)
  '(global-undo-tree-mode t)
  '(global-whitespace-cleanup-mode t)
- '(gnutls-algorithm-priority
-   "SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:%PROFILE_MEDIUM")
- '(gnutls-min-prime-bits 2048)
+ '(gnutls-crlfiles
+   (quote
+    ("/opt/local/etc/grid-security/certificates/*.crl.pem" "/etc/grid-security/certificates/*.crl.pem")))
+ '(gnutls-min-prime-bits nil)
  '(gnutls-trustfiles
    (quote
     ("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt")))
@@ -147,6 +145,7 @@
  '(linum-format "%4d ")
  '(load-prefer-newer t)
  '(lsp-response-timeout 30)
+ '(lsp-ui-sideline-ignore-duplicate t)
  '(mac-emulate-three-button-mouse t)
  '(mac-input-method-mode t)
  '(mac-mouse-wheel-mode t)
@@ -207,9 +206,8 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (add-node-modules-path ag all-the-icons all-the-icons-dired amx auto-compile auto-yasnippet blacken browse-kill-ring buffer-move bug-hunter cargo cl-lib-highlight company-emoji company-flx company-go company-lsp company-quickhelp company-restclient company-shell company-statistics company-tern company-web cquery crux csv-mode cycle-quotes default-text-scale delight diff-hl dimmer dired-collapse dired-hide-dotfiles dired-single docker dockerfile-mode dumb-jump editorconfig eglot elisp-def elisp-refs emmet-mode emr eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-mypy flycheck-pos-tip flycheck-rust flycheck-yamllint focus fontify-face form-feed git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile goto-chg graphviz-dot-mode helpful ialign ido-completing-read+ ido-vertical-mode imenu-anywhere import-js importmagic jq-mode js-doc js-format js2-mode js2-refactor kurecolor lorem-ipsum lsp-go lsp-javascript-flow macrostep magit magit-filenotify magit-gh-pulls magit-gitflow monky move-dup multi-term multiple-cursors nodejs-repl nvm olivetti origami osx-trash package-build package-lint pager-default-keybindings pcre2el pdf-tools persp-mode persp-mode-projectile-bridge prettier-js projectile py-autopep8 py-isort pyimport python-docstring quelpa-use-package racer rainbow-mode restclient rg rust-mode scss-mode smartparens smooth-scrolling solarized-theme spaceline sphinx-doc string-inflection tern tide try ts-comint typescript-mode undo-tree use-package visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode yaml-mode yarn-mode yasnippet yasnippet-snippets)))
+    (add-node-modules-path ag all-the-icons all-the-icons-dired amx auto-compile auto-yasnippet blacken browse-kill-ring buffer-move bug-hunter cargo cl-lib-highlight clang-format cmake-font-lock company-emoji company-flx company-go company-lsp company-quickhelp company-restclient company-shell company-statistics company-tern company-web cquery crux csv-mode cycle-quotes default-text-scale delight diff-hl dimmer dired-collapse dired-hacks-utils dired-hide-dotfiles dired-single docker dockerfile-mode dumb-jump editorconfig eglot elisp-def elisp-refs emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-clang-analyzer flycheck-mypy flycheck-objc-clang flycheck-pos-tip flycheck-rust flycheck-yamllint focus fontify-face form-feed git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode go-projectile god-mode goto-chg graphviz-dot-mode helpful hook-helpers ialign ido-completing-read+ ido-vertical-mode imenu-anywhere import-js importmagic jq-mode js-doc js-format js2-mode js2-refactor kurecolor lorem-ipsum lsp-go lsp-javascript-flow lsp-ui macrostep magit magit-filenotify magit-gh-pulls magit-gitflow magit-todos magithub monky move-dup multi-term multiple-cursors nodejs-repl nvm olivetti origami osx-trash package-build package-lint pager-default-keybindings pcre2el pdf-tools persp-mode persp-mode-projectile-bridge prettier-js projectile py-autopep8 py-isort pyimport python python-docstring quelpa-use-package racer rainbow-mode restclient rg rust-mode scss-mode smartparens smooth-scrolling solarized-theme spaceline sphinx-doc string-inflection tern tide try ts-comint typescript-mode undo-tree use-package visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode xterm-color yaml-mode yarn-mode yasnippet yasnippet-snippets)))
  '(pipenv-projectile-after-switch-function (quote pipenv-projectile-after-switch-extended))
- '(pixel-scroll-mode t)
  '(projectile-mode t nil (projectile))
  '(purpose-x-code1-dired-goto-file t)
  '(purpose-x-popwin-major-modes
@@ -247,7 +245,6 @@
  '(smtpmail-default-smtp-server "smtp.gmail.com")
  '(smtpmail-smtp-service 587)
  '(smtpmail-stream-type (quote starttls))
- '(solarized-emphasize-indicators nil)
  '(solarized-use-variable-pitch nil)
  '(sp-hybrid-kill-excessive-whitespace t)
  '(spaceline-all-the-icons-clock-always-visible nil)
@@ -273,6 +270,7 @@
  '(truncate-lines t)
  '(typescript-indent-level 2)
  '(uniquify-buffer-name-style (quote reverse) nil (uniquify))
+ '(url-automatic-caching t)
  '(user-full-name "Jimmy Yuen Ho Wong")
  '(user-mail-address "wyuenho@gmail.com")
  '(vc-follow-symlinks nil)
