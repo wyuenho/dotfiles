@@ -713,14 +713,15 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'typescript-mode-hook 'tide-hl-identifier-mode)
   (add-hook 'before-save-hook 'tide-format-before-save)
   :bind (:map tide-mode-map
-              ("C-c t f" . tide-organize-imports)
-              ("C-c f"   . tide-format)
-              ("C-c C-r" . tide-rename-symbol)
+              ("C-h p"   . tide-documentation-at-point)
               ("C-c 1"   . tide-fix)
-              ("M-?"     . tide-references)
+              ("C-c f"   . tide-format)
               ("C-c C-d" . tide-jsdoc-template)
+              ("C-c t f" . tide-organize-imports)
               ("M-RET"   . tide-refactor)
-              ("C-h d"   . tide-documentation-at-point)))
+              ("M-?"     . tide-references)
+              ("C-c r"   . tide-rename-file)
+              ("C-c C-r" . tide-rename-symbol)))
 
 ;; Python
 (add-hook 'python-mode-hook
