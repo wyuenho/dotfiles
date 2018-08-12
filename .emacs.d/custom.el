@@ -107,6 +107,10 @@
  '(gnutls-trustfiles
    (quote
     ("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt")))
+ '(help-at-pt-display-when-idle
+   (quote
+    (keymap local-map button kbd-help flymake-diagnostic)) nil (help-at-pt))
+ '(help-at-pt-timer-delay 0.5)
  '(history-length 250)
  '(ibuffer-elide-long-columns t)
  '(ibuffer-expert t)
