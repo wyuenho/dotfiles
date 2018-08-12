@@ -559,6 +559,7 @@ Optional argument ARG same as `comment-dwim''s."
                             (bind-keys :map eglot-mode-map
                                        ("C-h o"   . eglot-help-at-point)
                                        ("C-c C-r" . eglot-rename)
+                                       ("C-c f"   . eglot-format)
                                        ("M-1"     . eglot-code-actions))))
                 (with-eval-after-load 'company
                   (setq company-transformers (remq 'company-flx-transformer company-transformers))
