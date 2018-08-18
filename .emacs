@@ -690,7 +690,6 @@ Optional argument ARG same as `comment-dwim''s."
   :config (js2r-add-keybindings-with-prefix "C-c r"))
 
 (use-package rjsx-mode
-  :quelpa (rjsx-mode :fetcher github :repo "wyuenho/rjsx-mode" :branch "indent-after-jsx-expr")
   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
 ;; TypeScript
