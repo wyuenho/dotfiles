@@ -149,6 +149,7 @@
  '(linum-delay t)
  '(linum-format "%4d ")
  '(load-prefer-newer t)
+ '(lsp-inhibit-message t)
  '(lsp-response-timeout 30)
  '(lsp-ui-sideline-ignore-duplicate t)
  '(mac-emulate-three-button-mouse t)
