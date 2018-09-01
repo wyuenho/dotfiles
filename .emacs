@@ -605,7 +605,9 @@ Optional argument ARG same as `comment-dwim''s."
 
          (package-json
           (if package-json-dir
-              (json-read-file (f-join package-json-dir "package.json"))
+              (json-read-file (concat
+                               (expand-file-name package-json-dir)
+                               "package.json"))
             nil))
 
          (devDependencies
@@ -620,6 +622,8 @@ Optional argument ARG same as `comment-dwim''s."
             (babel-preset-airbnb . airbnb)
             (standard            . standard))))
 
+    (autoload 'map-filter "map")
+    (autoload 'map-contains-key "map")
     (cdr (car (map-filter
                (lambda (package _)
                  (map-contains-key devDependencies package))
@@ -654,16 +658,14 @@ Optional argument ARG same as `comment-dwim''s."
               (cond ((eq style 'prettier)
                      (use-package prettier-js
                        :delight
-                       :config
-                       (prettier-js-mode t)
+                       :config (prettier-js-mode t)
                        :bind (:map js-mode-map
                                    ("C-c f" . prettier-js))))
 
                     ((eq style 'eslint)
                      (use-package eslintd-fix
                        :delight
-                       :config
-                       (eslintd-fix-mode t)
+                       :config (eslintd-fix-mode t)
                        :bind (:map js-mode-map
                                    ("C-c f" . eslintd-fix))))
 
