@@ -579,7 +579,7 @@ Optional argument ARG same as `comment-dwim''s."
   :hook (cmake-mode . cmake-font-lock-activate))
 
 ;; Javascript
-(use-package lsp-javascript-typescript
+(use-package lsp-javascript-flow
   :preface
   (defun lsp-js-find-symbol ()
     (interactive)
@@ -591,7 +591,7 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'js-mode-hook
             (lambda ()
               (unless (derived-mode-p 'json-mode)
-                (lsp-javascript-typescript-enable)
+                (lsp-javascript-flow-enable)
                 (bind-keys :map js-mode-map
                            ("M-."   . lsp-ui-peek-find-definitions)
                            ("M-?"   . lsp-ui-peek-find-references)
