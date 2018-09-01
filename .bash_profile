@@ -34,6 +34,7 @@ fi
 export NVM_DIR
 NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+[ -s "$HOME/.avn/bin/avn.sh" ] && source "$HOME/.avn/bin/avn.sh"
 PATH="$HOME/.yarn/bin:$PATH"
 
 # Ruby
