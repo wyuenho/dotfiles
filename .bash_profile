@@ -51,6 +51,9 @@ fi
 # Rust
 PATH="$HOME/.cargo/bin:$PATH"
 
+# OPAM configuration
+source "$HOME/.opam/opam-init/init.sh" > /dev/null 2> /dev/null || true
+
 # Google Cloud SDK
 export CLOUDSDK_PYTHON
 CLOUDSDK_PYTHON="python"
