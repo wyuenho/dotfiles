@@ -144,6 +144,7 @@
  '(js2-imenu-enabled-frameworks (quote (jquery jquery-ui dojo backbone enyo sencha)))
  '(js2-mode-show-parse-errors nil)
  '(js2-mode-show-strict-warnings nil)
+ '(js2-skip-preprocessor-directives t)
  '(json-reformat:indent-width 2)
  '(kept-new-versions 10)
  '(kept-old-versions 10)
