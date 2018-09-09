@@ -595,6 +595,7 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'js-mode-hook
             (lambda ()
               (unless (derived-mode-p 'json-mode)
+                (setq-local lsp-ui-flycheck-enable nil)
                 (lsp-javascript-flow-enable)
                 (bind-keys :map js-mode-map
                            ("M-."   . lsp-ui-peek-find-definitions)
