@@ -557,6 +557,7 @@ Optional argument ARG same as `comment-dwim''s."
             (lambda ()
               (use-package eglot
                 :config
+                (add-to-list 'eglot-server-programs '((c++-mode c-mode) . (eglot-cquery "cquery")))
                 (add-hook 'eglot--managed-mode-hook
                           (lambda ()
                             (bind-keys :map eglot-mode-map

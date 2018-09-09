@@ -69,6 +69,7 @@
      ("Asia/Tokyo" "Tokyo"))))
  '(ediff-split-window-function (quote split-window-horizontally))
  '(editorconfig-mode t)
+ '(eglot-autoreconnect 300)
  '(eldoc-eval-preferred-function (quote eval-expression))
  '(eldoc-in-minibuffer-mode t)
  '(emmet-indentation 2)
