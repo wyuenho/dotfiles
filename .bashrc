@@ -24,6 +24,8 @@ alias su="/usr/bin/su"
 alias sudo="/usr/bin/sudo"
 alias diff="diff -u -B -r"
 
+[ "$(type -fp hub)" ] && eval "$(hub alias -s)"
+
 # Prompt
 if [ -f $HOME/.scm-prompt.sh ]; then
     source "$HOME/.scm-prompt.sh"
