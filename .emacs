@@ -663,16 +663,17 @@ Optional argument ARG same as `comment-dwim''s."
               (cond ((eq style 'prettier)
                      (use-package prettier-js
                        :delight
-                       :config (prettier-js-mode t)
-                       :bind (:map js-mode-map
-                                   ("C-c f" . prettier-js))))
+                       :config
+                       (prettier-js-mode t)
+                       ;; Eagerly load this so the after save hook works
+                       (bind-key "C-c f" 'prettier-js js-mode-map)))
 
                     ((eq style 'eslint)
                      (use-package eslintd-fix
                        :delight
                        :config (eslintd-fix-mode t)
-                       :bind (:map js-mode-map
-                                   ("C-c f" . eslintd-fix))))
+                       ;; Eagerly load this so the after save hook works
+                       (bind-key "C-c f" 'eslintd-fix js-mode-map)))
 
                     ((memq style '(esfmt airbnb standard))
                      (use-package js-format
