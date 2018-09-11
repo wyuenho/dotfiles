@@ -454,7 +454,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package company-lsp
   :config
-  (add-hook 'lsp-after-initialize-hook
+  (add-hook 'lsp-after-open-hook
             (lambda ()
               (make-local-variable 'company-transformers)
               (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
@@ -462,7 +462,7 @@ Optional argument ARG same as `comment-dwim''s."
               (setq-local company-backends `(,@(if (and (memq (window-system) '(ns mac))
                                                         (fboundp 'company-emoji))
                                                    '((company-emoji :separate company-lsp :separate company-yasnippet))
-                                                 '(company-lsp :separate company-yasnippet))
+                                                 '((company-lsp :separate company-yasnippet)))
                                              company-files
                                              company-capf
                                              company-keywords)))))
