@@ -763,6 +763,8 @@ Optional argument ARG same as `comment-dwim''s."
 
   (add-hook 'go-mode-hook
             (lambda ()
+              (use-package flycheck-golangci-lint)
+
               (use-package company-go
                 :after company go-mode
                 :config
