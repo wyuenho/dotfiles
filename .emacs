@@ -794,6 +794,12 @@ Optional argument ARG same as `comment-dwim''s."
                 :delight
                 :config (cargo-minor-mode)))))
 
+;; Ocaml and Reason
+(use-package lsp-ocaml
+  :hook ((tuareg-mode . lsp-ocaml-enable)
+         (reason-mode . lsp-ocaml-enable)
+         (caml-mode   . lsp-ocaml-enable)))
+
 ;; Web
 (use-package scss-mode
   :mode "\\.scss\\'")
