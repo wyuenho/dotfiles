@@ -792,6 +792,10 @@ Optional argument ARG same as `comment-dwim''s."
          (reason-mode . lsp-ocaml-enable)
          (caml-mode   . lsp-ocaml-enable)))
 
+;; API Blueprints
+(use-package apib-mode
+  :mode "\\.apib\\'")
+
 ;; Web
 (use-package scss-mode
   :mode "\\.scss\\'")
