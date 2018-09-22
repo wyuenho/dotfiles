@@ -551,26 +551,40 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-h o" . helpful-symbol)
          ("C-h p" . helpful-at-point)))
 
-;; LSP for C/C++/Objective-C and Python
-(dolist (hook '(c-mode-common-hook python-mode-hook))
-  (add-hook hook
+;; LSP for C/C++/Objective-C, Python, and Javascript
+(use-package eglot
+  :functions eglot-ensure
+  :preface
+  (defun eglot-ensure-flow ()
+    (when (and (executable-find "flow")
+               (locate-dominating-file
+                (file-name-directory (buffer-file-name))
+                ".flowconfig"))
+      (eglot-ensure)))
+  :hook ((c-mode-common . eglot-ensure)
+         (c++-mode      . eglot-ensure)
+         (objc-mode     . eglot-ensure)
+         (python-mode   . eglot-ensure)
+         (js-mode       . eglot-ensure-flow)
+         (js2-mode      . eglot-ensure-flow)
+         (rjsx-mode     . eglot-ensure-flow))
+  :config
+  (add-to-list 'eglot-server-programs '((objc-mode c++-mode c-mode) . (eglot-cquery "cquery")))
+  (add-to-list 'eglot-server-programs '((js-mode js2-mode rjsx-mode) . ("flow" "lsp")))
+  (add-hook 'eglot--managed-mode-hook
             (lambda ()
-              (use-package eglot
-                :config
-                (add-to-list 'eglot-server-programs '((c++-mode c-mode) . (eglot-cquery "cquery")))
-                (add-hook 'eglot--managed-mode-hook
-                          (lambda ()
-                            (bind-keys :map eglot-mode-map
-                                       ("C-h o"   . eglot-help-at-point)
-                                       ("C-c C-r" . eglot-rename)
-                                       ("C-c f"   . eglot-format)
-                                       ("M-1"     . eglot-code-actions))))
-                (with-eval-after-load 'company
-                  (setq company-transformers (remq 'company-flx-transformer company-transformers))
-                  (setq-local company-backends '(company-files
-                                                 (company-capf :separate company-yasnippet)
-                                                 company-keywords)))
-                (eglot-ensure)))))
+              (bind-keys :map eglot-mode-map
+                         ("C-h o"   . eglot-help-at-point)
+                         ("C-c C-r" . eglot-rename)
+                         ("C-c f"   . eglot-format)
+                         ("M-1"     . eglot-code-actions))))
+  (with-eval-after-load 'company
+    (make-local-variable 'company-transformers)
+    (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
+    (setq company-transformers (remq 'company-flx-transformer company-transformers))
+    (setq-local company-backends '(company-files
+                                   (company-capf :separate company-yasnippet)
+                                   company-keywords))))
 
 ;; C/C++/Objective-C
 (use-package flycheck-clang-analyzer
@@ -581,28 +595,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package cmake-font-lock
   :hook (cmake-mode . cmake-font-lock-activate))
-
-;; Javascript
-(use-package lsp-javascript-flow
-  :preface
-  (defun lsp-js-find-symbol ()
-    (interactive)
-    (let ((pattern (word-at-point)))
-      (when pattern
-        (lsp-ui-peek-find-workspace-symbol (substring-no-properties pattern)))))
-
-  :config
-  (add-hook 'js-mode-hook
-            (lambda ()
-              (unless (derived-mode-p 'json-mode)
-                (setq-local lsp-ui-flycheck-enable nil)
-                (lsp-javascript-flow-enable)
-                (bind-keys :map js-mode-map
-                           ("M-."   . lsp-ui-peek-find-definitions)
-                           ("M-?"   . lsp-ui-peek-find-references)
-                           ("M-,"   . lsp-ui-peek-jump-backward)
-                           ("C-M-." . lsp-js-find-symbol))))
-            t))
 
 (defun find-js-format-style ()
   (let* ((package-json-dir
