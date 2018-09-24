@@ -31,7 +31,7 @@
  '(column-number-mode t)
  '(company-global-modes
    (quote
-    (lisp-mode emacs-lisp-mode restclient-mode js-mode js2-mode js-jsx-mode js2-jsx-mode rjsx-mode python-mode go-mode rust-mode web-mode c-mode c++-mode objc-mode css-mode sh-mode typescript-mode)))
+    (lisp-mode emacs-lisp-mode restclient-mode js-mode js2-mode js-jsx-mode js2-jsx-mode rjsx-mode python-mode go-mode rust-mode web-mode c-mode c++-mode objc-mode css-mode sh-mode typescript-mode ruby-mode)))
  '(company-lsp-enable-recompletion t)
  '(company-require-match nil)
  '(company-statistics-mode t)
@@ -71,6 +71,7 @@
  '(ediff-split-window-function (quote split-window-horizontally))
  '(editorconfig-mode t)
  '(eglot-autoreconnect 300)
+ '(eglot-connect-timeout 300)
  '(eldoc-eval-preferred-function (quote eval-expression))
  '(eldoc-in-minibuffer-mode t)
  '(emmet-indentation 2)
