@@ -33,8 +33,8 @@ fi
 # Node
 export NVM_DIR
 NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-[ -s "$HOME/.avn/bin/avn.sh" ] && source "$HOME/.avn/bin/avn.sh"
+[ -f "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+[ -f "$HOME/.avn/bin/avn.sh" ] && source "$HOME/.avn/bin/avn.sh"
 PATH="$HOME/.yarn/bin:$PATH"
 
 # Ruby
@@ -42,7 +42,7 @@ PATH="$HOME/.rbenv/bin:$PATH"
 if [ "$(type -fp rbenv)" ]; then eval "$(rbenv init -)"; fi
 
 # Go
-if [ -s "$HOME/.gvm/scripts/gvm" ]; then
+if [ -f "$HOME/.gvm/scripts/gvm" ]; then
     source "$HOME/.gvm/scripts/gvm"
     export GOROOT_BOOTSTRAP
     GOROOT_BOOTSTRAP=$(go env GOROOT)
@@ -52,7 +52,12 @@ fi
 PATH="$HOME/.cargo/bin:$PATH"
 
 # OPAM configuration
-source "$HOME/.opam/opam-init/init.sh" > /dev/null 2> /dev/null || true
+if [ -f "$HOME/.opam/opam-init/init.sh" ]; then
+    source "$HOME/.opam/opam-init/init.sh"
+fi
+
+# Haskell
+PATH="$HOME/Library/Haskell/bin:$PATH"
 
 # Google Cloud SDK
 export CLOUDSDK_PYTHON
@@ -64,4 +69,4 @@ fi
 # PWD
 PATH=".:$PATH"
 
-if [ -r ~/.bashrc ]; then source ~/.bashrc; fi
+if [ -f ~/.bashrc ]; then source ~/.bashrc; fi
