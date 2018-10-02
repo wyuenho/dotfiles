@@ -282,6 +282,7 @@
  '(typescript-indent-level 2)
  '(uniquify-buffer-name-style (quote reverse) nil (uniquify))
  '(url-automatic-caching t)
+ '(use-package-enable-imenu-support t)
  '(user-full-name "Jimmy Yuen Ho Wong")
  '(user-mail-address "wyuenho@gmail.com")
  '(vc-follow-symlinks nil)

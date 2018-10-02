@@ -535,15 +535,6 @@ Optional argument ARG same as `comment-dwim''s."
   :delight
   :hook (emacs-lisp-mode . elisp-def-mode))
 
-(add-hook 'emacs-lisp-mode-hook
-          (lambda ()
-            (make-local-variable 'lisp-imenu-generic-expression)
-            (setq imenu-generic-expression
-                  (add-to-list
-                   'lisp-imenu-generic-expression
-                   '("Packages" "^\\s-*(use-package\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)" 1)
-                   t))))
-
 (use-package helpful
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
