@@ -545,24 +545,12 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; LSP for C/C++/Objective-C, Python, and Javascript
 (use-package eglot
-  :functions eglot-ensure
-  :preface
-  (defun eglot-ensure-flow ()
-    (when (and (executable-find "flow")
-               (locate-dominating-file
-                (file-name-directory (buffer-file-name))
-                ".flowconfig"))
-      (eglot-ensure)))
   :hook ((c-mode-common . eglot-ensure)
-         (c++-mode      . eglot-ensure)
-         (objc-mode     . eglot-ensure)
          (python-mode   . eglot-ensure)
-         (js-mode       . eglot-ensure-flow)
-         (js2-mode      . eglot-ensure-flow)
-         (rjsx-mode     . eglot-ensure-flow))
+         (ruby-mode     . eglot-ensure))
   :config
-  (add-to-list 'eglot-server-programs '((objc-mode c++-mode c-mode) . (eglot-cquery "cquery")))
-  (add-to-list 'eglot-server-programs '((js-mode js2-mode rjsx-mode) . ("flow" "lsp")))
+  (map-put eglot-server-programs '(objc-mode c++-mode c-mode) '(eglot-cquery "cquery") 'equal)
+  (map-put eglot-server-programs 'ruby-mode '("solargraph" "stdio"))
   (add-hook 'eglot--managed-mode-hook
             (lambda ()
               (bind-keys :map eglot-mode-map
@@ -587,6 +575,28 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package cmake-font-lock
   :hook (cmake-mode . cmake-font-lock-activate))
+
+;; Javascript
+(use-package lsp-javascript-flow
+  :preface
+  (defun lsp-js-find-symbol ()
+    (interactive)
+    (let ((pattern (word-at-point)))
+      (when pattern
+        (lsp-ui-peek-find-workspace-symbol (substring-no-properties pattern)))))
+
+  :config
+  (add-hook 'js-mode-hook
+            (lambda ()
+              (unless (derived-mode-p 'json-mode)
+                (setq-local lsp-ui-flycheck-enable nil)
+                (lsp-javascript-flow-enable)
+                (bind-keys :map js-mode-map
+                           ("M-."   . lsp-ui-peek-find-definitions)
+                           ("M-?"   . lsp-ui-peek-find-references)
+                           ("M-,"   . lsp-ui-peek-jump-backward)
+                           ("C-M-." . lsp-js-find-symbol))))
+t))
 
 (defun find-js-format-style ()
   (let* ((package-json-dir
