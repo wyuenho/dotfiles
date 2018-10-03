@@ -499,6 +499,7 @@ Optional argument ARG same as `comment-dwim''s."
                           '(company-shell company-shell-env company-files company-capf)))))
 
 (use-package multi-term
+  :after projectile
   :bind (("M-T" . multi-term)
          :map projectile-command-map
          ("x T" . multi-term)))
@@ -873,7 +874,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Project management
 (use-package projectile
-  :bind-keymap ("C-c p" . projectile-command-map))
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :config (projectile-mode t))
 
 ;; Search
 (use-package ag
