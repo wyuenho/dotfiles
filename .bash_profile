@@ -3,6 +3,7 @@ PATH="/usr/local/sbin:$PATH"
 
 # MacPorts
 PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+MANPATH="/opt/local/share/man:$MANPATH"
 
 # My Own things
 PATH="$HOME/packages/bin:$PATH"
