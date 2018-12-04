@@ -895,7 +895,7 @@ t))
   :config
   (projectile-mode t)
   (with-eval-after-load 'project
-    (add-to-list 'project-find-functions 'my-projectile-project-find-function)))
+    (add-to-list 'project-find-functions 'projectile-project-find-function)))
 
 ;; Search
 (use-package ag
