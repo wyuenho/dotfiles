@@ -38,17 +38,17 @@ bind 'set match-hidden-files off'
 
 # Bash Completion
 if [[ ( -z "$INSIDE_EMACS" || "$EMACS_BASH_COMPLETE" = "t" ) ]]; then
-    if [ -r /opt/local/etc/bash_completion ]; then # MacPorts
+    if [ -f /opt/local/etc/bash_completion ]; then # MacPorts
         source /opt/local/etc/bash_completion
-    elif [ -r /usr/local/etc/bash_completion ]; then # Homebrew
+    elif [ -f /usr/local/etc/bash_completion ]; then # Homebrew
         source /usr/local/etc/bash_completion
     fi
 
     # NVM
-    [ -r "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+    [ -f "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
 
     # GVM
-    [ -r "$HOME/.gvm/scripts/completion" ] && source "$HOME/.gvm/scripts/completion"
+    [ -f "$HOME/.gvm/scripts/completion" ] && source "$HOME/.gvm/scripts/completion"
 
     # gcloud
     if [ -f "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
