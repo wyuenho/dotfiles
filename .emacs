@@ -884,8 +884,18 @@ t))
 
 ;; Project management
 (use-package projectile
+  :preface
+  ;; Bridge projectile and project together so packages that depend on project
+  ;; like eglot work
+  (defun projectile-project-find-function (dir)
+    (let* ((root (projectile-project-root dir)))
+      (and root (cons 'transient root))))
+
   :bind-keymap ("C-c p" . projectile-command-map)
-  :config (projectile-mode t))
+  :config
+  (projectile-mode t)
+  (with-eval-after-load 'project
+    (add-to-list 'project-find-functions 'my-projectile-project-find-function)))
 
 ;; Search
 (use-package ag
