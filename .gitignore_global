@@ -196,3 +196,6 @@ bower_components
 ### Node ###
 .grunt
 node_modules
+
+### Flow ###
+flow-typed
