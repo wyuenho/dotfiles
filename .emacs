@@ -545,10 +545,24 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; LSP for C/C++/Objective-C, Python, and Javascript
 (use-package eglot
+  :preface
+  (defun eglot-ensure-flow ()
+    ;; Always prefer the LSP server's lookup function
+    (unbind-key "M-." js-mode-map)
+    (when (and (not (string= major-mode "json-mode"))
+               (executable-find "flow")
+               (locate-dominating-file
+                (file-name-directory (buffer-file-name))
+                ".flowconfig"))
+      (eglot-ensure)))
   :hook ((c-mode-common . eglot-ensure)
          (python-mode   . eglot-ensure)
-         (ruby-mode     . eglot-ensure))
+         (ruby-mode     . eglot-ensure)
+         (js-mode       . eglot-ensure-flow))
   :config
+  (setf (alist-get '(js-mode js2-mode rjsx-mode typescript-mode) eglot-server-programs t t 'equal) t)
+  (map-put eglot-server-programs 'typescript-mode '("javascript-typescript-stdio"))
+  (map-put eglot-server-programs '(js-mode js2-mode rjsx-mode) '("flow" "lsp" "--lazy" "--lazy-mode=ide"))
   (map-put eglot-server-programs '(objc-mode c++-mode c-mode) '(eglot-cquery "cquery") 'equal)
   (map-put eglot-server-programs 'ruby-mode '("solargraph" "stdio"))
   (add-hook 'eglot--managed-mode-hook
