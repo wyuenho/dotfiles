@@ -23,6 +23,7 @@
 
 [credential]
 	helper = osxkeychain
+	useHttpPath = true
 
 [alias]
 	co = checkout
@@ -60,5 +61,6 @@
 
 [commit]
 	gpgsign = true
+
 [fetch]
-	fsckobjects = false
+	fsckObjects = false
