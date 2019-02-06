@@ -767,7 +767,7 @@ t))
 (use-package go-mode
   :mode "\\.go\\'"
   :config
-  (add-hook 'before-save-hook 'gofmt-before-save)
+  (add-hook 'before-save-hook 'gofmt-before-save nil 'local)
 
   (add-hook 'go-mode-hook
             (lambda ()
