@@ -1093,6 +1093,7 @@ t))
 
 ;; Replace the major mode name with its icon
 (use-package all-the-icons
+  :quelpa (imenu-list :fetcher github :repo "wyuenho/all-the-icons.el")
   :if (display-graphic-p)
   :config
   (add-hook 'after-change-major-mode-hook
