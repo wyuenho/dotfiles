@@ -33,6 +33,7 @@
   :config (exec-path-from-shell-initialize))
 
 (require 'quelpa-use-package)
+(setq quelpa-use-package-inhibit-loading-quelpa t)
 
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
