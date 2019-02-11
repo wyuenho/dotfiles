@@ -58,8 +58,10 @@ fi
 
 
 # Better bash history search
-HH_CONFIG=hicolor,rawhistory # get more colors
-export HH_CONFIG
+[ "$(type -fp hstr)" ] && alias hh="hstr"
+
+HSTR_CONFIG=hicolor,raw-history-view
+export HSTR_CONFIG
 
 # append new history items to .bash_history
 shopt -s histappend
@@ -84,5 +86,9 @@ declared="$(declare -p PROMPT_COMMAND)"
 [[ "$declared" =~ \ -[aAilrtu]*x[aAilrtu]*\  ]] 2>/dev/null
 [[ $? -eq 0 ]] && export PROMPT_COMMAND
 
-# if this is interactive shell, then bind hh to Ctrl-r (for Vi mode check doc)
-if [[ $- =~ .*i.* && "$(type -fp hh)" ]]; then bind '"\C-r": "\C-a hh -- \C-j"'; fi
+if [[ $- =~ .*i.* && "$(type -fp hstr)" ]]; then
+    # if this is interactive shell, then bind hstr to Ctrl-r (for Vi mode check doc)
+    bind '"\C-r": "\C-a hstr -- \C-j"';
+    # if this is interactive shell, then bind 'kill last command' to Ctrl-x k
+    bind '"\C-xk": "\C-a hstr -k \C-j"';
+fi
