@@ -165,9 +165,6 @@ Optional argument ARG same as `comment-dwim''s."
                      (comint-write-input-ring))
                    (quit-window 'kill)))))))
 
-(use-package async
-  :config (async-bytecomp-package-mode t))
-
 (use-package osx-trash
   :if (and (eq system-type 'darwin)
            (not (fboundp 'system-move-file-to-trash)))

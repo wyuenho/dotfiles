@@ -12,6 +12,7 @@
  '(ag-reuse-window t)
  '(amx-mode t)
  '(apib-drafter-executable "aglio")
+ '(async-bytecomp-package-mode t)
  '(auth-sources (quote ("~/.authinfo.gpg")))
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
