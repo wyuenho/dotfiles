@@ -12,6 +12,7 @@
  '(ag-reuse-window t)
  '(amx-mode t)
  '(apib-drafter-executable "aglio")
+ '(async-bytecomp-package-mode t)
  '(auth-sources (quote ("~/.authinfo.gpg")))
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
@@ -223,7 +224,7 @@
    (quote
     (help-mode compilation-mode occur-mode helpful-mode)))
  '(quelpa-checkout-melpa-p nil)
- '(quelpa-self-upgrade-p nil)
+ '(quelpa-update-melpa-p nil)
  '(rainbow-html-colors-major-mode-list
    (quote
     (html-mode php-mode nxml-mode xml-mode web-mode rjsx-mode mhtml-mode)))

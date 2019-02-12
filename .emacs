@@ -33,6 +33,7 @@
   :config (exec-path-from-shell-initialize))
 
 (require 'quelpa-use-package)
+(setq quelpa-use-package-inhibit-loading-quelpa t)
 
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -163,9 +164,6 @@ Optional argument ARG same as `comment-dwim''s."
                    (let ((comint-input-ring-separator "\n"))
                      (comint-write-input-ring))
                    (quit-window 'kill)))))))
-
-(use-package async
-  :config (async-bytecomp-package-mode t))
 
 (use-package osx-trash
   :if (and (eq system-type 'darwin)
@@ -1093,7 +1091,7 @@ t))
 
 ;; Replace the major mode name with its icon
 (use-package all-the-icons
-  :quelpa (imenu-list :fetcher github :repo "wyuenho/all-the-icons.el")
+  :quelpa (all-the-icons :fetcher github :repo "wyuenho/all-the-icons.el" :files (:defaults "data"))
   :if (display-graphic-p)
   :config
   (add-hook 'after-change-major-mode-hook
