@@ -16,7 +16,7 @@ CXX="c++"
 
 # Java
 export JAVA_HOME
-JAVA_HOME=$(/usr/libexec/java_home -v 10)
+JAVA_HOME=$(/usr/libexec/java_home -v 11)
 
 # Python
 export PYTHONSTARTUP
