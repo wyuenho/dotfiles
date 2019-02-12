@@ -9,8 +9,7 @@
                                   "Don't ask for confirmation when loading a theme."
                                   (apply old-load-theme (car args) t (cddr args))))
 
-(when (< emacs-major-version 27)
-  (package-initialize))
+(package-initialize)
 
 ;; Tell Custom to write and find the custom settings elsewhere
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
