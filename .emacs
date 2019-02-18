@@ -18,10 +18,12 @@
 ;; Install missing packages
 (let ((missing (cl-set-difference package-selected-packages package-activated-list)))
   (when missing
-    (package-refresh-contents)
+    (with-demoted-errors "%s"
+      (package-refresh-contents))
     (mapc (lambda (package)
-            (package-install package t)
-            (package-activate package))
+            (with-demoted-errors "%s"
+              (package-install package t)
+              (package-activate package)))
           missing)
     (load custom-file)))
 
