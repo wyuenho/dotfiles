@@ -938,9 +938,6 @@ t))
 
 (use-package magit)
 
-(use-package magithub
-  :config (magithub-feature-autoinject t))
-
 (use-package magit-todos)
 
 (use-package monky
