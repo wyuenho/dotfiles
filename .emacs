@@ -509,6 +509,9 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package yaml-mode
   :mode "\\.ya?ml\\'")
 
+(use-package dotenv-mode
+  :mode "\\.env\\..*\\'")
+
 (use-package flycheck-yamllint
   :after yaml-mode
   :config (flycheck-yamllint-setup))
