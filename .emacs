@@ -373,6 +373,9 @@ Optional argument ARG same as `comment-dwim''s."
   (setq string-inflection-skip-backward-when-done t)
   :bind (("C-x C-y" . inflect-string)))
 
+(use-package smart-semicolon
+  :hook ((c-mode-common js-mode) . smart-semicolon-mode))
+
 ;; Cycle between quotes
 (use-package cycle-quotes
   :bind (("C-x C-'" . cycle-quotes)))
