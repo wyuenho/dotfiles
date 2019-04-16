@@ -84,6 +84,7 @@
  '(eval-expression-print-level nil)
  '(exec-path-from-shell-variables (quote ("PATH" "MANPATH" "GOPATH")))
  '(executable-prefix-env t)
+ '(expand-region-fast-keys-enabled nil)
  '(explicit-shell-file-name "/opt/local/bin/bash")
  '(fill-column 80)
  '(flx-ido-mode t)
