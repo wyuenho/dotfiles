@@ -187,7 +187,7 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-x C-l" . crux-downcase-region)
          ("C-x M-c" . crux-capitalize-region)
          ("C-c d"   . crux-delete-file-and-buffer)
-         ("C-c r"   . crux-rename-file-and-buffer)
+         ("C-c m"   . crux-rename-file-and-buffer)
          ("C-c c"   . crux-copy-file-preserve-attributes)
          ("C-c u"   . crux-find-user-init-file)
          ("C-c ,"   . crux-find-user-custom-file)
