@@ -340,6 +340,13 @@ Optional argument ARG same as `comment-dwim''s."
               ("<tab>" . nil)
               ("C-c i" . yas-expand-from-trigger-key)))
 
+(use-package yasnippet-snippets
+  :quelpa (yasnippet-snippets
+           :fetcher github
+           :repo "wyuenho/yasnippet-snippets"
+           :branch "refresh-js-snippets"
+           :files ("*.el" "snippets" ".nosearch")))
+
 ;; No sane person will program from right to left, so turn this major perf
 ;; bottleneck off
 (add-hook 'prog-mode-hook
