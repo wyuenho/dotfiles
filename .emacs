@@ -953,6 +953,9 @@ t))
 
 (use-package magit)
 
+(use-package forge
+  :after magit)
+
 (use-package magit-todos)
 
 (use-package monky
