@@ -56,6 +56,10 @@ if [[ ( -z "$INSIDE_EMACS" || "$EMACS_BASH_COMPLETE" = "t" ) ]]; then
     fi
 fi
 
+# Direnv
+if [ -f "$(type -fp direnv)" ]; then
+    eval "$(direnv hook bash)"
+fi
 
 # Better bash history search
 [ "$(type -fp hstr)" ] && alias hh="hstr"
