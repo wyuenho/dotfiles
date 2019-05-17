@@ -464,6 +464,9 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package company-quickhelp
   :hook (company-mode . company-quickhelp-mode))
 
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+
 (use-package company-lsp
   :config
   (add-hook 'lsp-after-open-hook
