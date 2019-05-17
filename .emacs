@@ -426,6 +426,10 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package lsp-mode
   :hook (((css-mode web-mode go-mode tuareg-mode reason-mode caml-mode) . lsp)))
 
+;; LSP debugging support
+(use-package dap-mode
+  :after lsp-mode)
+
 ;; Auto-completion
 (use-package company
   :delight
@@ -765,18 +769,11 @@ Optional argument ARG same as `comment-dwim''s."
   :mode "\\.go\\'"
   :config
   (add-hook 'before-save-hook 'gofmt-before-save nil 'local)
-
   (add-hook 'go-mode-hook
             (lambda ()
               (use-package flycheck-golangci-lint)
-
-              (use-package company-go
-                :after company go-mode
-                :config
-                (setq-local company-backends '(company-go)))
-
-              (use-package go-projectile
-                :after projectile))))
+              (with-eval-after-load 'dap-mode
+                (require 'dap-go)))))
 
 ;; Rust
 (use-package rust-mode
