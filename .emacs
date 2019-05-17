@@ -606,27 +606,6 @@ Optional argument ARG same as `comment-dwim''s."
   :hook (cmake-mode . cmake-font-lock-activate))
 
 ;; Javascript
-(use-package lsp-javascript-flow
-  :preface
-  (defun lsp-js-find-symbol ()
-    (interactive)
-    (let ((pattern (word-at-point)))
-      (when pattern
-        (lsp-ui-peek-find-workspace-symbol (substring-no-properties pattern)))))
-
-  :config
-  (add-hook 'js-mode-hook
-            (lambda ()
-              (unless (derived-mode-p 'json-mode)
-                (setq-local lsp-ui-flycheck-enable nil)
-                (lsp-javascript-flow-enable)
-                (bind-keys :map js-mode-map
-                           ("M-."   . lsp-ui-peek-find-definitions)
-                           ("M-?"   . lsp-ui-peek-find-references)
-                           ("M-,"   . lsp-ui-peek-jump-backward)
-                           ("C-M-." . lsp-js-find-symbol))))
-t))
-
 (defun find-js-format-style ()
   (let* ((package-json-dir
           (locate-dominating-file (buffer-file-name) "package.json"))
