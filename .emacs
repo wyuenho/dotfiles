@@ -424,8 +424,8 @@ Optional argument ARG same as `comment-dwim''s."
               :config (pdf-tools-install))))
 
 ;; Static Analysis
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode))
+(use-package lsp-mode
+  :hook (((css-mode web-mode go-mode tuareg-mode reason-mode caml-mode) . lsp)))
 
 ;; Auto-completion
 (use-package company
