@@ -327,8 +327,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Prettier form-feeds
 (use-package form-feed
   :delight
-  :hook ((prog-mode . form-feed-mode)
-         (text-mode . form-feed-mode)))
+  :hook (((prog-mode text-mode) . form-feed-mode)))
 
 ;; Quick Snippets
 (use-package yasnippet
@@ -468,6 +467,7 @@ Optional argument ARG same as `comment-dwim''s."
   :hook (company-mode . company-box-mode))
 
 (use-package company-lsp
+  :after company lsp-mode
   :config
   (add-hook 'lsp-after-open-hook
             (lambda ()
