@@ -772,9 +772,6 @@ Optional argument ARG same as `comment-dwim''s."
                 :config
                 (setq-local company-backends '(company-go)))
 
-              (use-package lsp-go
-                :config (lsp-go-enable))
-
               (use-package go-projectile
                 :after projectile))))
 
@@ -795,12 +792,6 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package cargo
                 :delight
                 :config (cargo-minor-mode)))))
-
-;; Ocaml and Reason
-(use-package lsp-ocaml
-  :hook ((tuareg-mode . lsp-ocaml-enable)
-         (reason-mode . lsp-ocaml-enable)
-         (caml-mode   . lsp-ocaml-enable)))
 
 ;; API Blueprints
 (use-package apib-mode
