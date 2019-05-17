@@ -383,6 +383,7 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("C-x C-y" . inflect-string)))
 
 (use-package smart-semicolon
+  :delight
   :hook ((c-mode-common js-mode) . smart-semicolon-mode))
 
 ;; Cycle between quotes
