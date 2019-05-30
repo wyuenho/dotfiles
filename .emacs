@@ -59,7 +59,7 @@
 ;; Only turn on `auto-revert-mode' for Mac on Emacs >= 26 because kqueue file
 ;; notification is broken for Emacs < 26
 (when (and (>= emacs-major-version 26)
-           (memq (window-system) '(mac ns)))
+           (string-equal system-type "darwin"))
   (global-auto-revert-mode t))
 
 ;; Automatically wrap overly long lines for all text modes
