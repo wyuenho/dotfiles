@@ -731,11 +731,12 @@ Optional argument ARG same as `comment-dwim''s."
               ("C-c M-:" . switch-to-ts)))
 
 (use-package tide
-  :after typescript-mode
-  :hook (typescript-mode . tide-setup)
+  :after (typescript-mode)
+  :hook (typescript-mode . (lambda ()
+                             (tide-setup)
+                             (tide-hl-identifier-mode t)))
   :config
-  (add-hook 'typescript-mode-hook 'tide-hl-identifier-mode)
-  (add-hook 'before-save-hook 'tide-format-before-save)
+  (add-hook 'before-save-hook 'tide-format-before-save 'local)
   :bind (:map tide-mode-map
               ("C-h p"   . tide-documentation-at-point)
               ("C-c 1"   . tide-fix)
@@ -864,9 +865,19 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package tide
                 :if (string-equal "tsx" (file-name-extension buffer-file-name))
                 :config
-                (add-hook 'before-save-hook 'tide-format-before-save)
-                (tide-setup t)
-                (tide-hl-identifier-mode t))
+                (tide-setup)
+                (tide-hl-identifier-mode t)
+                (add-hook 'before-save-hook 'tide-format-before-save 'local)
+                :bind (:map tide-mode-map
+                            ("C-h p"   . tide-documentation-at-point)
+                            ("C-c 1"   . tide-fix)
+                            ("C-c f"   . tide-format)
+                            ("C-c C-d" . tide-jsdoc-template)
+                            ("C-c t f" . tide-organize-imports)
+                            ("M-RET"   . tide-refactor)
+                            ("M-?"     . tide-references)
+                            ("C-c r"   . tide-rename-file)
+                            ("C-c C-r" . tide-rename-symbol)))
 
               ;; Setup flycheck
               (let ((ext (file-name-extension buffer-file-name)))
