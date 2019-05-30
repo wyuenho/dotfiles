@@ -31,12 +31,11 @@
 (require 'quelpa-use-package)
 (quelpa-use-package-activate-advice)
 
-;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This is
+;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
 ;; should be done ASAP on init.
 (use-package exec-path-from-shell
   :if (memq (window-system) '(mac ns))
   :config (exec-path-from-shell-initialize))
-
 
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
