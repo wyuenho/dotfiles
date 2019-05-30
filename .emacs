@@ -753,7 +753,7 @@ Optional argument ARG same as `comment-dwim''s."
           (lambda ()
             (use-package py-isort
               :config
-              (add-hook 'before-save-hook 'py-isort-before-save))
+              (add-hook 'before-save-hook 'py-isort-before-save 'local))
 
             (use-package python-docstring
               :delight
