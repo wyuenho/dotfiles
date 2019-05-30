@@ -423,7 +423,12 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Static Analysis
 (use-package lsp-mode
-  :hook (((css-mode web-mode go-mode tuareg-mode reason-mode caml-mode) . lsp)))
+  :hook (((css-mode web-mode go-mode tuareg-mode reason-mode caml-mode js-mode) . lsp))
+  :config
+  (add-hook 'lsp-after-open-hook
+            (lambda ()
+              (when (lsp--capability "definitionProvider")
+                (bind-key "M-." 'lsp-find-definition lsp-mode-map)))))
 
 ;; LSP debugging support
 (use-package dap-mode
