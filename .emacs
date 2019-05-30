@@ -497,6 +497,7 @@ Optional argument ARG same as `comment-dwim''s."
   (global-flycheck-mode t))
 
 (use-package flycheck-pos-tip
+  :after (flycheck)
   :hook (flycheck-mode . flycheck-pos-tip-mode))
 
 ;; REST API
@@ -537,7 +538,7 @@ Optional argument ARG same as `comment-dwim''s."
   :mode "\\.env\\..*\\'")
 
 (use-package flycheck-yamllint
-  :after yaml-mode
+  :after (flycheck yaml-mode)
   :config (flycheck-yamllint-setup))
 
 ;; Emacs Lisp
@@ -608,10 +609,12 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; C/C++/Objective-C
 (use-package flycheck-clang-analyzer
-  :hook (flycheck-mode . flycheck-clang-analyzer-setup))
+  :after (flycheck)
+  :config (flycheck-clang-analyzer-setup))
 
 (use-package flycheck-objc-clang
-  :hook (flycheck-mode . flycheck-objc-clang-setup))
+  :after (flycheck)
+  :config (flycheck-objc-clang-setup))
 
 (use-package cmake-font-lock
   :hook (cmake-mode . cmake-font-lock-activate))
@@ -775,9 +778,12 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'before-save-hook 'gofmt-before-save nil 'local)
   (add-hook 'go-mode-hook
             (lambda ()
-              (use-package flycheck-golangci-lint)
               (with-eval-after-load 'dap-mode
                 (require 'dap-go)))))
+
+(use-package flycheck-golangci-lint
+  :after (go-mode)
+  :config (flycheck-golangci-lint-setup))
 
 ;; Rust
 (use-package rust-mode
