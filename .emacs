@@ -432,7 +432,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; LSP debugging support
 (use-package dap-mode
-  :after lsp-mode)
+  :after (lsp-mode))
 
 ;; Auto-completion
 (use-package company
@@ -475,7 +475,7 @@ Optional argument ARG same as `comment-dwim''s."
   :hook (company-mode . company-box-mode))
 
 (use-package company-lsp
-  :after company lsp-mode
+  :after (company lsp-mode)
   :config
   (add-hook 'lsp-after-open-hook
             (lambda ()
@@ -509,7 +509,7 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'restclient-mode-hook
             (lambda ()
               (use-package company-restclient
-                :after company
+                :after (company)
                 :config
                 (setq-local company-backends `(company-restclient))))))
 
@@ -517,13 +517,13 @@ Optional argument ARG same as `comment-dwim''s."
 (add-hook 'sh-mode-hook
           (lambda ()
             (use-package company-shell
-              :after company
+              :after (company)
               :config
               (setq-local company-backends
                           '(company-shell company-shell-env company-files company-capf)))))
 
 (use-package multi-term
-  :after projectile
+  :after (projectile)
   :bind (("M-T" . multi-term)
          :map projectile-command-map
          ("x T" . multi-term)))
@@ -708,7 +708,7 @@ Optional argument ARG same as `comment-dwim''s."
     (bind-key "C-k" 'sp-kill-whole-line js2-mode-map)))
 
 (use-package js2-refactor
-  :after js2-mode
+  :after (js2-mode)
   :delight
   :hook (js2-mode . js2-refactor-mode)
   :config (js2r-add-keybindings-with-prefix "C-c r"))
@@ -721,7 +721,7 @@ Optional argument ARG same as `comment-dwim''s."
   :mode ("\\.ts\\'" "\\.mts\\'"))
 
 (use-package ts-comint
-  :after typescript-mode
+  :after (typescript-mode)
   :bind (:map typescript-mode-map
               ("C-x C-e" . ts-send-last-sexp)
               ("C-c e e" . ts-send-last-sexp-and-go)
@@ -793,7 +793,7 @@ Optional argument ARG same as `comment-dwim''s."
             (lambda ()
               (use-package racer
                 :delight
-                :after company
+                :after (company)
                 :config
                 (add-hook 'racer-mode-hook 'eldoc-mode)
                 (add-hook 'racer-mode-hook 'company-mode)
@@ -835,7 +835,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (unbind-key "C-c C-r" tern-mode-keymap))
 
               (use-package company-tern
-                :after company tern
+                :after (company tern)
                 :config
                 (setq-local company-backends
                             '(company-tern company-files))
@@ -851,7 +851,7 @@ Optional argument ARG same as `comment-dwim''s."
                                       (if tern-mode (tern-mode t))))))))
 
               (use-package company-web-html
-                :after company
+                :after (company)
                 :config
                 (setq-local company-backends
                             `(company-tern
@@ -911,10 +911,10 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("M-s a" . ag)))
 
 (use-package wgrep-ag
-  :after ag)
+  :after (ag))
 
 (use-package rg
-  :after wgrep-ag projectile
+  :after (wgrep-ag projectile)
   :config
   (add-hook 'rg-mode-hook
             (lambda ()
@@ -937,7 +937,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package magit)
 
 (use-package forge
-  :after magit)
+  :after (magit))
 
 (use-package magit-todos)
 
@@ -956,7 +956,7 @@ Optional argument ARG same as `comment-dwim''s."
                         dired-mode-map))))
 
 (use-package all-the-icons-dired
-  :after all-the-icons
+  :after (all-the-icons)
   :if (display-graphic-p)
   :hook (dired-mode . all-the-icons-dired-mode))
 
@@ -965,7 +965,7 @@ Optional argument ARG same as `comment-dwim''s."
               ("." . dired-hide-dotfiles-mode)))
 
 (use-package dired-single
-  :after dired-hide-dotfiles
+  :after (dired-hide-dotfiles)
   :bind (:map dired-mode-map
               ("^"         . (lambda () (interactive) (dired-single-buffer "..")))
               ("<mouse-1>" . dired-single-buffer-mouse)
