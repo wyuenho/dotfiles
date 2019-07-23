@@ -340,12 +340,7 @@ Optional argument ARG same as `comment-dwim''s."
               ("<tab>" . nil)
               ("C-c i" . yas-expand-from-trigger-key)))
 
-(use-package yasnippet-snippets
-  :quelpa (yasnippet-snippets
-           :fetcher github
-           :repo "wyuenho/yasnippet-snippets"
-           :branch "refresh-js-snippets"
-           :files ("*.el" "snippets" ".nosearch")))
+(use-package yasnippet-snippets)
 
 ;; No sane person will program from right to left, so turn this major perf
 ;; bottleneck off
@@ -530,7 +525,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (setq eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
-;; YAML
+;; Markup and config languages
 (use-package yaml-mode
   :mode "\\.ya?ml\\'")
 
@@ -608,10 +603,6 @@ Optional argument ARG same as `comment-dwim''s."
                                    company-keywords))))
 
 ;; C/C++/Objective-C
-(use-package flycheck-clang-analyzer
-  :after (flycheck)
-  :config (flycheck-clang-analyzer-setup))
-
 (use-package flycheck-objc-clang
   :after (flycheck)
   :config (flycheck-objc-clang-setup))
@@ -715,6 +706,23 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package rjsx-mode
   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
+
+(use-package polymode
+  :after rjsx-mode
+  :config
+  (define-hostmode poly-rjsx-hostmode nil
+    "RJSX hostmode."
+    :mode 'rjsx-mode)
+  (define-innermode poly-rjsx-graphql-innermode nil
+    :mode 'graphql-mode
+    :head-matcher "graphql\`"
+    :tail-matcher "\`"
+    :head-mode 'host
+    :tail-mode 'host)
+  (define-polymode poly-rjsx-mode
+    :hostmode 'poly-rjsx-hostmode
+    :innermodes '(poly-rjsx-graphql-innermode))
+  (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . poly-rjsx-mode)))
 
 ;; TypeScript
 (use-package typescript-mode
