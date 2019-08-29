@@ -917,6 +917,16 @@ Optional argument ARG same as `comment-dwim''s."
   (with-eval-after-load 'project
     (add-to-list 'project-find-functions 'projectile-project-find-function)))
 
+(use-package projectile-rails
+  :after projectile
+  :delight
+  :config
+  (projectile-rails-global-mode)
+  (add-hook 'projectile-rails-mode-hook
+            (lambda ()
+              (setq projectile-rails-mode-map (make-sparse-keymap))
+              (define-key projectile-command-map (kbd "C-r") 'projectile-rails-command-map))))
+
 ;; Search
 (use-package ag
   :bind (("M-s a" . ag)))
