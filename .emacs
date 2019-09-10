@@ -641,11 +641,36 @@ Optional argument ARG same as `comment-dwim''s."
                  (map-contains-key devDependencies package))
                formatter-styles)))))
 
+(use-package add-node-modules-path
+  :hook ((css-mode web-mode js-mode scss-mode yaml-mode markdown-mode) .
+         (lambda ()
+           (let ((style (find-js-format-style)))
+             (cond ((eq style 'prettier)
+                    (use-package prettier-js
+                      :delight
+                      :config
+                      (prettier-js-mode t)
+                      ;; Eagerly load this so the after save hook works
+                      (bind-key "C-c f" 'prettier-js js-mode-map)))
+
+                   ((eq style 'eslint)
+                    (use-package eslintd-fix
+                      :if (derived-mode-p '(js-mode))
+                      :delight
+                      :config (eslintd-fix-mode t)
+                      ;; Eagerly load this so the after save hook works
+                      (bind-key "C-c f" 'eslintd-fix js-mode-map)))
+
+                   ((memq style '(esfmt airbnb standard))
+                    (use-package js-format
+                      :if (derived-mode-p '(js-mode))
+                      :config
+                      (js-format-setup (symbol-name (find-js-format-style)))
+                      :bind (:map js-mode-map
+                                  ("C-c f" . js-format-buffer)))))))))
+
 (add-hook 'js-mode-hook
           (lambda ()
-            (use-package add-node-modules-path
-              :config (add-node-modules-path))
-
             (use-package import-js
               :bind (:map js-mode-map
                           ("C-c t i"   . import-js-import)
@@ -665,29 +690,6 @@ Optional argument ARG same as `comment-dwim''s."
                          ("C-c e b" . nodejs-repl-send-buffer)
                          ("C-c e l" . nodejs-repl-load-file)
                          ("C-c M-:" . nodejs-repl-switch-to-repl)))
-
-            (let ((style (find-js-format-style)))
-              (cond ((eq style 'prettier)
-                     (use-package prettier-js
-                       :delight
-                       :config
-                       (prettier-js-mode t)
-                       ;; Eagerly load this so the after save hook works
-                       (bind-key "C-c f" 'prettier-js js-mode-map)))
-
-                    ((eq style 'eslint)
-                     (use-package eslintd-fix
-                       :delight
-                       :config (eslintd-fix-mode t)
-                       ;; Eagerly load this so the after save hook works
-                       (bind-key "C-c f" 'eslintd-fix js-mode-map)))
-
-                    ((memq style '(esfmt airbnb standard))
-                     (use-package js-format
-                       :config
-                       (js-format-setup (symbol-name (find-js-format-style)))
-                       :bind (:map js-mode-map
-                                   ("C-c f" . js-format-buffer))))))
 
             (define-key js-mode-map [menu-bar] nil)))
 
