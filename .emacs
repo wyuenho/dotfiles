@@ -566,41 +566,41 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-h p" . helpful-at-point)))
 
 ;; LSP for C/C++/Objective-C, Python, Rudy and Javascript
-(use-package eglot
-  :preface
-  (defun eglot-ensure-flow ()
-    ;; Always prefer the LSP server's lookup function
-    (unbind-key "M-." js-mode-map)
-    (when (and (not (string= major-mode "json-mode"))
-               (executable-find "flow")
-               (locate-dominating-file
-                (file-name-directory (buffer-file-name))
-                ".flowconfig"))
-      (eglot-ensure)))
-  :hook ((c-mode-common . eglot-ensure)
-         (python-mode   . eglot-ensure)
-         (ruby-mode     . eglot-ensure)
-         (js-mode       . eglot-ensure-flow))
-  :config
-  (setf (alist-get '(js-mode js2-mode rjsx-mode typescript-mode) eglot-server-programs t t 'equal) t)
-  (map-put eglot-server-programs 'typescript-mode '("javascript-typescript-stdio"))
-  (map-put eglot-server-programs '(js-mode js2-mode rjsx-mode) '("flow" "lsp" "--lazy" "--lazy-mode=ide"))
-  (map-put eglot-server-programs '(objc-mode c++-mode c-mode) '(eglot-cquery "cquery") 'equal)
-  (map-put eglot-server-programs 'ruby-mode '("solargraph" "stdio"))
-  (add-hook 'eglot--managed-mode-hook
-            (lambda ()
-              (bind-keys :map eglot-mode-map
-                         ("C-h o"   . eglot-help-at-point)
-                         ("C-c C-r" . eglot-rename)
-                         ("C-c f"   . eglot-format)
-                         ("M-1"     . eglot-code-actions))))
-  (with-eval-after-load 'company
-    (make-local-variable 'company-transformers)
-    (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
-    (setq company-transformers (remq 'company-flx-transformer company-transformers))
-    (setq-local company-backends '(company-files
-                                   (company-capf :separate company-yasnippet)
-                                   company-keywords))))
+;; (use-package eglot
+;;   :preface
+;;   (defun eglot-ensure-flow ()
+;;     ;; Always prefer the LSP server's lookup function
+;;     (unbind-key "M-." js-mode-map)
+;;     (when (and (not (string= major-mode "json-mode"))
+;;                (executable-find "flow")
+;;                (locate-dominating-file
+;;                 (file-name-directory (buffer-file-name))
+;;                 ".flowconfig"))
+;;       (eglot-ensure)))
+;;   :hook ((c-mode-common . eglot-ensure)
+;;          (python-mode   . eglot-ensure)
+;;          (ruby-mode     . eglot-ensure)
+;;          (js-mode       . eglot-ensure-flow))
+;;   :config
+;;   (setf (alist-get '(js-mode js2-mode rjsx-mode typescript-mode) eglot-server-programs t t 'equal) t)
+;;   (map-put eglot-server-programs 'typescript-mode '("javascript-typescript-stdio"))
+;;   (map-put eglot-server-programs '(js-mode js2-mode rjsx-mode) '("flow" "lsp" "--lazy" "--lazy-mode=ide"))
+;;   (map-put eglot-server-programs '(objc-mode c++-mode c-mode) '(eglot-cquery "cquery") 'equal)
+;;   (map-put eglot-server-programs 'ruby-mode '("solargraph" "stdio"))
+;;   (add-hook 'eglot--managed-mode-hook
+;;             (lambda ()
+;;               (bind-keys :map eglot-mode-map
+;;                          ("C-h o"   . eglot-help-at-point)
+;;                          ("C-c C-r" . eglot-rename)
+;;                          ("C-c f"   . eglot-format)
+;;                          ("M-1"     . eglot-code-actions))))
+;;   (with-eval-after-load 'company
+;;     (make-local-variable 'company-transformers)
+;;     (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
+;;     (setq company-transformers (remq 'company-flx-transformer company-transformers))
+;;     (setq-local company-backends '(company-files
+;;                                    (company-capf :separate company-yasnippet)
+;;                                    company-keywords))))
 
 ;; C/C++/Objective-C
 (use-package flycheck-objc-clang
