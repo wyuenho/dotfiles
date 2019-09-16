@@ -561,7 +561,7 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-h o" . helpful-symbol)
          ("C-h p" . helpful-at-point)))
 
-;; LSP for C/C++/Objective-C, Python, Rudy and Javascript
+;; LSP for C/C++/Objective-C, Python, Ruby and Javascript
 ;; (use-package eglot
 ;;   :preface
 ;;   (defun eglot-ensure-flow ()
