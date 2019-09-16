@@ -708,21 +708,24 @@ Optional argument ARG same as `comment-dwim''s."
   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
 (use-package polymode
-  :after rjsx-mode
-  :config
-  (define-hostmode poly-rjsx-hostmode nil
-    "RJSX hostmode."
-    :mode 'rjsx-mode)
-  (define-innermode poly-rjsx-graphql-innermode nil
-    :mode 'graphql-mode
-    :head-matcher "graphql\`"
-    :tail-matcher "\`"
-    :head-mode 'host
-    :tail-mode 'host)
-  (define-polymode poly-rjsx-mode
-    :hostmode 'poly-rjsx-hostmode
-    :innermodes '(poly-rjsx-graphql-innermode))
-  (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . poly-rjsx-mode)))
+  ;; :after rjsx-mode
+  ;; :config
+  ;; (define-hostmode poly-rjsx-hostmode nil
+  ;;   "RJSX hostmode."
+  ;;   :mode 'rjsx-mode)
+  ;; (define-innermode poly-rjsx-graphql-innermode nil
+  ;;   :mode 'graphql-mode
+  ;;   :head-matcher "graphql\`"
+  ;;   :tail-matcher "\`"
+  ;;   :head-mode 'host
+  ;;   :tail-mode 'host)
+  ;; (define-polymode poly-rjsx-mode
+  ;;   :hostmode 'poly-rjsx-hostmode
+  ;;   :innermodes '(poly-rjsx-graphql-innermode))
+  ;; (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . poly-rjsx-mode))
+  )
+
+(use-package poly-markdown)
 
 ;; TypeScript
 (use-package typescript-mode
