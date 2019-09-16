@@ -410,12 +410,16 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Static Analysis
 (use-package lsp-mode
+  :init (require 'lsp-clients)
   :hook (((css-mode web-mode go-mode tuareg-mode reason-mode caml-mode js-mode) . lsp))
   :config
   (add-hook 'lsp-after-open-hook
             (lambda ()
               (when (lsp--capability "definitionProvider")
                 (bind-key "M-." 'lsp-find-definition lsp-mode-map)))))
+
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode))
 
 ;; LSP debugging support
 (use-package dap-mode
@@ -558,41 +562,41 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-h p" . helpful-at-point)))
 
 ;; LSP for C/C++/Objective-C, Python, Rudy and Javascript
-(use-package eglot
-  :preface
-  (defun eglot-ensure-flow ()
-    ;; Always prefer the LSP server's lookup function
-    (unbind-key "M-." js-mode-map)
-    (when (and (not (string= major-mode "json-mode"))
-               (executable-find "flow")
-               (locate-dominating-file
-                (file-name-directory (buffer-file-name))
-                ".flowconfig"))
-      (eglot-ensure)))
-  :hook ((c-mode-common . eglot-ensure)
-         (python-mode   . eglot-ensure)
-         (ruby-mode     . eglot-ensure)
-         (js-mode       . eglot-ensure-flow))
-  :config
-  (setf (alist-get '(js-mode js2-mode rjsx-mode typescript-mode) eglot-server-programs t t 'equal) t)
-  (map-put eglot-server-programs 'typescript-mode '("javascript-typescript-stdio"))
-  (map-put eglot-server-programs '(js-mode js2-mode rjsx-mode) '("flow" "lsp" "--lazy" "--lazy-mode=ide"))
-  (map-put eglot-server-programs '(objc-mode c++-mode c-mode) '(eglot-cquery "cquery") 'equal)
-  (map-put eglot-server-programs 'ruby-mode '("solargraph" "stdio"))
-  (add-hook 'eglot--managed-mode-hook
-            (lambda ()
-              (bind-keys :map eglot-mode-map
-                         ("C-h o"   . eglot-help-at-point)
-                         ("C-c C-r" . eglot-rename)
-                         ("C-c f"   . eglot-format)
-                         ("M-1"     . eglot-code-actions))))
-  (with-eval-after-load 'company
-    (make-local-variable 'company-transformers)
-    (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
-    (setq company-transformers (remq 'company-flx-transformer company-transformers))
-    (setq-local company-backends '(company-files
-                                   (company-capf :separate company-yasnippet)
-                                   company-keywords))))
+;; (use-package eglot
+;;   :preface
+;;   (defun eglot-ensure-flow ()
+;;     ;; Always prefer the LSP server's lookup function
+;;     (unbind-key "M-." js-mode-map)
+;;     (when (and (not (string= major-mode "json-mode"))
+;;                (executable-find "flow")
+;;                (locate-dominating-file
+;;                 (file-name-directory (buffer-file-name))
+;;                 ".flowconfig"))
+;;       (eglot-ensure)))
+;;   :hook ((c-mode-common . eglot-ensure)
+;;          (python-mode   . eglot-ensure)
+;;          (ruby-mode     . eglot-ensure)
+;;          (js-mode       . eglot-ensure-flow))
+;;   :config
+;;   (setf (alist-get '(js-mode js2-mode rjsx-mode typescript-mode) eglot-server-programs t t 'equal) t)
+;;   (map-put eglot-server-programs 'typescript-mode '("javascript-typescript-stdio"))
+;;   (map-put eglot-server-programs '(js-mode js2-mode rjsx-mode) '("flow" "lsp" "--lazy" "--lazy-mode=ide"))
+;;   (map-put eglot-server-programs '(objc-mode c++-mode c-mode) '(eglot-cquery "cquery") 'equal)
+;;   (map-put eglot-server-programs 'ruby-mode '("solargraph" "stdio"))
+;;   (add-hook 'eglot--managed-mode-hook
+;;             (lambda ()
+;;               (bind-keys :map eglot-mode-map
+;;                          ("C-h o"   . eglot-help-at-point)
+;;                          ("C-c C-r" . eglot-rename)
+;;                          ("C-c f"   . eglot-format)
+;;                          ("M-1"     . eglot-code-actions))))
+;;   (with-eval-after-load 'company
+;;     (make-local-variable 'company-transformers)
+;;     (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
+;;     (setq company-transformers (remq 'company-flx-transformer company-transformers))
+;;     (setq-local company-backends '(company-files
+;;                                    (company-capf :separate company-yasnippet)
+;;                                    company-keywords))))
 
 ;; C/C++/Objective-C
 (use-package flycheck-objc-clang
@@ -602,7 +606,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package cmake-font-lock
   :hook (cmake-mode . cmake-font-lock-activate))
 
-;; Javascript
+;; Node
 (defun find-js-format-style ()
   (let* ((package-json-dir
           (locate-dominating-file (buffer-file-name) "package.json"))
@@ -633,11 +637,38 @@ Optional argument ARG same as `comment-dwim''s."
                  (map-contains-key devDependencies package))
                formatter-styles)))))
 
+
+(use-package add-node-modules-path
+  :commands add-node-modules-path
+  :init
+  (defun setup-modules-path-and-linter ()
+    (add-node-modules-path)
+    (let ((style (find-js-format-style)))
+      (cond ((eq style 'prettier)
+             (use-package prettier-js
+               :delight
+               :config
+               (prettier-js-mode t)
+               ;; Eagerly load this so the after save hook works
+               (bind-key "C-c f" 'prettier-js (symbol-value (intern (concat (symbol-name major-mode) "-map"))))))
+
+            ((and (eq style 'eslint) (derived-mode-p '(js-mode)))
+             (use-package eslintd-fix
+               :delight
+               :config (eslintd-fix-mode t)
+               ;; Eagerly load this so the after save hook works
+               (bind-key "C-c f" 'eslintd-fix js-mode-map)))
+
+            ((and (memq style '(esfmt airbnb standard)) (derived-mode-p '(js-mode)))
+             (use-package js-format
+               :config
+               (js-format-setup (symbol-name (find-js-format-style)))
+               :bind (:map js-mode-map
+                           ("C-c f" . js-format-buffer)))))))
+  :hook ((css-mode web-mode js-mode scss-mode yaml-mode markdown-mode) . setup-modules-path-and-linter))
+
 (add-hook 'js-mode-hook
           (lambda ()
-            (use-package add-node-modules-path
-              :config (add-node-modules-path))
-
             (use-package import-js
               :bind (:map js-mode-map
                           ("C-c t i"   . import-js-import)
@@ -657,29 +688,6 @@ Optional argument ARG same as `comment-dwim''s."
                          ("C-c e b" . nodejs-repl-send-buffer)
                          ("C-c e l" . nodejs-repl-load-file)
                          ("C-c M-:" . nodejs-repl-switch-to-repl)))
-
-            (let ((style (find-js-format-style)))
-              (cond ((eq style 'prettier)
-                     (use-package prettier-js
-                       :delight
-                       :config
-                       (prettier-js-mode t)
-                       ;; Eagerly load this so the after save hook works
-                       (bind-key "C-c f" 'prettier-js js-mode-map)))
-
-                    ((eq style 'eslint)
-                     (use-package eslintd-fix
-                       :delight
-                       :config (eslintd-fix-mode t)
-                       ;; Eagerly load this so the after save hook works
-                       (bind-key "C-c f" 'eslintd-fix js-mode-map)))
-
-                    ((memq style '(esfmt airbnb standard))
-                     (use-package js-format
-                       :config
-                       (js-format-setup (symbol-name (find-js-format-style)))
-                       :bind (:map js-mode-map
-                                   ("C-c f" . js-format-buffer))))))
 
             (define-key js-mode-map [menu-bar] nil)))
 
