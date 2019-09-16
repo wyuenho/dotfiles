@@ -971,7 +971,11 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package forge
   :after (magit))
 
-(use-package magit-todos)
+(use-package magit-todos
+  :after (magit))
+
+(use-package magit-lfs
+  :after (magit))
 
 (use-package monky
   :bind (("C-x v M-m" . monky-status)))
