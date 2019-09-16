@@ -109,7 +109,6 @@
  '(gnutls-crlfiles
    (quote
     ("/opt/local/etc/grid-security/certificates/*.crl.pem" "/etc/grid-security/certificates/*.crl.pem")))
- '(gnutls-min-prime-bits nil)
  '(gnutls-trustfiles
    (quote
     ("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt")))
@@ -154,14 +153,16 @@
  '(linum-delay t)
  '(linum-format "%4d ")
  '(load-prefer-newer t)
+ '(lsp-auto-configure nil)
  '(lsp-auto-guess-root t)
  '(lsp-clients-go-server "gopls")
+ '(lsp-eldoc-render-all t)
+ '(lsp-enable-completion-at-point nil)
  '(lsp-imenu-sort-methods (quote (kind name position)))
- '(lsp-prefer-flymake nil)
  '(lsp-report-if-no-buffer nil)
  '(lsp-response-timeout 30)
- '(lsp-ui-doc-position (quote at-point))
- '(lsp-ui-flycheck-enable t)
+ '(lsp-ui-doc-enable nil)
+ '(lsp-ui-sideline-enable nil)
  '(lsp-ui-sideline-ignore-duplicate t)
  '(mac-emulate-three-button-mouse t)
  '(mac-input-method-mode t)
@@ -207,10 +208,10 @@
  '(mouse-wheel-flip-direction t)
  '(mouse-wheel-mode t)
  '(mouse-wheel-progressive-speed nil)
+ '(mouse-wheel-scroll-amount (quote (1 ((shift) . 5) ((control)))))
  '(mouse-wheel-tilt-scroll t)
  '(multi-term-program "/opt/local/bin/bash")
  '(multi-term-program-switches "--login")
- '(network-security-level (quote high))
  '(ns-alternate-modifier (quote alt))
  '(ns-command-modifier (quote meta))
  '(ns-pop-up-frames nil)
@@ -222,7 +223,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (add-node-modules-path ag all-the-icons all-the-icons-dired amx apib-mode async auto-compile auto-yasnippet blacken browse-kill-ring buffer-move bug-hunter cargo cl-lib-highlight clang-format cmake-font-lock company-box company-emoji company-flx company-lsp company-quickhelp company-restclient company-shell company-statistics company-tern company-web crux csv-mode cycle-quotes dap-mode default-text-scale delight diff-hl dimmer dired-collapse dired-hacks-utils dired-hide-dotfiles dired-single docker dockerfile-mode dotenv-mode dumb-jump editorconfig eglot elisp-def elisp-refs emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-golangci-lint flycheck-mypy flycheck-objc-clang flycheck-pos-tip flycheck-rust flycheck-yamllint focus fontify-face forge form-feed git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode goto-chg graphql-mode graphviz-dot-mode helpful hook-helpers ialign ido-completing-read+ ido-vertical-mode imenu-anywhere import-js importmagic jq-mode js-doc js-format js2-mode js2-refactor kurecolor lorem-ipsum lsp-mode lsp-ui macrostep magit magit-todos monky move-dup multi-term multiple-cursors nodejs-repl nvm olivetti origami osx-trash package-build package-lint pager-default-keybindings pcre2el pdf-tools poly-rst polymode prettier-js projectile py-autopep8 py-isort pyimport python-docstring quelpa-use-package racer rainbow-mode reason-mode restart-emacs restclient rg rjsx-mode rust-mode scss-mode smart-semicolon smartparens smooth-scrolling solarized-theme spaceline sphinx-doc string-inflection tern tide try ts-comint tuareg typescript-mode undo-tree use-package visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode xterm-color yaml-mode yarn-mode yasnippet yasnippet-snippets)))
+    (add-node-modules-path ag all-the-icons all-the-icons-dired amx apib-mode async auto-compile auto-yasnippet blacken browse-kill-ring buffer-move bug-hunter cargo cl-lib-highlight clang-format cmake-font-lock company-box company-emoji company-flx company-lsp company-quickhelp company-restclient company-shell company-statistics company-tern company-web crux csv-mode cycle-quotes dap-mode default-text-scale delight diff-hl dimmer dired-collapse dired-hacks-utils dired-hide-dotfiles dired-single docker dockerfile-mode dotenv-mode dumb-jump editorconfig eglot elisp-def elisp-refs emmet-mode eslintd-fix evil-numbers exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-golangci-lint flycheck-mypy flycheck-objc-clang flycheck-pos-tip flycheck-rust flycheck-yamllint focus fontify-face forge form-feed git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode goto-chg graphql-mode graphviz-dot-mode helpful hook-helpers hydra ialign ido-completing-read+ ido-vertical-mode imenu-anywhere import-js importmagic jq-mode js-doc js-format js2-mode js2-refactor kurecolor lorem-ipsum lsp-mode lsp-ui macrostep magit magit-todos monky move-dup multi-term multiple-cursors nodejs-repl olivetti origami osx-trash package-build package-lint pager-default-keybindings pcre2el pdf-tools poly-rst polymode prettier-js projectile py-autopep8 py-isort pyimport python-docstring quelpa-use-package racer rainbow-mode reason-mode restart-emacs restclient rg rjsx-mode rust-mode scss-mode smart-semicolon smartparens smooth-scrolling solarized-theme spaceline sphinx-doc string-inflection tern tide try ts-comint tuareg typescript-mode undo-tree use-package visual-regexp-steroids web-mode wgrep-ag which-key whitespace-cleanup-mode xterm-color yaml-mode yarn-mode yasnippet yasnippet-snippets)))
  '(purpose-x-code1-dired-goto-file t)
  '(purpose-x-popwin-major-modes
    (quote
@@ -285,7 +286,6 @@
  '(truncate-lines t)
  '(typescript-indent-level 2)
  '(uniquify-buffer-name-style (quote reverse) nil (uniquify))
- '(url-automatic-caching t)
  '(use-package-enable-imenu-support t)
  '(user-full-name "Jimmy Yuen Ho Wong")
  '(user-mail-address "wyuenho@gmail.com")
