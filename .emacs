@@ -820,6 +820,9 @@ Optional argument ARG same as `comment-dwim''s."
   :mode "\\.apib\\'")
 
 ;; Web
+(use-package sass-mode
+  :mode "\\.sass\\'")
+
 (use-package scss-mode
   :mode "\\.scss\\'")
 
