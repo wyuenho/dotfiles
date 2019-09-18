@@ -47,6 +47,8 @@ if [ -f "$HOME/.gvm/scripts/gvm" ]; then
     source "$HOME/.gvm/scripts/gvm"
     export GOROOT_BOOTSTRAP
     GOROOT_BOOTSTRAP=$(go env GOROOT)
+    export GO111MODULE
+    GO111MODULE="on"
 fi
 
 # Rust
