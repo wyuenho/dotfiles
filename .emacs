@@ -411,14 +411,17 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Static Analysis
 (use-package lsp-mode
   :init (require 'lsp-clients)
-  :hook (((css-mode web-mode go-mode tuareg-mode reason-mode caml-mode js-mode) . lsp))
+  :hook (((css-mode web-mode go-mode reason-mode caml-mode js-mode sh-mode rust-mode ruby-mode) . lsp-deferred))
   :config
   (add-hook 'lsp-after-open-hook
             (lambda ()
               (when (lsp--capability "definitionProvider")
-                (bind-key "M-." 'lsp-find-definition lsp-mode-map)))))
+                (bind-key "M-." 'lsp-find-definition lsp-mode-map))
+              (when (lsp--capability "referencesProvider")
+                (bind-key "M-," 'lsp-find-references lsp-mode-map)))))
 
 (use-package lsp-ui
+  :after (lsp-mode)
   :hook (lsp-mode . lsp-ui-mode))
 
 ;; LSP debugging support
@@ -607,44 +610,46 @@ Optional argument ARG same as `comment-dwim''s."
   :hook (cmake-mode . cmake-font-lock-activate))
 
 ;; Node
-(defun find-js-format-style ()
-  (let* ((package-json-dir
-          (locate-dominating-file (buffer-file-name) "package.json"))
-
-         (package-json
-          (if package-json-dir
-              (json-read-file (concat
-                               (expand-file-name package-json-dir)
-                               "package.json"))
-            nil))
-
-         (devDependencies
-          (if package-json
-              (alist-get 'devDependencies package-json)
-            nil))
-
-         (formatter-styles
-          '((prettier            . prettier)
-            (eslint              . eslint)
-            (esformatter         . esfmt)
-            (babel-preset-airbnb . airbnb)
-            (standard            . standard))))
-
-    (autoload 'map-filter "map")
-    (autoload 'map-contains-key "map")
-    (cdr (car (map-filter
-               (lambda (package _)
-                 (map-contains-key devDependencies package))
-               formatter-styles)))))
-
-
 (use-package add-node-modules-path
   :commands add-node-modules-path
   :init
+  (defun find-js-format-style ()
+    (let* ((package-json-dir
+            (locate-dominating-file (buffer-file-name) "package.json"))
+
+           (package-json
+            (if package-json-dir
+                (json-read-file (concat
+                                 (expand-file-name package-json-dir)
+                                 "package.json"))
+              nil))
+
+           (devDependencies
+            (if package-json
+                (alist-get 'devDependencies package-json)
+              nil))
+
+           (formatter-styles
+            '((prettier            . prettier)
+              (eslint              . eslint)
+              (esformatter         . esfmt)
+              (babel-preset-airbnb . airbnb)
+              (standard            . standard))))
+
+      (autoload 'map-filter "map")
+      (autoload 'map-contains-key "map")
+      (when devDependencies
+        (cdr (car (map-filter
+                   (lambda (package _)
+                     (map-contains-key devDependencies package))
+                   formatter-styles))))
+      nil))
+
   (defun setup-modules-path-and-linter ()
     (add-node-modules-path)
     (let ((style (find-js-format-style)))
-      (cond ((eq style 'prettier)
+      (cond ((null style))
+            ((eq style 'prettier)
              (use-package prettier-js
                :delight
                :config
@@ -662,7 +667,7 @@ Optional argument ARG same as `comment-dwim''s."
             ((and (memq style '(esfmt airbnb standard)) (derived-mode-p '(js-mode)))
              (use-package js-format
                :config
-               (js-format-setup (symbol-name (find-js-format-style)))
+               (js-format-setup (symbol-name style))
                :bind (:map js-mode-map
                            ("C-c f" . js-format-buffer)))))))
   :hook ((css-mode web-mode js-mode scss-mode yaml-mode markdown-mode) . setup-modules-path-and-linter))
@@ -803,14 +808,6 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'rust-mode-hook
             (lambda ()
-              (use-package racer
-                :delight
-                :after (company)
-                :config
-                (add-hook 'racer-mode-hook 'eldoc-mode)
-                (add-hook 'racer-mode-hook 'company-mode)
-                (racer-mode))
-
               (use-package cargo
                 :delight
                 :config (cargo-minor-mode)))))
