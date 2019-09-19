@@ -643,12 +643,11 @@ Optional argument ARG same as `comment-dwim''s."
 
       (autoload 'map-filter "map")
       (autoload 'map-contains-key "map")
-      (when devDependencies
-        (cdr (car (map-filter
-                   (lambda (package _)
-                     (map-contains-key devDependencies package))
-                   formatter-styles))))
-      nil))
+      (or (cdr (car (map-filter
+                     (lambda (package _)
+                       (map-contains-key devDependencies package))
+                     formatter-styles)))
+          nil)))
 
   (defun setup-modules-path-and-linter ()
     (add-node-modules-path)
