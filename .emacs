@@ -478,8 +478,13 @@ Optional argument ARG same as `comment-dwim''s."
               (setq company-transformers (remq 'company-flx-transformer company-transformers))
               (setq-local company-backends `(,@(if (and (memq (window-system) '(ns mac))
                                                         (fboundp 'company-emoji))
-                                                   '((company-emoji :separate company-lsp :separate company-yasnippet))
-                                                 '((company-lsp :separate company-yasnippet)))
+                                                   '((company-emoji
+                                                      :separate company-lsp
+                                                      :separate company-files
+                                                      :separate company-yasnippet))
+                                                 '((company-lsp
+                                                    :separate company-files
+                                                    :separate company-yasnippet)))
                                              company-files
                                              company-capf
                                              company-keywords)))))
