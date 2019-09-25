@@ -148,7 +148,6 @@
  '(lsp-auto-configure nil)
  '(lsp-auto-guess-root t)
  '(lsp-clients-go-server "gopls")
- '(lsp-eldoc-render-all t)
  '(lsp-enable-completion-at-point nil)
  '(lsp-imenu-sort-methods '(kind name position))
  '(lsp-report-if-no-buffer nil)
