@@ -96,6 +96,3 @@ if [[ $- =~ .*i.* && "$(type -fp hstr)" ]]; then
     # if this is interactive shell, then bind 'kill last command' to Ctrl-x k
     bind '"\C-xk": "\C-a hstr -k \C-j"';
 fi
-
-# The next line updates PATH for Netlify's Git Credential Helper.
-if [ -f '/Users/wyuenho/.netlify/helper/path.bash.inc' ]; then source '/Users/wyuenho/.netlify/helper/path.bash.inc'; fi
