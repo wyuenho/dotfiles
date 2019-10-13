@@ -21,10 +21,6 @@
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 
-[credential]
-	helper = osxkeychain
-	useHttpPath = true
-
 [alias]
 	co = checkout
 	ci = commit
@@ -67,3 +63,11 @@
 
 [merge]
 	ff = false
+
+# This next lines include Netlify's Git Credential Helper configuration in your Git configuration.
+[include]
+  path = ./.netlify/helper/git-config
+
+[credential]
+	helper = osxkeychain
+	useHttpPath = true
