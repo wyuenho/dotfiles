@@ -411,14 +411,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Static Analysis
 (use-package lsp-mode
   :init (require 'lsp-clients)
-  :hook (((css-mode web-mode go-mode reason-mode caml-mode js-mode sh-mode rust-mode ruby-mode) . lsp-deferred))
-  :config
-  (add-hook 'lsp-after-open-hook
-            (lambda ()
-              (when (lsp--capability "definitionProvider")
-                (bind-key "M-." 'lsp-find-definition lsp-mode-map))
-              (when (lsp--capability "referencesProvider")
-                (bind-key "M-," 'lsp-find-references lsp-mode-map)))))
+  :hook (((css-mode web-mode go-mode reason-mode caml-mode js-mode sh-mode rust-mode ruby-mode) . lsp-deferred)))
 
 (use-package lsp-ui
   :after (lsp-mode)
@@ -698,7 +691,8 @@ Optional argument ARG same as `comment-dwim''s."
                          ("C-c e l" . nodejs-repl-load-file)
                          ("C-c M-:" . nodejs-repl-switch-to-repl)))
 
-            (define-key js-mode-map [menu-bar] nil)))
+            (define-key js-mode-map [menu-bar] nil)
+            (define-key js-mode-map (kbd "M-.") nil)))
 
 (use-package js2-mode
   :interpreter ("node" . js2-mode)
