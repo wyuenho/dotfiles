@@ -64,10 +64,6 @@
 [merge]
 	ff = only
 
-# This next lines include Netlify's Git Credential Helper configuration in your Git configuration.
-[include]
-  path = ./.netlify/helper/git-config
-
 [credential]
 	helper = osxkeychain
 	useHttpPath = true
