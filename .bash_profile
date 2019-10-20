@@ -15,8 +15,10 @@ export CXX
 CXX="c++"
 
 # Java
-export JAVA_HOME
-JAVA_HOME=$(/usr/libexec/java_home -v 11)
+if /usr/libexec/java_home -v 11 > /dev/null 2>&1; then
+    export JAVA_HOME
+    JAVA_HOME=$(/usr/libexec/java_home -v 11)
+fi
 
 # Python
 export PYTHONSTARTUP
@@ -31,7 +33,7 @@ if [ "$(type -fp pyenv)" ]; then
     fi
 fi
 
-# Node
+# Nodeb
 export NVM_DIR
 NVM_DIR="$HOME/.nvm"
 [ -f "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
@@ -68,8 +70,8 @@ if [ -f "$HOME/.google-cloud-sdk/path.bash.inc" ]; then
 fi
 
 # Netlify's Git Credential Helper.
-if [ -f '$HOME/.netlify/helper/path.bash.inc' ]; then
-    source '$HOME/.netlify/helper/path.bash.inc'
+if [ -f "$HOME/.netlify/helper/path.bash.inc" ]; then
+    source "$HOME/.netlify/helper/path.bash.inc"
 fi
 
 # PWD

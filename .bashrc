@@ -2,19 +2,19 @@ export MBOX
 MBOX="$HOME/.mail/mbox"
 
 export EDITOR
-EDITOR="emacsclient"
+EDITOR="emacsclient -t"
 
 export ALTERNATE_EDITOR
 ALTERNATE_EDITOR="emacs"
 
 export HGMERGE
-HGMERGE="emacsclient"
+HGMERGE="$EDITOR"
 
 # Aliases
-if [ "$(which ls)" == "/bin/ls" ]; then
-    alias ls="ls -FhG"
-else
+if ls --color=auto > /dev/null 2>&1; then
     alias ls="ls -Fh --color=auto"
+else
+    alias ls="ls -FhG"
 fi
 
 alias grep="grep --color=auto -C 5 -n -H"
@@ -27,7 +27,7 @@ alias diff="diff -u -B -r"
 [ "$(type -fp hub)" ] && eval "$(hub alias -s)"
 
 # Prompt
-if [ -f $HOME/.scm-prompt.sh ]; then
+if [ -f "$HOME/.scm-prompt.sh" ]; then
     source "$HOME/.scm-prompt.sh"
     PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\[\e[01;35m\]$(_scm_prompt)\[\e[0m\]\n\$ '
 else
@@ -87,8 +87,9 @@ PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
 # Magic fix for command not found error lifted from
 # https://github.com/Bash-it/bash-it/pull/709
 declared="$(declare -p PROMPT_COMMAND)"
-[[ "$declared" =~ \ -[aAilrtu]*x[aAilrtu]*\  ]] 2>/dev/null
-[[ $? -eq 0 ]] && export PROMPT_COMMAND
+if "$declared" =~ \ -[aAilrtu]*x[aAilrtu]*\  2>/dev/null; then
+    export PROMPT_COMMAND
+fi
 
 if [[ $- =~ .*i.* && "$(type -fp hstr)" ]]; then
     # if this is interactive shell, then bind hstr to Ctrl-r (for Vi mode check doc)
