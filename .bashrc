@@ -34,8 +34,6 @@ else
     PS1='\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
 fi
 
-bind 'set match-hidden-files off'
-
 # Bash Completion
 if [[ ( -z "$INSIDE_EMACS" || "$EMACS_BASH_COMPLETE" = "t" ) ]]; then
     if [ -f /opt/local/etc/bash_completion ]; then # MacPorts

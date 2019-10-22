@@ -1,7 +1,9 @@
-import sys
+from __future__ import print_function
+
+import inspect
 import os
 import os.path
-import inspect
+import sys
 from pprint import pprint
 
 # Python 3.4+ defines this
@@ -25,7 +27,7 @@ if not getattr(sys, '__interactivehook__', None):
 
         try:
             readline.read_init_file()
-        except (IOError, OSError):
+        except (IOError, OSError) as error:
             # An OSError here could have many causes, but the most likely one
             # is that there's no .inputrc file (or .editrc file in the case of
             # Mac OS X + libedit) in the expected location.  In that case, we
@@ -42,9 +44,18 @@ if not getattr(sys, '__interactivehook__', None):
                                    '.python_history')
             try:
                 readline.read_history_file(history)
-            except IOError:
+            except (IOError, OSError):
                 pass
-            atexit.register(readline.write_history_file, history)
+
+            def write_history():
+                try:
+                    readline.write_history_file(history)
+                except (IOError, OSError):
+                    # home directory does not exist or is not writable
+                    # https://bugs.python.org/issue19891
+                    pass
+
+            atexit.register(write_history)
 
     register_readline()
     del register_readline
