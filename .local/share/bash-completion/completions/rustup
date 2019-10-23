@@ -13,6 +13,9 @@ _rustup() {
                 cmd="rustup"
                 ;;
             
+            active-toolchain)
+                cmd+="__active__toolchain"
+                ;;
             add)
                 cmd+="__add"
                 ;;
@@ -248,7 +251,7 @@ _rustup() {
             return 0
             ;;
         rustup__doc)
-            opts=" -h -V  --book --std --help --version  "
+            opts=" -h -V  --path --book --std --reference --help --version  "
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                 return 0
@@ -263,7 +266,7 @@ _rustup() {
             return 0
             ;;
         rustup__docs)
-            opts=" -h -V  --book --std --help --version  "
+            opts=" -h -V  --path --book --std --reference --help --version  "
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                 return 0
@@ -575,8 +578,38 @@ _rustup() {
             return 0
             ;;
         rustup__show)
-            opts=" -h -V  --help --version  "
+            opts=" -h -V  --help --version   active-toolchain help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                return 0
+            fi
+            case "${prev}" in
+                
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+            return 0
+            ;;
+        rustup__show__active__toolchain)
+            opts=" -h -V  --help --version  "
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+                return 0
+            fi
+            case "${prev}" in
+                
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+            return 0
+            ;;
+        rustup__show__help)
+            opts=" -h -V  --help --version  "
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                 return 0
             fi
