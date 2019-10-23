@@ -1,8 +1,8 @@
 # shellcheck shell=bash disable=2207
-# vim: set fdm=syntax:
+# vim: set fdm=syntax fdl=0:
 #
-# Version: 0.12.0
-# Yarn Version: 1.13.0
+# Version: 0.15.0
+# Yarn Version: 1.17.3
 #
 # bash completion for Yarn (https://github.com/yarnpkg/yarn)
 #
@@ -284,6 +284,12 @@ __yarn_flag_args() {
 				--access)
 					COMPREPLY=($(compgen -W 'public restricted' -- "$cur"))
 					;;
+				--groups)
+					COMPREPLY=($(compgen -W 'dependencies devDependencies optionalDependencies' -- "$cur"))
+					;;
+				--level)
+					COMPREPLY=($(compgen -W 'info low moderate high critical' -- "$cur"))
+					;;
 				--network-timeout)
 					compopt -o nospace
 					COMPREPLY=($(compgen -W '{1000..10000..1000}' -- "$cur"))
@@ -297,6 +303,7 @@ __yarn_flag_args() {
 _yarn_add() {
 	((depth++))
 	flags=(
+		--audit -A
 		--dev -D
 		--exact -E
 		--optional -O
@@ -310,6 +317,8 @@ _yarn_add() {
 _yarn_audit() {
 	((depth++))
 	flags=(
+		--groups
+		--level
 		--summary
 	)
 	return 1
@@ -703,6 +712,11 @@ _yarn_publish() {
 		--no-commit-hooks
 		--no-git-tag-version
 		--patch
+		--preid
+		--premajor
+		--preminor
+		--prepatch
+		--prerelease
 		--tag
 	)
 	return 1
@@ -832,6 +846,7 @@ _yarn_upgrade() {
 	((depth++))
 	declare cmd dependencies devDependencies
 	flags=(
+		--audit -A
 		--caret -C
 		--exact -E
 		--latest -L
@@ -885,6 +900,11 @@ _yarn_version() {
 		--no-commit-hooks
 		--no-git-tag-version
 		--patch
+		--preid
+		--premajor
+		--preminor
+		--prepatch
+		--prerelease
 	)
 	return 1
 }
@@ -892,6 +912,7 @@ _yarn_version() {
 _yarn_workspace() {
 	((depth++))
 	declare -i args
+	declare workspaces_info
 
 	case "$cur" in
 		-*) ;;
@@ -899,12 +920,13 @@ _yarn_workspace() {
 			__yarn_count_args
 			case "$args" in
 				[0-2])
-					declare workspace_path
-					declare -a workspaces=()
-					for workspace_path in $(__yarn_get_package_fields -t array workspaces); do
-						workspaces+=("$(basename "$workspace_path")")
-					done
-					COMPREPLY=($(compgen -W "${workspaces[*]}" -- "$cur"))
+					workspaces_info=$(yarn workspaces info -s 2> /dev/null)
+					if [[ -n $workspaces_info ]]; then
+						mapfile -t < <(
+							sed -n 's/^ \{2\}"\([^"]*\)": {$/\1/p' <<< "$workspaces_info"
+						)
+						COMPREPLY=($(compgen -W "${MAPFILE[*]}" -- "$cur"))
+					fi
 					return 0
 					;;
 				3)
@@ -913,6 +935,16 @@ _yarn_workspace() {
 					;;
 				*)
 					declare cmd
+					workspaces_info=$(yarn workspaces info -s 2> /dev/null)
+
+					if [[ -n $workspaces_info ]]; then
+						PWD=$(
+							sed -n '/^ \{2\}"'"${COMP_WORDS[2]}"'": {$/,/^ \{2\}},\{0,1\}$/{
+								s/^ \{4\}"location": "\([^"]*\)",$/\1/p
+							}' <<< "$workspaces_info"
+						)
+					fi
+
 					__yarn_get_command -d 3
 					"_yarn_${cmd//-/_}" 2> /dev/null
 					return $?
@@ -982,8 +1014,12 @@ _yarn_yarn() {
 }
 
 _yarn() {
-	declare prev_shopt
-	prev_shopt=$(shopt -p extglob)
+	# shellcheck disable=SC2064
+	trap "
+		PWD=$PWD
+		$(shopt -p extglob)
+		set +o pipefail
+	" RETURN
 
 	shopt -s extglob
 	set -o pipefail
@@ -1065,6 +1101,8 @@ _yarn() {
 	)
 	declare -ar special_arg_flags=(
 		--access
+		--groups
+		--level
 		--network-timeout
 	)
 	declare -ar optional_arg_flags=(
@@ -1160,12 +1198,6 @@ _yarn() {
 	__yarn_get_command -d 1
 
 	__yarn_flag_args || "_yarn_${cmd//-/_}" 2> /dev/null || __yarn_fallback
-
-	# Resets back to users' settings
-	$prev_shopt
-	set +o pipefail
-
-	return 0
 }
 
 if [[ ${BASH_VERSINFO[0]} -ge 4 && ${BASH_VERSINFO[1]} -ge 4 ]]; then
