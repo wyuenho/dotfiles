@@ -27,7 +27,6 @@
           missing)
     (load custom-file)))
 
-(setq quelpa-use-package-inhibit-loading-quelpa t)
 (require 'quelpa-use-package)
 (quelpa-use-package-activate-advice)
 
