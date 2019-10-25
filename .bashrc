@@ -11,18 +11,21 @@ export HGMERGE
 HGMERGE="$EDITOR"
 
 # Aliases
-if ls --color=auto > /dev/null 2>&1; then
-    alias ls="ls -Fh --color=auto"
+if ls --color > /dev/null 2>&1; then
+    alias ls="ls -Fh --color"
 else
     alias ls="ls -FhG"
 fi
 
-alias grep="grep --color=auto -C 5 -n -H"
+alias grep="grep --color -C 5 -nH"
 alias cp="cp -iPp"
-alias mv="mv -i -v"
-alias su="/usr/bin/su"
-alias sudo="/usr/bin/sudo"
-alias diff="diff -u -B -r"
+alias mv="mv -iv"
+
+if diff --color /etc/hosts /etc/hosts > /dev/null 2>&1; then
+    alias diff="diff --color -ur"
+else
+    alias diff="diff -ur"
+fi
 
 [ "$(type -fp hub)" ] && eval "$(hub alias -s)"
 
