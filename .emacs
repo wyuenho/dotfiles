@@ -181,6 +181,10 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package ialign
   :bind ("<A-tab>" . ialign))
 
+;; Undo preview
+(use-package undo-propose
+  :quelpa (undo-propose :fetcher github :repo "wyuenho/undo-propose-el" :branch "undo-in-new-window")  :bind ("C-x u" . undo-propose))
+
 ;; Other missing essentials that I don't want to write
 (use-package crux
   :bind (("C-x C-u" . crux-upcase-region)
@@ -266,6 +270,7 @@ Optional argument ARG same as `comment-dwim''s."
   (with-eval-after-load 'rjsx-mode
     (add-hook 'rjsx-mode-hook (load-html-mode-expansions 'rjsx-mode))))
 
+;; Navigate source code by syntax
 (add-hook 'prog-mode-hook
           (lambda ()
             (use-package smartparens
@@ -1107,7 +1112,6 @@ Optional argument ARG same as `comment-dwim''s."
              (smartparens-mode        nil smartparens)
              (which-key-mode          nil which-key)
              (whitespace-cleanup-mode nil whitespace)
-             (undo-tree-mode          nil undo-tree)
              (auto-revert-mode        nil autorevert)
              (visual-line-mode        nil simple)
              (subword-mode            nil subword))))
