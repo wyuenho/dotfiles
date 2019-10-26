@@ -6,7 +6,7 @@ PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 MANPATH="/opt/local/share/man:$MANPATH"
 
 # My Own things
-PATH="$HOME/packages/bin:$PATH"
+PATH="$HOME/.local/bin:$PATH"
 
 # C/C++
 export CC
