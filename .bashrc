@@ -98,3 +98,7 @@ if [[ $- =~ .*i.* && "$(type -fp hstr)" ]]; then
     # if this is interactive shell, then bind 'kill last command' to Ctrl-x k
     bind '"\C-xk": "\C-a hstr -k \C-j"';
 fi
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
