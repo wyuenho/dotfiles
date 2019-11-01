@@ -33,7 +33,7 @@ if [ "$(type -fp pyenv)" ]; then
     fi
 fi
 
-# Nodeb
+# Node
 export NVM_DIR
 NVM_DIR="$HOME/.nvm"
 [ -f "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
