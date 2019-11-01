@@ -617,7 +617,7 @@ Optional argument ARG same as `comment-dwim''s."
   :init
   (defun find-js-format-style ()
     (let* ((package-json-dir
-            (locate-dominating-file (buffer-file-name) "package.json"))
+            (locate-dominating-file default-directory "package.json"))
 
            (package-json
             (if package-json-dir
