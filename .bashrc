@@ -62,8 +62,8 @@ if [ -f ~/.bash_aliases ]; then
 fi
 
 # Prompt
-if [ -f "$HOME/.scm-prompt.sh" ]; then
-    source "$HOME/.scm-prompt.sh"
+if [ -f "$HOME/.local/bin/scm-prompt.sh" ]; then
+    source "$HOME/.local/bin/scm-prompt.sh"
 fi
 
 # set variable identifying the chroot you work in (used in the prompt below)
@@ -76,9 +76,9 @@ case "$TERM" in
 esac
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\[\e[01;35m\]$(_scm_prompt)\[\e[0m\]\n\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\[\e[01;35m\]$([ $(type -t _scm_prompt) ] && _scm_prompt)\[\e[0m\]\n\$ '
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h \w$(_scm_prompt)\n\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h \w$([ $(type -t _scm_prompt) ] && _scm_prompt)\n\$ '
 fi
 unset color_prompt
 
