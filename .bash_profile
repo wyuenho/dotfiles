@@ -19,7 +19,7 @@ if [ -d "$HOME/.local/bin" ]; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-if [ -x lesspipe.sh ]; then
+if [ -x "$(command -v lesspipe.sh)" ]; then
     export LESSOPEN
     LESSOPEN='| /opt/local/bin/lesspipe.sh %s'
 fi
@@ -48,7 +48,7 @@ if [ -d "$HOME/.pyenv" ]; then
     export PYENV_ROOT
     PYENV_ROOT="$HOME/.pyenv"
     PATH="$HOME/.pyenv/bin:$PATH"
-    if [ "$(type -fp pyenv)" ]; then
+    if [ -x "$(command -v pyenv)" ]; then
         eval "$(pyenv init -)";
         if pyenv commands | grep -q virtualenv; then
             eval "$(pyenv virtualenv-init -)";
@@ -74,7 +74,7 @@ fi
 # Ruby
 if [ -d "$HOME/.rbenv/bin" ]; then
     PATH="$HOME/.rbenv/bin:$PATH"
-    if [ "$(type -fp rbenv)" ]; then
+    if [ -x "$(command -v rbenv)" ]; then
         eval "$(rbenv init -)";
     fi
 fi
