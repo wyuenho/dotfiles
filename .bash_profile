@@ -1,12 +1,28 @@
+# ~/.bash_profile: executed by the command interpreter for login shells
+# ~/.profile is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
+
 # Homebrew
 PATH="/usr/local/sbin:$PATH"
 
 # MacPorts
-PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-MANPATH="/opt/local/share/man:$MANPATH"
+if [ -d /opt/local ]; then
+    PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+    MANPATH="/opt/local/share/man:$MANPATH"
+fi
 
 # My Own things
-PATH="$HOME/.local/bin:$PATH"
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+if [ -d "$HOME/.local/bin" ]; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+if [ -x lesspipe.sh ]; then
+    export LESSOPEN
+    LESSOPEN='| /opt/local/bin/lesspipe.sh %s'
+fi
 
 # C/C++
 export CC
@@ -23,26 +39,45 @@ fi
 # Python
 export PYTHONSTARTUP
 PYTHONSTARTUP="$HOME/.pythonrc"
-export PYENV_ROOT
-PYENV_ROOT="$HOME/.pyenv"
-PATH="$HOME/.pyenv/bin:$HOME/Library/Python/2.7/bin:$PATH"
-if [ "$(type -fp pyenv)" ]; then
-    eval "$(pyenv init -)";
-    if pyenv commands | grep -q virtualenv; then
-        eval "$(pyenv virtualenv-init -)";
+
+if [ -d "$HOME/Library/Python/2.7/bin" ]; then
+    PATH="$HOME/Library/Python/2.7/bin:$PATH"
+fi
+
+if [ -d "$HOME/.pyenv" ]; then
+    export PYENV_ROOT
+    PYENV_ROOT="$HOME/.pyenv"
+    PATH="$HOME/.pyenv/bin:$PATH"
+    if [ "$(type -fp pyenv)" ]; then
+        eval "$(pyenv init -)";
+        if pyenv commands | grep -q virtualenv; then
+            eval "$(pyenv virtualenv-init -)";
+        fi
     fi
 fi
 
 # Node
 export NVM_DIR
 NVM_DIR="$HOME/.nvm"
-[ -f "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-[ -f "$HOME/.avn/bin/avn.sh" ] && source "$HOME/.avn/bin/avn.sh"
-PATH="$HOME/.yarn/bin:$PATH"
+if [ -f "$NVM_DIR/nvm.sh" ]; then
+    source "$NVM_DIR/nvm.sh"
+fi
+
+if [ -f "$HOME/.avn/bin/avn.sh" ]; then
+    source "$HOME/.avn/bin/avn.sh"
+fi
+
+if [ -d "$HOME/.yarn/bin" ]; then
+    PATH="$HOME/.yarn/bin:$PATH"
+fi
 
 # Ruby
-PATH="$HOME/.rbenv/bin:$PATH"
-if [ "$(type -fp rbenv)" ]; then eval "$(rbenv init -)"; fi
+if [ -d "$HOME/.rbenv/bin" ]; then
+    PATH="$HOME/.rbenv/bin:$PATH"
+    if [ "$(type -fp rbenv)" ]; then
+        eval "$(rbenv init -)";
+    fi
+fi
 
 # Go
 if [ -f "$HOME/.gvm/scripts/gvm" ]; then
@@ -52,7 +87,9 @@ if [ -f "$HOME/.gvm/scripts/gvm" ]; then
 fi
 
 # Rust
-PATH="$HOME/.cargo/bin:$PATH"
+if [ -d "$HOME/.cargo/bin" ]; then
+    PATH="$HOME/.cargo/bin:$PATH"
+fi
 
 # OPAM configuration
 if [ -f "$HOME/.opam/opam-init/init.sh" ]; then
@@ -60,7 +97,9 @@ if [ -f "$HOME/.opam/opam-init/init.sh" ]; then
 fi
 
 # Haskell
-PATH="$HOME/Library/Haskell/bin:$PATH"
+if [ -f "$HOME/Library/Haskell/bin" ]; then
+    PATH="$HOME/Library/Haskell/bin:$PATH"
+fi
 
 # Google Cloud SDK
 export CLOUDSDK_PYTHON
@@ -77,4 +116,8 @@ fi
 # PWD
 PATH=".:$PATH"
 
-if [ -f ~/.bashrc ]; then source ~/.bashrc; fi
+if [ -n "$BASH_VERSION" ]; then
+    if [ -f "$HOME/.bashrc" ]; then
+        source "$HOME/.bashrc"
+    fi
+fi
