@@ -17,7 +17,7 @@ shopt -s globstar
 export MBOX
 MBOX="$HOME/.mail/mbox"
 
-if [ -x emacs ]; then
+if [ -x "$(command -v emacs)" ]; then
     export EDITOR
     EDITOR="emacsclient -t"
 
@@ -59,7 +59,7 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-[ -x hub ] && eval "$(hub alias -s)"
+[ -x "$(command -v hub)" ] && eval "$(hub alias -s)"
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -111,7 +111,7 @@ if [ -z "$INSIDE_EMACS" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq pos
 fi
 
 # Direnv
-[ -x direnv ] && eval "$(direnv hook bash)"
+[ -x "$(command -v direnv)" ] && eval "$(direnv hook bash)"
 
 # History
 
@@ -143,7 +143,7 @@ if "$declared" =~ \ -[aAilrtu]*x[aAilrtu]*\  2>/dev/null; then
 fi
 
 # Better bash history search
-if [ -x hstr ]; then
+if [ -x "$(command -v hstr)" ]; then
     alias hh="hstr"
     # if this is interactive shell, then bind hstr to Ctrl-r (for Vi mode check doc)
     bind '"\C-r": "\C-a hstr -- \C-j"';
