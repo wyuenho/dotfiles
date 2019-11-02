@@ -6,6 +6,14 @@ case $- in
       *) return;;
 esac
 
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
+
 export MBOX
 MBOX="$HOME/.mail/mbox"
 
@@ -21,14 +29,14 @@ if [ -x emacs ]; then
 fi
 
 # make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)" # Debian
 
 # Aliases
-if [ -x /usr/bin/dircolors ]; then
+if [ -x /usr/bin/dircolors ]; then # Debian
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls="ls -Fh --color=auto"
 else
-    alias ls="ls -FhG"
+    alias ls="ls -FhG" # BSD
 fi
 
 alias ll='ls -alF'
@@ -51,20 +59,16 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-[ "$(type -fp hub)" ] && eval "$(hub alias -s)"
+[ -x hub ] && eval "$(hub alias -s)"
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
-if [ -f ~/.bash_aliases ]; then
-    source ~/.bash_aliases
-fi
+[ -f ~/.bash_aliases ] && source ~/.bash_aliases
 
 # Prompt
-if [ -f "$HOME/.local/bin/scm-prompt.sh" ]; then
-    source "$HOME/.local/bin/scm-prompt.sh"
-fi
+[ -f "$HOME/.local/bin/scm-prompt.sh" ] && source "$HOME/.local/bin/scm-prompt.sh"
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
@@ -107,12 +111,9 @@ if [ -z "$INSIDE_EMACS" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq pos
 fi
 
 # Direnv
-if [ -f "$(type -fp direnv)" ]; then
-    eval "$(direnv hook bash)"
-fi
+[ -x direnv ] && eval "$(direnv hook bash)"
 
-# Better bash history search
-[ "$(type -fp hstr)" ] && alias hh="hstr"
+# History
 
 HSTR_CONFIG=hicolor,raw-history-view
 export HSTR_CONFIG
@@ -141,7 +142,9 @@ if "$declared" =~ \ -[aAilrtu]*x[aAilrtu]*\  2>/dev/null; then
     export PROMPT_COMMAND
 fi
 
-if [[ $- =~ .*i.* && "$(type -fp hstr)" ]]; then
+# Better bash history search
+if [ -x hstr ]; then
+    alias hh="hstr"
     # if this is interactive shell, then bind hstr to Ctrl-r (for Vi mode check doc)
     bind '"\C-r": "\C-a hstr -- \C-j"';
     # if this is interactive shell, then bind 'kill last command' to Ctrl-x k
