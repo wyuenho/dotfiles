@@ -1137,7 +1137,6 @@ Optional argument ARG same as `comment-dwim''s."
                   (setq mode-name (propertize icon 'display '(:ascent center))))))))
 
 (use-package solarized-theme
-  :quelpa (solarized-theme :fetcher github :repo "wyuenho/solarized-emacs" :branch "unify-diff")
   :if (display-graphic-p)
   :config
   (load-theme 'solarized-dark)
