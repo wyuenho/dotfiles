@@ -1069,18 +1069,20 @@ Optional argument ARG same as `comment-dwim''s."
                 (purpose-load-window-layout-file))
               (select-window (get-largest-window)))))
 
-;; GUI
+;; UI
+
+;; Let the themes due with this these things
+(dolist (param '(background-mode tty-color-mode screen-gamma
+                 alpha font foreground-color background-color mouse-color
+                 cursor-color border-color scroll-bar-foreground
+                 scroll-bar-background))
+  (add-to-list 'frameset-filter-alist `(,param . :never)))
+
 (when (display-graphic-p)
   ;; Set up default fonts
   (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
 
   (let ((win-sys (window-system)))
-    (when (eq win-sys 'mac)
-      ;; A bug in the mac port saves the mouse color when `frameset-save' is called,
-      ;; but it's not desirable on macOS because the window server will decide the
-      ;; color of the cursor according to the background color.
-      (add-to-list 'frameset-filter-alist '(mouse-color . :never)))
-
     ;; Emacs 26 ns port new settings
     (when (eq win-sys 'ns)
       ;; Will at least display native Unicode emojis if the multicolor font
