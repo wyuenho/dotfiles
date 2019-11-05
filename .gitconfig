@@ -61,9 +61,6 @@
 [fetch]
 	fsckObjects = false
 
-[merge]
-	ff = only
-
 [credential]
 	helper = osxkeychain
 	useHttpPath = true
