@@ -108,6 +108,11 @@ if [ -z "$INSIDE_EMACS" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq pos
     if [ -f "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
         source "$HOME/.google-cloud-sdk/completion.bash.inc";
     fi
+
+    # k8
+    if [ -x "$(command -v kubectl)" ]; then
+        eval "$(kubectl completion bash)"
+    fi
 fi
 
 # Direnv
