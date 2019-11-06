@@ -110,9 +110,10 @@ if [ -z "$INSIDE_EMACS" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq pos
     fi
 
     # k8
-    if [ -x "$(command -v kubectl)" ]; then
-        eval "$(kubectl completion bash)"
-    fi
+    [ -x "$(command -v kubectl)" ] && eval "$(kubectl completion bash)"
+
+    # aws
+    [ -x "$(command -v aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
 fi
 
 # Direnv
