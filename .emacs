@@ -1071,7 +1071,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; UI
 
-;; Let the themes due with this these things
+;; Let the themes deal with these things
 (dolist (param '(background-mode tty-color-mode screen-gamma
                  alpha font foreground-color background-color mouse-color
                  cursor-color border-color scroll-bar-foreground
