@@ -19,7 +19,7 @@ MBOX="$HOME/.mail/mbox"
 
 if [ -x "$(command -v emacs)" ]; then
     export EDITOR
-    EDITOR="emacsclient -t"
+    EDITOR="emacsclient"
 
     export ALTERNATE_EDITOR
     ALTERNATE_EDITOR="emacs"
