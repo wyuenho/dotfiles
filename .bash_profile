@@ -108,9 +108,9 @@ if [ -f "$HOME/Library/Haskell/bin" ]; then
 fi
 
 # Google Cloud SDK
-export CLOUDSDK_PYTHON
-CLOUDSDK_PYTHON="python"
 if [ -f "$HOME/.google-cloud-sdk/path.bash.inc" ]; then
+    export CLOUDSDK_PYTHON
+    CLOUDSDK_PYTHON="python"
     source "$HOME/.google-cloud-sdk/path.bash.inc"
 fi
 
