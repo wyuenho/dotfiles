@@ -36,7 +36,7 @@ if /usr/libexec/java_home -v 11 > /dev/null 2>&1; then
     JAVA_HOME=$(/usr/libexec/java_home -v 11)
 fi
 
-if [ -f "$$HOME/.sdkman/bin/sdkman-init.sh" ]; then
+if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
     export SDKMAN_DIR
     SDKMAN_DIR="$HOME/.sdkman"
     source "$SDKMAN_DIR/bin/sdkman-init.sh"
