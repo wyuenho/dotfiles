@@ -9,9 +9,6 @@
                                   "Don't ask for confirmation when loading a theme."
                                   (apply old-load-theme (car args) t (cddr args))))
 
-(advice-add 'package-download-transaction :after
-            (lambda (&rest args) (package--quickstart-maybe-refresh)))
-
 (package-initialize)
 
 ;; Tell Custom to write and find the custom settings elsewhere
