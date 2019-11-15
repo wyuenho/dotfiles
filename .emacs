@@ -9,6 +9,9 @@
                                   "Don't ask for confirmation when loading a theme."
                                   (apply old-load-theme (car args) t (cddr args))))
 
+(advice-add 'package-download-transaction :after
+            (lambda (&rest args) (package--quickstart-maybe-refresh)))
+
 (package-initialize)
 
 ;; Tell Custom to write and find the custom settings elsewhere
@@ -361,7 +364,7 @@ Optional argument ARG same as `comment-dwim''s."
   :preface
   (defun inflect-string ()
     (interactive)
-    (cond ((memq major-mode '(java-mode js-mode js2-mode rjsx-mode typescript-mode go-mode))
+    (cond ((memq major-mode '(scala-mode java-mode js-mode js2-mode rjsx-mode typescript-mode go-mode))
            (string-inflection-java-style-cycle))
           ((memq major-mode '(python-mode ruby-mode c-mode rust-mode))
            (string-inflection-python-style-cycle))
@@ -373,7 +376,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package smart-semicolon
   :delight
-  :hook ((c-mode-common js-mode) . smart-semicolon-mode))
+  :hook ((c-mode-common js-mode java-mode scala-mode css-mode scss-mode) . smart-semicolon-mode))
 
 ;; Cycle between quotes
 (use-package cycle-quotes
@@ -415,7 +418,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Static Analysis
 (use-package lsp-mode
   :init (require 'lsp-clients)
-  :hook (((css-mode web-mode go-mode reason-mode caml-mode js-mode sh-mode rust-mode ruby-mode) . lsp-deferred)))
+  :hook (((css-mode web-mode go-mode reason-mode caml-mode js-mode sh-mode rust-mode enh-ruby-mode) . lsp-deferred)))
 
 (use-package lsp-ui
   :after (lsp-mode)
@@ -468,7 +471,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package company-lsp
   :after (company lsp-mode)
   :config
-  (add-hook 'lsp-after-open-hook
+  (add-hook 'lsp-mode-hook
             (lambda ()
               (make-local-variable 'company-transformers)
               (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
@@ -754,7 +757,7 @@ Optional argument ARG same as `comment-dwim''s."
                              (tide-setup)
                              (tide-hl-identifier-mode t)))
   :config
-  (add-hook 'before-save-hook 'tide-format-before-save 'local)
+  ;; (add-hook 'before-save-hook 'tide-format-before-save 'local)
   :bind (:map tide-mode-map
               ("C-h p"   . tide-documentation-at-point)
               ("C-c 1"   . tide-fix)
@@ -790,6 +793,14 @@ Optional argument ARG same as `comment-dwim''s."
                   (use-package blacken :delight)
                 (use-package py-autopep8 :config (py-autopep8-enable-on-save))))))
 
+;; Ruby
+(use-package yard-mode)
+(use-package enh-ruby-mode
+  :mode "\\(?:\\.\\(?:rbw?\\|ru\\|rake\\|thor\\|jbuilder\\|rabl\\|gemspec\\|podspec\\)\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Puppet\\|Berks\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'"
+  :interpreter ("ruby1.8" "ruby1.9" "jruby" "rbx" "ruby")
+  :config (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
+  :hook yard-mode)
+
 ;; Go
 (use-package go-mode
   :mode "\\.go\\'"
@@ -813,6 +824,19 @@ Optional argument ARG same as `comment-dwim''s."
               (use-package cargo
                 :delight
                 :config (cargo-minor-mode)))))
+
+;; Scala
+(use-package sbt-mode
+  :commands sbt-start sbt-command
+  :config
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; allows using SPACE when in the minibuffer
+  (substitute-key-definition
+   'minibuffer-complete-word
+   'self-insert-command
+   minibuffer-local-completion-map)
+  ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+  (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 ;; API Blueprints
 (use-package apib-mode
