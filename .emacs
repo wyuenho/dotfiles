@@ -183,7 +183,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Undo preview
 (use-package undo-propose
-  :quelpa (undo-propose :fetcher github :repo "wyuenho/undo-propose-el" :branch "undo-in-new-window")  :bind ("C-x u" . undo-propose))
+  :bind ("C-x u" . undo-propose))
 
 ;; Other missing essentials that I don't want to write
 (use-package crux
