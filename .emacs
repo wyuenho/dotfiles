@@ -767,6 +767,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;;               ("C-c C-r" . tide-rename-symbol)))
 
 ;; Python
+(add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
 (add-hook 'python-mode-hook
           (lambda ()
             (use-package py-isort
@@ -793,7 +794,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Ruby
 (use-package yard-mode)
 (use-package enh-ruby-mode
-  :mode "\\(?:\\.\\(?:rbw?\\|ru\\|rake\\|thor\\|jbuilder\\|rabl\\|gemspec\\|podspec\\)\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Puppet\\|Berks\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'"
+  :mode "\\(?:\\.\\(?:rbw?\\|ru\\|rake\\|thor\\|jbuilder\\|rabl\\|gemspec\\|podspec\\|irbrc\\)\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Puppet\\|Berks\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'"
   :interpreter ("ruby1.8" "ruby1.9" "jruby" "rbx" "ruby")
   :config (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
   :hook yard-mode)
