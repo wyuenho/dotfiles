@@ -415,7 +415,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Static Analysis
 (use-package lsp-mode
   :init (require 'lsp-clients)
-  :hook (((css-mode web-mode go-mode reason-mode caml-mode js-mode sh-mode rust-mode enh-ruby-mode typescript-mode) . lsp-deferred)))
+  :hook (((css-mode scss-mode web-mode go-mode reason-mode caml-mode js-mode sh-mode rust-mode enh-ruby-mode typescript-mode) . lsp-deferred)))
 
 (use-package lsp-ui
   :after (lsp-mode)
