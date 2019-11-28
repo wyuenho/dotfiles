@@ -90,8 +90,8 @@
  '(fill-column 80)
  '(flx-ido-mode t)
  '(flx-ido-use-faces t)
- '(flycheck-global-modes
-   '(sh-mode json-mode yaml-mode js-mode js-jsx-mode js2-mode js2-jsx-mode rjsx-mode typescript-mode python-mode go-mode web-mode css-mode scss-mode rust-mode))
+ '(flycheck-disabled-checkers '(json-jsonlint json-python-json))
+ '(flycheck-global-modes '(json-mode))
  '(flycheck-pos-tip-max-width 80)
  '(gc-cons-threshold 35000000)
  '(global-auto-revert-non-file-buffers t)
