@@ -924,6 +924,8 @@ Optional argument ARG same as `comment-dwim''s."
   :after (:any web-mode js2-mode rjsx-mode)
   :hook (sgml-mode nxml-mode web-mode js-jsx-mode js2-jsx-mode rjsx-mode)
   :config
+  (unbind-key "C-c C-c w" emmet-mode-keymap)
+  (bind-key "C-c C-m w" 'emmet-wrap-with-markup emmet-mode-keymap)
   (add-hook 'emmet-mode-hook
             (lambda ()
               (when (or (member major-mode '(js-jsx-mode js2-jsx-mode rjsx-mode))
