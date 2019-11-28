@@ -705,12 +705,6 @@ Optional argument ARG same as `comment-dwim''s."
   (when (fboundp 'sp-kill-whole-line)
     (bind-key "C-k" 'sp-kill-whole-line js2-mode-map)))
 
-(use-package js2-refactor
-  :after (js2-mode)
-  :delight
-  :hook (js2-mode . js2-refactor-mode)
-  :config (js2r-add-keybindings-with-prefix "C-c r"))
-
 (use-package rjsx-mode
   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
