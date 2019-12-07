@@ -34,6 +34,8 @@ CXX="c++"
 if /usr/libexec/java_home -v 11 > /dev/null 2>&1; then
     export JAVA_HOME
     JAVA_HOME=$(/usr/libexec/java_home -v 11)
+    export KEYTOOL
+    KEYTOOL="$JAVA_HOME/jre/bin"
 fi
 
 if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
