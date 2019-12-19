@@ -64,3 +64,9 @@
 [credential]
 	helper = osxkeychain
 	useHttpPath = true
+
+[sendemail]
+	smtpEncryption = tls
+	smtpServer = smtp.gmail.com
+	smtpUser = wyuenho@gmail.com
+	smtpServerPort = 587
