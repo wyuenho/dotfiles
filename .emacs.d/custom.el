@@ -91,7 +91,8 @@
  '(flx-ido-mode t)
  '(flx-ido-use-faces t)
  '(flycheck-disabled-checkers '(json-jsonlint json-python-json))
- '(flycheck-global-modes '(json-mode))
+ '(flycheck-global-modes
+   '(json-mode js-mode js2-mode rjsx-mode scss-mode css-mode web-mode python-mode ruby-mode markdown-mode yaml-mode enh-ruby-mode go-mode rust-mode swift-mode scala-mode c-mode c++-mode objc-mode))
  '(flycheck-pos-tip-max-width 80)
  '(gc-cons-threshold 35000000)
  '(global-auto-revert-non-file-buffers t)
