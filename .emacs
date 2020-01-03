@@ -966,15 +966,15 @@ Optional argument ARG same as `comment-dwim''s."
   :after (ag))
 
 (use-package rg
-  :after (wgrep-ag projectile)
   :config
+  (bind-key "M-s r" 'rg)
+  (with-eval-after-load 'projectile
+    (define-key projectile-command-map (kbd "s r") 'rg-project))
+
   (add-hook 'rg-mode-hook
             (lambda ()
               (next-error-follow-minor-mode 0)
-              (wgrep-ag-setup)))
-  :bind (("M-s r" . rg)
-         :map projectile-command-map
-         ("s r" . rg-project)))
+              (wgrep-ag-setup))))
 
 (use-package dumb-jump)
 
