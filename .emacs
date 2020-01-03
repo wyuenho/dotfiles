@@ -65,7 +65,7 @@
 (add-hook 'text-mode-hook 'auto-fill-mode)
 
 ;; Turn on line wrapping for programming, text and message buffers
-(dolist (hook '(prog-mode-hook text-mode-hook messages-buffer-mode-hook))
+(dolist (hook '(prog-mode-hook text-mode-hook messages-buffer-mode-hook Custom-mode-hook))
   (add-hook hook 'visual-line-mode))
 
 ;; Turn on subword mode and linum mode for all prog and text modes
