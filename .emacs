@@ -614,7 +614,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Node
 (use-package add-node-modules-path
   :commands add-node-modules-path
-  :init
+  :preface
   (defun find-js-format-style ()
     (let* ((package-json-dir
             (locate-dominating-file default-directory "package.json"))
