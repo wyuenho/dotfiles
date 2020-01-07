@@ -269,7 +269,6 @@
  '(treemacs-follow-mode t)
  '(treemacs-git-integration t)
  '(treemacs-no-png-images t)
- '(truncate-lines t)
  '(typescript-indent-level 2)
  '(uniquify-buffer-name-style 'reverse nil (uniquify))
  '(use-package-enable-imenu-support t)
@@ -283,10 +282,12 @@
  '(web-mode-markup-indent-offset 2)
  '(web-mode-script-padding 2)
  '(web-mode-style-padding 2)
+ '(wgrep-auto-save-buffer t)
  '(which-function-mode t)
  '(which-key-idle-secondary-delay 0.0)
  '(which-key-mode t)
  '(winner-mode t)
+ '(words-include-escapes t)
  '(x-underline-at-descent-line t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
