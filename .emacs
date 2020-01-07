@@ -110,6 +110,11 @@ Optional argument ARG same as `comment-dwim''s."
 (unbind-key "C-x '")
 ;; Always use M-g prefix to jump between errors
 (unbind-key "C-x `")
+;; Must there be 4 bindings to undo?
+(unbind-key "C-x u")
+(unbind-key "C-_")
+(unbind-key "C-/")
+(unbind-key "s-z")
 
 ;; Bind useful things to keys
 (bind-keys ("<backtab>" . align)
@@ -125,7 +130,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Replace zap-to-char with the hidden zap-up-to-char
 (autoload 'zap-up-to-char "misc")
-(bind-key "M-z" 'zap-up-to-char)
+(fset 'zap-to-char 'zap-up-to-char)
 
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
@@ -181,10 +186,6 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package ialign
   :bind ("<A-tab>" . ialign))
 
-;; Undo preview
-(use-package undo-propose
-  :bind ("C-x u" . undo-propose))
-
 ;; Other missing essentials that I don't want to write
 (use-package crux
   :bind (("C-x C-u" . crux-upcase-region)
@@ -198,6 +199,11 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-c s"   . crux-find-shell-init-file)
          ("C-c C-u" . crux-sudo-edit)
          ("C-c M-o" . crux-open-with)))
+
+;; Saner undo/redo
+(use-package undo-fu
+  :bind (("M-z"   . undo-fu-only-undo)
+         ("C-M-z" . undo-fu-only-redo)))
 
 ;; So I can see past kills that I can yank
 (use-package browse-kill-ring
