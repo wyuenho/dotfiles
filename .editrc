@@ -1,4 +1,4 @@
 # Emacs bindings
 bind -e
 # Tab complete
-bind \\t rl_complete
+bind ^I rl_complete
