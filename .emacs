@@ -736,7 +736,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; TypeScript
 (use-package typescript-mode
-  :mode ("\\.ts\\'" "\\.mts\\'"))
+  :mode ("\\.ts\\'"))
 
 (use-package ts-comint
   :after (typescript-mode)
