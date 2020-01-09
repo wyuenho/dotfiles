@@ -677,7 +677,7 @@ Optional argument ARG same as `comment-dwim''s."
                (js-format-setup (symbol-name style))
                :bind (:map js-mode-map
                            ("C-c f" . js-format-buffer)))))))
-  :hook ((css-mode web-mode js-mode scss-mode yaml-mode markdown-mode) . setup-modules-path-and-linter))
+  :hook ((css-mode web-mode js-mode typescript-mode scss-mode yaml-mode markdown-mode) . setup-modules-path-and-linter))
 
 (add-hook 'js-mode-hook
           (lambda ()
