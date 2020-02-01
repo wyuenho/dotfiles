@@ -234,10 +234,13 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Use ido for even more things than ido-everywhere
 (use-package ido-completing-read+)
 (use-package ido-vertical-mode)
+(use-package crm-custom
+  :config
+  (crm-custom-mode t))
 
 ;; Convenient iMenu entry search
 (use-package imenu-anywhere
-  :bind (("C-." . imenu-anywhere)))
+  :bind (("C-\\" . imenu-anywhere)))
 
 ;; Turn on iMenu for code outlines for all prog and text modes, if possible
 (dolist (hook '(prog-mode-hook text-mode-hook))
@@ -469,6 +472,7 @@ Optional argument ARG same as `comment-dwim''s."
   :hook (company-mode . company-quickhelp-mode))
 
 (use-package company-box
+  :delight
   :hook (company-mode . company-box-mode))
 
 (use-package company-lsp
@@ -1131,17 +1135,30 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (delight '((rainbow-mode)
              (lsp-mode)
-             (isearch-mode            nil isearch)
-             (abbrev-mode             nil abbrev)
-             (purpose-mode            nil window-purpose)
-             (eldoc-mode              nil eldoc)
-             (move-dup-mode           nil move-dup)
-             (smartparens-mode        nil smartparens)
-             (which-key-mode          nil which-key)
-             (whitespace-cleanup-mode nil whitespace)
-             (auto-revert-mode        nil autorevert)
-             (visual-line-mode        nil simple)
-             (subword-mode            nil subword))))
+             (beginend-global-mode      nil beginend)
+             (beginend-bs-mode          nil beginend)
+             (beginend-org-mode         nil beginend)
+             (beginend-prog-mode        nil beginend)
+             (beginend-LaTeX-mode       nil beginend)
+             (beginend-latex-mode       nil beginend)
+             (beginend-occur-mode       nil beginend)
+             (beginend-ibuffer-mode     nil beginend)
+             (beginend-message-mode     nil beginend)
+             (beginend-outline-mode     nil beginend)
+             (beginend-prodigy-mode     nil beginend)
+             (beginend-compilation-mode nil beginend)
+             (auto-fill-mode            nil simple)
+             (isearch-mode              nil isearch)
+             (abbrev-mode               nil abbrev)
+             (purpose-mode              nil window-purpose)
+             (eldoc-mode                nil eldoc)
+             (move-dup-mode             nil move-dup)
+             (smartparens-mode          nil smartparens)
+             (which-key-mode            nil which-key)
+             (whitespace-cleanup-mode   nil whitespace)
+             (auto-revert-mode          nil autorevert)
+             (visual-line-mode          nil simple)
+             (subword-mode              nil subword))))
 
 ;; Fancy mode line
 (use-package spaceline
