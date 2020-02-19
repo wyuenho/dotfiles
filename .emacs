@@ -423,16 +423,39 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Static Analysis
 (use-package lsp-mode
-  :init (require 'lsp-clients)
-  :hook (((css-mode scss-mode web-mode go-mode reason-mode caml-mode js-mode sh-mode rust-mode enh-ruby-mode typescript-mode) . lsp-deferred)))
-
-(use-package lsp-ui
-  :after (lsp-mode)
-  :hook (lsp-mode . lsp-ui-mode))
+  :after (which-key)
+  :hook (((css-mode
+           scss-mode
+           web-mode
+           go-mode
+           reason-mode
+           caml-mode
+           js-mode
+           sh-mode
+           rust-mode
+           enh-ruby-mode
+           typescript-mode)
+          . lsp-deferred)
+         (lsp-mode . lsp-enable-which-key-integration)))
 
 ;; LSP debugging support
 (use-package dap-mode
-  :after (lsp-mode))
+  :after (lsp-mode)
+  :config
+  (dap-mode t)
+  (dap-ui-mode t)
+  (dap-tooltip-mode t))
+
+(use-package dap-node
+  :after (js2-mode dap-mode))
+
+(use-package dap-python
+  :after (dap-mode))
+
+(use-package dap-ruby
+  :after (enh-ruby-mode dap-mode))
+
+(use-package dap-lldb)
 
 ;; Auto-completion
 (use-package company
@@ -481,20 +504,8 @@ Optional argument ARG same as `comment-dwim''s."
   (add-hook 'lsp-mode-hook
             (lambda ()
               (make-local-variable 'company-transformers)
-              (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
-              (setq company-transformers (remq 'company-flx-transformer company-transformers))
-              (setq-local company-backends `(,@(if (and (memq (window-system) '(ns mac))
-                                                        (fboundp 'company-emoji))
-                                                   '((company-emoji
-                                                      :separate company-lsp
-                                                      :separate company-files
-                                                      :separate company-yasnippet))
-                                                 '((company-lsp
-                                                    :separate company-files
-                                                    :separate company-yasnippet)))
-                                             company-files
-                                             company-capf
-                                             company-keywords)))))
+              (setq company-transformers (remq 'company-flx-transformer
+                                               (remq 'company-sort-by-statistics company-transformers))))))
 
 ;; Linting
 (use-package flycheck
