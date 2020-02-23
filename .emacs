@@ -517,6 +517,13 @@ Optional argument ARG same as `comment-dwim''s."
   :after (flycheck)
   :hook (flycheck-mode . flycheck-pos-tip-mode))
 
+;; Formatting
+(use-package reformatter
+  :config
+  (reformatter-define eslint-format
+    :program "eslint"
+    :args '("--fix-to-stdout" "--stdin")))
+
 ;; REST API
 (use-package restclient
   :commands restclient-mode
@@ -632,70 +639,55 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package cmake-font-lock
   :hook (cmake-mode . cmake-font-lock-activate))
 
-;; Node
-(use-package add-node-modules-path
-  :commands add-node-modules-path
+(defun find-js-format-style ()
+  (let* ((package-json-dir
+          (locate-dominating-file default-directory "package.json"))
+
+         (package-json
+          (if package-json-dir
+              (json-read-file (concat
+                               (expand-file-name package-json-dir)
+                               "package.json"))
+            nil))
+
+         (devDependencies
+          (if package-json
+              (alist-get 'devDependencies package-json)
+            nil))
+
+         (formatter-styles
+          '((prettier . prettier)
+            (eslint   . eslint))))
+
+    (autoload 'map-filter "map")
+    (autoload 'map-contains-key "map")
+    (or (cdr (car (map-filter
+                   (lambda (package _)
+                     (map-contains-key devDependencies package))
+                   formatter-styles)))
+        nil)))
+
+(use-package prettier
+  :commands prettier-mode
   :preface
-  (defun find-js-format-style ()
-    (let* ((package-json-dir
-            (locate-dominating-file default-directory "package.json"))
+  (defun setup-prettier ()
+    (prettier-mode)
+    (unless (key-binding "C-c f")
+      (bind-key "C-c f" 'prettier-prettify (symbol-value (intern (concat (symbol-name major-mode) "-map"))))))
+  :hook ((css-mode web-mode js-mode typescript-mode scss-mode yaml-mode markdown-mode) . setup-prettier))
 
-           (package-json
-            (if package-json-dir
-                (json-read-file (concat
-                                 (expand-file-name package-json-dir)
-                                 "package.json"))
-              nil))
-
-           (devDependencies
-            (if package-json
-                (alist-get 'devDependencies package-json)
-              nil))
-
-           (formatter-styles
-            '((prettier            . prettier)
-              (eslint              . eslint)
-              (esformatter         . esfmt)
-              (babel-preset-airbnb . airbnb)
-              (standard            . standard))))
-
-      (autoload 'map-filter "map")
-      (autoload 'map-contains-key "map")
-      (or (cdr (car (map-filter
-                     (lambda (package _)
-                       (map-contains-key devDependencies package))
-                     formatter-styles)))
-          nil)))
-
-  (defun setup-modules-path-and-linter ()
-    (add-node-modules-path)
-    (let ((style (find-js-format-style)))
-      (cond ((null style))
-            ((eq style 'prettier)
-             (use-package prettier-js
-               :delight
-               :config
-               (prettier-js-mode t)
-               ;; Eagerly load this so the after save hook works
-               (bind-key "C-c f" 'prettier-js (symbol-value (intern (concat (symbol-name major-mode) "-map"))))))
-
-            ((and (eq style 'eslint) (derived-mode-p '(js-mode)))
-             (use-package eslintd-fix
-               :delight
-               :config (eslintd-fix-mode t)
-               ;; Eagerly load this so the after save hook works
-               (bind-key "C-c f" 'eslintd-fix js-mode-map)))
-
-            ((and (memq style '(esfmt airbnb standard)) (derived-mode-p '(js-mode)))
-             (use-package js-format
-               :config
-               (js-format-setup (symbol-name style))
-               :bind (:map js-mode-map
-                           ("C-c f" . js-format-buffer)))))))
-  :hook ((css-mode web-mode js-mode typescript-mode scss-mode yaml-mode markdown-mode) . setup-modules-path-and-linter))
-
+;; Node
 (add-hook 'js-mode-hook
           (lambda ()
+            (use-package add-node-modules-path
+              :config
+              (add-node-modules-path)
+              (let ((style (find-js-format-style)))
+                (cond ((null style))
+                      ((and (eq style 'eslint) (derived-mode-p 'js-mode))
+                       (bind-key "C-c f" 'eslint-format-buffer (symbol-value (intern (concat (symbol-name major-mode) "-map"))))
+                       (add-hook 'js-mode-hook 'eslint-format-on-save-mode)))))
+
             (use-package import-js
               :bind (:map js-mode-map
                           ("C-c t i"   . import-js-import)
