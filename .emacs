@@ -370,11 +370,11 @@ Optional argument ARG same as `comment-dwim''s."
   :preface
   (defun inflect-string ()
     (interactive)
-    (cond ((memq major-mode '(scala-mode java-mode js-mode js2-mode rjsx-mode typescript-mode go-mode))
+    (cond ((derived-mode-p 'scala-mode 'java-mode 'js-mode 'typescript-mode 'go-mode)
            (string-inflection-java-style-cycle))
-          ((memq major-mode '(python-mode ruby-mode c-mode rust-mode))
+          ((derived-mode-p 'python-mode 'ruby-mode 'c-mode 'rust-mode)
            (string-inflection-python-style-cycle))
-          ((derived-mode-p major-mode 'prog-mode)
+          ((derived-mode-p 'prog-mode)
            (string-inflection-all-cycle))))
   :config
   (setq string-inflection-skip-backward-when-done t)
