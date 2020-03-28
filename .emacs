@@ -433,6 +433,7 @@ Optional argument ARG same as `comment-dwim''s."
            js-mode
            sh-mode
            rust-mode
+           python-mode
            enh-ruby-mode
            typescript-mode)
           . lsp-deferred)
