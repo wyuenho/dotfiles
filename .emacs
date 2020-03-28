@@ -993,6 +993,26 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package dumb-jump)
 
 ;; Version Control
+
+;; Save window config before ediff starts and restores it and cleans up when it quits, sanity!
+(with-eval-after-load 'ediff
+  (defvar ediff-saved-window-configuration)
+
+  (add-hook 'ediff-before-setup-hook
+            (lambda ()
+              (setq ediff-saved-window-configuration (current-window-configuration))))
+
+  (let ((restore-window-configuration
+         (lambda ()
+           (set-window-configuration ediff-saved-window-configuration))))
+    (add-hook 'ediff-quit-hook restore-window-configuration 'append)
+    (add-hook 'ediff-suspend-hook restore-window-configuration 'append))
+
+  (add-hook 'ediff-cleanup-hook
+            (lambda ()
+              (eval-and-compile (require 'ediff-util))
+              (ediff-janitor nil nil)) 'append))
+
 (use-package diff-hl
   :config
   (unless (display-graphic-p)
