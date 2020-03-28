@@ -218,7 +218,10 @@
  '(prettier-enabled-parsers
    '(angular babel babel-flow css flow graphql json less html markdown mdx scss typescript vue yaml))
  '(purpose-x-code1-dired-goto-file t)
- '(purpose-x-popwin-major-modes '(help-mode compilation-mode occur-mode helpful-mode))
+ '(purpose-x-code1-update-idle-delay 0.5)
+ '(purpose-x-popwin-major-modes
+   '(help-mode compilation-mode occur-mode helpful-mode comint-mode))
+ '(python-shell-completion-native-enable nil)
  '(quelpa-checkout-melpa-p nil)
  '(quelpa-update-melpa-p nil)
  '(quelpa-upgrade-p t)
@@ -236,6 +239,7 @@
  '(rst-indent-literal-normal 2)
  '(rxt-global-mode t)
  '(save-place-mode t)
+ '(save-place-save-skipped nil)
  '(savehist-mode t nil (savehist))
  '(scroll-bar-mode nil)
  '(select-enable-clipboard t)
