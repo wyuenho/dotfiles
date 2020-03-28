@@ -1035,20 +1035,46 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("C-x v M-m" . monky-status)))
 
 ;; File management
-(add-hook 'dired-mode-hook
-          (lambda ()
-            (add-minor-mode 'dired-hide-details-mode "")
-            (when (memq (window-system) '(mac ns))
-              (bind-key "z" (lambda ()
-                              (interactive)
-                              (let ((file-name (dired-get-file-for-visit)))
-                                (start-process "default-app" nil "open" file-name)))
-                        dired-mode-map))))
+(with-eval-after-load 'dired
+  (defface dired-executable
+    '((t (:inherit font-lock-warning-face :weight normal)))
+    "Face used for symbolic links."
+    :group 'dired-faces)
+
+  (defvar dired-executable-face 'dired-executable)
+
+  (defun dired-executable-matcher (end)
+    (let ((file (dired-file-name-at-point)))
+      (when (and (file-executable-p file)
+                 (not (file-symlink-p file)))
+        (re-search-forward ".+" end t))))
+
+  (font-lock-add-keywords
+   'dired-mode
+   (list
+    (list dired-re-exe
+          (list 'dired-executable-matcher
+                '(dired-move-to-filename)
+                nil
+                '(0 dired-executable-face)))))
+
+  (remove-hook 'dired-initial-position-hook 'save-place-dired-hook)
+
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              (add-minor-mode 'dired-hide-details-mode "")
+              (when (memq (window-system) '(mac ns))
+                (bind-key "z" (lambda ()
+                                (interactive)
+                                (let ((file-name (dired-get-file-for-visit)))
+                                  (start-process "default-app" nil "open" file-name)))
+                          dired-mode-map)))))
 
 (use-package all-the-icons-dired
-  :after (all-the-icons)
+  :after (all-the-icons dired-collapse)
+  :quelpa (all-the-icons-dired :fetcher github :repo "wyuenho/all-the-icons-dired" :branch "monochrome")
   :if (display-graphic-p)
-  :hook (dired-mode . all-the-icons-dired-mode))
+  :hook (dired-collapse-mode . all-the-icons-dired-mode))
 
 (use-package dired-hide-dotfiles
   :bind (:map dired-mode-map
@@ -1057,10 +1083,12 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package dired-single
   :after (dired-hide-dotfiles)
   :bind (:map dired-mode-map
-              ("^"         . (lambda () (interactive) (dired-single-buffer "..")))
+              ("^"         . dired-single-up-directory)
               ("<mouse-1>" . dired-single-buffer-mouse)
               ("\C-m"      . dired-single-buffer))
   :config
+  (with-eval-after-load 'window-purpose-x
+    (setq dired-single-magic-buffer-name purpose-x-code1-dired-buffer-name))
   ;; Make sure dired-hide-details-mode is preserved when reusing the dired
   ;; window
   (advice-add 'find-alternate-file :around
@@ -1070,9 +1098,19 @@ Optional argument ARG same as `comment-dwim''s."
                       (hide-details dired-hide-details-mode)
                       (hide-information-lines dired-hide-details-hide-information-lines)
                       (hide-symlink-targets dired-hide-details-hide-symlink-targets)
+                      (tl truncate-lines)
+                      (ww word-wrap)
+                      (vlm visual-line-mode)
+                      (mlf mode-line-format)
+                      (arv auto-revert-verbose)
                       (result (apply oldfun args)))
                   (when hide-dotfiles (dired-hide-dotfiles-mode))
                   (when is-dired
+                    (setq truncate-lines tl
+                          word-wrap ww
+                          visual-line-mode vlm
+                          mode-line-format mlf
+                          auto-revert-verbose arv)
                     (setq-local dired-hide-details-hide-information-lines hide-information-lines)
                     (setq-local dired-hide-details-hide-symlink-targets hide-symlink-targets)
                     (when hide-details (dired-hide-details-mode)))
@@ -1201,6 +1239,12 @@ Optional argument ARG same as `comment-dwim''s."
           (spec (cdr entry)))
       (put face 'theme-face nil)
       (face-spec-set face spec)))
+
+  (dolist (face-map '((all-the-icons-dired-dir-face . dired-directory)))
+    (let* ((face (car face-map))
+           (alias (cdr face-map)))
+      (put face 'theme-face nil)
+      (put face 'face-alias alias)))
 
   (let ((line (face-attribute 'mode-line :underline)))
     (set-face-attribute 'mode-line nil :overline line :box nil)
