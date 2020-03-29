@@ -21,6 +21,10 @@
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 
+[merge]
+	tool = ediff
+	conflictStyle = diff3
+
 [alias]
 	co = checkout
 	ci = commit
