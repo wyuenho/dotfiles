@@ -33,6 +33,7 @@
 	sdiff = !git diff && git submodule foreach 'git diff'
 	spush = push --recurse-submodules=on-demand
 	supdate = submodule update --remote --merge
+	ignore = "!gi() { IFS=\",\"; curl -L -s \"https://www.gitignore.io/api/$*\" | tee .gitignore;}; \\\ngi"
 
 [color]
 	ui = true
