@@ -33,7 +33,9 @@
  '(company-box-icons-alist 'company-box-icons-all-the-icons)
  '(company-global-modes
    '(lisp-mode emacs-lisp-mode restclient-mode js-mode js2-mode js-jsx-mode js2-jsx-mode rjsx-mode python-mode go-mode rust-mode web-mode c-mode c++-mode objc-mode css-mode sh-mode typescript-mode ruby-mode enh-ruby-mode scss-mode))
+ '(company-idle-delay 0)
  '(company-lsp-enable-recompletion t)
+ '(company-minimum-prefix-length 1)
  '(company-require-match nil)
  '(company-statistics-mode t)
  '(company-tooltip-align-annotations t)
