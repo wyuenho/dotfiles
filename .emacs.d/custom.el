@@ -111,6 +111,7 @@
  '(global-undo-tree-mode t)
  '(global-whitespace-cleanup-mode t)
  '(gnus-completing-read-function 'gnus-ido-completing-read)
+ '(gnutls-algorithm-priority "normal:-vers-tls1.3")
  '(gnutls-crlfiles
    '("/opt/local/etc/grid-security/certificates/*.crl.pem" "/etc/grid-security/certificates/*.crl.pem"))
  '(gnutls-trustfiles
