@@ -76,7 +76,7 @@ if [ -f "$HOME/.avn/bin/avn.sh" ]; then
 fi
 
 if [ -d "$HOME/.yarn/bin" ]; then
-    PATH="$HOME/.yarn/bin:$PATH"
+    PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 fi
 
 # Ruby
