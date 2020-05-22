@@ -232,11 +232,18 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("M-X" . amx-major-mode-commands)))
 
 ;; Use ido for even more things than ido-everywhere
-(use-package ido-completing-read+)
-(use-package ido-vertical-mode)
 (use-package crm-custom
   :config
   (crm-custom-mode t))
+(use-package ido-vertical-mode
+  :bind (:map icomplete-minibuffer-map
+              ("<down>" . icomplete-forward-completions)
+              ("C-n"    . icomplete-forward-completions)
+              ("<up>"   . icomplete-backward-completions)
+              ("C-p"    . icomplete-backward-completions)
+              ("C-v"    . icomplete-vertical-toggle)))
+(use-package icomplete-vertical)
+(use-package ido-completing-read+)
 
 ;; Convenient iMenu entry search
 (use-package imenu-anywhere
