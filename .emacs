@@ -922,32 +922,32 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'web-mode-hook
             (lambda ()
-              (use-package tern
-                :delight
-                :config
-                (unbind-key "C-c C-r" tern-mode-keymap))
+              ;; (use-package tern
+              ;;   :delight
+              ;;   :config
+              ;;   (unbind-key "C-c C-r" tern-mode-keymap))
 
-              (use-package company-tern
-                :after (company tern)
-                :config
-                (setq-local company-backends
-                            '(company-tern company-files))
+              ;; (use-package company-tern
+              ;;   :after (company tern)
+              ;;   :config
+              ;;   (setq-local company-backends
+              ;;               '(company-tern company-files))
 
-                (advice-add 'company-tern :before
-                            (lambda (&rest _)
-                              (if (eq major-mode 'web-mode)
-                                  (let ((web-mode-cur-language
-                                         (web-mode-language-at-pos)))
-                                    (if (or (string= web-mode-cur-language "javascript")
-                                            (string= web-mode-cur-language "jsx"))
-                                        (unless tern-mode (tern-mode))
-                                      (if tern-mode (tern-mode t))))))))
+              ;;   (advice-add 'company-tern :before
+              ;;               (lambda (&rest _)
+              ;;                 (if (eq major-mode 'web-mode)
+              ;;                     (let ((web-mode-cur-language
+              ;;                            (web-mode-language-at-pos)))
+              ;;                       (if (or (string= web-mode-cur-language "javascript")
+              ;;                               (string= web-mode-cur-language "jsx"))
+              ;;                           (unless tern-mode (tern-mode))
+              ;;                         (if tern-mode (tern-mode t))))))))
 
               (use-package company-web-html
                 :after (company)
                 :config
                 (setq-local company-backends
-                            `(company-tern
+                            `(;; company-tern
                               company-web-html
                               ,@(unless (version<= "26" emacs-version)
                                   (list 'company-css))
