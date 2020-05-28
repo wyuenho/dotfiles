@@ -39,7 +39,7 @@
  '(company-require-match nil)
  '(company-statistics-mode t)
  '(company-tooltip-align-annotations t)
- '(completion-auto-help nil)
+ '(completion-auto-help 'lazy)
  '(completion-styles '(flex basic partial-completion substring initials emacs22))
  '(confirm-kill-processes nil)
  '(create-lockfiles nil)

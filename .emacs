@@ -237,6 +237,9 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package crm-custom
   :config
   (crm-custom-mode t))
+
+(use-package ido-completing-read+)
+
 (use-package ido-vertical-mode
   :bind (:map icomplete-minibuffer-map
               ("<down>" . icomplete-forward-completions)
@@ -244,8 +247,8 @@ Optional argument ARG same as `comment-dwim''s."
               ("<up>"   . icomplete-backward-completions)
               ("C-p"    . icomplete-backward-completions)
               ("C-v"    . icomplete-vertical-toggle)))
+
 (use-package icomplete-vertical)
-(use-package ido-completing-read+)
 
 ;; Convenient iMenu entry search
 (use-package imenu-anywhere
