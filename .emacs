@@ -1,4 +1,6 @@
 ;;; -*- lexical-binding: t -*-
+(load-library "map")
+(load-library "seq")
 
 ;; Set file, keyboard and terminal coding systems automatically
 (prefer-coding-system 'utf-8)
@@ -525,13 +527,6 @@ Optional argument ARG same as `comment-dwim''s."
   :after (flycheck)
   :hook (flycheck-mode . flycheck-pos-tip-mode))
 
-;; Formatting
-(use-package reformatter
-  :config
-  (reformatter-define eslint-format
-    :program "eslint"
-    :args '("--fix-to-stdout" "--stdin")))
-
 ;; REST API
 (use-package restclient
   :commands restclient-mode
@@ -647,55 +642,95 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package cmake-font-lock
   :hook (cmake-mode . cmake-font-lock-activate))
 
-(defun find-js-format-style ()
-  (let* ((package-json-dir
-          (locate-dominating-file default-directory "package.json"))
+;; Formatting
+(use-package reformatter
+  :quelpa (reformatter :fetcher github :repo "wyuenho/reformatter.el" :branch "post-processor")
+  :config
+  (reformatter-define yarn-eslint-format
+    :program "yarn"
+    :args `("--silent"
+            "eslint"
+            "--fix-dry-run"
+            "--format"
+            "json"
+            "--stdin"
+            "--stdin-filename"
+            ,buffer-file-name
+            "--ext"
+            ".json,.js,.jsx,.mjs,.mjsx,.cjs,.cjsx,.ts,.tsx")
+    :output-post-processor (lambda (file)
+                             (let* ((data (json-read-file file))
+                                    (output (alist-get 'output (aref data 0))))
+                               (make-temp-file "yarn-eslint-format" nil nil output)))
+    :exit-code-success-p integerp)
+  (reformatter-define eslint-format
+    :program "eslint_d"
+    :args `("--fix-to-stdout"
+            "--stdin"
+            "--stdin-filename"
+            ,buffer-file-name
+            "--ext"
+            ".json,.js,.jsx,.mjs,.mjsx,.cjs,.cjsx,.ts,.tsx")))
 
-         (package-json
-          (if package-json-dir
-              (json-read-file (concat
-                               (expand-file-name package-json-dir)
-                               "package.json"))
-            nil))
+(defun find-js-formatter ()
+  (when-let* ((package-json-dir
+               (locate-dominating-file default-directory "package.json"))
 
-         (devDependencies
-          (if package-json
-              (alist-get 'devDependencies package-json)
-            nil))
+              (package-json
+               (if package-json-dir
+                   (json-read-file (concat
+                                    (expand-file-name package-json-dir)
+                                    "package.json"))
+                 nil))
 
-         (formatter-styles
-          '((prettier . prettier)
-            (eslint   . eslint))))
+              (devDependencies
+               (if package-json
+                   (alist-get 'devDependencies package-json)
+                 nil))
 
-    (autoload 'map-filter "map")
-    (autoload 'map-contains-key "map")
-    (or (cdr (car (map-filter
-                   (lambda (package _)
-                     (map-contains-key devDependencies package))
-                   formatter-styles)))
-        nil)))
+              (formatter-styles
+               '((prettier prettier-eslint prettier)
+                 (eslint eslint-plugin-prettier eslint))))
 
-(use-package prettier
-  :commands prettier-mode
-  :preface
-  (defun setup-prettier ()
-    (prettier-mode)
-    (unless (key-binding "C-c f")
-      (bind-key "C-c f" 'prettier-prettify (symbol-value (intern (concat (symbol-name major-mode) "-map"))))))
-  :hook ((css-mode web-mode js-mode typescript-mode scss-mode yaml-mode markdown-mode) . setup-prettier))
+    (car (seq-filter 'identity
+                     (map-apply (lambda (command packages)
+                                  (and
+                                   (seq-some (lambda (package) (map-contains-key devDependencies package)) packages)
+                                   command))
+                                formatter-styles)))))
+
+(dolist (mode '(css-mode web-mode js-mode typescript-mode scss-mode yaml-mode markdown-mode))
+  (add-hook (intern (concat (symbol-name mode) "-hook"))
+            (lambda ()
+              (let ((formatter (find-js-formatter))
+                    (yarn-pnp-p (seq-some 'file-exists-p
+                                          (list (concat default-directory ".pnp.js")
+                                                (concat default-directory ".pnp.cjs"))))
+                    (mode-hook (intern (concat (symbol-name major-mode) "-hook")))
+                    (keymap (symbol-value (intern (concat (symbol-name major-mode) "-map")))))
+                (unless yarn-pnp-p
+                  (use-package add-node-modules-path
+                    :config (add-node-modules-path)))
+                (cond
+                 ((eq formatter 'eslint)
+                  (if (or yarn-pnp-p (executable-find "yarn"))
+                      (progn
+                        (bind-key "C-c f" 'yarn-eslint-format-buffer keymap)
+                        (add-hook mode-hook 'yarn-eslint-format-on-save-mode))
+                    (progn
+                      (bind-key "C-c f" 'eslint-format-buffer keymap)
+                      (add-hook mode-hook 'eslint-format-on-save-mode)))
+                  (eslint-format-on-save-mode))
+                 ((eq formatter 'prettier)
+                  (use-package prettier
+                    :delight
+                    :config
+                    (prettier-mode)
+                    (bind-key "C-c f" 'prettier-prettify keymap))))))))
 
 ;; Node
 (add-hook 'js-mode-hook
           (lambda ()
-            (use-package add-node-modules-path
-              :config
-              (add-node-modules-path)
-              (let ((style (find-js-format-style)))
-                (cond ((null style))
-                      ((and (eq style 'eslint) (derived-mode-p 'js-mode))
-                       (bind-key "C-c f" 'eslint-format-buffer (symbol-value (intern (concat (symbol-name major-mode) "-map"))))
-                       (add-hook 'js-mode-hook 'eslint-format-on-save-mode)))))
-
             (use-package import-js
               :bind (:map js-mode-map
                           ("C-c t i"   . import-js-import)
