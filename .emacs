@@ -764,6 +764,13 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package rjsx-mode
   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
+(use-package json-mode
+  :config
+  (unbind-key "C-c C-f" json-mode-map)
+  (add-hook 'json-mode-hook (lambda ()
+                              (when (not (key-binding "C-c f"))
+                                (bind-key "C-c f" 'json-pretty-print-buffer)))))
+
 (use-package polymode
   ;; :after rjsx-mode
   ;; :config
