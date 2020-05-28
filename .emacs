@@ -449,7 +449,16 @@ Optional argument ARG same as `comment-dwim''s."
            enh-ruby-mode
            typescript-mode)
           . lsp-deferred)
-         (lsp-mode . lsp-enable-which-key-integration)))
+         (lsp-mode . lsp-enable-which-key-integration))
+  :config
+  (setq read-process-output-max (* 1024 1024))
+  (setq lsp-eslint-server-command `("node"
+                                    ,(expand-file-name
+                                      (car
+                                       (last
+                                        (file-expand-wildcards
+                                         "~/.vscode/extensions/dbaeumer.vscode-eslint-*/server/out/eslintServer.js"))))
+                                    "--stdio")))
 
 ;; LSP debugging support
 (use-package dap-mode
