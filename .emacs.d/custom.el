@@ -282,6 +282,7 @@
  '(treemacs-follow-mode t)
  '(treemacs-git-integration t)
  '(treemacs-no-png-images t)
+ '(ts-comint-program-command "ts-node")
  '(typescript-indent-level 2)
  '(uniquify-buffer-name-style 'reverse nil (uniquify))
  '(use-package-enable-imenu-support t)
