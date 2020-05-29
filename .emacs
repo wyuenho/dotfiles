@@ -724,7 +724,15 @@ Optional argument ARG same as `comment-dwim''s."
                   (use-package add-node-modules-path
                     :config (add-node-modules-path)))
                 (cond
-                 ((eq formatter 'eslint)
+                 ((and (eq formatter 'eslint)
+                       (or (not (featurep 'lsp-mode))
+                           (with-eval-after-load 'lsp-mode
+                             (or (not lsp-mode)
+                                 (and lsp-mode
+                                      (member 'eslint
+                                              (mapcar
+                                               (lambda (workspace) (lsp--workspace-server-id workspace))
+                                               lsp--buffer-workspaces)))))))
                   (if (or yarn-pnp-p (executable-find "yarn"))
                       (progn
                         (bind-key "C-c f" 'yarn-eslint-format-buffer keymap)
