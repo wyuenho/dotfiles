@@ -215,6 +215,8 @@
  '(ns-alternate-modifier 'alt)
  '(ns-command-modifier 'meta)
  '(ns-pop-up-frames nil)
+ '(ns-right-command-modifier 'super)
+ '(ns-right-control-modifier 'hyper)
  '(nsm-save-host-names t)
  '(olivetti-body-width 120)
  '(package-archives
