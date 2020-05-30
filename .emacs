@@ -789,7 +789,7 @@ Optional argument ARG same as `comment-dwim''s."
   (unbind-key "C-c C-f" json-mode-map)
   (add-hook 'json-mode-hook (lambda ()
                               (when (not (key-binding "C-c f"))
-                                (bind-key "C-c f" 'json-pretty-print-buffer)))))
+                                (bind-key "C-c f" 'json-pretty-print-buffer 'json-mode-map)))))
 
 (use-package polymode
   ;; :after rjsx-mode
