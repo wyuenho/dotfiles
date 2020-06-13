@@ -1222,7 +1222,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package window-purpose
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts")
-                          :branch "improve-code1-emacs27-recursive-load-temp-fix")
+                          :branch "improve-code1")
   :config
   (define-key purpose-mode-map (kbd "C-c ,") nil)
   (define-key purpose-mode-map (kbd "C-c w") purpose-mode-prefix-map)
