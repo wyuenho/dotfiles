@@ -98,6 +98,9 @@ Optional argument ARG same as `comment-dwim''s."
                   (comment-or-uncomment-region (line-beginning-position) (line-end-position))
                 (apply comment-dwim args))))
 
+(use-package bind-key
+  :quelpa (bind-key :fetcher github :repo "wyuenho/use-package" :branch "patch-1" :files ("bind-key.el")))
+
 ;; I hate X mouse bindings
 (when (and (display-graphic-p)
            (not (memq (window-system) '(x))))
