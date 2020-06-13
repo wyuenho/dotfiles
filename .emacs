@@ -1066,14 +1066,14 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package rg
   :config
-  (bind-key "M-s r" 'rg)
+  (rg-enable-default-bindings)
   (with-eval-after-load 'projectile
     (define-key projectile-command-map (kbd "s r") 'rg-project))
 
   (add-hook 'rg-mode-hook
             (lambda ()
               (next-error-follow-minor-mode 0)
-              (wgrep-ag-setup))))
+              (wgrep-rg-setup))))
 
 (use-package dumb-jump)
 
