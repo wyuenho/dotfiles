@@ -238,6 +238,22 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (crm-custom-mode t))
 
+;; More sensible begin and end in certain modes
+(use-package beginend
+  :after (delight)
+  :hook ((dired-mode          . beginend-dired-mode)
+         (magit-status-mode   . beginend-magit-status-mode)
+         (message-mode        . beginend-message-mode)
+         (prog-mode           . beginend-prog-mode)
+         (occur-mode          . beginend-occur-mode)
+         (ibuffer-mode        . beginend-ibuffer-mode)
+         (vc-dir-mode         . beginend-vc-dir-mode)
+         (recentf-dialog-mode . beginend-recentf-dialog-mode)
+         (compilation-mode    . beginend-compilation-mode)
+         (rg-mode             . beginend-rg-mode))
+  :config
+  (map-values-apply (lambda (mode) (delight mode nil t)) beginend-modes))
+
 (use-package ido-completing-read+)
 
 (use-package ido-vertical-mode
