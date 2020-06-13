@@ -416,10 +416,10 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package cycle-quotes
   :bind (("C-x C-'" . cycle-quotes)))
 
-;; Vim-like increment and decrement
-(use-package evil-numbers
-  :bind (("C-x =" . evil-numbers/inc-at-pt)
-         ("C-x -" . evil-numbers/dec-at-pt)))
+;; Increment and decrement
+(use-package shift-number
+  :bind (("C-x =" . shift-number-up)
+         ("C-x -" . shift-number-down)))
 
 ;; Modern code folding
 (use-package origami
