@@ -226,6 +226,7 @@
  '(ns-right-control-modifier 'hyper)
  '(nsm-save-host-names t)
  '(olivetti-body-width 120)
+ '(origami-fold-replacement "▶️")
  '(package-archives
    '(("gnu" . "https://elpa.gnu.org/packages/")
      ("melpa" . "https://melpa.org/packages/")))
@@ -249,6 +250,9 @@
  '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/.recentf")
  '(require-final-newline 'ask)
+ '(rg-command-line-flags '("--no-ignore-global"))
+ '(rg-hide-command nil)
+ '(rg-keymap-prefix [134217843 114])
  '(ring-bell-function 'ignore)
  '(rst-adjust-hook 'rst-toc-update)
  '(rst-indent-comment 2)
