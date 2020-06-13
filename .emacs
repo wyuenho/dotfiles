@@ -478,6 +478,8 @@ Optional argument ARG same as `comment-dwim''s."
                                         (file-expand-wildcards
                                          "~/.vscode/extensions/dbaeumer.vscode-eslint-*/server/out/eslintServer.js"))))
                                     "--stdio")))
+(use-package lsp-origami
+  :hook (lsp-after-open . lsp-origami-try-enable))
 
 ;; LSP debugging support
 (use-package dap-mode
