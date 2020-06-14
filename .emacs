@@ -455,18 +455,18 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Static Analysis
 (use-package lsp-mode
   :after (which-key)
-  :hook (((css-mode
-           scss-mode
-           web-mode
-           go-mode
-           reason-mode
-           caml-mode
-           js-mode
-           sh-mode
-           rust-mode
-           python-mode
+  :hook (((caml-mode
+           css-mode
            enh-ruby-mode
-           typescript-mode)
+           go-mode
+           js-mode
+           python-mode
+           reason-mode
+           rust-mode
+           scss-mode
+           sh-mode
+           typescript-mode
+           web-mode)
           . lsp-deferred)
          (lsp-mode . lsp-enable-which-key-integration))
   :config
@@ -477,7 +477,12 @@ Optional argument ARG same as `comment-dwim''s."
                                        (last
                                         (file-expand-wildcards
                                          "~/.vscode/extensions/dbaeumer.vscode-eslint-*/server/out/eslintServer.js"))))
-                                    "--stdio")))
+                                    "--stdio"))
+  (add-hook 'lsp-managed-mode (lambda ()
+                                (when (or (lsp-feature? "textDocument/formatting")
+                                          (lsp-feature? "textDocument/rangeFormatting"))
+                                  (bind-key "C-c f" 'lsp-format-buffer (derived-mode-map-name major-mode))))))
+
 (use-package lsp-origami
   :hook (lsp-after-open . lsp-origami-try-enable))
 
@@ -705,69 +710,66 @@ Optional argument ARG same as `comment-dwim''s."
             "--ext"
             ".json,.js,.jsx,.mjs,.mjsx,.cjs,.cjsx,.ts,.tsx")))
 
-(defun find-js-formatter ()
-  (when-let* ((package-json-dir
-               (locate-dominating-file default-directory "package.json"))
+(dolist (mode '(css-mode js-mode markdown-mode scss-mode typescript-mode web-mode yaml-mode))
+  (let ((mode-hook (derived-mode-hook-name mode)))
+    (add-hook mode-hook
+              (lambda ()
+                (let ((formatter
+                       (when-let* ((package-json-dir
+                                    (locate-dominating-file default-directory "package.json"))
 
-              (package-json
-               (if package-json-dir
-                   (json-read-file (concat
-                                    (expand-file-name package-json-dir)
-                                    "package.json"))
-                 nil))
+                                   (package-json
+                                    (if package-json-dir
+                                        (json-read-file (concat
+                                                         (expand-file-name package-json-dir)
+                                                         "package.json"))
+                                      nil))
 
-              (devDependencies
-               (if package-json
-                   (alist-get 'devDependencies package-json)
-                 nil))
+                                   (devDependencies
+                                    (if package-json
+                                        (alist-get 'devDependencies package-json)
+                                      nil))
 
-              (formatter-styles
-               '((prettier prettier-eslint prettier)
-                 (eslint eslint-plugin-prettier eslint))))
+                                   (formatter-styles
+                                    '((prettier prettier-eslint prettier)
+                                      (eslint eslint-plugin-prettier eslint))))
 
-    (car (seq-filter 'identity
-                     (map-apply (lambda (command packages)
-                                  (and
-                                   (seq-some (lambda (package) (map-contains-key devDependencies package)) packages)
-                                   command))
-                                formatter-styles)))))
-
-(dolist (mode '(css-mode web-mode js-mode typescript-mode scss-mode yaml-mode markdown-mode))
-  (add-hook (intern (concat (symbol-name mode) "-hook"))
-            (lambda ()
-              (let ((formatter (find-js-formatter))
-                    (yarn-pnp-p (seq-some 'file-exists-p
-                                          (list (concat default-directory ".pnp.js")
-                                                (concat default-directory ".pnp.cjs"))))
-                    (mode-hook (intern (concat (symbol-name major-mode) "-hook")))
-                    (keymap (symbol-value (intern (concat (symbol-name major-mode) "-map")))))
-                (unless yarn-pnp-p
-                  (use-package add-node-modules-path
-                    :config (add-node-modules-path)))
-                (cond
-                 ((and (eq formatter 'eslint)
-                       (or (not (featurep 'lsp-mode))
-                           (with-eval-after-load 'lsp-mode
-                             (or (not lsp-mode)
-                                 (and lsp-mode
-                                      (member 'eslint
-                                              (mapcar
-                                               (lambda (workspace) (lsp--workspace-server-id workspace))
-                                               lsp--buffer-workspaces)))))))
-                  (if (or yarn-pnp-p (executable-find "yarn"))
+                         (car (seq-filter 'identity
+                                          (map-apply (lambda (command packages)
+                                                       (and
+                                                        (seq-some
+                                                         (lambda (package) (map-contains-key devDependencies package)) packages)
+                                                        command))
+                                                     formatter-styles)))))
+                      (yarn-pnp-p (seq-some 'file-exists-p
+                                            (list (concat default-directory ".pnp.js")
+                                                  (concat default-directory ".pnp.cjs")))))
+                  (unless yarn-pnp-p
+                    (use-package add-node-modules-path
+                      :config (add-node-modules-path)))
+                  (cond
+                   ((and (eq formatter 'eslint)
+                         (or (not (featurep 'lsp-mode))
+                             (with-eval-after-load 'lsp-mode
+                               (or (not lsp-mode)
+                                   (and lsp-mode
+                                        (member 'eslint
+                                                (lsp-foreach-workspace
+                                                 (lsp--workspace-server-id lsp--cur-workspace))))))))
+                    (if (or yarn-pnp-p (executable-find "yarn"))
+                        (progn
+                          (bind-key "C-c f" 'yarn-eslint-format-buffer (derived-mode-map-name mode))
+                          (add-hook mode-hook 'yarn-eslint-format-on-save-mode))
                       (progn
-                        (bind-key "C-c f" 'yarn-eslint-format-buffer keymap)
-                        (add-hook mode-hook 'yarn-eslint-format-on-save-mode))
-                    (progn
-                      (bind-key "C-c f" 'eslint-format-buffer keymap)
-                      (add-hook mode-hook 'eslint-format-on-save-mode)))
-                  (eslint-format-on-save-mode))
-                 ((eq formatter 'prettier)
-                  (use-package prettier
-                    :delight
-                    :config
-                    (prettier-mode)
-                    (bind-key "C-c f" 'prettier-prettify keymap))))))))
+                        (bind-key "C-c f" 'eslint-format-buffer (derived-mode-map-name mode))
+                        (add-hook mode-hook 'eslint-format-on-save-mode)))
+                    (eslint-format-on-save-mode))
+                   ((eq formatter 'prettier)
+                    (use-package prettier
+                      :delight
+                      :config
+                      (prettier-mode)
+                      (bind-key "C-c f" 'prettier-prettify (derived-mode-map-name mode))))))))))
 
 ;; Node
 (add-hook 'js-mode-hook
