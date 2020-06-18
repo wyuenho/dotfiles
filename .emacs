@@ -615,6 +615,8 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-c e r" . eval-region)
            ("C-c e e" . eval-print-last-sexp))
 
+(add-hook 'ielm-mode-hook (lambda () (ielm-change-working-buffer (window-buffer (selected-window)))))
+
 (use-package macrostep
   :bind (:map emacs-lisp-mode-map
               ("C-c e x" . macrostep-expand)))
