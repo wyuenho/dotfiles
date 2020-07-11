@@ -1252,7 +1252,30 @@ Optional argument ARG same as `comment-dwim''s."
             (lambda ()
               (when (file-exists-p purpose-default-layout-file)
                 (purpose-load-window-layout-file))
-              (select-window (get-largest-window)))))
+              (select-window (get-largest-window))))
+
+  (advice-add 'quit-restore-window :around (lambda (orig-func &optional window bury-or-kill)
+                                             (let* ((window (window-normalize-window window t))
+                                                    (quit-restore (window-parameter window 'quit-restore)))
+
+                                               ;; log
+                                               (with-temp-buffer
+                                                 (let ((file-path (concat user-emacs-directory "quit-restore-window.log")))
+                                                   (unless (file-exists-p file-path)
+                                                     (write-file file-path))
+                                                   (insert-file-contents file-path t)
+                                                   (goto-char (point-max))
+                                                   (insert (format "command: %s, major-mode: %s, quit-restore window param: %s, bury-or-kill: %s\n"
+                                                                   this-command
+                                                                   major-mode
+                                                                   (window-parameter window 'quit-restore)
+                                                                   bury-or-kill))
+                                                   (save-buffer)))
+
+                                               (funcall orig-func window bury-or-kill)
+
+                                               (when (and (null quit-restore) (window-parent window))
+                                                 (delete-window window))))))
 
 ;; UI
 
