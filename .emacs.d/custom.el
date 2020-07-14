@@ -121,6 +121,8 @@
  '(help-at-pt-display-when-idle '(keymap local-map button kbd-help flymake-diagnostic) nil (help-at-pt))
  '(help-at-pt-timer-delay 0.5)
  '(history-length 250)
+ '(ialign-initial-regexp "(\\s+)")
+ '(ialign-pcre-mode t)
  '(ibuffer-elide-long-columns t)
  '(ibuffer-expert t)
  '(icomplete-mode t)
