@@ -459,7 +459,7 @@ Optional argument ARG same as `comment-dwim''s."
            enh-ruby-mode
            go-mode
            js-mode
-           python-mode
+           ;; python-mode
            reason-mode
            rust-mode
            scss-mode
@@ -481,6 +481,9 @@ Optional argument ARG same as `comment-dwim''s."
                                 (when (or (lsp-feature? "textDocument/formatting")
                                           (lsp-feature? "textDocument/rangeFormatting"))
                                   (bind-key "C-c f" 'lsp-format-buffer (derived-mode-map-name major-mode))))))
+
+;; (use-package lsp-python-ms
+;;   :after (lsp-mode))
 
 (use-package lsp-origami
   :hook (lsp-after-open . lsp-origami-try-enable))
@@ -563,6 +566,10 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package flycheck-pos-tip
   :after (flycheck)
   :hook (flycheck-mode . flycheck-pos-tip-mode))
+
+(use-package flycheck-pyre
+  :after (flycheck)
+  :hook (flycheck-mode . flycheck-pyre-setup))
 
 ;; REST API
 (use-package restclient
@@ -871,9 +878,21 @@ Optional argument ARG same as `comment-dwim''s."
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
 (add-hook 'python-mode-hook
           (lambda ()
+            (use-package anaconda-mode
+              :delight
+              :config
+              (anaconda-mode)
+              (anaconda-eldoc-mode))
+
+            (use-package company-anaconda
+              :after (company)
+              :config
+              (setq-local company-backends
+                          '((company-anaconda :with company-capf company-yasnippet))))
+
             (use-package py-isort
               :config
-              (add-hook 'before-save-hook 'py-isort-before-save 'local))
+              (add-hook 'before-save-hook 'py-isort-before-save nil 'local))
 
             (use-package python-docstring
               :delight
