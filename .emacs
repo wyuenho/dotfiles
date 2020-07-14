@@ -2,8 +2,7 @@
 (load-library "map")
 (load-library "seq")
 
-;; Set file, keyboard and terminal coding systems automatically
-(prefer-coding-system 'utf-8)
+(set-locale-environment "UTF-8")
 
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...

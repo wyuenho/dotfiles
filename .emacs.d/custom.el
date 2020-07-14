@@ -44,7 +44,6 @@
  '(confirm-kill-processes nil)
  '(create-lockfiles nil)
  '(css-indent-offset 2)
- '(current-language-environment "English")
  '(custom-buffer-done-kill t)
  '(dabbrev-case-fold-search nil)
  '(delete-by-moving-to-trash t)
