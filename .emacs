@@ -534,8 +534,8 @@ Optional argument ARG same as `comment-dwim''s."
           company-files
           ,@(if (and (memq (window-system) '(ns mac))
                      (fboundp 'company-emoji))
-                '((company-emoji :separate company-capf :separate company-yasnippet))
-              '(company-capf :separate company-yasnippet))
+                '((company-emoji :separate company-capf :with company-yasnippet))
+              '(company-capf :with company-yasnippet))
           (company-dabbrev-code
            company-gtags
            company-etags
