@@ -6,9 +6,10 @@
 
 ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
 ;; evaling arbitrary code...
-(advice-add 'load-theme :around (lambda (old-load-theme &rest args)
-                                  "Don't ask for confirmation when loading a theme."
-                                  (apply old-load-theme (car args) t (cddr args))))
+(defun load-theme-advice (old-load-theme &rest args)
+  "Don't ask for confirmation when loading a theme."
+  (apply old-load-theme (car args) t (cddr args)))
+(advice-add 'load-theme :around 'load-theme-advice)
 
 (package-initialize)
 
@@ -45,14 +46,16 @@
 
 ;; Remove all query on exit flags on all processes before quitting
 (unless (boundp 'confirm-kill-processes) ;; new on Emacs 26
-  (advice-add 'save-buffers-kill-emacs :before
-              (lambda (&rest _)
-                (defun processes-with-query (process)
-                  (and (memq (process-status process) '(run stop open listen))
-                       (process-query-on-exit-flag process)))
-                (let ((processes (seq-filter 'processes-with-query (process-list))))
-                  (dolist (process processes)
-                    (set-process-query-on-exit-flag process nil)))))
+  (defun save-buffers-kill-emacs-advice (&rest _)
+    "Remove all query-on-exit flags on all processes before quitting."
+    (let ((processes (seq-filter
+                      (lambda (process)
+                        (and (memq (process-status process) '(run stop open listen))
+                             (process-query-on-exit-flag process)))
+                      (process-list))))
+      (dolist (process processes)
+        (set-process-query-on-exit-flag process nil))))
+  (advice-add 'save-buffers-kill-emacs :before 'save-buffers-kill-emacs-advice)
   (setq kill-buffer-query-functions
         (remq 'process-kill-buffer-query-function kill-buffer-query-functions)))
 
@@ -80,9 +83,8 @@
                      (add-hook 'after-revert-hook 'linum-update-current)))))
 
 ;; More sensible comment-dwim
-(advice-add 'comment-dwim :around
-            (lambda (comment-dwim &rest args)
-              "Replacement for the `comment-dwim' command.
+(defun comment-dwim-advice (comment-dwim &rest args)
+  "Replacement for the `comment-dwim' command.
 
 If no region is selected and point is not at the end of the line,
 comment the current line from the front, otherwise the
@@ -91,11 +93,11 @@ of `comment-dwim', where it inserts comment at the end of the
 line if no region is defined.
 
 Optional argument ARG same as `comment-dwim''s."
-
-              (interactive "*P")
-              (if (and (not (use-region-p)))
-                  (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-                (apply comment-dwim args))))
+  (interactive "*P")
+  (if (and (not (use-region-p)))
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+    (apply comment-dwim args)))
+(advice-add 'comment-dwim :around 'comment-dwim-advice)
 
 (use-package bind-key
   :quelpa (bind-key :fetcher github :repo "wyuenho/use-package" :branch "patch-1" :files ("bind-key.el")))
@@ -1203,30 +1205,31 @@ Optional argument ARG same as `comment-dwim''s."
     (setq dired-single-magic-buffer-name purpose-x-code1-dired-buffer-name))
   ;; Make sure dired-hide-details-mode is preserved when reusing the dired
   ;; window
-  (advice-add 'find-alternate-file :around
-              (lambda (oldfun &rest args)
-                (let ((is-dired (derived-mode-p 'dired-mode))
-                      (hide-dotfiles (and (boundp 'dired-hide-dotfiles-mode) dired-hide-dotfiles-mode))
-                      (hide-details dired-hide-details-mode)
-                      (hide-information-lines dired-hide-details-hide-information-lines)
-                      (hide-symlink-targets dired-hide-details-hide-symlink-targets)
-                      (tl truncate-lines)
-                      (ww word-wrap)
-                      (vlm visual-line-mode)
-                      (mlf mode-line-format)
-                      (arv auto-revert-verbose)
-                      (result (apply oldfun args)))
-                  (when hide-dotfiles (dired-hide-dotfiles-mode))
-                  (when is-dired
-                    (setq truncate-lines tl
-                          word-wrap ww
-                          visual-line-mode vlm
-                          mode-line-format mlf
-                          auto-revert-verbose arv)
-                    (setq-local dired-hide-details-hide-information-lines hide-information-lines)
-                    (setq-local dired-hide-details-hide-symlink-targets hide-symlink-targets)
-                    (when hide-details (dired-hide-details-mode)))
-                  result))))
+  (defun find-alternate-file-advice (oldfun &rest args)
+    "Preserve inherit parent dired buffer state if invoked from a dired buffer."
+    (let ((is-dired (derived-mode-p 'dired-mode))
+          (hide-dotfiles (and (boundp 'dired-hide-dotfiles-mode) dired-hide-dotfiles-mode))
+          (hide-details dired-hide-details-mode)
+          (hide-information-lines dired-hide-details-hide-information-lines)
+          (hide-symlink-targets dired-hide-details-hide-symlink-targets)
+          (tl truncate-lines)
+          (ww word-wrap)
+          (vlm visual-line-mode)
+          (mlf mode-line-format)
+          (arv auto-revert-verbose)
+          (result (apply oldfun args)))
+      (when is-dired
+        (when hide-dotfiles (dired-hide-dotfiles-mode))
+        (setq truncate-lines tl
+              word-wrap ww
+              visual-line-mode vlm
+              mode-line-format mlf
+              auto-revert-verbose arv)
+        (setq-local dired-hide-details-hide-information-lines hide-information-lines)
+        (setq-local dired-hide-details-hide-symlink-targets hide-symlink-targets)
+        (when hide-details (dired-hide-details-mode)))
+      result))
+  (advice-add 'find-alternate-file :around 'find-alternate-file-advice))
 
 (use-package dired-collapse
   :hook (dired-mode . dired-collapse-mode))
@@ -1294,28 +1297,28 @@ Optional argument ARG same as `comment-dwim''s."
                 (purpose-load-window-layout-file))
               (select-window (get-largest-window))))
 
-  (advice-add 'quit-restore-window :around (lambda (orig-func &optional window bury-or-kill)
-                                             (let* ((window (window-normalize-window window t))
-                                                    (quit-restore (window-parameter window 'quit-restore)))
+  (defun quit-restore-window-advice (orig-func &optional window bury-or-kill)
+    (let* ((window (window-normalize-window window t))
+           (quit-restore (window-parameter window 'quit-restore)))
 
-                                               ;; log
-                                               (with-temp-buffer
-                                                 (let ((file-path (concat user-emacs-directory "quit-restore-window.log")))
-                                                   (unless (file-exists-p file-path)
-                                                     (write-file file-path))
-                                                   (insert-file-contents file-path t)
-                                                   (goto-char (point-max))
-                                                   (insert (format "command: %s, major-mode: %s, quit-restore window param: %s, bury-or-kill: %s\n"
-                                                                   this-command
-                                                                   major-mode
-                                                                   (window-parameter window 'quit-restore)
-                                                                   bury-or-kill))
-                                                   (save-buffer)))
+      ;; log
+      (with-temp-buffer
+        (let ((file-path (concat user-emacs-directory "quit-restore-window.log")))
+          (unless (file-exists-p file-path)
+            (write-file file-path))
+          (insert-file-contents file-path t)
+          (goto-char (point-max))
+          (insert (format "command: %s, major-mode: %s, quit-restore window param: %s, bury-or-kill: %s\n"
+                          this-command
+                          major-mode
+                          (window-parameter window 'quit-restore)
+                          bury-or-kill))
+          (save-buffer)))
 
-                                               (funcall orig-func window bury-or-kill)
-
-                                               (when (and (null quit-restore) (window-parent window))
-                                                 (delete-window window))))))
+      (funcall orig-func window bury-or-kill)
+      (when (and (null quit-restore) (window-parent window))
+        (delete-window window))))
+  (advice-add 'quit-restore-window :around 'quit-restore-window-advice))
 
 ;; UI
 
