@@ -862,7 +862,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;;                              (tide-setup)
 ;;                              (tide-hl-identifier-mode t)))
 ;;   :config
-;;   ;; (add-hook 'before-save-hook 'tide-format-before-save 'local)
+;;   ;; (add-hook 'before-save-hook 'tide-format-before-save nil 'local)
 ;;   :bind (:map tide-mode-map
 ;;               ("C-h p"   . tide-documentation-at-point)
 ;;               ("C-c 1"   . tide-fix)
@@ -1022,7 +1022,7 @@ Optional argument ARG same as `comment-dwim''s."
                 :config
                 (tide-setup)
                 (tide-hl-identifier-mode t)
-                (add-hook 'before-save-hook 'tide-format-before-save 'local)
+                (add-hook 'before-save-hook 'tide-format-before-save nil 'local)
                 :bind (:map tide-mode-map
                             ("C-h p"   . tide-documentation-at-point)
                             ("C-c 1"   . tide-fix)
