@@ -587,13 +587,17 @@ Optional argument ARG same as `comment-dwim''s."
                 (setq-local company-backends `(company-restclient))))))
 
 ;; Term and shell
+(with-eval-after-load 'shell
+  (use-package native-complete
+    :config (native-complete-setup-bash)))
+
 (add-hook 'sh-mode-hook
           (lambda ()
-            (use-package company-shell
+            (use-package company-native-complete
               :after (company)
               :config
               (setq-local company-backends
-                          '(company-shell company-shell-env company-files company-capf)))))
+                          '(company-native-complete company-files company-capf)))))
 
 (use-package multi-term
   :after (projectile)
