@@ -127,8 +127,9 @@ export HSTR_CONFIG
 # append new history items to .bash_history
 shopt -s histappend
 
-# leading space hides commands from history
-HISTCONTROL=ignorespace
+# leading space hides commands from history, move dups to front and erase old
+# entry
+HISTCONTROL=ignorespace:erasedups
 export HISTCONTROL
 
 # increase history file size (default is 500)
