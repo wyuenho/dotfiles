@@ -1266,6 +1266,28 @@ Optional argument ARG same as `comment-dwim''s."
 
   (purpose-mode t)
 
+  ;; Replace `edebug-pop-to-buffer' with `pop-to-buffer'
+  (with-eval-after-load 'edebug
+
+    (defun edebug-pop-to-buffer-advice (buffer &optional window)
+      "Replaces `edebug-pop-to-buffer' with `pop-to-buffer'"
+      (setq window
+            (cond
+             ((and (edebug-window-live-p window)
+                   (eq (window-buffer window) buffer))
+              window)
+             ((eq (window-buffer) buffer)
+              (selected-window))
+             ((get-buffer-window buffer 0))
+             (t (get-buffer-window (pop-to-buffer buffer)))))
+      (set-window-buffer window buffer)
+      (select-window window)
+      (unless (memq (framep (selected-frame)) '(nil t pc))
+        (x-focus-frame (selected-frame)))
+      (set-window-hscroll window 0))
+
+    (advice-add 'edebug-pop-to-buffer :override 'edebug-pop-to-buffer-advice))
+
   (add-hook 'after-init-hook
             (lambda ()
               (when (file-exists-p purpose-default-layout-file)
