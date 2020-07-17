@@ -625,6 +625,9 @@ Quit window when there are no more multi-term buffers."
 
 (setq eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
+(use-package eterm-256color
+  :hook (term-mode . eterm-256color-mode))
+
 ;; Markup and config languages
 (use-package yaml-mode
   :mode "\\.ya?ml\\'")
