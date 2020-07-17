@@ -600,10 +600,26 @@ Optional argument ARG same as `comment-dwim''s."
                           '(company-native-complete company-files company-capf)))))
 
 (use-package multi-term
+  :preface
+  (defun multi-term-handle-close-advice ()
+    "Close current term buffer when `exit' from term buffer.
+
+Quit window when there are no more multi-term buffers."
+    (when (ignore-errors (get-buffer-process (current-buffer)))
+      (set-process-sentinel (get-buffer-process (current-buffer))
+                            (lambda (proc change)
+                              (let* ((buffer (process-buffer proc))
+                                     (window (get-buffer-window buffer)))
+                                (when (string-match "\\(finished\\|exited\\)" change)
+                                  (kill-buffer buffer)
+                                  (when (not multi-term-buffer-list)
+                                    (delete-window window))))))))
   :after (projectile)
   :bind (("M-T" . multi-term)
          :map projectile-command-map
-         ("x T" . multi-term)))
+         ("x T" . multi-term))
+  :config
+  (advice-add 'multi-term-handle-close :override 'multi-term-handle-close-advice))
 
 (setq eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
