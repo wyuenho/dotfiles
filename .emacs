@@ -599,34 +599,48 @@ Optional argument ARG same as `comment-dwim''s."
               (setq-local company-backends
                           '(company-native-complete company-files company-capf)))))
 
-(use-package multi-term
-  :preface
-  (defun multi-term-handle-close-advice ()
-    "Close current term buffer when `exit' from term buffer.
-
-Quit window when there are no more multi-term buffers."
-    (when (ignore-errors (get-buffer-process (current-buffer)))
-      (set-process-sentinel (get-buffer-process (current-buffer))
-                            (lambda (proc change)
-                              (let* ((buffer (process-buffer proc))
-                                     (window (get-buffer-window buffer)))
-                                (when (string-match "\\(finished\\|exited\\)" change)
-                                  (kill-buffer buffer)
-                                  (when (and (window-live-p window)
-                                             (not (window-dedicated-p window))
-                                             (not multi-term-buffer-list))
-                                    (delete-window window))))))))
-  :after (projectile)
-  :bind (("M-T" . multi-term)
-         :map projectile-command-map
-         ("x T" . multi-term))
-  :config
-  (advice-add 'multi-term-handle-close :override 'multi-term-handle-close-advice))
-
 (setq eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
+
+(use-package vterm
+  :preface
+  (defun vterm--sentinel-advice (process event)
+    "Sentinel of vterm PROCESS.
+Argument EVENT process event.
+
+Runs `vterm-exit-functions' before exiting.
+
+If `vterm-kill-buffer-on-exit' is t, kills the buffer and
+optionally the window if possible."
+    (let* ((buffer (process-buffer process))
+           (window (get-buffer-window buffer)))
+      (when (string-match "\\(finished\\|exited\\)" event)
+        (run-hook-with-args 'vterm-exit-functions
+                            (if (buffer-live-p buffer) buffer nil)
+                            event)
+        (when (and vterm-kill-buffer-on-exit (buffer-live-p buffer))
+          (kill-buffer buffer)
+          (when (and (window-live-p window)
+                     (not (window-dedicated-p window))
+                     (not (seq-find (lambda (buffer)
+                                      (with-current-buffer buffer
+                                        (and (derived-mode-p 'vterm-mode)
+                                             (buffer-live-p buffer))))
+                                    (buffer-list))))
+            (ignore-errors (delete-window window)))))))
+  :bind (("M-T" . vterm))
+  :config
+  (setq vterm-always-compile-module t)
+  (advice-add 'vterm--sentinel :override 'vterm--sentinel-advice))
+
 (use-package eterm-256color
-  :hook (term-mode . eterm-256color-mode))
+  :config
+  (with-eval-after-load 'term
+    (add-hook 'term-mode 'eterm-256color-mode))
+  (with-eval-after-load 'vterm
+    (add-hook 'vterm-mode-hook
+              (lambda ()
+                (setq-local vterm-term-environment-variable "eterm-256color")))))
 
 ;; Markup and config languages
 (use-package yaml-mode
@@ -1285,7 +1299,8 @@ Quit window when there are no more multi-term buffers."
   (purpose-add-user-purposes
    :modes '((message-mode . edit)
             (ag-mode      . search)
-            (rg-mode      . search)))
+            (rg-mode      . search)
+            (vterm-mode   . terminal)))
 
   (purpose-x-code1-setup)
   (purpose-x-popwin-setup)
@@ -1313,7 +1328,6 @@ Quit window when there are no more multi-term buffers."
       (unless (memq (framep (selected-frame)) '(nil t pc))
         (x-focus-frame (selected-frame)))
       (set-window-hscroll window 0))
-
     (advice-add 'edebug-pop-to-buffer :override 'edebug-pop-to-buffer-advice))
 
   (add-hook 'after-init-hook
@@ -1342,7 +1356,7 @@ Quit window when there are no more multi-term buffers."
 
       (funcall orig-func window bury-or-kill)
       (when (and (null quit-restore) (window-parent window))
-        (delete-window window))))
+        (ignore-errors (delete-window window)))))
   (advice-add 'quit-restore-window :around 'quit-restore-window-advice))
 
 ;; UI
