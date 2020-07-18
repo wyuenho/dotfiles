@@ -304,6 +304,8 @@
  '(user-mail-address "wyuenho@gmail.com")
  '(vc-follow-symlinks nil)
  '(vr/engine 'pcre2el)
+ '(vterm-always-compile-module t)
+ '(vterm-term-environment-variable "eterm-256color")
  '(web-mode-code-indent-offset 2)
  '(web-mode-css-indent-offset 2)
  '(web-mode-enable-auto-indentation nil)

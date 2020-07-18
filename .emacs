@@ -601,7 +601,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 (setq eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
-
 (use-package vterm
   :preface
   (defun vterm--sentinel-advice (process event)
@@ -630,17 +629,12 @@ optionally the window if possible."
             (ignore-errors (delete-window window)))))))
   :bind (("M-T" . vterm))
   :config
-  (setq vterm-always-compile-module t)
   (advice-add 'vterm--sentinel :override 'vterm--sentinel-advice))
 
 (use-package eterm-256color
   :config
   (with-eval-after-load 'term
-    (add-hook 'term-mode 'eterm-256color-mode))
-  (with-eval-after-load 'vterm
-    (add-hook 'vterm-mode-hook
-              (lambda ()
-                (setq-local vterm-term-environment-variable "eterm-256color")))))
+    (add-hook 'term-mode 'eterm-256color-mode)))
 
 ;; Markup and config languages
 (use-package yaml-mode
