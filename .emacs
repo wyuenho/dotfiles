@@ -708,7 +708,7 @@ optionally the window if possible."
 ;;                          ("C-h o"   . eglot-help-at-point)
 ;;                          ("C-c C-r" . eglot-rename)
 ;;                          ("C-c f"   . eglot-format)
-;;                          ("M-1"     . eglot-code-actions))))
+;;                          ("C-c C-a" . eglot-code-actions))))
 ;;   (with-eval-after-load 'company
 ;;     (make-local-variable 'company-transformers)
 ;;     (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
@@ -937,9 +937,11 @@ optionally the window if possible."
 
             (use-package importmagic
               :delight
-              :config (importmagic-mode)
               :bind (:map importmagic-mode-map
-                          ("M-1" . importmagic-fix-imports)))
+                          ("C-c f" . importmagic-fix-imports))
+              :config
+              (importmagic-mode)
+              (unbind-key "C-c C-l" importmagic-mode-map))
 
             (let ((python-version (shell-command-to-string
                                    (string-join `(,python-shell-interpreter "--version") " "))))
