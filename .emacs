@@ -929,10 +929,6 @@ optionally the window if possible."
               (setq-local company-backends
                           '((company-anaconda :with company-capf company-yasnippet))))
 
-            (use-package py-isort
-              :config
-              (add-hook 'before-save-hook 'py-isort-before-save nil 'local))
-
             (use-package python-docstring
               :delight
               :config (python-docstring-mode))
@@ -949,8 +945,12 @@ optionally the window if possible."
                                    (string-join `(,python-shell-interpreter "--version") " "))))
               (if (and (string-match "\\([0-9]+\\)\.[0-9]+\.[0-9]+" python-version)
                        (>= (string-to-number (match-string-no-properties 1 python-version)) 3))
-                  (use-package blacken :delight)
-                (use-package py-autopep8 :config (py-autopep8-enable-on-save))))))
+                  (use-package python-black :config (python-black-on-save-mode))
+                (progn
+                  (use-package py-autopep8 :config (py-autopep8-enable-on-save))
+                  (use-package py-isort
+                    :config
+                    (add-hook 'before-save-hook 'py-isort-before-save nil 'local)))))))
 
 ;; Ruby
 (use-package yard-mode)
