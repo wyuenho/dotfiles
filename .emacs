@@ -918,6 +918,8 @@ optionally the window if possible."
             (use-package anaconda-mode
               :delight
               :config
+              (bind-key "C-M-=" 'anaconda-mode-find-assignments anaconda-mode-map)
+              (unbind-key "M-=" anaconda-mode-map)
               (anaconda-mode)
               (anaconda-eldoc-mode))
 
