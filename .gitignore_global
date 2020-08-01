@@ -1276,7 +1276,6 @@ gradle-app.setting
 *.rdb
 
 ### Ruby ###
-/.config
 /InstalledFiles
 /pkg/
 /spec/reports/
