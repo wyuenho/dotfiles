@@ -471,6 +471,7 @@ Optional argument ARG same as `comment-dwim''s."
            rust-mode
            scss-mode
            sh-mode
+           swift-mode
            typescript-mode
            web-mode)
           . lsp-deferred)
@@ -496,6 +497,9 @@ Optional argument ARG same as `comment-dwim''s."
   :after lsp
   :config
   (add-to-list 'lsp-enabled-clients 'jedi))
+
+(use-package lsp-sourcekit
+  :after (lsp-mode))
 
 (use-package lsp-origami
   :hook (lsp-after-open . lsp-origami-try-enable))
@@ -979,6 +983,9 @@ optionally the window if possible."
               (use-package cargo
                 :delight
                 :config (cargo-minor-mode)))))
+
+;; Swift
+(use-package swift-mode)
 
 ;; Scala
 (use-package sbt-mode
