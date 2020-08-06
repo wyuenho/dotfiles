@@ -452,6 +452,12 @@ Optional argument ARG same as `comment-dwim''s."
             (use-package pdf-tools
               :config (pdf-tools-install))))
 
+;; Modern tree-based syntax-highlighting
+(use-package tree-sitter-langs
+  :config
+  (setq tree-sitter-mode-major-mode (assoc-delete-all 'js2-mode tree-sitter-mode-major-mode))
+  (add-hook 'tree-sitter-after-on-hook 'tree-sitter-hl-mode))
+
 ;; Static Analysis
 (use-package lsp-mode
   :after (which-key)
