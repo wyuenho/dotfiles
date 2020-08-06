@@ -466,7 +466,7 @@ Optional argument ARG same as `comment-dwim''s."
            enh-ruby-mode
            go-mode
            js-mode
-           ;; python-mode
+           python-mode
            reason-mode
            rust-mode
            scss-mode
@@ -476,7 +476,9 @@ Optional argument ARG same as `comment-dwim''s."
           . lsp-deferred)
          (lsp-mode . lsp-enable-which-key-integration))
   :config
-  (setq read-process-output-max (* 1024 1024))
+  ;; Fuck this incredibly slow Palantir language server
+  (add-to-list 'lsp-disabled-clients 'pyls)
+  (setq read-process-output-max (* 1024 1024 10))
   (setq lsp-eslint-server-command `("node"
                                     ,(expand-file-name
                                       (car
@@ -489,8 +491,11 @@ Optional argument ARG same as `comment-dwim''s."
                                           (lsp-feature? "textDocument/rangeFormatting"))
                                   (bind-key "C-c f" 'lsp-format-buffer (derived-mode-map-name major-mode))))))
 
-;; (use-package lsp-python-ms
-;;   :after (lsp-mode))
+(use-package lsp-jedi
+  :quelpa (lsp-jedi :fetcher github :repo "wyuenho/lsp-jedi" :branch "fix-init-options")
+  :after lsp
+  :config
+  (add-to-list 'lsp-enabled-clients 'jedi))
 
 (use-package lsp-origami
   :hook (lsp-after-open . lsp-origami-try-enable))
@@ -920,20 +925,6 @@ optionally the window if possible."
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
 (add-hook 'python-mode-hook
           (lambda ()
-            (use-package anaconda-mode
-              :delight
-              :config
-              (bind-key "C-M-=" 'anaconda-mode-find-assignments anaconda-mode-map)
-              (unbind-key "M-=" anaconda-mode-map)
-              (anaconda-mode)
-              (anaconda-eldoc-mode))
-
-            (use-package company-anaconda
-              :after (company)
-              :config
-              (setq-local company-backends
-                          '((company-anaconda :with company-capf company-yasnippet))))
-
             (use-package python-docstring
               :delight
               :config (python-docstring-mode))
@@ -946,16 +937,16 @@ optionally the window if possible."
               (importmagic-mode)
               (unbind-key "C-c C-l" importmagic-mode-map))
 
+            ;; Don't add `py-isort-before-save' to `before-save-hook' or the
+            ;; undo history will be very messed up
+            (use-package py-isort)
+
             (let ((python-version (shell-command-to-string
                                    (string-join `(,python-shell-interpreter "--version") " "))))
               (if (and (string-match "\\([0-9]+\\)\.[0-9]+\.[0-9]+" python-version)
                        (>= (string-to-number (match-string-no-properties 1 python-version)) 3))
                   (use-package python-black :config (python-black-on-save-mode))
-                (progn
-                  (use-package py-autopep8 :config (py-autopep8-enable-on-save))
-                  (use-package py-isort
-                    :config
-                    (add-hook 'before-save-hook 'py-isort-before-save nil 'local)))))))
+                (use-package py-autopep8 :config (py-autopep8-enable-on-save))))))
 
 ;; Ruby
 (use-package yard-mode)
@@ -1401,6 +1392,7 @@ optionally the window if possible."
   :config
   (delight '((rainbow-mode)
              (lsp-mode)
+             (python-black-on-save-mode nil python-black)
              (auto-fill-mode            nil simple)
              (isearch-mode              nil isearch)
              (abbrev-mode               nil abbrev)

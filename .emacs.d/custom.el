@@ -109,6 +109,7 @@
  '(global-move-dup-mode t)
  '(global-origami-mode t)
  '(global-syntax-subword-mode t)
+ '(global-tree-sitter-mode t)
  '(global-undo-tree-mode t)
  '(global-whitespace-cleanup-mode t)
  '(gnus-completing-read-function 'gnus-ido-completing-read)
@@ -240,6 +241,7 @@
  '(purpose-x-code1-update-idle-delay 0.5)
  '(purpose-x-popwin-major-modes
    '(help-mode compilation-mode occur-mode helpful-mode comint-mode))
+ '(py-isort-options '("--profile" "black"))
  '(python-shell-completion-native-enable nil)
  '(quelpa-checkout-melpa-p nil)
  '(quelpa-update-melpa-p nil)
