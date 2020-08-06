@@ -99,8 +99,7 @@ Optional argument ARG same as `comment-dwim''s."
     (apply comment-dwim args)))
 (advice-add 'comment-dwim :around 'comment-dwim-advice)
 
-(use-package bind-key
-  :quelpa (bind-key :fetcher github :repo "wyuenho/use-package" :branch "patch-1" :files ("bind-key.el")))
+(use-package bind-key)
 
 ;; I hate X mouse bindings
 (when (and (display-graphic-p)
