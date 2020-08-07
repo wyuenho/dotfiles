@@ -1314,7 +1314,6 @@ optionally the window if possible."
 
   ;; Replace `edebug-pop-to-buffer' with `pop-to-buffer'
   (with-eval-after-load 'edebug
-
     (defun edebug-pop-to-buffer-advice (buffer &optional window)
       "Replaces `edebug-pop-to-buffer' with `pop-to-buffer'"
       (setq window
@@ -1333,12 +1332,6 @@ optionally the window if possible."
       (set-window-hscroll window 0))
     (advice-add 'edebug-pop-to-buffer :override 'edebug-pop-to-buffer-advice))
 
-  (add-hook 'after-init-hook
-            (lambda ()
-              (when (file-exists-p purpose-default-layout-file)
-                (purpose-load-window-layout-file))
-              (select-window (get-largest-window))))
-
   (defun purpose-quit-restore-window-advice (orig-func &optional window bury-or-kill)
     "Close pop up window when there aren't pop up buffers can be shown in it."
     (let* ((window (window-normalize-window window t))
@@ -1346,7 +1339,16 @@ optionally the window if possible."
       (funcall orig-func window bury-or-kill)
       (when (and (null quit-restore) (window-parent window))
         (ignore-errors (delete-window window)))))
-  (advice-add 'quit-restore-window :around 'purpose-quit-restore-window-advice))
+  (advice-add 'quit-restore-window :around 'purpose-quit-restore-window-advice)
+
+  (with-eval-after-load 'wid-browse
+    (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
+
+  (add-hook 'after-init-hook
+            (lambda ()
+              (when (file-exists-p purpose-default-layout-file)
+                (purpose-load-window-layout-file))
+              (select-window (get-largest-window)))))
 
 ;; UI
 
