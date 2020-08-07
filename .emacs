@@ -1339,28 +1339,14 @@ optionally the window if possible."
                 (purpose-load-window-layout-file))
               (select-window (get-largest-window))))
 
-  (defun quit-restore-window-advice (orig-func &optional window bury-or-kill)
+  (defun purpose-quit-restore-window-advice (orig-func &optional window bury-or-kill)
+    "Close pop up window when there aren't pop up buffers can be shown in it."
     (let* ((window (window-normalize-window window t))
            (quit-restore (window-parameter window 'quit-restore)))
-
-      ;; log
-      (with-temp-buffer
-        (let ((file-path (concat user-emacs-directory "quit-restore-window.log")))
-          (unless (file-exists-p file-path)
-            (write-file file-path))
-          (insert-file-contents file-path t)
-          (goto-char (point-max))
-          (insert (format "command: %s, major-mode: %s, quit-restore window param: %s, bury-or-kill: %s\n"
-                          this-command
-                          major-mode
-                          (window-parameter window 'quit-restore)
-                          bury-or-kill))
-          (save-buffer)))
-
       (funcall orig-func window bury-or-kill)
       (when (and (null quit-restore) (window-parent window))
         (ignore-errors (delete-window window)))))
-  (advice-add 'quit-restore-window :around 'quit-restore-window-advice))
+  (advice-add 'quit-restore-window :around 'purpose-quit-restore-window-advice))
 
 ;; UI
 
