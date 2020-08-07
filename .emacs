@@ -1385,6 +1385,7 @@ optionally the window if possible."
   :config
   (delight '((rainbow-mode)
              (lsp-mode)
+             (tree-sitter-hl-mode       nil tree-sitter)
              (python-black-on-save-mode nil python-black)
              (auto-fill-mode            nil simple)
              (isearch-mode              nil isearch)
