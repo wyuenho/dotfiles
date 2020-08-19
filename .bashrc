@@ -27,6 +27,9 @@ if [ -x "$(command -v emacs)" ]; then
     export ALTERNATE_EDITOR
     ALTERNATE_EDITOR=
 
+    export SUDO_EDITOR
+    SUDO_EDITOR="$EDITOR"
+
     export HGMERGE
     HGMERGE="$EDITOR"
 fi
