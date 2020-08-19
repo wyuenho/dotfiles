@@ -21,8 +21,11 @@ if [ -x "$(command -v emacs)" ]; then
     export EDITOR
     EDITOR="emacsclient"
 
+    export VISUAL
+    VISUAL="$EDITOR"
+
     export ALTERNATE_EDITOR
-    ALTERNATE_EDITOR="emacs"
+    ALTERNATE_EDITOR=
 
     export HGMERGE
     HGMERGE="$EDITOR"
