@@ -914,24 +914,6 @@ optionally the window if possible."
               ("C-c e l" . ts-load-file-and-go)
               ("C-c M-:" . switch-to-ts)))
 
-;; (use-package tide
-;;   :after (typescript-mode)
-;;   :hook (typescript-mode . (lambda ()
-;;                              (tide-setup)
-;;                              (tide-hl-identifier-mode t)))
-;;   :config
-;;   ;; (add-hook 'before-save-hook 'tide-format-before-save nil 'local)
-;;   :bind (:map tide-mode-map
-;;               ("C-h p"   . tide-documentation-at-point)
-;;               ("C-c 1"   . tide-fix)
-;;               ("C-c f"   . tide-format)
-;;               ("C-c C-d" . tide-jsdoc-template)
-;;               ("C-c t f" . tide-organize-imports)
-;;               ("M-RET"   . tide-refactor)
-;;               ("M-?"     . tide-references)
-;;               ("C-c r"   . tide-rename-file)
-;;               ("C-c C-r" . tide-rename-symbol)))
-
 ;; Python
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
 (add-hook 'python-mode-hook
@@ -1038,54 +1020,15 @@ optionally the window if possible."
   :config
   (add-hook 'web-mode-hook
             (lambda ()
-              ;; (use-package tern
-              ;;   :delight
-              ;;   :config
-              ;;   (unbind-key "C-c C-r" tern-mode-keymap))
-
-              ;; (use-package company-tern
-              ;;   :after (company tern)
-              ;;   :config
-              ;;   (setq-local company-backends
-              ;;               '(company-tern company-files))
-
-              ;;   (advice-add 'company-tern :before
-              ;;               (lambda (&rest _)
-              ;;                 (if (eq major-mode 'web-mode)
-              ;;                     (let ((web-mode-cur-language
-              ;;                            (web-mode-language-at-pos)))
-              ;;                       (if (or (string= web-mode-cur-language "javascript")
-              ;;                               (string= web-mode-cur-language "jsx"))
-              ;;                           (unless tern-mode (tern-mode))
-              ;;                         (if tern-mode (tern-mode t))))))))
-
               (use-package company-web-html
                 :after (company)
                 :config
                 (setq-local company-backends
-                            `(;; company-tern
-                              company-web-html
+                            `(company-web-html
                               ,@(unless (version<= "26" emacs-version)
                                   (list 'company-css))
                               company-yasnippet
                               company-files)))
-
-              (use-package tide
-                :if (string-equal "tsx" (file-name-extension buffer-file-name))
-                :config
-                (tide-setup)
-                (tide-hl-identifier-mode t)
-                (add-hook 'before-save-hook 'tide-format-before-save nil 'local)
-                :bind (:map tide-mode-map
-                            ("C-h p"   . tide-documentation-at-point)
-                            ("C-c 1"   . tide-fix)
-                            ("C-c f"   . tide-format)
-                            ("C-c C-d" . tide-jsdoc-template)
-                            ("C-c t f" . tide-organize-imports)
-                            ("M-RET"   . tide-refactor)
-                            ("M-?"     . tide-references)
-                            ("C-c r"   . tide-rename-file)
-                            ("C-c C-r" . tide-rename-symbol)))
 
               ;; Setup flycheck
               (let ((ext (file-name-extension buffer-file-name)))
