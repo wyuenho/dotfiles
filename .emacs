@@ -551,8 +551,8 @@ Optional argument ARG same as `comment-dwim''s."
   (if (fboundp 'company-flx-mode)
       (company-flx-mode))
   (setq company-backends
-        `((company-eclim company-semantic company-clang)
-          company-xcode
+        `(company-bbdb
+          (company-semantic company-clang)
           company-cmake
           company-files
           ,@(if (and (memq (window-system) '(ns mac))
