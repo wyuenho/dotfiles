@@ -1363,7 +1363,9 @@ ELEMENT is only added once."
                       (ns-appearance . dark)))
         (push pair (alist-get 'ns window-system-default-frame-alist nil))
         (set-frame-parameter nil (car pair) (cdr pair)))
-      (setq frame-title-format "%b"
+      (setq frame-title-format (list '(:eval
+                                       (when (buffer-file-name)
+                                         (abbreviate-file-name (buffer-file-name)))))
             ns-use-thin-smoothing t
             ns-use-mwheel-momentum t
             ns-use-mwheel-acceleration t
