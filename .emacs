@@ -1379,7 +1379,8 @@ ELEMENT is only added once."
   :config
   (delight '((rainbow-mode)
              (lsp-mode)
-             (tree-sitter-hl-mode       nil tree-sitter)
+             (tree-sitter-mode          nil tree-sitter)
+             (tree-sitter-hl-mode       nil tree-sitter-hl)
              (python-black-on-save-mode nil python-black)
              (auto-fill-mode            nil simple)
              (isearch-mode              nil isearch)
