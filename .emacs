@@ -488,13 +488,19 @@ Optional argument ARG same as `comment-dwim''s."
                                         (file-expand-wildcards
                                          "~/.vscode/extensions/dbaeumer.vscode-eslint-*/server/out/eslintServer.js"))))
                                     "--stdio"))
-  (add-hook 'lsp-managed-mode (lambda ()
-                                (when (or (lsp-feature? "textDocument/formatting")
-                                          (lsp-feature? "textDocument/rangeFormatting"))
-                                  (bind-key "C-c f" 'lsp-format-buffer (derived-mode-map-name major-mode))))))
+  (add-hook 'lsp-managed-mode-hook (lambda ()
+                                     ;; Don't use the lsp checker for Python
+                                     ;; because the only good Python language
+                                     ;; server (jedi-language-server) doesn't
+                                     ;; return very good diagnostics
+                                     (when (derived-mode-p 'python-mode)
+                                       (setq-local flycheck-checker 'python-flake8))
+
+                                     (when (or (lsp-feature? "textDocument/formatting")
+                                               (lsp-feature? "textDocument/rangeFormatting"))
+                                       (bind-key "C-c f" 'lsp-format-buffer (derived-mode-map-name major-mode))))))
 
 (use-package lsp-jedi
-  :quelpa (lsp-jedi :fetcher github :repo "wyuenho/lsp-jedi" :branch "fix-init-options")
   :after lsp
   :config
   (add-to-list 'lsp-enabled-clients 'jedi))
@@ -930,6 +936,8 @@ optionally the window if possible."
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
 (add-hook 'python-mode-hook
           (lambda ()
+            (use-package poetry)
+
             (use-package python-docstring
               :delight
               :config (python-docstring-mode))
