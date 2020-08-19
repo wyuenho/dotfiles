@@ -1143,7 +1143,26 @@ optionally the window if possible."
   :bind (("C-x v M-m" . monky-status)))
 
 ;; File management
+(defun add-to-invisibility-spec-override-advice (element)
+  "Add ELEMENT to `buffer-invisibility-spec'.
+See documentation for `buffer-invisibility-spec' for the kind of elements
+that can be added.
+
+If `buffer-invisibility-spec' isn't a list before calling this
+function, `buffer-invisibility-spec' will afterwards be a list
+with the value `(t ELEMENT)'.  This means that if text exists
+that invisibility values that aren't either `t' or ELEMENT, that
+text will become visible.
+
+ELEMENT is only added once."
+  (if (eq buffer-invisibility-spec t)
+      (setq buffer-invisibility-spec (list t)))
+  (setq buffer-invisibility-spec
+        (delete-dups (cons element buffer-invisibility-spec))))
+(advice-add 'add-to-invisibility-spec :override 'add-to-invisibility-spec-override-advice)
+
 (with-eval-after-load 'dired
+  ;; Font lock symlinks
   (defface dired-executable
     '((t (:inherit font-lock-warning-face :weight normal)))
     "Face used for symbolic links."
@@ -1166,11 +1185,16 @@ optionally the window if possible."
                 nil
                 '(0 dired-executable-face)))))
 
-  (remove-hook 'dired-initial-position-hook 'save-place-dired-hook)
+  ;; Don't save point position in dired buffers
+  (defun save-place--setup-hooks-after-advice (&rest args)
+    (remove-hook 'dired-initial-position-hook 'save-place-dired-hook))
+  (advice-add 'save-place--setup-hooks :after 'save-place--setup-hooks-after-advice)
 
   (add-hook 'dired-mode-hook
             (lambda ()
+              ;; So desktop mode will save this buffer local to the session
               (add-minor-mode 'dired-hide-details-mode "")
+              ;; Add binding to open file in native app
               (when (memq (window-system) '(mac ns))
                 (bind-key "z" (lambda ()
                                 (interactive)
@@ -1190,6 +1214,7 @@ optionally the window if possible."
 
 (use-package dired-single
   :after (dired-hide-dotfiles)
+  ;; FIXME: wrap all these commands so they don't error on the header
   :bind (:map dired-mode-map
               ("^"         . dired-single-up-directory)
               ("<mouse-1>" . dired-single-buffer-mouse)
