@@ -1325,7 +1325,18 @@ ELEMENT is only added once."
             (lambda ()
               (when (file-exists-p purpose-default-layout-file)
                 (purpose-load-window-layout-file))
-              (select-window (get-largest-window)))))
+              (select-window (get-largest-window))))
+
+  ;; Bury all special buffers after setting up dummie buffers and restoring
+  ;; session buffers
+  (with-eval-after-load 'desktop
+    (add-hook 'desktop-after-read-hook
+              (lambda ()
+                (dolist (buf (seq-filter
+                              (lambda (buf)
+                                (string-match-p "^ \\|\\*" (buffer-name buf)))
+                              (buffer-list)))
+                  (bury-buffer buf))))))
 
 ;; UI
 
