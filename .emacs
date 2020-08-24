@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t -*-
-(load-library "map")
-(load-library "seq")
+(require 'map)
+(require 'seq)
+(require 'cl-seq)
 
 (set-locale-environment "UTF-8")
 
