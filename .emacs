@@ -12,8 +12,11 @@
   (apply old-load-theme (car args) t (cddr args)))
 (advice-add 'load-theme :around 'load-theme-advice)
 
-(when (< emacs-major-version 27)
-  (package-initialize))
+;; Only initialize packages when needed
+(cond ((< emacs-major-version 27)
+       (package-initialize))
+      ((not package--activated)
+       (package-initialize)))
 
 ;; Tell Custom to write and find the custom settings elsewhere
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -24,11 +27,16 @@
   (when missing
     (with-demoted-errors "%s"
       (package-refresh-contents))
-    (mapc (lambda (package)
-            (with-demoted-errors "%s"
-              (package-install package t)
-              (package-activate package)))
-          missing)
+    (dolist (package missing)
+      (with-demoted-errors "%s"
+        (package-install package t)
+        (package-activate package)))
+    (require 'quelpa)
+    (when (quelpa-read-cache)
+      (quelpa-upgrade-all)
+      (dolist (cache quelpa-cache)
+        (let ((package (car cache)))
+          (package-activate package))))
     (load custom-file)))
 
 (require 'quelpa-use-package)
