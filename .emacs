@@ -1299,6 +1299,21 @@ ELEMENT is only added once."
 
   (purpose-mode t)
 
+  (add-hook 'after-init-hook
+            (lambda ()
+              (when (file-exists-p purpose-default-layout-file)
+                (purpose-load-window-layout-file))
+              (select-window (get-largest-window))))
+
+  (defun purpose-quit-restore-window-advice (orig-func &optional window bury-or-kill)
+    "Close pop up window when there aren't pop up buffers can be shown in it."
+    (let* ((window (window-normalize-window window t))
+           (quit-restore (window-parameter window 'quit-restore)))
+      (funcall orig-func window bury-or-kill)
+      (when (and (null quit-restore) (window-parent window))
+        (ignore-errors (delete-window window)))))
+  (advice-add 'quit-restore-window :around 'purpose-quit-restore-window-advice)
+
   ;; Replace `edebug-pop-to-buffer' with `pop-to-buffer'
   (with-eval-after-load 'edebug
     (defun edebug-pop-to-buffer-advice (buffer &optional window)
@@ -1319,23 +1334,48 @@ ELEMENT is only added once."
       (set-window-hscroll window 0))
     (advice-add 'edebug-pop-to-buffer :override 'edebug-pop-to-buffer-advice))
 
-  (defun purpose-quit-restore-window-advice (orig-func &optional window bury-or-kill)
-    "Close pop up window when there aren't pop up buffers can be shown in it."
-    (let* ((window (window-normalize-window window t))
-           (quit-restore (window-parameter window 'quit-restore)))
-      (funcall orig-func window bury-or-kill)
-      (when (and (null quit-restore) (window-parent window))
-        (ignore-errors (delete-window window)))))
-  (advice-add 'quit-restore-window :around 'purpose-quit-restore-window-advice)
+  (with-eval-after-load 'frameset
+    (defun remove-file-buffers-with-non-existent-files (window-tree)
+      (let ((head (car window-tree))
+            (tail (cdr window-tree)))
+        (cond ((memq head '(vc hc))
+               `(,head ,@(remove-file-buffers-with-non-existent-files tail)))
+              ((eq head 'leaf)
+               (let* ((buffer (alist-get 'buffer tail))
+                      (buffer-name (car buffer))
+                      (filter (lambda (buffer) (string= buffer-name (car buffer))))
+                      (next-buffers (alist-get 'next-buffers tail))
+                      (prev-buffers (alist-get 'prev-buffers tail)))
+                 (if (get-buffer buffer-name)
+                     window-tree
+                   (cond ((and next-buffers (> (length next-buffers) 1))
+                          (setf (alist-get 'next-buffers window-tree)
+                                (seq-remove filter next-buffers)))
+                         ((and prev-buffers (> (length prev-buffers) 1))
+                          (setf (alist-get 'prev-buffers window-tree)
+                                (seq-remove filter prev-buffers))))
+                   (when prev-buffers
+                     (setf (alist-get 'buffer tail) `(,(caar (alist-get 'prev-buffers window-tree)) ,@(cdr buffer))))
+                   `(,head ,@tail))))
+              ((null head) nil)
+              (t (cons (if (and (listp head) (listp (cdr head)))
+                           (remove-file-buffers-with-non-existent-files head)
+                         head)
+                       (if (and (listp tail) (listp (cdr tail)))
+                           (remove-file-buffers-with-non-existent-files tail)
+                         tail))))))
+
+    (defun frameset--restore-frame-advice (old-func &rest args)
+      (let ((window-state (cadr args)))
+        (apply old-func
+               (car args)
+               (remove-file-buffers-with-non-existent-files window-state)
+               (cddr args))))
+
+    (advice-add 'frameset--restore-frame :around 'frameset--restore-frame-advice))
 
   (with-eval-after-load 'wid-browse
     (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
-
-  (add-hook 'after-init-hook
-            (lambda ()
-              (when (file-exists-p purpose-default-layout-file)
-                (purpose-load-window-layout-file))
-              (select-window (get-largest-window))))
 
   ;; Bury all special buffers after setting up dummie buffers and restoring
   ;; session buffers
