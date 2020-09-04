@@ -878,7 +878,6 @@ optionally the window if possible."
 (use-package js2-mode
   :interpreter ("node" . js2-mode)
   :config
-  (js2-imenu-extras-mode t)
   (when (fboundp 'sp-kill-whole-line)
     (bind-key "C-k" 'sp-kill-whole-line js2-mode-map)))
 
