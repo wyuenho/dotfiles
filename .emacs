@@ -561,6 +561,10 @@ Optional argument ARG same as `comment-dwim''s."
       (company-flx-mode))
   (setq company-backends
         `(company-bbdb
+          ,@(unless (version<= "26" emacs-version)
+              (list 'company-nxml))
+          ,@(unless (version<= "26" emacs-version)
+              (list 'company-css))
           (company-semantic company-clang)
           company-cmake
           company-files
