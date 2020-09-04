@@ -775,10 +775,10 @@ optionally the window if possible."
             ,buffer-file-name
             "--ext"
             ".json,.js,.jsx,.mjs,.mjsx,.cjs,.cjsx,.ts,.tsx")
-    :output-post-processor (lambda (file)
-                             (let* ((data (json-read-file file))
-                                    (output (alist-get 'output (aref data 0))))
-                               (make-temp-file "yarn-eslint-format" nil nil output)))
+    :output-processor (lambda (output-file result-callback)
+                        (let* ((data (ignore-error 'json-end-of-file (json-read-file output-file)))
+                               (output (and data (arrayp data) (alist-get 'output (aref data 0)))))
+                          (funcall result-callback output)))
     :exit-code-success-p integerp)
   (reformatter-define eslint-format
     :program "eslint_d"
