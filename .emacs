@@ -1225,7 +1225,6 @@ ELEMENT is only added once."
 
 (use-package dired-single
   :after (dired-hide-dotfiles)
-  ;; FIXME: wrap all these commands so they don't error on the header
   :bind (:map dired-mode-map
               ("^"         . dired-single-up-directory)
               ("<mouse-1>" . dired-single-buffer-mouse)
