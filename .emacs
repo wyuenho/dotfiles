@@ -838,11 +838,10 @@ optionally the window if possible."
                     (if (or yarn-pnp-p (executable-find "yarn"))
                         (progn
                           (bind-key "C-c f" 'yarn-eslint-format-buffer (derived-mode-map-name mode))
-                          (add-hook mode-hook 'yarn-eslint-format-on-save-mode))
+                          (yarn-eslint-format-on-save-mode))
                       (progn
                         (bind-key "C-c f" 'eslint-format-buffer (derived-mode-map-name mode))
-                        (add-hook mode-hook 'eslint-format-on-save-mode)))
-                    (eslint-format-on-save-mode))
+                        (eslint-format-on-save-mode))))
                    ((eq formatter 'prettier)
                     (use-package prettier
                       :delight
