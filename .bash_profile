@@ -1,6 +1,16 @@
 # ~/.bash_profile: executed by the command interpreter for login shells
 # ~/.profile is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
 
+# https://wiki.archlinux.org/index.php/XDG_Base_Directory
+XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CONFIG_HOME
+
+XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CACHE_HOME
+
+XDG_DATA_HOME="$HOME/.local/share"
+export XDG_DATA_HOME
+
 # Homebrew
 PATH="/usr/local/sbin:$PATH"
 
@@ -65,18 +75,18 @@ if [ -d "$HOME/.pyenv" ]; then
 fi
 
 # Node
-if [ -f "$HOME/.nvm/nvm.sh" ]; then
-    export NVM_DIR
+if [ -z "${XDG_CONFIG_HOME-}" ]; then
     NVM_DIR="$HOME/.nvm"
-    source "$NVM_DIR/nvm.sh"
+else
+    NVM_DIR="${XDG_CONFIG_HOME}/nvm"
 fi
+
+export NVM_DIR
+
+source "$NVM_DIR/nvm.sh"
 
 if [ -f "$HOME/.avn/bin/avn.sh" ]; then
     source "$HOME/.avn/bin/avn.sh"
-fi
-
-if [ -d "$HOME/.yarn/bin" ]; then
-    PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 fi
 
 # Ruby
