@@ -6,6 +6,7 @@
 [core]
 	excludesfile = ~/.gitignore_global
 	autocrlf = input
+	pager = delta
 
 [difftool "ediff"]
 	cmd = emacsclient --eval \"(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")\"
@@ -75,5 +76,15 @@
 	smtpServer = smtp.gmail.com
 	smtpUser = wyuenho@gmail.com
 	smtpServerPort = 587
+
 [pull]
 	ff = only
+
+[interactive]
+	diffFilter = delta
+
+[delta]
+	line-numbers = true
+	side-by-side = true
+	syntax-theme = zenburn
+	tabs = 2
