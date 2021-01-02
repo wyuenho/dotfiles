@@ -2,14 +2,14 @@
 # ~/.profile is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
 
 # https://wiki.archlinux.org/index.php/XDG_Base_Directory
-XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CONFIG_HOME
+XDG_CONFIG_HOME="$HOME/.config"
 
-XDG_CACHE_HOME="$HOME/.cache"
 export XDG_CACHE_HOME
+XDG_CACHE_HOME="$HOME/.cache"
 
-XDG_DATA_HOME="$HOME/.local/share"
 export XDG_DATA_HOME
+XDG_DATA_HOME="$HOME/.local/share"
 
 # Homebrew
 PATH="/usr/local/sbin:$PATH"
