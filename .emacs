@@ -213,7 +213,9 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-c ,"   . crux-find-user-custom-file)
          ("C-c s"   . crux-find-shell-init-file)
          ("C-c C-u" . crux-sudo-edit)
-         ("C-c M-o" . crux-open-with)))
+         ("C-c M-o" . crux-open-with)
+         :map emacs-lisp-mode-map
+         ("C-c e e" . crux-eval-and-replace)))
 
 ;; Saner undo/redo
 (use-package undo-fu
