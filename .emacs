@@ -556,20 +556,61 @@ region."
 (use-package dap-mode
   :after (lsp-mode)
   :config
-  (dap-mode t)
-  (dap-ui-mode t)
-  (dap-tooltip-mode t))
+  (add-hook 'dap-stopped-hook
+            (lambda (_) (call-interactively #'dap-hydra)))
 
-(use-package dap-node
-  :after (js2-mode dap-mode))
+  (setq dap-utils-extension-path (expand-file-name "~/.vscode/extensions"))
 
-(use-package dap-python
-  :after (dap-mode))
+  (add-hook 'js-mode-hook
+            (lambda ()
+              (unless (derived-mode-p 'json-mode)
+                (setq dap-chrome-debug-path
+                      (car (last (file-expand-wildcards (concat dap-utils-extension-path "/msjsdiag.debugger-for-chrome-*")))))
+                (setq dap-chrome-debug-program
+                      (concat "node" dap-chrome-debug-path "/out/src/chromeDebug.js"))
+                (require 'dap-chrome)
 
-(use-package dap-ruby
-  :after (enh-ruby-mode dap-mode))
+                (setq dap-firefox-debug-path
+                      (car (last (file-expand-wildcards
+                                  (concat dap-utils-extension-path "/firefox-devtools.vscode-firefox-debug-*")))))
+                (setq dap-firefox-debug-program
+                      (concat "node" dap-firefox-debug-path "/dist/adaptor.bundle.js"))
+                (require 'dap-firefox)
 
-(use-package dap-lldb)
+                (setq dap-node-debug-path
+                      "/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/extensions/ms-vscode.node-debug2")
+                (setq dap-node-debug-program
+                      (concat "node" dap-node-debug-path "/out/src/nodeDebug.js"))
+                (require 'dap-node))))
+
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (setq dap-python-debugger 'debugpy)
+              (require 'dap-python)))
+
+  (add-hook 'go-mode-hook
+            (lambda ()
+              (setq dap-go-debug-path
+                    (car (last (file-expand-wildcards
+                                (concat dap-utils-extension-path "/golang.go-*")))))
+              (setq dap-go-debug-program
+                    (concat "node" dap-go-debug-path "/dist/debugAdaptor2.js"))
+              (require 'dap-go)))
+
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (setq dap-lldb-debug-path
+                    (car (last (file-expand-wildcards (concat dap-utils-extension-path "/lanza.lldb-vscode-*")))))
+              (setq dap-lldb-debug-program
+                    (concat dap-lldb-debug-path (concat "/bin/" (symbol-name system-type) "/bin/lldb-vscode")))
+              (require 'dap-lldb)
+
+              (setq dap-cpptools-debug-path
+                    (car (last (file-expand-wildcards
+                                (concat dap-utils-extension-path "/ms-vscode.cpptools-*")))))
+              (setq dap-cpptools-debug-program
+                    (concat dap-cpptools-debug-path "/bin/cpptools"))
+              (require 'dap-cpptools))))
 
 ;; Auto-completion
 (use-package company
