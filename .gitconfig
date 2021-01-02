@@ -81,7 +81,7 @@
 	ff = only
 
 [interactive]
-	diffFilter = delta
+	diffFilter = delta --color-only
 
 [delta]
 	line-numbers = true
