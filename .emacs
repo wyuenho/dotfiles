@@ -19,6 +19,8 @@
        (package-initialize)))
 
 ;; Tell Custom to write and find the custom settings elsewhere
+(setq org-directory (concat user-emacs-directory "org/"))
+(setq org-mobile-inbox-for-pull (concat org-directory "from-mobile.org"))
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
@@ -141,7 +143,10 @@ Optional argument ARG same as `comment-dwim''s."
            ("C-x ^"     . nil)
            ("C-{"       . enlarge-window)
            ("C-}"       . shrink-window)
-           ("C-c l"     . browse-url-at-point))
+           ("C-c l"     . browse-url-at-point)
+           ("C-c n l"   . org-store-link)
+           ("C-c n a"   . org-agenda)
+           ("C-c n c"   . org-capture))
 
 ;; Replace zap-to-char with the hidden zap-up-to-char
 (autoload 'zap-up-to-char "misc")
