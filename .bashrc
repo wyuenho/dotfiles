@@ -74,23 +74,25 @@ fi
 [ -f ~/.bash_aliases ] && source ~/.bash_aliases
 
 # Prompt
-[ -f "$HOME/.local/bin/scm-prompt.sh" ] && source "$HOME/.local/bin/scm-prompt.sh"
-
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
-esac
-
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\[\e[01;35m\]$([ $(type -t _scm_prompt) ] && _scm_prompt)\[\e[0m\]\n\$ '
+if [ -x "$(command -v starship)" ]; then
+    eval "$(starship init bash)"
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h \w$([ $(type -t _scm_prompt) ] && _scm_prompt)\n\$ '
+    # set variable identifying the chroot you work in (used in the prompt below)
+    if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+        debian_chroot=$(cat /etc/debian_chroot)
+    fi
+
+    case "$TERM" in
+        xterm-color|*-256color) color_prompt=yes;;
+    esac
+
+    if [ "$color_prompt" = yes ]; then
+        PS1='${debian_chroot:+($debian_chroot)}\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\[\e[01;35m\]\[\e[0m\]\n\$ '
+    else
+        PS1='${debian_chroot:+($debian_chroot)}\u@\h \w\n\$ '
+    fi
+    unset color_prompt
 fi
-unset color_prompt
 
 # Bash Completion
 if [ -z "$INSIDE_EMACS" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq posix; then
@@ -120,6 +122,9 @@ if [ -z "$INSIDE_EMACS" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq pos
 
     # aws
     [ -x "$(command -v aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
+
+    # starship
+    [ -x "$(command -v starship)" ] && eval "$(starship completions bash)"
 fi
 
 # Direnv
