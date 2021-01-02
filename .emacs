@@ -407,6 +407,9 @@ region."
   (add-to-list 'editorconfig-indentation-alist
                '(rjsx-mode js2-basic-offset sgml-basic-offset)))
 
+;; Performance enhancement for files with really long lines
+(use-package so-long)
+
 ;; Prettier form-feeds
 (use-package form-feed
   :delight
