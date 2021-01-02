@@ -58,10 +58,6 @@ fi
 export PYTHONSTARTUP
 PYTHONSTARTUP="$HOME/.pythonrc"
 
-if [ -d "$HOME/Library/Python/2.7/bin" ]; then
-    PATH="$HOME/Library/Python/2.7/bin:$PATH"
-fi
-
 if [ -d "$HOME/.pyenv" ]; then
     export PYENV_ROOT
     PYENV_ROOT="$HOME/.pyenv"
