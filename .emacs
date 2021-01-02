@@ -303,6 +303,9 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-M-<"   . mc/skip-to-previous-like-this)
          ("M-s C->" . mc/mark-all-dwim)))
 
+;; Mark and edit occurrences
+(use-package iedit)
+
 ;; Construct regexp and search visually and incrementally
 (use-package visual-regexp-steroids
   :bind (("M-%"   . vr/replace)
