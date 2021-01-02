@@ -544,9 +544,7 @@ region."
                                        (bind-key "C-c f" 'lsp-format-buffer (derived-mode-map-name major-mode))))))
 
 (use-package lsp-jedi
-  :after lsp
-  :config
-  (add-to-list 'lsp-enabled-clients 'jedi))
+  :after lsp)
 
 (use-package lsp-sourcekit
   :after (lsp-mode))
