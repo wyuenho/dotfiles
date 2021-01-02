@@ -73,7 +73,7 @@
 ;; notification is broken for Emacs < 26
 (when (and (>= emacs-major-version 26)
            (string-equal system-type "darwin"))
-  (global-auto-revert-mode t))
+  (global-auto-revert-mode 1))
 
 ;; Automatically wrap overly long lines for all text modes
 (add-hook 'text-mode-hook 'auto-fill-mode)
@@ -85,10 +85,10 @@
 ;; Turn on subword mode and linum mode for all prog and text modes
 (dolist (hook '(prog-mode-hook text-mode-hook))
   (add-hook hook (lambda ()
-                   (subword-mode t)
+                   (subword-mode 1)
                    (if (fboundp 'display-line-numbers-mode)
-                       (display-line-numbers-mode t)
-                     (linum-mode t)
+                       (display-line-numbers-mode 1)
+                     (linum-mode 1)
                      ;; Renumber the current buffer after reverting the buffer
                      (add-hook 'after-revert-hook 'linum-update-current)))))
 
@@ -235,12 +235,12 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
-  :config (flx-ido-mode t))
+  :config (flx-ido-mode 1))
 
 (use-package flx-isearch
   :bind (("C-M-s" . flx-isearch-forward)
          ("C-M-r" . flx-isearch-backward))
-  :config (flx-isearch-mode t))
+  :config (flx-isearch-mode 1))
 
 ;; Use ido with M-x
 (use-package amx
@@ -249,23 +249,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Use ido for even more things than ido-everywhere
 (use-package crm-custom
   :config
-  (crm-custom-mode t))
-
-;; More sensible begin and end in certain modes
-(use-package beginend
-  :after (delight)
-  :hook ((dired-mode          . beginend-dired-mode)
-         (magit-status-mode   . beginend-magit-status-mode)
-         (message-mode        . beginend-message-mode)
-         (prog-mode           . beginend-prog-mode)
-         (occur-mode          . beginend-occur-mode)
-         (ibuffer-mode        . beginend-ibuffer-mode)
-         (vc-dir-mode         . beginend-vc-dir-mode)
-         (recentf-dialog-mode . beginend-recentf-dialog-mode)
-         (compilation-mode    . beginend-compilation-mode)
-         (rg-mode             . beginend-rg-mode))
-  :config
-  (map-values-apply (lambda (mode) (delight mode nil t)) beginend-modes))
+  (crm-custom-mode 1))
 
 (use-package ido-completing-read+)
 
@@ -286,6 +270,22 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Turn on iMenu for code outlines for all prog and text modes, if possible
 (dolist (hook '(prog-mode-hook text-mode-hook))
   (add-hook hook (lambda () (ignore-errors (imenu-add-menubar-index)))))
+
+;; More sensible begin and end in certain modes
+(use-package beginend
+  :after (delight)
+  :hook ((dired-mode          . beginend-dired-mode)
+         (magit-status-mode   . beginend-magit-status-mode)
+         (message-mode        . beginend-message-mode)
+         (prog-mode           . beginend-prog-mode)
+         (occur-mode          . beginend-occur-mode)
+         (ibuffer-mode        . beginend-ibuffer-mode)
+         (vc-dir-mode         . beginend-vc-dir-mode)
+         (recentf-dialog-mode . beginend-recentf-dialog-mode)
+         (compilation-mode    . beginend-compilation-mode)
+         (rg-mode             . beginend-rg-mode))
+  :config
+  (map-values-apply (lambda (mode) (delight mode nil t)) beginend-modes))
 
 ;; Mark and edit multiple things at once
 (use-package multiple-cursors
@@ -597,7 +597,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package flycheck
   :delight
   :config
-  (global-flycheck-mode t))
+  (global-flycheck-mode 1))
 
 (use-package flycheck-pos-tip
   :after (flycheck)
@@ -1077,7 +1077,7 @@ optionally the window if possible."
 
   :bind-keymap ("C-c p" . projectile-command-map)
   :config
-  (projectile-mode t)
+  (projectile-mode 1)
   (with-eval-after-load 'project
     (add-to-list 'project-find-functions 'projectile-project-find-function)))
 
@@ -1135,8 +1135,8 @@ optionally the window if possible."
 (use-package diff-hl
   :config
   (unless (display-graphic-p)
-    (diff-hl-margin-mode t))
-  (diff-hl-flydiff-mode t)
+    (diff-hl-margin-mode 1))
+  (diff-hl-flydiff-mode 1)
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
 
 (use-package magit)
@@ -1297,7 +1297,7 @@ ELEMENT is only added once."
   (purpose-x-kill-setup)
   (purpose-x-magit-single-on)
 
-  (purpose-mode t)
+  (purpose-mode 1)
 
   (add-hook 'after-init-hook
             (lambda ()
