@@ -433,7 +433,8 @@ region."
 ;; bottleneck off
 (add-hook 'prog-mode-hook
           (lambda ()
-            (setq-local bidi-display-reordering nil)))
+            (setq-local bidi-paragraph-direction 'left-to-right
+                        bidi-inhibit-bpa nil)))
 
 ;; Turn on background color for HEX for specific modes
 (use-package rainbow-mode
