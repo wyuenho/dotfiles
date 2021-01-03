@@ -1540,6 +1540,7 @@ ELEMENT is only added once."
 
 ;; Fancy mode line
 (use-package spaceline
+  :after (window-purpose)
   :config
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
