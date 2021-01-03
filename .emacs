@@ -504,7 +504,8 @@ region."
 ;; Static Analysis
 (use-package lsp-mode
   :after (which-key)
-  :hook (((caml-mode
+  :hook (((c-mode-common
+           caml-mode
            css-mode
            enh-ruby-mode
            go-mode
@@ -512,32 +513,17 @@ region."
            python-mode
            reason-mode
            rust-mode
-           scss-mode
            sh-mode
            swift-mode
            typescript-mode
            web-mode)
-          . lsp-deferred)
+          . (lambda ()
+              (when (not (derived-mode-p 'json-mode))
+                (lsp-deferred))))
          (lsp-mode . lsp-enable-which-key-integration))
   :config
-  ;; Fuck this incredibly slow Palantir language server
-  (add-to-list 'lsp-disabled-clients 'pyls)
   (setq read-process-output-max (* 1024 1024 10))
-  (setq lsp-eslint-server-command `("node"
-                                    ,(expand-file-name
-                                      (car
-                                       (last
-                                        (file-expand-wildcards
-                                         "~/.vscode/extensions/dbaeumer.vscode-eslint-*/server/out/eslintServer.js"))))
-                                    "--stdio"))
   (add-hook 'lsp-managed-mode-hook (lambda ()
-                                     ;; Don't use the lsp checker for Python
-                                     ;; because the only good Python language
-                                     ;; server (jedi-language-server) doesn't
-                                     ;; return very good diagnostics
-                                     (when (derived-mode-p 'python-mode)
-                                       (setq-local flycheck-checker 'python-flake8))
-
                                      (when (or (lsp-feature? "textDocument/formatting")
                                                (lsp-feature? "textDocument/rangeFormatting"))
                                        (bind-key "C-c f" 'lsp-format-buffer (derived-mode-map-name major-mode))))))
