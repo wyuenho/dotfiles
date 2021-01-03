@@ -765,8 +765,7 @@ optionally the window if possible."
            ("C-c e c" . emacs-lisp-byte-compile)
            ("C-c e l" . emacs-lisp-byte-compile-and-load)
            ("C-c e b" . eval-buffer)
-           ("C-c e r" . eval-region)
-           ("C-c e e" . eval-print-last-sexp))
+           ("C-c e r" . eval-region))
 
 (add-hook 'ielm-mode-hook (lambda () (ielm-change-working-buffer (window-buffer (selected-window)))))
 
