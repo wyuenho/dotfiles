@@ -499,7 +499,6 @@ region."
 ;; Modern tree-based syntax-highlighting
 (use-package tree-sitter-langs
   :config
-  (setq tree-sitter-mode-major-mode (assoc-delete-all 'js2-mode tree-sitter-mode-major-mode))
   (add-hook 'tree-sitter-after-on-hook 'tree-sitter-hl-mode))
 
 ;; Static Analysis
