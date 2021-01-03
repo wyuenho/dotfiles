@@ -1312,7 +1312,7 @@ ELEMENT is only added once."
   ;; Make sure dired-hide-details-mode is preserved when reusing the dired
   ;; window
   (defun find-alternate-file-advice (oldfun &rest args)
-    "Preserve inherit parent dired buffer state if invoked from a dired buffer."
+    "Preserve inherited parent dired buffer state if invoked from a dired buffer."
     (let ((is-dired (derived-mode-p 'dired-mode))
           (hide-dotfiles (and (boundp 'dired-hide-dotfiles-mode) dired-hide-dotfiles-mode))
           (hide-details dired-hide-details-mode)
@@ -1412,11 +1412,12 @@ ELEMENT is only added once."
     (advice-add 'edebug-pop-to-buffer :override 'edebug-pop-to-buffer-advice))
 
   (with-eval-after-load 'frameset
-    (defun remove-file-buffers-with-non-existent-files (window-tree)
+    (defun remove-unrestorable-file-buffers (window-tree)
+      "Remove un-restorable buffers from window state."
       (let ((head (car window-tree))
             (tail (cdr window-tree)))
         (cond ((memq head '(vc hc))
-               `(,head ,@(remove-file-buffers-with-non-existent-files tail)))
+               `(,head ,@(remove-unrestorable-file-buffers tail)))
               ((eq head 'leaf)
                (let* ((buffer (alist-get 'buffer tail))
                       (buffer-name (car buffer))
@@ -1436,25 +1437,22 @@ ELEMENT is only added once."
                    `(,head ,@tail))))
               ((null head) nil)
               (t (cons (if (and (listp head) (listp (cdr head)))
-                           (remove-file-buffers-with-non-existent-files head)
+                           (remove-unrestorable-file-buffers head)
                          head)
                        (if (and (listp tail) (listp (cdr tail)))
-                           (remove-file-buffers-with-non-existent-files tail)
+                           (remove-unrestorable-file-buffers tail)
                          tail))))))
 
     (defun frameset--restore-frame-advice (old-func &rest args)
       (let ((window-state (cadr args)))
         (apply old-func
                (car args)
-               (remove-file-buffers-with-non-existent-files window-state)
+               (remove-unrestorable-file-buffers window-state)
                (cddr args))))
 
     (advice-add 'frameset--restore-frame :around 'frameset--restore-frame-advice))
 
-  (with-eval-after-load 'wid-browse
-    (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
-
-  ;; Bury all special buffers after setting up dummie buffers and restoring
+  ;; Bury all special buffers after setting up dummy buffers and restoring
   ;; session buffers
   (with-eval-after-load 'desktop
     (add-hook 'desktop-after-read-hook
