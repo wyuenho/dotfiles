@@ -1,0 +1,38 @@
+[battery]
+disabled = true
+
+[crystal]
+disabled = true
+
+[dart]
+disabled = true
+
+[directory]
+truncate_to_repo = false
+truncation_length = 8
+truncation_symbol = "…/"
+
+[dotnet]
+disabled = true
+
+[gcloud]
+symbol = "☁️  "
+
+[git_branch]
+symbol = "ᚶ️ "
+
+[hg_branch]
+symbol = "ᚶ️ "
+disabled = false
+
+[openstack]
+disabled = true
+
+[purescript]
+disabled = true
+
+[singularity]
+disabled = true
+
+[zig]
+disabled = true
