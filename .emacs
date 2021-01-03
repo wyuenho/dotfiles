@@ -1369,6 +1369,13 @@ ELEMENT is only added once."
             (rg-mode      . search)
             (vterm-mode   . terminal)))
 
+  (with-eval-after-load 'window-purpose-x
+    (add-to-list 'purpose-x-popwin-buffer-names "*Messages*")
+    (add-to-list 'purpose-x-popwin-buffer-name-regexps
+                 (concat (regexp-quote whitespace-report-buffer-name) "\\(<[[:digit:]]+>\\)*"))
+    (add-to-list 'purpose-x-popwin-buffer-name-regexps
+                 (concat (regexp-quote whitespace-help-buffer-name) "\\(<[[:digit:]]+>\\)*")))
+
   (purpose-x-code1-setup)
   (purpose-x-popwin-setup)
   (purpose-x-kill-setup)
@@ -1411,6 +1418,9 @@ ELEMENT is only added once."
       (set-window-hscroll window 0))
     (advice-add 'edebug-pop-to-buffer :override 'edebug-pop-to-buffer-advice))
 
+  (with-eval-after-load 'wid-browse
+    (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
+
   (with-eval-after-load 'frameset
     (defun remove-unrestorable-file-buffers (window-tree)
       "Remove un-restorable buffers from window state."
@@ -1442,6 +1452,14 @@ ELEMENT is only added once."
                        (if (and (listp tail) (listp (cdr tail)))
                            (remove-unrestorable-file-buffers tail)
                          tail))))))
+
+    (with-eval-after-load 'whitespace
+      (defun whitespace-display-window-advice (buffer)
+        (with-current-buffer buffer
+          (special-mode)
+          (goto-char (point-min)))
+        (switch-to-buffer buffer))
+      (advice-add 'whitespace-display-window :override 'whitespace-display-window-advice))
 
     (defun frameset--restore-frame-advice (old-func &rest args)
       (let ((window-state (cadr args)))
