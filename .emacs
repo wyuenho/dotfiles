@@ -1576,7 +1576,12 @@ ELEMENT is only added once."
       (put face 'face-alias alias)))
 
   (let ((line (face-attribute 'mode-line :underline)))
-    (set-face-attribute 'mode-line nil :overline line :box nil)
-    (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil))
+    (if window-divider-mode
+        (progn
+          (set-face-attribute 'window-divider nil :foreground line)
+          (set-face-attribute 'mode-line nil :overline line :underline nil :box nil)
+          (set-face-attribute 'mode-line-inactive nil :overline line :underline nil :box nil))
+      (set-face-attribute 'mode-line nil :overline line :box nil)
+      (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
 
   (set-face-attribute 'dired-header nil :underline t :background nil :foreground nil))
