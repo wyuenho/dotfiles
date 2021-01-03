@@ -1525,7 +1525,7 @@ ELEMENT is only added once."
              (tree-sitter-mode          nil tree-sitter)
              (tree-sitter-hl-mode       nil tree-sitter-hl)
              (python-black-on-save-mode nil python-black)
-             (auto-fill-mode            nil simple)
+             (auto-fill-function        nil t)
              (isearch-mode              nil isearch)
              (abbrev-mode               nil abbrev)
              (purpose-mode              nil window-purpose)
