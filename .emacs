@@ -1492,8 +1492,8 @@ ELEMENT is only added once."
 
 (when (display-graphic-p)
   ;; Set up default fonts
-  (set-face-attribute 'default nil :family "Noto Mono" :weight 'regular :width 'normal)
-  (set-face-attribute 'fixed-pitch nil :family "Noto Mono" :weight 'regular :width 'normal)
+  (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
+  (set-face-attribute 'fixed-pitch nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
   (set-face-attribute 'fixed-pitch-serif nil :family "Courier New" :weight 'regular :width 'normal)
   (set-face-attribute 'variable-pitch nil :family "Noto Sans" :weight 'regular :width 'normal)
 
