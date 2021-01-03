@@ -1184,7 +1184,9 @@ optionally the window if possible."
               (next-error-follow-minor-mode 0)
               (wgrep-rg-setup))))
 
-(use-package dumb-jump)
+(use-package dumb-jump
+  :config
+  (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
 
 ;; Version Control
 
