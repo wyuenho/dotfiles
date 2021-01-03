@@ -615,8 +615,6 @@ region."
               ("C-n" . company-select-next)
               ("C-p" . company-select-previous))
   :config
-  (if (fboundp 'company-flx-mode)
-      (company-flx-mode))
   (setq company-backends
         `(company-bbdb
           ,@(unless (version<= "26" emacs-version)
@@ -642,14 +640,14 @@ region."
   :delight
   :hook (company-mode . company-box-mode))
 
-(use-package company-lsp
-  :after (company lsp-mode)
+(use-package orderless
+  :custom (completion-styles '(orderless))
   :config
-  (add-hook 'lsp-mode-hook
-            (lambda ()
-              (make-local-variable 'company-transformers)
-              (setq company-transformers (remq 'company-flx-transformer
-                                               (remq 'company-sort-by-statistics company-transformers))))))
+  (with-eval-after-load 'company
+    (defun company-capf--candidates-advice (fn &rest args)
+      (let ((orderless-match-faces [completions-common-part]))
+        (apply fn args)))
+    (advice-add 'company-capf--candidates :around #'company-capf--candidates-advice)))
 
 ;; Linting
 (use-package flycheck
