@@ -1538,12 +1538,14 @@ ELEMENT is only added once."
 (use-package all-the-icons
   :if (display-graphic-p)
   :config
-  (add-hook 'after-change-major-mode-hook
-            (lambda ()
-              (let* ((icon (all-the-icons-icon-for-mode major-mode))
-                     (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
-                (when (and (stringp icon) (not (string= major-mode icon)) face-prop)
-                  (setq mode-name (propertize icon 'display '(:ascent center))))))))
+  (with-eval-after-load 'powerline
+    (advice-add 'powerline-major-mode :around
+                (lambda (old-powerline-major-mode &rest args)
+                  (let* ((major-mode-segment (apply old-powerline-major-mode args))
+                         (props (text-properties-at 0 major-mode-segment))
+                         (icon (all-the-icons-icon-for-mode major-mode))
+                         (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
+                    (apply 'propertize icon 'face face-prop props))))))
 
 (use-package solarized-theme
   :if (display-graphic-p)
