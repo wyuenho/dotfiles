@@ -301,6 +301,7 @@
  '(smtpmail-stream-type 'starttls)
  '(so-long-minor-modes
    '(font-lock-mode display-line-numbers-mode flymake-mode flyspell-mode goto-address-mode goto-address-prog-mode hi-lock-mode highlight-changes-mode hl-line-mode linum-mode nlinum-mode prettify-symbols-mode visual-line-mode whitespace-mode diff-hl-amend-mode diff-hl-flydiff-mode diff-hl-mode dtrt-indent-mode flycheck-mode hl-sexp-mode idle-highlight-mode rainbow-delimiters-mode lsp-mode))
+ '(so-long-target-modes '(css-mode js-mode))
  '(solarized-use-variable-pitch nil)
  '(sp-hybrid-kill-excessive-whitespace t)
  '(spaceline-all-the-icons-clock-always-visible nil)
