@@ -278,6 +278,11 @@ Optional argument ARG same as `comment-dwim''s."
 (dolist (hook '(prog-mode-hook text-mode-hook))
   (add-hook hook (lambda () (ignore-errors (imenu-add-menubar-index)))))
 
+;; Enable `xref-pop-marker-stack' to go back to where I was before clicking on
+;; an imenu item
+(add-hook 'imenu-after-jump-hook
+          (lambda () (when (mark) (xref-push-marker-stack (mark-marker)))))
+
 ;; More sensible begin and end in certain modes
 (use-package beginend
   :after (delight)
