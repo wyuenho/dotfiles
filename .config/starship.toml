@@ -1,3 +1,6 @@
+[aws]
+symbol = "🅰 "
+
 [battery]
 disabled = true
 
@@ -16,7 +19,7 @@ truncation_symbol = "…/"
 disabled = true
 
 [gcloud]
-symbol = "☁️  "
+symbol = "🅶 "
 
 [git_branch]
 symbol = "ᚶ️ "
