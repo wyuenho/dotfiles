@@ -85,7 +85,7 @@
   (add-hook hook 'visual-line-mode))
 
 ;; Turn on subword mode and linum mode for all prog and text modes
-(dolist (hook '(prog-mode-hook text-mode-hook))
+(dolist (hook '(prog-mode-hook text-mode-hook conf-mode-hook))
   (add-hook hook (lambda ()
                    (subword-mode 1)
                    (if (fboundp 'display-line-numbers-mode)
