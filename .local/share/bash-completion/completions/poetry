@@ -1,4 +1,4 @@
-_poetry_2f782263769b4d13_complete()
+_poetry_99783ea6f545de73_complete()
 {
     local cur script coms opts com
     COMPREPLY=()
@@ -30,7 +30,7 @@ _poetry_2f782263769b4d13_complete()
             ;;
 
             (add)
-            opts="${opts} --allow-prereleases --dev --dry-run --extras --optional --platform --python"
+            opts="${opts} --allow-prereleases --dev --dry-run --extras --lock --optional --platform --python --source"
             ;;
 
             (build)
@@ -66,15 +66,15 @@ _poetry_2f782263769b4d13_complete()
             ;;
 
             (init)
-            opts="${opts} --author --dependency --description --dev-dependency --license --name"
+            opts="${opts} --author --dependency --description --dev-dependency --license --name --python"
             ;;
 
             (install)
-            opts="${opts} --dry-run --extras --no-dev --no-root"
+            opts="${opts} --dry-run --extras --no-dev --no-root --remove-untracked"
             ;;
 
             (lock)
-            opts="${opts} "
+            opts="${opts} --no-update"
             ;;
 
             (new)
@@ -82,7 +82,7 @@ _poetry_2f782263769b4d13_complete()
             ;;
 
             (publish)
-            opts="${opts} --build --cert --client-cert --password --repository --username"
+            opts="${opts} --build --cert --client-cert --dry-run --password --repository --username"
             ;;
 
             (remove)
@@ -114,7 +114,7 @@ _poetry_2f782263769b4d13_complete()
             ;;
 
             (version)
-            opts="${opts} "
+            opts="${opts} --short"
             ;;
 
         esac
@@ -136,5 +136,5 @@ _poetry_2f782263769b4d13_complete()
     fi
 }
 
-complete -o default -F _poetry_2f782263769b4d13_complete poetry
-complete -o default -F _poetry_2f782263769b4d13_complete /Users/wyuenho/.pyenv/versions/3.8.2/bin/poetry
+complete -o default -F _poetry_99783ea6f545de73_complete poetry
+complete -o default -F _poetry_99783ea6f545de73_complete /Users/wyuenho/.pyenv/versions/3.9.1/bin/poetry
