@@ -117,9 +117,6 @@ if [ -z "$INSIDE_EMACS" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq pos
         source "$HOME/.google-cloud-sdk/completion.bash.inc";
     fi
 
-    # k8
-    [ -x "$(command -v kubectl)" ] && eval "$(kubectl completion bash)"
-
     # aws
     [ -x "$(command -v aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
 fi
