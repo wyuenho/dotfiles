@@ -122,9 +122,6 @@ if [ -z "$INSIDE_EMACS" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq pos
 
     # aws
     [ -x "$(command -v aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
-
-    # starship
-    [ -x "$(command -v starship)" ] && eval "$(starship completions bash)"
 fi
 
 # Direnv
