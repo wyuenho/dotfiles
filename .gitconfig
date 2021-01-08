@@ -1,7 +1,7 @@
 [user]
 	name = Jimmy Yuen Ho Wong
 	email = wyuenho@gmail.com
-	signingkey = 851DCF582E199A7C8B900354F63B916754790B33
+	signingkey = D1D84FDB614C2B7C
 
 [core]
 	excludesfile = ~/.gitignore_global
