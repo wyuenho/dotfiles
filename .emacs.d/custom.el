@@ -4,6 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(TeX-PDF-mode t)
+ '(abridge-diff-mode t)
  '(ad-default-compilation-action 'always)
  '(ag-arguments '("--smart-case" "--stats" "--search-zip" "--all-types"))
  '(ag-highlight-search t)

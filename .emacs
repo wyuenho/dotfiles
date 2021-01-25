@@ -1215,6 +1215,10 @@ optionally the window if possible."
 (use-package magit-lfs
   :after (magit))
 
+(use-package abridge-diff
+  :after (magit)
+  :delight)
+
 (use-package monky
   :bind (("C-x v M-m" . monky-status)))
 
