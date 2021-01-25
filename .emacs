@@ -1413,6 +1413,14 @@ ELEMENT is only added once."
   (with-eval-after-load 'wid-browse
     (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
 
+  (with-eval-after-load 'whitespace
+    (defun whitespace-display-window-advice (buffer)
+      (with-current-buffer buffer
+        (special-mode)
+        (goto-char (point-min)))
+      (switch-to-buffer buffer))
+    (advice-add 'whitespace-display-window :override 'whitespace-display-window-advice))
+
   (with-eval-after-load 'frameset
     (defun remove-unrestorable-file-buffers (window-tree)
       "Remove un-restorable buffers from window state."
@@ -1445,21 +1453,12 @@ ELEMENT is only added once."
                            (remove-unrestorable-file-buffers tail)
                          tail))))))
 
-    (with-eval-after-load 'whitespace
-      (defun whitespace-display-window-advice (buffer)
-        (with-current-buffer buffer
-          (special-mode)
-          (goto-char (point-min)))
-        (switch-to-buffer buffer))
-      (advice-add 'whitespace-display-window :override 'whitespace-display-window-advice))
-
     (defun frameset--restore-frame-advice (old-func &rest args)
       (let ((window-state (cadr args)))
         (apply old-func
                (car args)
                (remove-unrestorable-file-buffers window-state)
                (cddr args))))
-
     (advice-add 'frameset--restore-frame :around 'frameset--restore-frame-advice))
 
   ;; Bury all special buffers after setting up dummy buffers and restoring
