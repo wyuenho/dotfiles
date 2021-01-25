@@ -1549,7 +1549,9 @@ ELEMENT is only added once."
                          (props (text-properties-at 0 major-mode-segment))
                          (icon (all-the-icons-icon-for-mode major-mode))
                          (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
-                    (apply 'propertize icon 'face face-prop props))))))
+                    (if face-prop
+                        (apply 'propertize icon 'face face-prop props)
+                      (apply 'propertize icon props)))))))
 
 (use-package solarized-theme
   :if (display-graphic-p)
