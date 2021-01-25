@@ -557,20 +557,20 @@ region."
                 (setq dap-chrome-debug-path
                       (car (last (file-expand-wildcards (concat dap-utils-extension-path "/msjsdiag.debugger-for-chrome-*")))))
                 (setq dap-chrome-debug-program
-                      (concat "node" dap-chrome-debug-path "/out/src/chromeDebug.js"))
+                      (concat "node " dap-chrome-debug-path "/out/src/chromeDebug.js"))
                 (require 'dap-chrome)
 
                 (setq dap-firefox-debug-path
                       (car (last (file-expand-wildcards
                                   (concat dap-utils-extension-path "/firefox-devtools.vscode-firefox-debug-*")))))
                 (setq dap-firefox-debug-program
-                      (concat "node" dap-firefox-debug-path "/dist/adaptor.bundle.js"))
+                      (concat "node " dap-firefox-debug-path "/dist/adaptor.bundle.js"))
                 (require 'dap-firefox)
 
                 (setq dap-node-debug-path
                       "/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/extensions/ms-vscode.node-debug2")
                 (setq dap-node-debug-program
-                      (concat "node" dap-node-debug-path "/out/src/nodeDebug.js"))
+                      (concat "node " dap-node-debug-path "/out/src/nodeDebug.js"))
                 (require 'dap-node))))
 
   (add-hook 'python-mode-hook
