@@ -84,6 +84,7 @@
 	diffFilter = delta --color-only
 
 [delta]
-	side-by-side = true
+	hunk-header-style = syntax
+	line-numbers = true
 	syntax-theme = zenburn
 	tabs = 2
