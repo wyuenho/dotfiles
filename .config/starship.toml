@@ -24,6 +24,9 @@ symbol = "🅶 "
 [git_branch]
 symbol = "ᚶ️ "
 
+[git_status]
+disabled = true
+
 [hg_branch]
 symbol = "ᚶ️ "
 disabled = false
