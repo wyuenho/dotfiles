@@ -44,17 +44,15 @@ versions due to limitations in package.el."
     (dolist (package missing)
       (with-demoted-errors "%s"
         (package-install package t)
-        (package-activate package)))
-    (require 'quelpa)
-    (when (quelpa-read-cache)
-      (quelpa-upgrade-all)
-      (dolist (cache quelpa-cache)
-        (let ((package (car cache)))
-          (package-activate package))))
-    (load custom-file)))
-
-(require 'quelpa-use-package)
-(quelpa-use-package-activate-advice)
+        (package-activate package))))
+  (require 'quelpa)
+  (when (quelpa-read-cache)
+    (quelpa-upgrade-all-maybe)
+    (dolist (cache quelpa-cache)
+      (let ((package (car cache)))
+        (package-activate package))))
+  (require 'quelpa-use-package)
+  (quelpa-use-package-activate-advice))
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
 ;; should be done ASAP on init.
