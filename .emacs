@@ -664,6 +664,15 @@ region."
   :delight
   :hook (company-mode . company-box-mode))
 
+(use-package company-prescient
+  :hook (company-mode . company-prescient-mode)
+  :config
+  (add-hook 'company-prescient-mode-hook
+            (lambda ()
+              ;; Make sure `company-sort-prefer-same-case-prefix' is always at the back
+              (delq 'company-sort-prefer-same-case-prefix company-transformers)
+              (add-to-list 'company-transformers 'company-sort-prefer-same-case-prefix t))))
+
 (use-package orderless
   :custom (completion-styles '(orderless))
   :config

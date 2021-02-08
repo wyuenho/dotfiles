@@ -252,6 +252,7 @@
  '(pixel-scroll-mode t)
  '(poetry-tracking-mode t)
  '(poetry-tracking-strategy 'projectile)
+ '(prescient-persist-mode t)
  '(prettier-enabled-parsers
    '(angular babel babel-flow css flow graphql json less html markdown mdx scss typescript vue yaml))
  '(prettier-pre-warm 'some)
