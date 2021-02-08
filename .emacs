@@ -1559,7 +1559,7 @@ ELEMENT is only added once."
              (move-dup-mode             nil move-dup)
              (smartparens-mode          nil smartparens)
              (which-key-mode            nil which-key)
-             (whitespace-cleanup-mode   nil whitespace)
+             (whitespace-cleanup-mode   nil whitespace-cleanup-mode)
              (auto-revert-mode          nil autorevert)
              (visual-line-mode          nil simple)
              (subword-mode              nil subword))))
