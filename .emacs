@@ -5,12 +5,24 @@
 
 (set-locale-environment "UTF-8")
 
-;; Stop asking me if a theme is safe. The entirety of Emacs is built around
-;; evaling arbitrary code...
-(defun load-theme-advice (old-load-theme &rest args)
-  "Don't ask for confirmation when loading a theme."
-  (apply old-load-theme (car args) t (cddr args)))
-(advice-add 'load-theme :around 'load-theme-advice)
+(with-eval-after-load 'custom
+  ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
+  ;; evaling arbitrary code...
+  (defun load-theme-advice (fn &rest args)
+    "Don't ask for confirmation when loading a theme."
+    (apply fn (car args) t (cddr args)))
+  (advice-add 'load-theme :around 'load-theme-advice))
+
+(with-eval-after-load 'package
+  (defun package--removable-packages-advice (fn &rest args)
+    "Make sure `package-autoremove' does not consider quelpa-installed packages.
+
+FIXME: this currently does not take into account of package
+versions due to limitations in package.el."
+    (let ((removable-packages (apply fn args))
+          (quelpa-packages (mapcar #'car (quelpa-read-cache))))
+      (cl-set-difference removable-packages quelpa-packages)))
+  (advice-add 'package--removable-packages :around 'package--removable-packages-advice))
 
 ;; Only initialize packages when needed
 (cond ((< emacs-major-version 27)
@@ -58,18 +70,19 @@
 
 ;; Remove all query on exit flags on all processes before quitting
 (unless (boundp 'confirm-kill-processes) ;; new on Emacs 26
-  (defun save-buffers-kill-emacs-advice (&rest _)
-    "Remove all query-on-exit flags on all processes before quitting."
-    (let ((processes (seq-filter
-                      (lambda (process)
-                        (and (memq (process-status process) '(run stop open listen))
-                             (process-query-on-exit-flag process)))
-                      (process-list))))
-      (dolist (process processes)
-        (set-process-query-on-exit-flag process nil))))
-  (advice-add 'save-buffers-kill-emacs :before 'save-buffers-kill-emacs-advice)
-  (setq kill-buffer-query-functions
-        (remq 'process-kill-buffer-query-function kill-buffer-query-functions)))
+  (with-eval-after-load 'files
+    (defun save-buffers-kill-emacs-advice (&rest _)
+      "Remove all query-on-exit flags on all processes before quitting."
+      (let ((processes (seq-filter
+                        (lambda (process)
+                          (and (memq (process-status process) '(run stop open listen))
+                               (process-query-on-exit-flag process)))
+                        (process-list))))
+        (dolist (process processes)
+          (set-process-query-on-exit-flag process nil))))
+    (advice-add 'save-buffers-kill-emacs :before 'save-buffers-kill-emacs-advice)
+    (setq kill-buffer-query-functions
+          (remq 'process-kill-buffer-query-function kill-buffer-query-functions))))
 
 ;; Only turn on `auto-revert-mode' for Mac on Emacs >= 26 because kqueue file
 ;; notification is broken for Emacs < 26
@@ -95,8 +108,9 @@
                      (add-hook 'after-revert-hook 'linum-update-current)))))
 
 ;; More sensible comment-dwim
-(defun comment-dwim-advice (comment-dwim &rest args)
-  "Replacement for the `comment-dwim' command.
+(with-eval-after-load 'newcomment
+  (defun comment-dwim-advice (comment-dwim &rest args)
+    "Replacement for the `comment-dwim' command.
 
 If no region is selected and point is not at the end of the line,
 comment the current line from the front, otherwise the
@@ -105,11 +119,11 @@ of `comment-dwim', where it inserts comment at the end of the
 line if no region is defined.
 
 Optional argument ARG same as `comment-dwim''s."
-  (interactive "*P")
-  (if (and (not (use-region-p)))
-      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-    (apply comment-dwim args)))
-(advice-add 'comment-dwim :around 'comment-dwim-advice)
+    (interactive "*P")
+    (if (and (not (use-region-p)))
+        (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+      (apply comment-dwim args)))
+  (advice-add 'comment-dwim :around 'comment-dwim-advice))
 
 (use-package bind-key)
 
@@ -154,23 +168,32 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
-(add-hook 'occur-mode-hook
-          (lambda ()
-            (bind-keys :map occur-mode-map
-                       ("M-n" . nil)
-                       ("M-p" . nil)
-                       ("n"   . occur-next)
-                       ("p"   . occur-prev))))
+(with-eval-after-load 'replace
+  (bind-keys :map occur-mode-map
+             ("M-n" . nil)
+             ("M-p" . nil)
+             ("n"   . occur-next)
+             ("p"   . occur-prev)))
 
-;; I use compilation mode more, so of course I have to do the same thing as
-;; occur mode
-(add-hook 'compilation-mode-hook
-          (lambda ()
-            (bind-keys :map compilation-mode-map
-                       ("M-n" . nil)
-                       ("M-p" . nil)
-                       ("n"   . compilation-next-error)
-                       ("p"   . compilation-previous-error))))
+(with-eval-after-load 'compile
+  (bind-keys :map compilation-minor-mode-map
+             ("M-{" . nil)
+             ("M-}" . nil)
+             ("M-n" . nil)
+             ("M-p" . nil)
+             ("{"   . compilation-previous-file)
+             ("}"   . compilation-next-file)
+             ("p"   . compilation-previous-error)
+             ("n"   . compilation-next-error)
+             :map compilation-mode-map
+             ("M-{" . nil)
+             ("M-}" . nil)
+             ("M-n" . nil)
+             ("M-p" . nil)
+             ("{"   . compilation-previous-file)
+             ("}"   . compilation-next-file)
+             ("p"   . compilation-previous-error)
+             ("n"   . compilation-next-error)))
 
 ;; Persistent history for all the inferior modes
 (add-hook 'comint-mode-hook
@@ -652,7 +675,14 @@ region."
     (defun company-capf--candidates-advice (fn &rest args)
       (let ((orderless-match-faces [completions-common-part]))
         (apply fn args)))
-    (advice-add 'company-capf--candidates :around #'company-capf--candidates-advice)))
+    (advice-add 'company-capf--candidates :around #'company-capf--candidates-advice))
+
+  (with-eval-after-load 'icomplete
+    (add-hook 'minibuffer-setup-hook
+              (lambda ()
+                (when fido-mode
+                  (setq-local completion-styles '(orderless))))
+              t)))
 
 ;; Linting
 (use-package flycheck
@@ -1453,9 +1483,9 @@ ELEMENT is only added once."
                            (remove-unrestorable-file-buffers tail)
                          tail))))))
 
-    (defun frameset--restore-frame-advice (old-func &rest args)
+    (defun frameset--restore-frame-advice (fn &rest args)
       (let ((window-state (cadr args)))
-        (apply old-func
+        (apply fn
                (car args)
                (remove-unrestorable-file-buffers window-state)
                (cddr args))))
@@ -1476,9 +1506,9 @@ ELEMENT is only added once."
 
 ;; Let the themes deal with these things
 (dolist (param '(background-mode tty-color-mode screen-gamma
-                 alpha font foreground-color background-color mouse-color
-                 cursor-color border-color scroll-bar-foreground
-                 scroll-bar-background))
+                 alpha font foreground-color background-color
+                 mouse-color cursor-color border-color
+                 scroll-bar-foreground scroll-bar-background))
   (add-to-list 'frameset-filter-alist `(,param . :never)))
 
 (when (display-graphic-p)
@@ -1543,8 +1573,8 @@ ELEMENT is only added once."
   :config
   (with-eval-after-load 'powerline
     (advice-add 'powerline-major-mode :around
-                (lambda (old-powerline-major-mode &rest args)
-                  (let* ((major-mode-segment (apply old-powerline-major-mode args))
+                (lambda (fn &rest args)
+                  (let* ((major-mode-segment (apply fn args))
                          (props (text-properties-at 0 major-mode-segment))
                          (icon (all-the-icons-icon-for-mode major-mode))
                          (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
