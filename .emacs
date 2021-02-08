@@ -651,10 +651,7 @@ region."
           (company-semantic company-clang)
           company-cmake
           company-files
-          ,@(if (and (memq (window-system) '(ns mac))
-                     (fboundp 'company-emoji))
-                '((company-emoji :separate company-capf :with company-yasnippet))
-              '(company-capf :with company-yasnippet))
+          (company-capf :with company-yasnippet)
           (company-dabbrev-code
            company-gtags
            company-etags
