@@ -1423,6 +1423,8 @@ ELEMENT is only added once."
                 (purpose-load-window-layout-file))
               (select-window (get-largest-window))))
 
+  ;; TODO:
+  ;; See if https://github.com/bmag/emacs-purpose/pull/154 works better
   (defun purpose-quit-restore-window-advice (orig-func &optional window bury-or-kill)
     "Close pop up window when there aren't pop up buffers can be shown in it."
     (let* ((window (window-normalize-window window t))
@@ -1451,6 +1453,10 @@ ELEMENT is only added once."
         (advice-add 'pop-to-buffer :around 'purpose-pop-to-buffer-advice)))
     (advice-add 'compilation-goto-locus :around 'purpose-compilation-goto-locus-advice))
 
+  ;; Prevent `isearch-describe-*' commands from bypassing purpose.
+  (with-eval-after-load 'isearch
+    (setq isearch--display-help-action '(purpose--action-function . nil)))
+
   ;; Replace `edebug-pop-to-buffer' with `pop-to-buffer'
   (with-eval-after-load 'edebug
     (defun edebug-pop-to-buffer-advice (buffer &optional window)
@@ -1471,9 +1477,6 @@ ELEMENT is only added once."
       (set-window-hscroll window 0))
     (advice-add 'edebug-pop-to-buffer :override 'edebug-pop-to-buffer-advice))
 
-  (with-eval-after-load 'wid-browse
-    (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
-
   (with-eval-after-load 'whitespace
     (defun whitespace-display-window-advice (buffer)
       (with-current-buffer buffer
@@ -1481,6 +1484,9 @@ ELEMENT is only added once."
         (goto-char (point-min)))
       (switch-to-buffer buffer))
     (advice-add 'whitespace-display-window :override 'whitespace-display-window-advice))
+
+  (with-eval-after-load 'wid-browse
+    (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
 
   (with-eval-after-load 'frameset
     (defun remove-unrestorable-file-buffers (window-tree)
