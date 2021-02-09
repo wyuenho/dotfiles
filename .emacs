@@ -1434,24 +1434,13 @@ ELEMENT is only added once."
         (ignore-errors (delete-window window)))))
   (advice-add 'quit-restore-window :around 'purpose-quit-restore-window-advice)
 
-  ;; `display-buffer-overriding-action' will be overrided by
-  ;; `next-error-no-select', and `purpose-select-buffer' will be bypassed by the
-  ;; `other-window' action to `pop-to-buffer' inside `compilation-goto-locus',
-  ;; so source buffers will be popped up in other windows not respecting purpose
-  ;; purposes.
-  (with-eval-after-load 'compile
-    (defun purpose-compilation-goto-locus-advice (fn &rest args)
-      "Fix window selection issue when `next-error-follow-minor-mode' is active."
-      (unwind-protect
-          (progn
-            (advice-remove 'pop-to-buffer 'purpose-pop-to-buffer-advice)
-            (cl-letf (((symbol-function 'pop-to-buffer)
-                       (lambda (buffer-or-name &optional _ norecord)
-                         (purpose-select-buffer buffer-or-name 'prefer-other-window norecord))))
-              (let ((display-buffer-overriding-action '(purpose--action-function . nil)))
-                (apply fn args))))
-        (advice-add 'pop-to-buffer :around 'purpose-pop-to-buffer-advice)))
-    (advice-add 'compilation-goto-locus :around 'purpose-compilation-goto-locus-advice))
+  (with-eval-after-load 'simple
+    (defun purpose-next-error-advice (fn &rest args)
+      "Make sure `next-error' respects `purspose--action-function'."
+      (interactive (lambda (spec) (advice-eval-interactive-spec spec)))
+      (let ((display-buffer-overriding-action '(purpose--action-function . nil)))
+        (apply fn args)))
+    (advice-add 'next-error :around 'purpose-next-error-advice))
 
   ;; Prevent `isearch-describe-*' commands from bypassing purpose.
   (with-eval-after-load 'isearch
