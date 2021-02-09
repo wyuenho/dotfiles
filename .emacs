@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 (require 'map)
 (require 'seq)
-(require 'cl-seq)
+(require 'cl-lib)
 
 (set-locale-environment "UTF-8")
 
@@ -1397,7 +1397,13 @@ ELEMENT is only added once."
             (vterm-mode   . terminal)))
 
   (with-eval-after-load 'window-purpose-x
-    (add-to-list 'purpose-x-popwin-buffer-names "*Messages*")
+    (cl-pushnew "*Messages*" purpose-x-popwin-buffer-names)
+    (with-eval-after-load 'minibuffer
+      (cl-pushnew "*Completions*" purpose-x-popwin-buffer-names))
+    (with-eval-after-load 'ido
+      (cl-pushnew ido-completion-buffer purpose-x-popwin-buffer-names))
+    (with-eval-after-load 'ispell
+      (cl-pushnew ispell-choices-buffer purpose-x-popwin-buffer-names))
     (add-to-list 'purpose-x-popwin-buffer-name-regexps
                  (concat (regexp-quote whitespace-report-buffer-name) "\\(<[[:digit:]]+>\\)*"))
     (add-to-list 'purpose-x-popwin-buffer-name-regexps
