@@ -1605,7 +1605,9 @@ ELEMENT is only added once."
       (put face 'theme-face nil)
       (face-spec-set face spec)))
 
-  (dolist (face-map '((all-the-icons-dired-dir-face . dired-directory)))
+  (dolist (face-map '((all-the-icons-dired-dir-face . dired-directory)
+                      (icomplete-first-match        . ido-first-match)
+                      (completions-common-part      . flx-highlight-face)))
     (let* ((face (car face-map))
            (alias (cdr face-map)))
       (put face 'theme-face nil)
