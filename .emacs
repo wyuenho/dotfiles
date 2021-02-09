@@ -1398,16 +1398,21 @@ ELEMENT is only added once."
 
   (with-eval-after-load 'window-purpose-x
     (cl-pushnew "*Messages*" purpose-x-popwin-buffer-names)
+
     (with-eval-after-load 'minibuffer
       (cl-pushnew "*Completions*" purpose-x-popwin-buffer-names))
+
     (with-eval-after-load 'ido
       (cl-pushnew ido-completion-buffer purpose-x-popwin-buffer-names))
+
     (with-eval-after-load 'ispell
       (cl-pushnew ispell-choices-buffer purpose-x-popwin-buffer-names))
-    (add-to-list 'purpose-x-popwin-buffer-name-regexps
-                 (concat (regexp-quote whitespace-report-buffer-name) "\\(<[[:digit:]]+>\\)*"))
-    (add-to-list 'purpose-x-popwin-buffer-name-regexps
-                 (concat (regexp-quote whitespace-help-buffer-name) "\\(<[[:digit:]]+>\\)*")))
+
+    (with-eval-after-load 'whitespace
+      (add-to-list 'purpose-x-popwin-buffer-name-regexps
+                   (concat (regexp-quote whitespace-report-buffer-name) "\\(<[[:digit:]]+>\\)*"))
+      (add-to-list 'purpose-x-popwin-buffer-name-regexps
+                   (concat (regexp-quote whitespace-help-buffer-name) "\\(<[[:digit:]]+>\\)*"))))
 
   (purpose-x-code1-setup)
   (purpose-x-popwin-setup)
