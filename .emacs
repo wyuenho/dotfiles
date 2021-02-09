@@ -1554,6 +1554,7 @@ ELEMENT is only added once."
   :config
   (delight '((rainbow-mode)
              (lsp-mode)
+             (whitespace-cleanup-mode)
              (tree-sitter-mode          nil tree-sitter)
              (tree-sitter-hl-mode       nil tree-sitter-hl)
              (python-black-on-save-mode nil python-black)
@@ -1565,7 +1566,6 @@ ELEMENT is only added once."
              (move-dup-mode             nil move-dup)
              (smartparens-mode          nil smartparens)
              (which-key-mode            nil which-key)
-             (whitespace-cleanup-mode   nil whitespace-cleanup-mode)
              (auto-revert-mode          nil autorevert)
              (visual-line-mode          nil simple)
              (subword-mode              nil subword))))
