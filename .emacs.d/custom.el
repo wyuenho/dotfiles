@@ -220,13 +220,8 @@
      ("css" . web-mode)
      ("python" . python-mode)
      ("go" . go-mode)))
- '(markdown-command
-   "markdown_py -x pymdownx.github -x pymdownx.highlight --output_format=html5")
- '(markdown-css-paths
-   '("https://cdn.rawgit.com/aahan/pygments-github-style/master/github.css" "https://unpkg.com/github-markdown-css@2.9.0/github-markdown.css"))
+ '(markdown-command "multimarkdown --full --to=html")
  '(markdown-indent-on-enter nil)
- '(markdown-xhtml-body-epilogue "</article>")
- '(markdown-xhtml-body-preamble "<article class=\"markdown-body\">")
  '(menu-bar-mode t)
  '(minibuffer-depth-indicate-mode t)
  '(minibuffer-frame-alist '((width . 80) (height . 2)))
