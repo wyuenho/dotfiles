@@ -1201,11 +1201,7 @@ optionally the window if possible."
   (rg-enable-default-bindings)
   (with-eval-after-load 'projectile
     (define-key projectile-command-map (kbd "s r") 'rg-project))
-
-  (add-hook 'rg-mode-hook
-            (lambda ()
-              (next-error-follow-minor-mode 0)
-              (wgrep-rg-setup))))
+  (add-hook 'rg-mode-hook 'wgrep-rg-setup))
 
 (use-package dumb-jump
   :config
@@ -1435,6 +1431,25 @@ ELEMENT is only added once."
       (when (and (null quit-restore) (window-parent window))
         (ignore-errors (delete-window window)))))
   (advice-add 'quit-restore-window :around 'purpose-quit-restore-window-advice)
+
+  ;; `display-buffer-overriding-action' will be overrided by
+  ;; `next-error-no-select', and `purpose-select-buffer' will be bypassed by the
+  ;; `other-window' action to `pop-to-buffer' inside `compilation-goto-locus',
+  ;; so source buffers will be popped up in other windows not respecting purpose
+  ;; purposes.
+  (with-eval-after-load 'compile
+    (defun purpose-compilation-goto-locus-advice (fn &rest args)
+      "Fix window selection issue when `next-error-follow-minor-mode' is active."
+      (unwind-protect
+          (progn
+            (advice-remove 'pop-to-buffer 'purpose-pop-to-buffer-advice)
+            (cl-letf (((symbol-function 'pop-to-buffer)
+                       (lambda (buffer-or-name &optional _ norecord)
+                         (purpose-select-buffer buffer-or-name 'prefer-other-window norecord))))
+              (let ((display-buffer-overriding-action '(purpose--action-function . nil)))
+                (apply fn args))))
+        (advice-add 'pop-to-buffer :around 'purpose-pop-to-buffer-advice)))
+    (advice-add 'compilation-goto-locus :around 'purpose-compilation-goto-locus-advice))
 
   ;; Replace `edebug-pop-to-buffer' with `pop-to-buffer'
   (with-eval-after-load 'edebug
