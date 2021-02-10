@@ -1,6 +1,17 @@
 # ~/.bash_profile: executed by the command interpreter for login shells
 # ~/.profile is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
 
+if [ -z "$MANPATH" ]; then # MacOS
+    # Must be set first for /usr/libexec/path_helper to modify
+    export MANPATH
+    MANPATH=""
+
+    # Run again to set MANPATH
+    if [ -x /usr/libexec/path_helper ]; then
+        eval "$(/usr/libexec/path_helper -s)"
+    fi
+fi
+
 # https://wiki.archlinux.org/index.php/XDG_Base_Directory
 export XDG_CONFIG_HOME
 XDG_CONFIG_HOME="$HOME/.config"
