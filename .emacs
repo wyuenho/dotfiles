@@ -1233,12 +1233,21 @@ optionally the window if possible."
   (unless (display-graphic-p)
     (diff-hl-margin-mode 1))
   (diff-hl-flydiff-mode 1)
-  (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
+  (with-eval-after-load 'magit
+    (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
 
 (use-package magit)
 
 (use-package forge
-  :after (magit))
+  :after (magit)
+  :config
+  (add-hook 'forge-post-mode-hook
+            (lambda ()
+              (when (forge-github-repository-p
+                     (forge-get-repository forge--buffer-post-object))
+                (auto-fill-mode -1)))))
 
 (use-package magit-todos
   :after (magit))
