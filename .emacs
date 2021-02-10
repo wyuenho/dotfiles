@@ -1434,31 +1434,18 @@ ELEMENT is only added once."
 
   ;; TODO:
   ;; See if https://github.com/bmag/emacs-purpose/pull/154 works better
-  (defun purpose-quit-restore-window-advice (orig-func &optional window bury-or-kill)
+  (defun purpose-quit-restore-window-advice (fn &optional window bury-or-kill)
     "Close pop up window when there aren't pop up buffers can be shown in it."
     (let* ((window (window-normalize-window window t))
            (quit-restore (window-parameter window 'quit-restore)))
-      (funcall orig-func window bury-or-kill)
+      (funcall fn window bury-or-kill)
       (when (and (null quit-restore) (window-parent window))
         (ignore-errors (delete-window window)))))
   (advice-add 'quit-restore-window :around 'purpose-quit-restore-window-advice)
 
-  (with-eval-after-load 'simple
-    (defun purpose-next-error-advice (fn &rest args)
-      "Make sure `next-error' respects `purspose--action-function'."
-      (interactive (lambda (spec) (advice-eval-interactive-spec spec)))
-      (let ((display-buffer-overriding-action '(purpose--action-function . nil)))
-        (apply fn args)))
-    (advice-add 'next-error :around 'purpose-next-error-advice))
-
-  ;; Prevent `isearch-describe-*' commands from bypassing purpose.
-  (with-eval-after-load 'isearch
-    (setq isearch--display-help-action '(purpose--action-function . nil)))
-
-  ;; Replace `edebug-pop-to-buffer' with `pop-to-buffer'
   (with-eval-after-load 'edebug
     (defun edebug-pop-to-buffer-advice (buffer &optional window)
-      "Replaces `edebug-pop-to-buffer' with `pop-to-buffer'"
+      "Reimplements `edebug-pop-to-buffer' using `pop-to-buffer'"
       (setq window
             (cond
              ((and (edebug-window-live-p window)
