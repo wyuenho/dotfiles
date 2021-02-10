@@ -119,6 +119,11 @@ if [ -z "$INSIDE_EMACS" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq pos
 
     # aws
     [ -x "$(command -v aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
+
+    # git-subrepo
+    if [ -d "$GIT_SUBREPO_ROOT" ] && [ -f "$GIT_SUBREPO_ROOT/share/completion.bash" ]; then
+        source "$GIT_SUBREPO_ROOT/share/completion.bash"
+    fi
 fi
 
 # Direnv

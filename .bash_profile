@@ -40,6 +40,15 @@ if [ -d "$HOME/.local/bin" ]; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
+# git-subrepo
+if [ -d "$HOME/.local/git-subrepo" ]; then
+    export GIT_SUBREPO_ROOT
+    GIT_SUBREPO_ROOT="$HOME/.local/git-subrepo"
+    PATH="$GIT_SUBREPO_ROOT/lib:$PATH"
+    MANPATH="$GIT_SUBREPO_ROOT/man:$MANPATH"
+fi
+
+# Lesspipe
 if [ -x "$(command -v lesspipe.sh)" ]; then
     export LESSOPEN
     LESSOPEN='| /opt/local/bin/lesspipe.sh %s'
