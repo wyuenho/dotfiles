@@ -130,6 +130,7 @@ Optional argument ARG same as `comment-dwim''s."
            (not (memq (window-system) '(x))))
   (bind-key "<mouse-3>" 'mouse-buffer-menu))
 
+;; tab-bar mode can't be used on macOS, so rebinding it to something useful.
 (bind-key "C-x t" 'display-time-world)
 
 ;; Completely unbind annoying abbrev, dabbrev, expand, hippie-expand. These
