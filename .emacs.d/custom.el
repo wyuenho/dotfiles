@@ -196,6 +196,7 @@
  '(mac-mouse-wheel-mode t)
  '(mac-print-mode t)
  '(mac-system-move-file-to-trash-use-finder t)
+ '(magit-completing-read-function 'magit-ido-completing-read)
  '(magit-diff-refine-hunk 'all)
  '(magit-diff-use-overlays nil)
  '(magithub-clone-default-directory "~/Documents/workspace")
@@ -257,7 +258,6 @@
  '(prettier-enabled-parsers
    '(angular babel babel-flow css flow graphql json less html markdown mdx scss typescript vue yaml))
  '(prettier-pre-warm 'some)
- '(projectile-completion-system 'default)
  '(purpose-x-code1-dired-goto-file t)
  '(purpose-x-code1-update-idle-delay 0.5)
  '(purpose-x-popwin-major-modes
@@ -313,6 +313,7 @@
  '(spaceline-all-the-icons-clock-always-visible nil)
  '(spaceline-all-the-icons-separator-type 'arrow)
  '(standard-indent 2)
+ '(switch-to-buffer-obey-display-actions t)
  '(tab-stop-list '(2 4 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
  '(tab-width 2)
  '(temp-buffer-resize-mode t)
