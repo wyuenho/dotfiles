@@ -1375,6 +1375,49 @@ ELEMENT is only added once."
 
 ;; Window management
 
+(with-eval-after-load 'wid-browse
+  (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
+
+(with-eval-after-load 'frameset
+  (defun remove-unrestorable-file-buffers (window-tree)
+    "Remove un-restorable buffers from window state."
+    (let ((head (car window-tree))
+          (tail (cdr window-tree)))
+      (cond ((memq head '(vc hc))
+             `(,head ,@(remove-unrestorable-file-buffers tail)))
+            ((eq head 'leaf)
+             (let* ((buffer (alist-get 'buffer tail))
+                    (buffer-name (car buffer))
+                    (filter (lambda (buffer) (string= buffer-name (car buffer))))
+                    (next-buffers (alist-get 'next-buffers tail))
+                    (prev-buffers (alist-get 'prev-buffers tail)))
+               (if (get-buffer buffer-name)
+                   window-tree
+                 (cond ((and next-buffers (> (length next-buffers) 1))
+                        (setf (alist-get 'next-buffers window-tree)
+                              (seq-remove filter next-buffers)))
+                       ((and prev-buffers (> (length prev-buffers) 1))
+                        (setf (alist-get 'prev-buffers window-tree)
+                              (seq-remove filter prev-buffers))))
+                 (when prev-buffers
+                   (setf (alist-get 'buffer tail) `(,(caar (alist-get 'prev-buffers window-tree)) ,@(cdr buffer))))
+                 `(,head ,@tail))))
+            ((null head) nil)
+            (t (cons (if (and (listp head) (listp (cdr head)))
+                         (remove-unrestorable-file-buffers head)
+                       head)
+                     (if (and (listp tail) (listp (cdr tail)))
+                         (remove-unrestorable-file-buffers tail)
+                       tail))))))
+
+  (defun frameset--restore-frame-advice (fn &rest args)
+    (let ((window-state (cadr args)))
+      (apply fn
+             (car args)
+             (remove-unrestorable-file-buffers window-state)
+             (cddr args))))
+  (advice-add 'frameset--restore-frame :around 'frameset--restore-frame-advice))
+
 ;; Move around windows with shifted arrow keys
 (use-package windmove
   :config
@@ -1433,8 +1476,6 @@ ELEMENT is only added once."
                 (purpose-load-window-layout-file))
               (select-window (get-largest-window))))
 
-  ;; TODO:
-  ;; See if https://github.com/bmag/emacs-purpose/pull/154 works better
   (defun purpose-quit-restore-window-advice (fn &optional window bury-or-kill)
     "Close pop up window when there aren't pop up buffers can be shown in it."
     (let* ((window (window-normalize-window window t))
@@ -1443,76 +1484,6 @@ ELEMENT is only added once."
       (when (and (null quit-restore) (window-parent window))
         (ignore-errors (delete-window window)))))
   (advice-add 'quit-restore-window :around 'purpose-quit-restore-window-advice)
-
-  (with-eval-after-load 'edebug
-    (defun edebug-pop-to-buffer-advice (buffer &optional window)
-      "Reimplements `edebug-pop-to-buffer' using `pop-to-buffer'"
-      (setq window
-            (cond
-             ((and (edebug-window-live-p window)
-                   (eq (window-buffer window) buffer))
-              window)
-             ((eq (window-buffer) buffer)
-              (selected-window))
-             ((get-buffer-window buffer 0))
-             (t (get-buffer-window (pop-to-buffer buffer)))))
-      (set-window-buffer window buffer)
-      (select-window window)
-      (unless (memq (framep (selected-frame)) '(nil t pc))
-        (x-focus-frame (selected-frame)))
-      (set-window-hscroll window 0))
-    (advice-add 'edebug-pop-to-buffer :override 'edebug-pop-to-buffer-advice))
-
-  (with-eval-after-load 'whitespace
-    (defun whitespace-display-window-advice (buffer)
-      (with-current-buffer buffer
-        (special-mode)
-        (goto-char (point-min)))
-      (switch-to-buffer buffer))
-    (advice-add 'whitespace-display-window :override 'whitespace-display-window-advice))
-
-  (with-eval-after-load 'wid-browse
-    (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
-
-  (with-eval-after-load 'frameset
-    (defun remove-unrestorable-file-buffers (window-tree)
-      "Remove un-restorable buffers from window state."
-      (let ((head (car window-tree))
-            (tail (cdr window-tree)))
-        (cond ((memq head '(vc hc))
-               `(,head ,@(remove-unrestorable-file-buffers tail)))
-              ((eq head 'leaf)
-               (let* ((buffer (alist-get 'buffer tail))
-                      (buffer-name (car buffer))
-                      (filter (lambda (buffer) (string= buffer-name (car buffer))))
-                      (next-buffers (alist-get 'next-buffers tail))
-                      (prev-buffers (alist-get 'prev-buffers tail)))
-                 (if (get-buffer buffer-name)
-                     window-tree
-                   (cond ((and next-buffers (> (length next-buffers) 1))
-                          (setf (alist-get 'next-buffers window-tree)
-                                (seq-remove filter next-buffers)))
-                         ((and prev-buffers (> (length prev-buffers) 1))
-                          (setf (alist-get 'prev-buffers window-tree)
-                                (seq-remove filter prev-buffers))))
-                   (when prev-buffers
-                     (setf (alist-get 'buffer tail) `(,(caar (alist-get 'prev-buffers window-tree)) ,@(cdr buffer))))
-                   `(,head ,@tail))))
-              ((null head) nil)
-              (t (cons (if (and (listp head) (listp (cdr head)))
-                           (remove-unrestorable-file-buffers head)
-                         head)
-                       (if (and (listp tail) (listp (cdr tail)))
-                           (remove-unrestorable-file-buffers tail)
-                         tail))))))
-
-    (defun frameset--restore-frame-advice (fn &rest args)
-      (let ((window-state (cadr args)))
-        (apply fn
-               (car args)
-               (remove-unrestorable-file-buffers window-state)
-               (cddr args))))
-    (advice-add 'frameset--restore-frame :around 'frameset--restore-frame-advice))
 
   ;; Bury all special buffers after setting up dummy buffers and restoring
   ;; session buffers
