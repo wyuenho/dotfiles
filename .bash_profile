@@ -1,6 +1,9 @@
 # ~/.bash_profile: executed by the command interpreter for login shells
 # ~/.profile is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
 
+# adding an appropriate DISPLAY variable for use with MacPorts.
+export DISPLAY=:0
+
 if [ -z "$MANPATH" ]; then # MacOS
     # Must be set first for /usr/libexec/path_helper to modify
     export MANPATH
