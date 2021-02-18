@@ -78,8 +78,10 @@ if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
 fi
 
 # Python
-export PYTHONSTARTUP
-PYTHONSTARTUP="$HOME/.pythonrc"
+if [ -f "$HOME/.pythonrc" ]; then
+    export PYTHONSTARTUP
+    PYTHONSTARTUP="$HOME/.pythonrc"
+fi
 
 if [ -d "$HOME/.pyenv" ]; then
     export PYENV_ROOT
