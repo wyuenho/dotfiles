@@ -43,6 +43,7 @@
  '(completion-auto-help 'lazy)
  '(confirm-kill-processes nil)
  '(create-lockfiles nil)
+ '(crux-reopen-as-root-mode t)
  '(css-indent-offset 2)
  '(custom-buffer-done-kill t)
  '(dabbrev-case-fold-search nil)
