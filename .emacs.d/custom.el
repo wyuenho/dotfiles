@@ -361,6 +361,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(region ((((type ns))
+            (:background "selectedTextBackgroundColor" :foreground "selectedTextColor"))))
  '(lsp-headerline-breadcrumb-separator-face ((t (:inherit shadow))))
  '(tree-sitter-hl-face:function\.call ((t nil)))
  '(tree-sitter-hl-face:method\.call ((t nil)))

@@ -1581,12 +1581,12 @@ ELEMENT is only added once."
   :config
   (load-theme 'solarized-dark)
 
-  (dolist (entry `((region . ((((type ns))
-                               (:background "selectedTextBackgroundColor" :foreground "selectedTextColor"))))))
-    (let ((face (car entry))
-          (spec (cdr entry)))
-      (put face 'theme-face nil)
-      (face-spec-set face spec)))
+  ;; (dolist (entry `((region . ((((type ns))
+  ;;                              (:background "selectedTextBackgroundColor" :foreground "selectedTextColor"))))))
+  ;;   (let ((face (car entry))
+  ;;         (spec (cdr entry)))
+  ;;     (put face 'theme-face nil)
+  ;;     (face-spec-set face spec)))
 
   (dolist (face-map '((all-the-icons-dired-dir-face . dired-directory)
                       (icomplete-first-match        . ido-first-match)
