@@ -14,10 +14,6 @@ if [ "${BASH_VERSINFO[0]}" -ge 4 ]; then
     # If set, the pattern "**" used in a pathname expansion context will
     # match all files and zero or more directories and subdirectories.
     shopt -s globstar
-
-    # Multiple tabs selects options
-    bind 'TAB: menu-complete'
-    bind 'set show-all-if-ambiguous on'
 fi
 
 export MBOX
