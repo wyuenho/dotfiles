@@ -1376,6 +1376,8 @@ ELEMENT is only added once."
   :hook (dired-mode . dired-collapse-mode))
 
 ;; Window management
+(with-eval-after-load 'recentf
+  (define-key recentf-dialog-mode-map [remap recentf-cancel-dialog] 'quit-window))
 
 (with-eval-after-load 'wid-browse
   (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
