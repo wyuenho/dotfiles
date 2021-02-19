@@ -1450,22 +1450,27 @@ ELEMENT is only added once."
             (vterm-mode   . terminal)))
 
   (with-eval-after-load 'window-purpose-x
-    (cl-pushnew "*Messages*" purpose-x-popwin-buffer-names)
-
-    (with-eval-after-load 'minibuffer
-      (cl-pushnew "*Completions*" purpose-x-popwin-buffer-names))
+    (add-to-list 'purpose-x-popwin-buffer-names "*Messages*")
+    (purpose-x-popwin-update-conf)
 
     (with-eval-after-load 'ido
-      (cl-pushnew ido-completion-buffer purpose-x-popwin-buffer-names))
+      (add-to-list 'purpose-x-popwin-buffer-names ido-completion-buffer)
+      (purpose-x-popwin-update-conf))
 
     (with-eval-after-load 'ispell
-      (cl-pushnew ispell-choices-buffer purpose-x-popwin-buffer-names))
+      (add-to-list 'purpose-x-popwin-buffer-names ispell-choices-buffer)
+      (purpose-x-popwin-update-conf))
+
+    (with-eval-after-load 'minibuffer
+      (add-to-list 'purpose-x-popwin-buffer-names "*Completions*")
+      (purpose-x-popwin-update-conf))
 
     (with-eval-after-load 'whitespace
       (add-to-list 'purpose-x-popwin-buffer-name-regexps
                    (concat (regexp-quote whitespace-report-buffer-name) "\\(<[[:digit:]]+>\\)*"))
       (add-to-list 'purpose-x-popwin-buffer-name-regexps
-                   (concat (regexp-quote whitespace-help-buffer-name) "\\(<[[:digit:]]+>\\)*"))))
+                   (concat (regexp-quote whitespace-help-buffer-name) "\\(<[[:digit:]]+>\\)*"))
+      (purpose-x-popwin-update-conf)))
 
   (purpose-x-code1-setup)
   (purpose-x-popwin-setup)
@@ -1479,15 +1484,6 @@ ELEMENT is only added once."
               (when (file-exists-p purpose-default-layout-file)
                 (purpose-load-window-layout-file))
               (select-window (get-largest-window))))
-
-  (defun purpose-quit-restore-window-advice (fn &optional window bury-or-kill)
-    "Close pop up window when there aren't pop up buffers can be shown in it."
-    (let* ((window (window-normalize-window window t))
-           (quit-restore (window-parameter window 'quit-restore)))
-      (funcall fn window bury-or-kill)
-      (when (and (null quit-restore) (window-parent window))
-        (ignore-errors (delete-window window)))))
-  (advice-add 'quit-restore-window :around 'purpose-quit-restore-window-advice)
 
   ;; Bury all special buffers after setting up dummy buffers and restoring
   ;; session buffers
