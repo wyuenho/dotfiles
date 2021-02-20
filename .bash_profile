@@ -136,8 +136,8 @@ if [ -f "$HOME/.opam/opam-init/init.sh" ]; then
 fi
 
 # Haskell
-if [ -f "$HOME/Library/Haskell/bin" ]; then
-    PATH="$HOME/Library/Haskell/bin:$PATH"
+if [ -f "$HOME/.ghcup/env" ]; then
+    source "$HOME/.ghcup/env" # ghcup-env
 fi
 
 # Google Cloud SDK
