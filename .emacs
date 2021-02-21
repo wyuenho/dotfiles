@@ -1252,7 +1252,8 @@ optionally the window if possible."
             (lambda ()
               (when (forge-github-repository-p
                      (forge-get-repository forge--buffer-post-object))
-                (auto-fill-mode -1)))))
+                (auto-fill-mode -1))))
+  (remove-hook 'forge-post-mode-hook 'turn-on-flyspell))
 
 (use-package magit-todos
   :after (magit))
