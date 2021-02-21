@@ -1335,6 +1335,7 @@ ELEMENT is only added once."
   :hook (dired-collapse-mode . all-the-icons-dired-mode))
 
 (use-package dired-hide-dotfiles
+  :demand
   :bind (:map dired-mode-map
               ("." . dired-hide-dotfiles-mode)))
 
