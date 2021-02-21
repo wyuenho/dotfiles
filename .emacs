@@ -1088,7 +1088,8 @@ optionally the window if possible."
                 :config (cargo-minor-mode)))))
 
 ;; Swift
-(use-package swift-mode)
+(use-package swift-mode
+  :mode "\\.swift\\'")
 
 ;; Scala
 (use-package sbt-mode
