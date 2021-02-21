@@ -1350,7 +1350,7 @@ ELEMENT is only added once."
     (setq dired-single-magic-buffer-name purpose-x-code1-dired-buffer-name))
   ;; Make sure dired-hide-details-mode is preserved when reusing the dired
   ;; window
-  (defun find-alternate-file-advice (oldfun &rest args)
+  (defun find-alternate-file-advice (fn &rest args)
     "Preserve inherited parent dired buffer state if invoked from a dired buffer."
     (let ((is-dired (derived-mode-p 'dired-mode))
           (hide-dotfiles (and (boundp 'dired-hide-dotfiles-mode) dired-hide-dotfiles-mode))
@@ -1362,7 +1362,7 @@ ELEMENT is only added once."
           (vlm visual-line-mode)
           (mlf mode-line-format)
           (arv auto-revert-verbose)
-          (result (apply oldfun args)))
+          (result (apply fn args)))
       (when is-dired
         (when hide-dotfiles (dired-hide-dotfiles-mode))
         (setq truncate-lines tl
