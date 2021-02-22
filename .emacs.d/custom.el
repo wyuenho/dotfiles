@@ -179,7 +179,6 @@
  '(linum-format "%4d ")
  '(load-prefer-newer t)
  '(lsp-auto-guess-root t)
- '(lsp-clients-go-server "gopls")
  '(lsp-disabled-clients '(pyls eslint))
  '(lsp-headerline-breadcrumb-enable nil)
  '(lsp-idle-delay 0.1)
@@ -187,7 +186,6 @@
    '(Class Method Property Field Constuctor Enum Interface Function Struct))
  '(lsp-imenu-sort-methods '(position))
  '(lsp-keep-workspace-alive nil)
- '(lsp-modeline-diagnostics-enable nil)
  '(lsp-response-timeout 60)
  '(lsp-sourcekit-executable
    "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp")
@@ -250,7 +248,7 @@
    '(("gnu" . "https://elpa.gnu.org/packages/")
      ("melpa" . "https://melpa.org/packages/")))
  '(package-selected-packages
-   '(abridge-diff add-node-modules-path ag all-the-icons amx apib-mode auto-compile auto-yasnippet beginend bind-key browse-kill-ring buffer-move bug-hunter cargo cl-lib-highlight clang-format cmake-font-lock company company-box company-native-complete company-prescient company-quickhelp company-restclient company-web crm-custom crux csv-mode cycle-quotes dap-mode default-text-scale delight diff-hl dired-collapse dired-hacks-utils dired-hide-dotfiles dired-single docker docker-compose-mode dockerfile-mode dotenv-mode dumb-jump editorconfig elisp-def elisp-refs emmet-mode emojify enh-ruby-mode eterm-256color exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-golangci-lint flycheck-objc-clang flycheck-pos-tip flycheck-pyre flycheck-rust flycheck-yamllint focus fontify-face forge form-feed git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode goto-last-change graphql-mode graphviz-dot-mode helpful hydra ialign icomplete-vertical ido-completing-read+ ido-vertical-mode iedit imenu-anywhere import-js importmagic jq-mode js-doc js2-mode json-mode kurecolor lorem-ipsum lsp-jedi lsp-mode lsp-origami lsp-sourcekit macrostep magit magit-lfs magit-todos monky move-dup multiple-cursors native-complete nodejs-repl olivetti orderless origami osx-trash package-build package-lint package-safe-delete package-utils pager-default-keybindings pcre2el pdf-tools po-mode poetry poly-markdown poly-rst polymode prettier projectile projectile-rails protobuf-mode py-autopep8 py-isort pyimport python-black python-docstring quelpa-use-package rainbow-mode reason-mode restart-emacs restclient rg rjsx-mode rust-mode sass-mode sbt-mode scala-mode scss-mode shift-number smart-semicolon smartparens smooth-scrolling solarized-theme spaceline sphinx-doc string-inflection swift-mode tree-sitter tree-sitter-langs ts-comint tuareg typescript-mode undo-fu unicode-fonts visual-regexp-steroids vterm web-mode wgrep-ag which-key whitespace-cleanup-mode yaml-mode yard-mode yarn-mode yasnippet yasnippet-snippets))
+   '(shrink-path abridge-diff add-node-modules-path ag all-the-icons amx apib-mode auto-compile auto-yasnippet beginend bind-key browse-kill-ring buffer-move bug-hunter cargo cl-lib-highlight clang-format cmake-font-lock company company-box company-native-complete company-prescient company-quickhelp company-restclient company-web crm-custom crux csv-mode cycle-quotes dap-mode default-text-scale delight diff-hl dired-collapse dired-hacks-utils dired-hide-dotfiles dired-single docker docker-compose-mode dockerfile-mode dotenv-mode dumb-jump editorconfig elisp-def elisp-refs emmet-mode emojify enh-ruby-mode eterm-256color exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-golangci-lint flycheck-objc-clang flycheck-pos-tip flycheck-pyre flycheck-rust flycheck-yamllint focus fontify-face forge form-feed git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode goto-last-change graphql-mode graphviz-dot-mode helpful hydra ialign icomplete-vertical ido-completing-read+ ido-vertical-mode iedit imenu-anywhere import-js importmagic jq-mode js-doc js2-mode json-mode kurecolor lorem-ipsum lsp-jedi lsp-mode lsp-origami lsp-sourcekit macrostep magit magit-lfs magit-todos monky move-dup multiple-cursors native-complete nodejs-repl olivetti orderless origami osx-trash package-build package-lint package-safe-delete package-utils pager-default-keybindings pcre2el pdf-tools po-mode poetry poly-markdown poly-rst polymode prettier projectile projectile-rails protobuf-mode py-isort pyimport python-black python-docstring quelpa-use-package rainbow-mode reason-mode restart-emacs restclient rg rjsx-mode rust-mode sass-mode sbt-mode scala-mode scss-mode shift-number smart-semicolon smartparens smooth-scrolling solarized-theme spaceline sphinx-doc string-inflection swift-mode tree-sitter tree-sitter-langs ts-comint tuareg typescript-mode undo-fu unicode-fonts visual-regexp-steroids vterm web-mode wgrep-ag which-key whitespace-cleanup-mode yaml-mode yard-mode yarn-mode yasnippet yasnippet-snippets))
  '(pixel-scroll-mode t)
  '(poetry-tracking-mode t)
  '(poetry-tracking-strategy 'projectile)

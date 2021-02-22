@@ -7,10 +7,11 @@ import sys
 from pprint import pprint
 
 # Python 3.4+ defines this
-if not getattr(sys, '__interactivehook__', None):
+if not getattr(sys, "__interactivehook__", None):
     # Copied from site.py from python 3.5.2
     def register_readline():
         import atexit
+
         try:
             import readline
             import rlcompleter
@@ -19,11 +20,11 @@ if not getattr(sys, '__interactivehook__', None):
 
         # Reading the initialization (config) file may not be enough to set a
         # completion key, so we set one first and then read the file.
-        readline_doc = getattr(readline, '__doc__', '')
-        if readline_doc is not None and 'libedit' in readline_doc:
-            readline.parse_and_bind('bind ^I rl_complete')
+        readline_doc = getattr(readline, "__doc__", "")
+        if readline_doc is not None and "libedit" in readline_doc:
+            readline.parse_and_bind("bind ^I rl_complete")
         else:
-            readline.parse_and_bind('tab: complete')
+            readline.parse_and_bind("tab: complete")
 
         try:
             readline.read_init_file()
@@ -40,8 +41,7 @@ if not getattr(sys, '__interactivehook__', None):
             # each interpreter exit when readline was already configured
             # through a PYTHONSTARTUP hook, see:
             # http://bugs.python.org/issue5845#msg198636
-            history = os.path.join(os.path.expanduser('~'),
-                                   '.python_history')
+            history = os.path.join(os.path.expanduser("~"), ".python_history")
             try:
                 readline.read_history_file(history)
             except (IOError, OSError):

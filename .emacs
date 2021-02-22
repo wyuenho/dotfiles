@@ -1,4 +1,6 @@
 ;; -*- lexical-binding: t -*-
+(toggle-debug-on-error)
+
 (require 'map)
 (require 'seq)
 (require 'cl-lib)
@@ -52,6 +54,7 @@ versions due to limitations in package.el."
       (let ((package (car cache)))
         (package-activate package))))
   (require 'quelpa-use-package)
+  (setq use-package-compute-statistics t)
   (quelpa-use-package-activate-advice))
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
@@ -553,10 +556,11 @@ region."
          (lsp-mode . lsp-enable-which-key-integration))
   :config
   (setq read-process-output-max (* 1024 1024 10))
-  (add-hook 'lsp-managed-mode-hook (lambda ()
-                                     (when (or (lsp-feature? "textDocument/formatting")
-                                               (lsp-feature? "textDocument/rangeFormatting"))
-                                       (bind-key "C-c f" 'lsp-format-buffer (derived-mode-map-name major-mode))))))
+  ;; (add-hook 'lsp-managed-mode-hook (lambda ()
+  ;;                                    (when (or (lsp-feature? "textDocument/formatting")
+  ;;                                              (lsp-feature? "textDocument/rangeFormatting"))
+  ;;                                      (bind-key "C-c f" 'lsp-format-buffer (derived-mode-map-name major-mode)))))
+  )
 
 (use-package lsp-jedi
   :after lsp)
@@ -815,42 +819,10 @@ optionally the window if possible."
          ("C-h o" . helpful-symbol)
          ("C-h p" . helpful-at-point)))
 
-;; LSP for C/C++/Objective-C, Python, Ruby and Javascript
-;; (use-package eglot
-;;   :preface
-;;   (defun eglot-ensure-flow ()
-;;     ;; Always prefer the LSP server's lookup function
-;;     (unbind-key "M-." js-mode-map)
-;;     (when (and (not (string= major-mode "json-mode"))
-;;                (executable-find "flow")
-;;                (locate-dominating-file
-;;                 (file-name-directory (buffer-file-name))
-;;                 ".flowconfig"))
-;;       (eglot-ensure)))
-;;   :hook ((c-mode-common . eglot-ensure)
-;;          (python-mode   . eglot-ensure)
-;;          (ruby-mode     . eglot-ensure)
-;;          (js-mode       . eglot-ensure-flow))
-;;   :config
-;;   (setf (alist-get '(js-mode js2-mode rjsx-mode typescript-mode) eglot-server-programs t t 'equal) t)
-;;   (map-put eglot-server-programs 'typescript-mode '("javascript-typescript-stdio"))
-;;   (map-put eglot-server-programs '(js-mode js2-mode rjsx-mode) '("flow" "lsp" "--lazy" "--lazy-mode=ide"))
-;;   (map-put eglot-server-programs '(objc-mode c++-mode c-mode) '(eglot-cquery "cquery") 'equal)
-;;   (map-put eglot-server-programs 'ruby-mode '("solargraph" "stdio"))
-;;   (add-hook 'eglot--managed-mode-hook
-;;             (lambda ()
-;;               (bind-keys :map eglot-mode-map
-;;                          ("C-h o"   . eglot-help-at-point)
-;;                          ("C-c C-r" . eglot-rename)
-;;                          ("C-c f"   . eglot-format)
-;;                          ("C-c C-a" . eglot-code-actions))))
-;;   (with-eval-after-load 'company
-;;     (make-local-variable 'company-transformers)
-;;     (setq company-transformers (remq 'company-sort-by-statistics company-transformers))
-;;     (setq company-transformers (remq 'company-flx-transformer company-transformers))
-;;     (setq-local company-backends '(company-files
-;;                                    (company-capf :separate company-yasnippet)
-;;                                    company-keywords))))
+(use-package devdocs-lookup
+  :quelpa (devdocs-lookup :fetcher github :repo "skeeto/devdocs-lookup")
+  :config
+  (devdocs-setup))
 
 ;; C/C++/Objective-C
 (use-package flycheck-objc-clang
@@ -1030,30 +1002,34 @@ optionally the window if possible."
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
 (add-hook 'python-mode-hook
           (lambda ()
-            (use-package poetry)
-
             (use-package python-docstring
               :delight
               :config (python-docstring-mode))
 
-            (use-package importmagic
-              :delight
-              :bind (:map importmagic-mode-map
-                          ("C-c f" . importmagic-fix-imports))
-              :config
-              (importmagic-mode)
-              (unbind-key "C-c C-l" importmagic-mode-map))
+            (use-package poetry)
 
-            ;; Don't add `py-isort-before-save' to `before-save-hook' or the
-            ;; undo history will be very messed up
-            (use-package py-isort)
+            (when-let* ((requirements
+                         (ignore-errors (process-lines "pip" "list" "--format=freeze")))
+                        (requirements
+                         (mapcar (lambda (req) (car (split-string req "=="))) requirements)))
 
-            (let ((python-version (shell-command-to-string
-                                   (string-join `(,python-shell-interpreter "--version") " "))))
-              (if (and (string-match "\\([0-9]+\\)\.[0-9]+\.[0-9]+" python-version)
-                       (>= (string-to-number (match-string-no-properties 1 python-version)) 3))
-                  (use-package python-black :config (python-black-on-save-mode))
-                (use-package py-autopep8 :config (py-autopep8-enable-on-save))))))
+              (use-package python-black
+                :config
+                (python-black-on-save-mode (if (member "black" requirements) 1 0)))
+
+              (use-package importmagic
+                :delight
+                :config
+                (importmagic-mode (if (member "importmagic" requirements) 1 0))
+                (bind-key "C-c f i" 'importmagic-fix-import python-mode-map)
+                (unbind-key "C-c C-l" 'importmagic-mode-map))
+
+              ;; Don't add `py-isort-before-save' to `before-save-hook' or the
+              ;; undo history will be very messed up
+              (use-package py-isort
+                :config
+                (when (member "isort" requirements)
+                  (bind-key "C-c f s" 'py-isort-buffer python-mode-map))))))
 
 ;; Ruby
 (use-package yard-mode)
@@ -1256,7 +1232,9 @@ optionally the window if possible."
   (remove-hook 'forge-post-mode-hook 'turn-on-flyspell))
 
 (use-package magit-todos
-  :after (magit))
+  :quelpa (magit-todos :fetcher github :repo "wyuenho/magit-todos" :branch "fix-95")
+  :after (magit)
+  :config (magit-todos-mode 1))
 
 (use-package magit-lfs
   :after (magit))
@@ -1328,9 +1306,11 @@ ELEMENT is only added once."
                                   (start-process "default-app" nil "open" file-name)))
                           dired-mode-map)))))
 
+(use-package shrink-path)
+
 (use-package all-the-icons-dired
   :after (all-the-icons dired-collapse)
-  :quelpa (all-the-icons-dired :fetcher github :repo "wyuenho/all-the-icons-dired" :branch "monochrome")
+  :quelpa (all-the-icons-dired :fetcher github :repo "wyuenho/all-the-icons-dired" :branch "master")
   :if (display-graphic-p)
   :hook (dired-collapse-mode . all-the-icons-dired-mode))
 
@@ -1520,7 +1500,7 @@ ELEMENT is only added once."
     (when (eq win-sys 'ns)
       ;; Will at least display native Unicode emojis if the multicolor font
       ;; patch is applied
-      (set-fontset-font "fontset-default" 'unicode "Apple Color Emoji" nil 'prepend)
+      ;; (set-fontset-font "fontset-default" 'unicode "Apple Color Emoji" nil 'prepend)
       (dolist (pair '((ns-transparent-titlebar . nil)
                       (ns-appearance . dark)))
         (push pair (alist-get 'ns window-system-default-frame-alist nil))
@@ -1610,3 +1590,7 @@ ELEMENT is only added once."
       (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
 
   (set-face-attribute 'dired-header nil :underline t :background nil :foreground nil))
+
+;; (use-package unicode-fonts
+;;   :config
+;;   (unicode-fonts-setup))
