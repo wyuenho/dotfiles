@@ -147,7 +147,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Bind useful things to keys
 (pcase-dolist (`(,key . ,command)
-               `(("<backtab>" . align)
+               '(("<backtab>" . align)
                  ("C-x f"     . follow-mode)
                  ;; Replace default buffer menu with ibuffer
                  ("C-x C-b"   . ibuffer)
@@ -200,7 +200,7 @@ Optional argument ARG same as `comment-dwim''s."
                     (comint-read-input-ring)))
                 (set-process-sentinel
                  proc
-                 (lambda (process state)
+                 (lambda (&rest _)
                    (let ((comint-input-ring-separator "\n"))
                      (comint-write-input-ring))
                    (quit-window 'kill)))))))
@@ -780,7 +780,7 @@ optionally the window if possible."
 
 ;; Emacs Lisp
 (pcase-dolist (`(,key . ,command)
-               `(("C-c e f" . byte-compile-file)
+               '(("C-c e f" . byte-compile-file)
                  ("C-c e c" . emacs-lisp-byte-compile)
                  ("C-c e l" . emacs-lisp-byte-compile-and-load)
                  ("C-c e b" . eval-buffer)
@@ -1281,7 +1281,7 @@ ELEMENT is only added once."
                 '(0 dired-executable-face)))))
 
   ;; Don't save point position in dired buffers
-  (defun save-place--setup-hooks-after-advice (&rest args)
+  (defun save-place--setup-hooks-after-advice (&rest _)
     (remove-hook 'dired-initial-position-hook 'save-place-dired-hook))
   (advice-add 'save-place--setup-hooks :after 'save-place--setup-hooks-after-advice)
 
@@ -1359,11 +1359,12 @@ ELEMENT is only added once."
 
 (with-eval-after-load 'frameset
   (defun remove-unrestorable-file-buffers (window-tree)
+  (defun frameset--remove-unrestorable-file-buffers (window-tree)
     "Remove un-restorable buffers from window state."
     (let ((head (car window-tree))
           (tail (cdr window-tree)))
       (cond ((memq head '(vc hc))
-             `(,head ,@(remove-unrestorable-file-buffers tail)))
+             `(,head ,@(frameset--remove-unrestorable-file-buffers tail)))
             ((eq head 'leaf)
              (let* ((buffer (alist-get 'buffer tail))
                     (buffer-name (car buffer))
@@ -1383,17 +1384,17 @@ ELEMENT is only added once."
                  `(,head ,@tail))))
             ((null head) nil)
             (t (cons (if (and (listp head) (listp (cdr head)))
-                         (remove-unrestorable-file-buffers head)
+                         (frameset--remove-unrestorable-file-buffers head)
                        head)
                      (if (and (listp tail) (listp (cdr tail)))
-                         (remove-unrestorable-file-buffers tail)
+                         (frameset--remove-unrestorable-file-buffers tail)
                        tail))))))
 
   (defun frameset--restore-frame-advice (fn &rest args)
     (let ((window-state (cadr args)))
       (apply fn
              (car args)
-             (remove-unrestorable-file-buffers window-state)
+             (frameset--remove-unrestorable-file-buffers window-state)
              (cddr args))))
   (advice-add 'frameset--restore-frame :around 'frameset--restore-frame-advice))
 
