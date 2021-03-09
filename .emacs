@@ -126,43 +126,43 @@ Optional argument ARG same as `comment-dwim''s."
       (apply comment-dwim args)))
   (advice-add 'comment-dwim :around 'comment-dwim-advice))
 
-(use-package bind-key)
-
 ;; I hate X mouse bindings
 (when (and (display-graphic-p)
            (not (memq (window-system) '(x))))
-  (bind-key "<mouse-3>" 'mouse-buffer-menu))
+  (global-set-key (kbd "<mouse-3>") 'mouse-buffer-menu))
 
 ;; tab-bar mode can't be used on macOS, so rebinding it to something useful.
-(bind-key "C-x t" 'display-time-world)
+(global-set-key (kbd "C-x t") 'display-time-world)
 
 ;; Completely unbind annoying abbrev, dabbrev, expand, hippie-expand. These
 ;; ancient completion commands are just too stupid for this day and age
-(unbind-key "M-'")
-(unbind-key "M-/")
-(unbind-key "C-x '")
+(global-unset-key (kbd "M-'"))
+(global-unset-key (kbd "M-/"))
+(global-unset-key (kbd "C-x '"))
 ;; Always use M-g prefix to jump between errors
-(unbind-key "C-x `")
+(global-unset-key (kbd "C-x `"))
 ;; Must there be 4 bindings to undo?
-(unbind-key "C-x u")
-(unbind-key "C-_")
-(unbind-key "C-/")
-(unbind-key "s-z")
+(global-unset-key (kbd "C-x u"))
+(global-unset-key (kbd "C-_"))
+(global-unset-key (kbd "C-/"))
+(global-unset-key (kbd "s-z"))
 
 ;; Bind useful things to keys
-(bind-keys ("<backtab>" . align)
-           ("C-x f"     . follow-mode)
-           ;; Replace default buffer menu with ibuffer
-           ("C-x C-b"   . ibuffer)
-           ("C-t"       . transpose-sexps)
-           ("M-:"       . ielm)
-           ("C-x ^"     . nil)
-           ("C-{"       . enlarge-window)
-           ("C-}"       . shrink-window)
-           ("C-c l"     . browse-url-at-point)
-           ("C-c n l"   . org-store-link)
-           ("C-c n a"   . org-agenda)
-           ("C-c n c"   . org-capture))
+(pcase-dolist (`(,key . ,command)
+               `(("<backtab>" . align)
+                 ("C-x f"     . follow-mode)
+                 ;; Replace default buffer menu with ibuffer
+                 ("C-x C-b"   . ibuffer)
+                 ("C-t"       . transpose-sexps)
+                 ("M-:"       . ielm)
+                 ("C-x ^"     . nil)
+                 ("C-{"       . enlarge-window)
+                 ("C-}"       . shrink-window)
+                 ("C-c l"     . browse-url-at-point)
+                 ("C-c n l"   . org-store-link)
+                 ("C-c n a"   . org-agenda)
+                 ("C-c n c"   . org-capture)))
+  (global-set-key (kbd key) command))
 
 ;; Replace zap-to-char with the hidden zap-up-to-char
 (autoload 'zap-up-to-char "misc")
@@ -171,31 +171,25 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
 (with-eval-after-load 'replace
-  (bind-keys :map occur-mode-map
-             ("M-n" . nil)
-             ("M-p" . nil)
-             ("n"   . occur-next)
-             ("p"   . occur-prev)))
+  (pcase-dolist (`(,key . ,command)
+                 '(("M-n" . nil)
+                   ("M-p" . nil)
+                   ("n"   . occur-next)
+                   ("p"   . occur-prev)))
+    (define-key occur-mode-map (kbd key) command)))
 
 (with-eval-after-load 'compile
-  (bind-keys :map compilation-minor-mode-map
-             ("M-{" . nil)
-             ("M-}" . nil)
-             ("M-n" . nil)
-             ("M-p" . nil)
-             ("{"   . compilation-previous-file)
-             ("}"   . compilation-next-file)
-             ("p"   . compilation-previous-error)
-             ("n"   . compilation-next-error)
-             :map compilation-mode-map
-             ("M-{" . nil)
-             ("M-}" . nil)
-             ("M-n" . nil)
-             ("M-p" . nil)
-             ("{"   . compilation-previous-file)
-             ("}"   . compilation-next-file)
-             ("p"   . compilation-previous-error)
-             ("n"   . compilation-next-error)))
+  (pcase-dolist (`(,key . ,command)
+                 '(("M-{" . nil)
+                   ("M-}" . nil)
+                   ("M-n" . nil)
+                   ("M-p" . nil)
+                   ("{"   . compilation-previous-file)
+                   ("}"   . compilation-next-file)
+                   ("p"   . compilation-previous-error)
+                   ("n"   . compilation-next-error)))
+    (define-key compilation-minor-mode-map (kbd key) command)
+    (define-key compilation-mode-map (kbd key) command)))
 
 ;; Persistent history for all the inferior modes
 (add-hook 'comint-mode-hook
@@ -790,12 +784,13 @@ optionally the window if possible."
   :config (flycheck-yamllint-setup))
 
 ;; Emacs Lisp
-(bind-keys :map emacs-lisp-mode-map
-           ("C-c e f" . byte-compile-file)
-           ("C-c e c" . emacs-lisp-byte-compile)
-           ("C-c e l" . emacs-lisp-byte-compile-and-load)
-           ("C-c e b" . eval-buffer)
-           ("C-c e r" . eval-region))
+(pcase-dolist (`(,key . ,command)
+               `(("C-c e f" . byte-compile-file)
+                 ("C-c e c" . emacs-lisp-byte-compile)
+                 ("C-c e l" . emacs-lisp-byte-compile-and-load)
+                 ("C-c e b" . eval-buffer)
+                 ("C-c e r" . eval-region)))
+  (define-key emacs-lisp-mode-map (kbd key) command))
 
 (add-hook 'ielm-mode-hook (lambda () (ielm-change-working-buffer (window-buffer (selected-window)))))
 
@@ -910,17 +905,17 @@ optionally the window if possible."
                                                  (lsp--workspace-server-id lsp--cur-workspace))))))))
                     (if (or yarn-pnp-p (executable-find "yarn"))
                         (progn
-                          (bind-key "C-c f" 'yarn-eslint-format-buffer (derived-mode-map-name mode))
+                          (define-key (derived-mode-map-name mode) (kbd "C-c f") 'yarn-eslint-format-buffer)
                           (yarn-eslint-format-on-save-mode))
                       (progn
-                        (bind-key "C-c f" 'eslint-format-buffer (derived-mode-map-name mode))
+                        (define-key (derived-mode-map-name mode) (kbd "C-c f") 'eslint-format-buffer)
                         (eslint-format-on-save-mode))))
                    ((eq formatter 'prettier)
                     (use-package prettier
                       :delight
                       :config
                       (prettier-mode)
-                      (bind-key "C-c f" 'prettier-prettify (derived-mode-map-name mode))))))))))
+                      (define-key (derived-mode-map-name mode) (kbd "C-c f") 'prettier-prettify)))))))))
 
 ;; Node
 (add-hook 'js-mode-hook
@@ -952,17 +947,18 @@ optionally the window if possible."
   :interpreter ("node" . js2-mode)
   :config
   (when (fboundp 'sp-kill-whole-line)
-    (bind-key "C-k" 'sp-kill-whole-line js2-mode-map)))
+    (define-key js2-mode-map (kbd "C-k") 'sp-kill-whole-line)))
 
 (use-package rjsx-mode
   :mode ("\\.jsx?\\'" "\\.mjs\\'"))
 
 (use-package json-mode
   :config
-  (unbind-key "C-c C-f" json-mode-map)
-  (add-hook 'json-mode-hook (lambda ()
-                              (when (not (key-binding "C-c f"))
-                                (bind-key "C-c f" 'json-pretty-print-buffer 'json-mode-map)))))
+  (define-key json-mode-map (kbd "C-c C-f") nil)
+  (add-hook 'json-mode-hook
+            (lambda ()
+              (when (not (key-binding (kbd "C-c f")))
+                (define-key json-mode-map (kbd "C-c f") 'json-pretty-print-buffer)))))
 
 (use-package polymode
   ;; :after rjsx-mode
@@ -1135,8 +1131,8 @@ optionally the window if possible."
   :after (:any web-mode js2-mode rjsx-mode)
   :hook (sgml-mode nxml-mode web-mode js-jsx-mode js2-jsx-mode rjsx-mode)
   :config
-  (unbind-key "C-c C-c w" emmet-mode-keymap)
-  (bind-key "C-c C-m w" 'emmet-wrap-with-markup emmet-mode-keymap)
+  (define-key emmet-mode-keymap (kbd "C-c C-c w") nil)
+  (define-key emmet-mode-keymap (kbd "C-c C-m w") 'emmet-wrap-with-markup)
   (add-hook 'emmet-mode-hook
             (lambda ()
               (when (or (member major-mode '(js-jsx-mode js2-jsx-mode rjsx-mode))
@@ -1300,11 +1296,11 @@ ELEMENT is only added once."
               (add-minor-mode 'dired-hide-details-mode "")
               ;; Add binding to open file in native app
               (when (memq (window-system) '(mac ns))
-                (bind-key "z" (lambda ()
-                                (interactive)
-                                (let ((file-name (dired-get-file-for-visit)))
-                                  (start-process "default-app" nil "open" file-name)))
-                          dired-mode-map)))))
+                (define-key dired-mode-map (kbd "z")
+                  (lambda ()
+                    (interactive)
+                    (let ((file-name (dired-get-file-for-visit)))
+                      (start-process "default-app" nil "open" file-name))))))))
 
 (use-package shrink-path)
 
