@@ -1206,7 +1206,9 @@ optionally the window if possible."
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
 
-(use-package magit)
+(use-package magit
+  :config
+  (add-hook 'magit-post-refresh-hook 'vc-refresh-state))
 
 (use-package forge
   :after (magit)
