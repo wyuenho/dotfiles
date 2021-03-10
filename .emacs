@@ -805,11 +805,6 @@ optionally the window if possible."
          ("C-h o" . helpful-symbol)
          ("C-h p" . helpful-at-point)))
 
-(use-package devdocs-lookup
-  :quelpa (devdocs-lookup :fetcher github :repo "skeeto/devdocs-lookup")
-  :config
-  (devdocs-setup))
-
 ;; C/C++/Objective-C
 (use-package flycheck-objc-clang
   :after (flycheck)
