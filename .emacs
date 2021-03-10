@@ -1426,7 +1426,7 @@ ELEMENT is only added once."
          ("C-c b <down>"  . buf-move-down)))
 
 (use-package imenu-list
-  :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
+  :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "code1"))
 
 (use-package window-purpose
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts")
