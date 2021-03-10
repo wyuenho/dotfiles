@@ -1364,7 +1364,17 @@ ELEMENT is only added once."
   (define-key widget-browse-mode-map [remap bury-buffer] 'quit-window))
 
 (with-eval-after-load 'frameset
-  (defun remove-unrestorable-file-buffers (window-tree)
+  ;; Let the themes deal with these things
+  (dolist (param '(background-mode tty-color-mode screen-gamma
+                                   alpha font foreground-color
+                                   background-color mouse-color
+                                   cursor-color border-color
+                                   scroll-bar-foreground
+                                   scroll-bar-background))
+    (if (assq param frameset-filter-alist)
+        (setf (alist-get param frameset-filter-alist) :never)
+      (push `(,param . :never) frameset-filter-alist)))
+
   (defun frameset--remove-unrestorable-file-buffers (window-tree)
     "Remove un-restorable buffers from window state."
     (let ((head (car window-tree))
@@ -1479,13 +1489,6 @@ ELEMENT is only added once."
                   (bury-buffer buf))))))
 
 ;; UI
-
-;; Let the themes deal with these things
-(dolist (param '(background-mode tty-color-mode screen-gamma
-                 alpha font foreground-color background-color
-                 mouse-color cursor-color border-color
-                 scroll-bar-foreground scroll-bar-background))
-  (add-to-list 'frameset-filter-alist `(,param . :never)))
 
 (when (display-graphic-p)
   ;; Set up default fonts
