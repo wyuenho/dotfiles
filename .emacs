@@ -1195,7 +1195,8 @@ optionally the window if possible."
   (unless (display-graphic-p)
     (diff-hl-margin-mode 1))
   (diff-hl-flydiff-mode 1)
-  (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
+  (with-eval-after-load 'dired
+    (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
   (with-eval-after-load 'magit
     (add-hook 'magit-post-commit-hook 'diff-hl-update)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
