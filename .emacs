@@ -542,14 +542,10 @@ region."
           . (lambda ()
               (when (not (derived-mode-p 'json-mode))
                 (lsp-deferred))))
+         (lsp-managed-mode . lsp-mode)
          (lsp-mode . lsp-enable-which-key-integration))
   :config
-  (setq read-process-output-max (* 1024 1024 10))
-  ;; (add-hook 'lsp-managed-mode-hook (lambda ()
-  ;;                                    (when (or (lsp-feature? "textDocument/formatting")
-  ;;                                              (lsp-feature? "textDocument/rangeFormatting"))
-  ;;                                      (bind-key "C-c f" 'lsp-format-buffer (derived-mode-map-name major-mode)))))
-  )
+  (setq read-process-output-max (* 1024 1024 10)))
 
 (use-package lsp-jedi
   :after lsp)
