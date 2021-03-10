@@ -1291,7 +1291,19 @@ ELEMENT is only added once."
                     (let ((file-name (dired-get-file-for-visit)))
                       (start-process "default-app" nil "open" file-name))))))))
 
-(use-package shrink-path)
+(use-package shrink-path
+  :config
+  (add-hook 'dired-after-readin-hook
+            (lambda ()
+              (save-excursion
+                (goto-char (point-min))
+                (when (looking-at dired-subdir-regexp)
+                  (let* ((inhibit-read-only t)
+                         (beg (match-beginning 1))
+                         (end (match-end 1))
+                         (subdir (buffer-substring beg end))
+                         (shrunken-subdir (shrink-path-dirs subdir)))
+                    (make-button beg end 'display shrunken-subdir 'help-echo subdir)))))))
 
 (use-package all-the-icons-dired
   :after (all-the-icons dired-collapse)
