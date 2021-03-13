@@ -7,36 +7,11 @@
 
 (set-locale-environment "UTF-8")
 
-(with-eval-after-load 'custom
-  ;; Stop asking me if a theme is safe. The entirety of Emacs is built around
-  ;; evaling arbitrary code...
-  (defun load-theme-advice (fn &rest args)
-    "Don't ask for confirmation when loading a theme."
-    (apply fn (car args) t (cddr args)))
-  (advice-add 'load-theme :around 'load-theme-advice))
-
-(with-eval-after-load 'package
-  (defun package--removable-packages-advice (fn &rest args)
-    "Make sure `package-autoremove' does not consider quelpa-installed packages.
-
-FIXME: this currently does not take into account of package
-versions due to limitations in package.el."
-    (let ((removable-packages (apply fn args))
-          (quelpa-packages (mapcar #'car (quelpa-read-cache))))
-      (cl-set-difference removable-packages quelpa-packages)))
-  (advice-add 'package--removable-packages :around 'package--removable-packages-advice))
-
-;; Only initialize packages when needed
-(cond ((< emacs-major-version 27)
-       (package-initialize))
-      ((not package--activated)
-       (package-initialize)))
-
 ;; Tell Custom to write and find the custom settings elsewhere
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
-;; Install missing packages
+;; Install selected by missing packages
 (let ((missing (cl-set-difference package-selected-packages package-activated-list)))
   (when missing
     (with-demoted-errors "%s"
@@ -55,39 +30,93 @@ versions due to limitations in package.el."
   (setq use-package-compute-statistics t)
   (quelpa-use-package-activate-advice))
 
+;; Remap Unicode charactors to their appropriate fonts
+;; (use-package unicode-fonts
+;;   :config
+;;   (unicode-fonts-setup))
+
+;; Turn off useless mode lighters
+(use-package delight
+  :config
+  (delight '((rainbow-mode)
+             (lsp-mode)
+             (whitespace-cleanup-mode)
+             (tree-sitter-mode          nil tree-sitter)
+             (tree-sitter-hl-mode       nil tree-sitter-hl)
+             (python-black-on-save-mode nil python-black)
+             (auto-fill-function        nil t)
+             (isearch-mode              nil isearch)
+             (abbrev-mode               nil abbrev)
+             (purpose-mode              nil window-purpose)
+             (eldoc-mode                nil eldoc)
+             (move-dup-mode             nil move-dup)
+             (smartparens-mode          nil smartparens)
+             (which-key-mode            nil which-key)
+             (auto-revert-mode          nil autorevert)
+             (visual-line-mode          nil simple)
+             (subword-mode              nil subword))))
+
+;; Theme
+(use-package solarized-theme
+  :if (display-graphic-p)
+  :config
+  (load-theme 'solarized-dark t)
+
+  ;; (pcase-dolist (`(,face . ,spec)
+  ;;                '((region . ((((type ns))
+  ;;                              (:background "selectedTextBackgroundColor" :foreground "selectedTextColor"))))))
+  ;;   (put face 'theme-face nil)
+  ;;   (face-spec-set face spec))
+
+  (pcase-dolist (`(,face . ,alias)
+                 '((all-the-icons-dired-dir-face . dired-directory)
+                   (icomplete-first-match        . ido-first-match)
+                   (completions-common-part      . flx-highlight-face)))
+    (put face 'theme-face nil)
+    (put face 'face-alias alias))
+
+  (let ((line (face-attribute 'mode-line :underline)))
+    (if window-divider-mode
+        (progn
+          (set-face-attribute 'window-divider nil :foreground line)
+          (set-face-attribute 'mode-line nil :overline line :underline nil :box nil)
+          (set-face-attribute 'mode-line-inactive nil :overline line :underline nil :box nil))
+      (set-face-attribute 'mode-line nil :overline line :box nil)
+      (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
+
+  (with-eval-after-load 'dired
+    (set-face-attribute 'dired-header nil :underline t :foreground nil :background nil)))
+
+;; Fancy mode line
+(use-package spaceline
+  :config
+  (require 'spaceline-config)
+  (spaceline-spacemacs-theme)
+  (spaceline-toggle-buffer-encoding-abbrev-off))
+
+;; Replace the major mode name with its icon
+(use-package all-the-icons
+  :if (display-graphic-p)
+  :config
+  (with-eval-after-load 'powerline
+    (defun powerline-major-mode-advice (fn &rest args)
+      (let* ((major-mode-segment (apply fn args))
+             (props (text-properties-at 0 major-mode-segment))
+             (icon (all-the-icons-icon-for-mode major-mode))
+             (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
+        (if face-prop
+            (apply 'propertize icon 'face face-prop props)
+          major-mode-segment)))
+    (advice-add 'powerline-major-mode :around 'powerline-major-mode-advice)))
+
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
 ;; should be done ASAP on init.
 (use-package exec-path-from-shell
   :if (memq (window-system) '(mac ns))
   :config (exec-path-from-shell-initialize))
 
-;; No more yes and no and y and n inconsistencies
-(fset 'yes-or-no-p 'y-or-n-p)
-
 (setq backup-directory-alist
       `(("." . ,(concat user-emacs-directory "backups"))))
-
-;; Remove all query on exit flags on all processes before quitting
-(unless (boundp 'confirm-kill-processes) ;; new on Emacs 26
-  (with-eval-after-load 'files
-    (defun save-buffers-kill-emacs-advice (&rest _)
-      "Remove all query-on-exit flags on all processes before quitting."
-      (let ((processes (seq-filter
-                        (lambda (process)
-                          (and (memq (process-status process) '(run stop open listen))
-                               (process-query-on-exit-flag process)))
-                        (process-list))))
-        (dolist (process processes)
-          (set-process-query-on-exit-flag process nil))))
-    (advice-add 'save-buffers-kill-emacs :before 'save-buffers-kill-emacs-advice)
-    (setq kill-buffer-query-functions
-          (remq 'process-kill-buffer-query-function kill-buffer-query-functions))))
-
-;; Only turn on `auto-revert-mode' for Mac on Emacs >= 26 because kqueue file
-;; notification is broken for Emacs < 26
-(when (and (>= emacs-major-version 26)
-           (string-equal system-type "darwin"))
-  (global-auto-revert-mode 1))
 
 ;; Automatically wrap overly long lines for all text modes
 (add-hook 'text-mode-hook 'auto-fill-mode)
@@ -636,10 +665,6 @@ region."
   :config
   (setq company-backends
         `(company-bbdb
-          ,@(unless (version<= "26" emacs-version)
-              (list 'company-nxml))
-          ,@(unless (version<= "26" emacs-version)
-              (list 'company-css))
           (company-semantic company-clang)
           company-cmake
           company-files
@@ -844,7 +869,7 @@ optionally the window if possible."
             ".json,.js,.jsx,.mjs,.mjsx,.cjs,.cjsx,.ts,.tsx")))
 
 (dolist (mode '(css-mode js-mode markdown-mode scss-mode typescript-mode web-mode yaml-mode))
-  (let ((mode-hook (derived-mode-hook-name mode)))
+  (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook mode-hook
               (lambda ()
                 (let ((formatter
@@ -1096,8 +1121,6 @@ optionally the window if possible."
                 :config
                 (setq-local company-backends
                             `(company-web-html
-                              ,@(unless (version<= "26" emacs-version)
-                                  (list 'company-css))
                               company-yasnippet
                               company-files)))
 
@@ -1366,11 +1389,9 @@ ELEMENT is only added once."
 (with-eval-after-load 'frameset
   ;; Let the themes deal with these things
   (dolist (param '(background-mode tty-color-mode screen-gamma
-                                   alpha font foreground-color
-                                   background-color mouse-color
-                                   cursor-color border-color
-                                   scroll-bar-foreground
-                                   scroll-bar-background))
+                   alpha font foreground-color background-color
+                   mouse-color cursor-color border-color
+                   scroll-bar-foreground scroll-bar-background))
     (if (assq param frameset-filter-alist)
         (setf (alist-get param frameset-filter-alist) :never)
       (push `(,param . :never) frameset-filter-alist)))
@@ -1474,8 +1495,7 @@ ELEMENT is only added once."
   (add-hook 'after-init-hook
             (lambda ()
               (when (file-exists-p purpose-default-layout-file)
-                (purpose-load-window-layout-file))
-              (select-window (get-largest-window))))
+                (purpose-load-window-layout-file))))
 
   ;; Bury all special buffers after setting up dummy buffers and restoring
   ;; session buffers
@@ -1487,111 +1507,3 @@ ELEMENT is only added once."
                                 (string-match-p "^ \\|\\*" (buffer-name buf)))
                               (buffer-list)))
                   (bury-buffer buf))))))
-
-;; UI
-
-(when (display-graphic-p)
-  ;; Set up default fonts
-  (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
-  (set-face-attribute 'fixed-pitch nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
-  (set-face-attribute 'fixed-pitch-serif nil :family "Courier New" :weight 'regular :width 'normal)
-  (set-face-attribute 'variable-pitch nil :family "Noto Sans" :weight 'regular :width 'normal)
-
-  (let ((win-sys (window-system)))
-    (when (eq win-sys 'ns)
-      ;; Will at least display native Unicode emojis if the multicolor font
-      ;; patch is applied
-      ;; (set-fontset-font "fontset-default" 'unicode "Apple Color Emoji" nil 'prepend)
-      (dolist (pair '((ns-transparent-titlebar . nil)
-                      (ns-appearance . dark)))
-        (push pair (alist-get 'ns window-system-default-frame-alist nil))
-        (set-frame-parameter nil (car pair) (cdr pair)))
-      (setq frame-title-format (list '(:eval
-                                       (when (buffer-file-name)
-                                         (abbreviate-file-name (buffer-file-name)))))
-            ns-use-thin-smoothing t
-            ns-use-mwheel-momentum t
-            ns-use-mwheel-acceleration t
-            ;; MacPorts emacs-app port bug
-            x-colors (ns-list-colors))))
-
-  (set-frame-parameter nil 'fullscreen 'maximized))
-
-;; Turn off useless mode lighters
-(use-package delight
-  :config
-  (delight '((rainbow-mode)
-             (lsp-mode)
-             (whitespace-cleanup-mode)
-             (tree-sitter-mode          nil tree-sitter)
-             (tree-sitter-hl-mode       nil tree-sitter-hl)
-             (python-black-on-save-mode nil python-black)
-             (auto-fill-function        nil t)
-             (isearch-mode              nil isearch)
-             (abbrev-mode               nil abbrev)
-             (purpose-mode              nil window-purpose)
-             (eldoc-mode                nil eldoc)
-             (move-dup-mode             nil move-dup)
-             (smartparens-mode          nil smartparens)
-             (which-key-mode            nil which-key)
-             (auto-revert-mode          nil autorevert)
-             (visual-line-mode          nil simple)
-             (subword-mode              nil subword))))
-
-;; Fancy mode line
-(use-package spaceline
-  :after (window-purpose)
-  :config
-  (require 'spaceline-config)
-  (spaceline-spacemacs-theme)
-  (spaceline-toggle-buffer-encoding-abbrev-off))
-
-;; Replace the major mode name with its icon
-(use-package all-the-icons
-  :if (display-graphic-p)
-  :config
-  (with-eval-after-load 'powerline
-    (advice-add 'powerline-major-mode :around
-                (lambda (fn &rest args)
-                  (let* ((major-mode-segment (apply fn args))
-                         (props (text-properties-at 0 major-mode-segment))
-                         (icon (all-the-icons-icon-for-mode major-mode))
-                         (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
-                    (if face-prop
-                        (apply 'propertize icon 'face face-prop props)
-                      (apply 'propertize icon props)))))))
-
-(use-package solarized-theme
-  :if (display-graphic-p)
-  :config
-  (load-theme 'solarized-dark)
-
-  ;; (dolist (entry `((region . ((((type ns))
-  ;;                              (:background "selectedTextBackgroundColor" :foreground "selectedTextColor"))))))
-  ;;   (let ((face (car entry))
-  ;;         (spec (cdr entry)))
-  ;;     (put face 'theme-face nil)
-  ;;     (face-spec-set face spec)))
-
-  (dolist (face-map '((all-the-icons-dired-dir-face . dired-directory)
-                      (icomplete-first-match        . ido-first-match)
-                      (completions-common-part      . flx-highlight-face)))
-    (let* ((face (car face-map))
-           (alias (cdr face-map)))
-      (put face 'theme-face nil)
-      (put face 'face-alias alias)))
-
-  (let ((line (face-attribute 'mode-line :underline)))
-    (if window-divider-mode
-        (progn
-          (set-face-attribute 'window-divider nil :foreground line)
-          (set-face-attribute 'mode-line nil :overline line :underline nil :box nil)
-          (set-face-attribute 'mode-line-inactive nil :overline line :underline nil :box nil))
-      (set-face-attribute 'mode-line nil :overline line :box nil)
-      (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
-
-  (set-face-attribute 'dired-header nil :underline t :background nil :foreground nil))
-
-;; (use-package unicode-fonts
-;;   :config
-;;   (unicode-fonts-setup))
