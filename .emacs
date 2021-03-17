@@ -6,20 +6,34 @@
 (require 'cl-lib)
 
 (set-locale-environment "UTF-8")
+(custom-autoload 'package-selected-packages "package")
+(custom-autoload 'package-activated-list "package")
 
 ;; Tell Custom to write and find the custom settings elsewhere
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file)
+(defun load-custom-file ()
+  "Load custom file.
+
+Sets `custom-file' by searching for a file named `custom.el'
+under `user-emacs-directory'.  If it exists, loaded it."
+  (interactive)
+  (when-let ((custom-file-path
+              (locate-file "custom.el" (list user-emacs-directory))))
+    (setq custom-file custom-file-path)
+    (load custom-file)))
+(load-custom-file)
 
 ;; Install selected by missing packages
-(let ((missing (cl-set-difference package-selected-packages package-activated-list)))
+(let ((missing (cl-set-difference
+                package-selected-packages
+                package-activated-list)))
   (when missing
     (with-demoted-errors "%s"
       (package-refresh-contents))
     (dolist (package missing)
       (with-demoted-errors "%s"
         (package-install package t)
-        (package-activate package))))
+        (package-activate package)))
+    (add-hook 'window-setup-hook 'load-custom-file))
   (require 'quelpa)
   (when (quelpa-read-cache)
     (quelpa-upgrade-all-maybe)
