@@ -97,7 +97,7 @@ else
 fi
 
 # Bash Completion
-if [ -z "$INSIDE_EMACS" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq posix; then
+if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq posix; then
     if [ -f /usr/share/bash-completion/bash_completion ]; then # Debian
         source /usr/share/bash-completion/bash_completion
     elif [ -f /etc/bash_completion ]; then
