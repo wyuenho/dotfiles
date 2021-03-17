@@ -7,16 +7,20 @@
 (set-face-attribute 'variable-pitch nil :family "Noto Sans" :weight 'regular :width 'normal)
 (set-face-attribute 'default nil :family "Noto Sans Mono" :weight 'regular :width 'normal)
 
+(set-face-attribute 'default nil :background "#002b36" :foreground "#839496")
+(set-face-attribute 'mode-line nil :background "#073642" :foreground "#839496" :underline nil :box nil :overline "#284b54")
+(set-face-attribute 'mode-line-inactive nil :background "#002b36" :foreground "#586e75" :overline "#284b54")
+(set-face-attribute 'mode-line-buffer-id nil :weight 'bold :foreground "#93a1a1")
+
 ;; Will at least display native Unicode emojis if the multicolor font
 ;; patch is applied
 ;; (set-fontset-font "fontset-default" 'unicode "Apple Color Emoji" nil 'prepend)
 
 ;; Set up initial and default frame params
 (pcase-dolist (`(,param . ,value)
-               '((background-mode      . dark)
-                 (background-color     . "#002b36")
-                 (scoll-bar-background . "#002b36")
-                 (fullscreen           . maximized)))
+               '((background-mode . dark)
+                 (fullscreen      . maximized)
+                 (cursor-type     . bar)))
   (setf (alist-get param initial-frame-alist) value))
 
 (pcase-dolist (`(,param . ,value)
