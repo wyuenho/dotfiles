@@ -1385,11 +1385,12 @@ ELEMENT is only added once."
               (add-minor-mode 'dired-hide-details-mode "")
               ;; Add binding to open file in native app
               (when (memq (window-system) '(mac ns))
-                (define-key dired-mode-map (kbd "z")
-                  (lambda ()
-                    (interactive)
-                    (let ((file-name (dired-get-file-for-visit)))
-                      (start-process "default-app" nil "open" file-name))))))))
+                (defun dired-ns-open-externally ()
+                  "Open file using default system apps on macOS."
+                  (interactive)
+                  (let ((file-name (dired-get-file-for-visit)))
+                    (start-process "default-app" nil "open" file-name)))
+                (define-key dired-mode-map (kbd "z") 'dired-ns-open-externally)))))
 
 (use-package shrink-path
   :config
