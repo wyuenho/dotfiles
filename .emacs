@@ -1526,7 +1526,7 @@ ELEMENT is only added once."
     (which-key-add-key-based-replacements "C-c b" "buffer-move")))
 
 (use-package imenu-list
-  :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "code1"))
+  :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "clear-buffer"))
 
 (use-package window-purpose
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts")
