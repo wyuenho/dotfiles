@@ -109,6 +109,7 @@
  '(flycheck-pos-tip-max-width 80)
  '(garbage-collection-messages t)
  '(gc-cons-threshold 80000000)
+ '(global-auto-revert-mode t)
  '(global-auto-revert-non-file-buffers t)
  '(global-company-mode t)
  '(global-diff-hl-mode t)
