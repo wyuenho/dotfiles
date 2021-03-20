@@ -1407,7 +1407,6 @@ ELEMENT is only added once."
 
 (use-package all-the-icons-dired
   :after (all-the-icons dired-collapse)
-  :quelpa (all-the-icons-dired :fetcher github :repo "wyuenho/all-the-icons-dired" :branch "master")
   :if (display-graphic-p)
   :hook (dired-collapse-mode . all-the-icons-dired-mode))
 
