@@ -264,6 +264,7 @@
  '(prettier-enabled-parsers
    '(angular babel babel-flow css flow graphql json less html markdown mdx scss typescript vue yaml))
  '(prettier-pre-warm 'some)
+ '(projectile-project-search-path '("~/Documents/workspace"))
  '(purpose-x-code1-dired-goto-file t)
  '(purpose-x-code1-update-idle-delay 0.5)
  '(purpose-x-popwin-major-modes
