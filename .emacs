@@ -257,7 +257,21 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package which-key
   :delight
   :bind (("C-h b" . which-key-show-top-level)
-         ("C-h m" . which-key-show-major-mode)))
+         ("C-h m" . which-key-show-major-mode))
+  :config
+  (which-key-add-keymap-based-replacements ctl-x-map
+    "RET" "mule"
+    "4" "other-window"
+    "5" "other-frame"
+    "8" "unicode"
+    "@" "event-apply"
+    "X" "edebug"
+    "a" "abbrev"
+    "n" "narrow"
+    "r" "register"
+    "C-a" "edebug")
+  (with-eval-after-load 'vc
+    (which-key-add-key-based-replacements "C-x v M" "vc-merge")))
 
 ;; Visual alignment
 (use-package ialign
@@ -370,6 +384,11 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Mark and edit occurrences
 (use-package iedit)
+
+(use-package pcre2el
+  :config
+  (with-eval-after-load 'which-key
+    (which-key-add-key-based-replacements "C-c /" "PCRE")))
 
 ;; Construct regexp and search visually and incrementally
 (use-package visual-regexp-steroids
@@ -485,12 +504,14 @@ region."
   :delight yas-minor-mode
   :commands yas-minor-mode
   :hook ((prog-mode text-mode) . yas-minor-mode)
-  :config
-  (yas-reload-all)
   :bind (:map yas-minor-mode-map
               ("TAB"   . nil)
               ("<tab>" . nil)
-              ("C-c i" . yas-expand-from-trigger-key)))
+              ("C-c i" . yas-expand-from-trigger-key))
+  :config
+  (yas-reload-all)
+  (with-eval-after-load 'which-key
+    (which-key-add-key-based-replacements "C-c &" "yasnippet")))
 
 (use-package yasnippet-snippets)
 
@@ -822,7 +843,12 @@ optionally the window if possible."
                  ("C-c e r" . eval-region)))
   (define-key emacs-lisp-mode-map (kbd key) command))
 
-(add-hook 'ielm-mode-hook (lambda () (ielm-change-working-buffer (window-buffer (selected-window)))))
+(with-eval-after-load 'which-key
+  (which-key-add-key-based-replacements "C-c e" "elisp"))
+
+(add-hook 'ielm-mode-hook
+          (lambda ()
+            (ielm-change-working-buffer (window-buffer (selected-window)))))
 
 (use-package macrostep
   :bind (:map emacs-lisp-mode-map
@@ -1176,7 +1202,14 @@ optionally the window if possible."
   :config
   (projectile-mode 1)
   (with-eval-after-load 'project
-    (add-to-list 'project-find-functions 'projectile-project-find-function)))
+    (add-to-list 'project-find-functions 'projectile-project-find-function))
+  (with-eval-after-load 'which-key
+    (which-key-add-key-based-replacements "C-c p" "projectile")
+    (which-key-add-keymap-based-replacements projectile-command-map
+      "4" "projectile-other-window"
+      "5" "projectile-other-frame"
+      "x" "projectile-run"
+      "s" "projectile-search")))
 
 (use-package projectile-rails
   :after projectile
@@ -1458,7 +1491,10 @@ ELEMENT is only added once."
   :bind (("C-c b <left>"  . buf-move-left)
          ("C-c b <right>" . buf-move-right)
          ("C-c b <up>"    . buf-move-up)
-         ("C-c b <down>"  . buf-move-down)))
+         ("C-c b <down>"  . buf-move-down))
+  :config
+  (with-eval-after-load 'which-key
+    (which-key-add-key-based-replacements "C-c b" "buffer-move")))
 
 (use-package imenu-list
   :quelpa (imenu-list :fetcher github :repo "wyuenho/imenu-list" :branch "code1"))
@@ -1469,6 +1505,12 @@ ELEMENT is only added once."
   :config
   (define-key purpose-mode-map (kbd "C-c ,") nil)
   (define-key purpose-mode-map (kbd "C-c w") purpose-mode-prefix-map)
+
+  (with-eval-after-load 'which-key
+    (which-key-add-key-based-replacements "C-c w" "window-purpose")
+    (which-key-add-keymap-based-replacements purpose-mode-prefix-map
+      "4" "purpose-other-window"
+      "5" "purpose-other-frame"))
 
   (purpose-add-user-purposes
    :modes '((message-mode . edit)
