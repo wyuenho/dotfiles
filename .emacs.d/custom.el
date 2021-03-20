@@ -113,6 +113,7 @@
  '(global-auto-revert-non-file-buffers t)
  '(global-company-mode t)
  '(global-diff-hl-mode t)
+ '(global-diff-hl-show-hunk-mouse-mode t)
  '(global-flycheck-mode t)
  '(global-font-lock-mode t nil (font-lock))
  '(global-move-dup-mode t)
