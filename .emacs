@@ -738,8 +738,9 @@ region."
            company-etags
            company-keywords))))
 
-(use-package company-quickhelp
-  :hook (company-mode . company-quickhelp-mode))
+(use-package company-posframe
+  :delight
+  :hook (company-mode . company-posframe-mode))
 
 (use-package company-box
   :delight
@@ -776,9 +777,9 @@ region."
   :config
   (global-flycheck-mode 1))
 
-(use-package flycheck-pos-tip
+(use-package flycheck-posframe
   :after (flycheck)
-  :hook (flycheck-mode . flycheck-pos-tip-mode))
+  :hook (flycheck-mode . flycheck-posframe-mode))
 
 (use-package flycheck-pyre
   :after (flycheck)
