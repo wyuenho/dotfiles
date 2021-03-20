@@ -273,6 +273,35 @@ Optional argument ARG same as `comment-dwim''s."
   (with-eval-after-load 'vc
     (which-key-add-key-based-replacements "C-x v M" "vc-merge")))
 
+;; More featureful package menu
+(use-package paradox
+  :quelpa (paradox :fetcher github :repo "wyuenho/paradox")
+  :config
+  (paradox-enable)
+  (add-hook 'paradox-menu-mode-hook
+            (lambda ()
+              (pcase-dolist (`(,key . ,command)
+                             '(("F" . nil)
+                               ("f" . nil)
+                               ("s" . nil)
+                               ("l" . nil)
+                               ("/ /" . nil)))
+                (define-key paradox-menu-mode-map (kbd key) command))
+
+              (if paradox-menu-hail-hydra
+                  (define-key paradox-menu-mode-map (kbd "/") 'hydra-paradox-filter/body)
+                (pcase-dolist (`(,key . ,command)
+                               '(("s" . nil)
+                                 ("k" . nil)))
+                  (define-key paradox-menu-filter-prefix-map (kbd key) command))
+                (define-key paradox-menu-mode-map (kbd "f") nil)
+                (define-key paradox-menu-mode-map (kbd "/") paradox-menu-filter-prefix-map))
+
+              (with-eval-after-load 'which-key
+                (which-key-add-keymap-based-replacements package-menu-mode-map
+                  "/" "search"
+                  "S" "sort")))))
+
 ;; Visual alignment
 (use-package ialign
   :bind ("<A-tab>" . ialign))
