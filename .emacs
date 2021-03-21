@@ -280,13 +280,24 @@ Optional argument ARG same as `comment-dwim''s."
   (paradox-enable)
   (add-hook 'paradox-menu-mode-hook
             (lambda ()
+              (defun paradox--key-descriptors-advice (fn &rest args)
+                (let ((result (apply fn args)))
+                  (cl-loop for i in result
+                           collect (cl-loop for j in i
+                                            if (and (stringp j) (string-prefix-p "filter" j))
+                                            collect "/-filter"
+                                            else
+                                            collect j))))
+              (advice-add 'paradox--key-descriptors :around 'paradox--key-descriptors-advice)
+
               (pcase-dolist (`(,key . ,command)
                              '(("F" . nil)
                                ("f" . nil)
                                ("s" . nil)
-                               ("l" . nil)
-                               ("/ /" . nil)))
+                               ("l" . nil)))
                 (define-key paradox-menu-mode-map (kbd key) command))
+
+              (define-key package-menu-mode-map (kbd "/ /") nil)
 
               (if paradox-menu-hail-hydra
                   (define-key paradox-menu-mode-map (kbd "/") 'hydra-paradox-filter/body)
