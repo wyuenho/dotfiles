@@ -1304,7 +1304,13 @@ optionally the window if possible."
 
 (use-package magit
   :config
-  (add-hook 'magit-post-refresh-hook 'vc-refresh-state))
+  (add-hook 'magit-post-refresh-hook 'vc-refresh-state)
+  (with-eval-after-load 'git-rebase
+    ;; Vanilla undo has been completely unbound, this reenable undo in
+    ;; `git-rebase-mode'
+    (add-hook 'git-rebase-mode-hook
+              (lambda ()
+                (define-key git-rebase-mode-map (kbd "M-z") 'git-rebase-undo)))))
 
 (use-package forge
   :after (magit)
