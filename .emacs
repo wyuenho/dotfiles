@@ -872,8 +872,8 @@ optionally the window if possible."
     (add-hook 'term-mode 'eterm-256color-mode)))
 
 ;; Markup and config languages
-(use-package yaml-mode
-  :mode "\\.ya?ml\\'")
+(use-package markdown-mode
+  :mode (("README\\.md\\'" . gfm-mode)))
 
 (use-package dotenv-mode
   :mode "\\.env\\..*\\'")
