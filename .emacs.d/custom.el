@@ -46,6 +46,7 @@
  '(custom-buffer-done-kill t)
  '(dabbrev-case-fold-search nil)
  '(dap-auto-configure-mode t)
+ '(debugger-bury-or-kill 'kill)
  '(delete-by-moving-to-trash t)
  '(delete-old-versions t)
  '(delete-selection-mode t)
