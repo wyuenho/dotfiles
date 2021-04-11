@@ -237,7 +237,6 @@
  '(markdown-indent-on-enter nil)
  '(menu-bar-mode t)
  '(minibuffer-depth-indicate-mode t)
- '(minibuffer-frame-alist '((width . 80) (height . 2)))
  '(mouse-wheel-flip-direction t)
  '(mouse-wheel-mode t)
  '(mouse-wheel-progressive-speed nil)
