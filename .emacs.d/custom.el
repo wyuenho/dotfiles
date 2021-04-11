@@ -110,6 +110,7 @@
  '(flycheck-global-modes
    '(json-mode js-mode js2-mode rjsx-mode scss-mode css-mode web-mode python-mode ruby-mode markdown-mode yaml-mode enh-ruby-mode go-mode rust-mode swift-mode scala-mode c-mode c++-mode objc-mode))
  '(flycheck-pos-tip-max-width 80)
+ '(frame-resize-pixelwise t)
  '(garbage-collection-messages t)
  '(gc-cons-threshold 80000000)
  '(global-auto-revert-mode t)
