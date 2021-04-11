@@ -35,8 +35,6 @@
  '(company-global-modes
    '(c++-mode c-mode css-mode emacs-lisp-mode enh-ruby-mode go-mode inferior-emacs-lisp-mode js-jsx-mode js-mode js2-jsx-mode js2-mode lisp-interaction-mode lisp-mode objc-mode python-mode restclient-mode rjsx-mode ruby-mode rust-mode scss-mode sh-mode typescript-mode web-mode))
  '(company-idle-delay 0)
- '(company-posframe-quickhelp-delay 0.1)
- '(company-statistics-mode t)
  '(company-tooltip-align-annotations t)
  '(completion-auto-help 'lazy)
  '(confirm-kill-processes nil)
