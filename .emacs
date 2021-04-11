@@ -941,7 +941,7 @@ optionally the window if possible."
             "--stdin-filename"
             ,buffer-file-name
             "--ext"
-            ".json,.js,.jsx,.mjs,.mjsx,.cjs,.cjsx,.ts,.tsx")
+            ".json,.js,.jsx,.mjs,.cjs,.cjsx,.ts,.tsx")
     :output-processor (lambda (output-file result-callback)
                         (let* ((data (ignore-error 'json-end-of-file (json-read-file output-file)))
                                (output (and data (arrayp data) (alist-get 'output (aref data 0)))))
@@ -954,7 +954,7 @@ optionally the window if possible."
             "--stdin-filename"
             ,buffer-file-name
             "--ext"
-            ".json,.js,.jsx,.mjs,.mjsx,.cjs,.cjsx,.ts,.tsx")))
+            ".json,.js,.jsx,.mjs,.cjs,.cjsx,.ts,.tsx")))
 
 (dolist (mode '(css-mode js-mode markdown-mode scss-mode typescript-mode web-mode yaml-mode))
   (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
@@ -1004,43 +1004,51 @@ optionally the window if possible."
                                                  (lsp--workspace-server-id lsp--cur-workspace))))))))
                     (if (or yarn-pnp-p (executable-find "yarn"))
                         (progn
-                          (define-key (derived-mode-map-name mode) (kbd "C-c f") 'yarn-eslint-format-buffer)
+                          (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'yarn-eslint-format-buffer)
                           (yarn-eslint-format-on-save-mode))
                       (progn
-                        (define-key (derived-mode-map-name mode) (kbd "C-c f") 'eslint-format-buffer)
+                        (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'eslint-format-buffer)
                         (eslint-format-on-save-mode))))
                    ((eq formatter 'prettier)
                     (use-package prettier
                       :delight
                       :config
                       (prettier-mode)
-                      (define-key (derived-mode-map-name mode) (kbd "C-c f") 'prettier-prettify)))))))))
+                      (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'prettier-prettify)))))))))
 
-;; Node
+;; Javascript
 (add-hook 'js-mode-hook
           (lambda ()
-            (use-package import-js
-              :bind (:map js-mode-map
-                          ("C-c t i"   . import-js-import)
-                          ("C-c t f"   . import-js-fix)
-                          ("C-c t M-." . import-js-goto))
-              :config (run-import-js))
+            (pcase-dolist (`(,key . ,command)
+                           '(("M-."     . nil)
+                             ("C-c M-:" . nil)
+                             ("C-c C-j" . nil)
+                             ("C-M-x"   . nil)
+                             ("<menu-bar>" . nil)))
+              (define-key js-mode-map (kbd key) command))))
 
-            (use-package js-doc
-              :bind (:map js-mode-map
-                          ("C-c C-d m" . js-doc-insert-file-doc)
-                          ("C-c C-d f" . js-doc-insert-function-doc-snippet)))
+(use-package import-js
+  :after (js)
+  :bind (:map js-mode-map
+              ("C-c t i"   . import-js-import)
+              ("C-c t f"   . import-js-fix)
+              ("C-c t M-." . import-js-goto))
+  :config (run-import-js))
 
-            (use-package nodejs-repl
-              :bind(:map js-mode-map
-                         ("C-c e e" . nodejs-repl-send-last-expression)
-                         ("C-c e r" . nodejs-repl-send-region)
-                         ("C-c e b" . nodejs-repl-send-buffer)
-                         ("C-c e l" . nodejs-repl-load-file)
-                         ("C-c M-:" . nodejs-repl-switch-to-repl)))
+(use-package js-doc
+  :after (js)
+  :bind (:map js-mode-map
+              ("C-c C-d m" . js-doc-insert-file-doc)
+              ("C-c C-d f" . js-doc-insert-function-doc-snippet)))
 
-            (define-key js-mode-map [menu-bar] nil)
-            (define-key js-mode-map (kbd "M-.") nil)))
+(use-package nodejs-repl
+  :after (js)
+  :bind(:map js-mode-map
+             ("C-c e e" . nodejs-repl-send-last-expression)
+             ("C-c e r" . nodejs-repl-send-region)
+             ("C-c e b" . nodejs-repl-send-buffer)
+             ("C-c e l" . nodejs-repl-load-file)
+             ("C-c M-:" . nodejs-repl-switch-to-repl)))
 
 (use-package js2-mode
   :interpreter ("node" . js2-mode)
@@ -1059,29 +1067,11 @@ optionally the window if possible."
               (when (not (key-binding (kbd "C-c f")))
                 (define-key json-mode-map (kbd "C-c f") 'json-pretty-print-buffer)))))
 
-(use-package polymode
-  ;; :after rjsx-mode
-  ;; :config
-  ;; (define-hostmode poly-rjsx-hostmode nil
-  ;;   "RJSX hostmode."
-  ;;   :mode 'rjsx-mode)
-  ;; (define-innermode poly-rjsx-graphql-innermode nil
-  ;;   :mode 'graphql-mode
-  ;;   :head-matcher "graphql\`"
-  ;;   :tail-matcher "\`"
-  ;;   :head-mode 'host
-  ;;   :tail-mode 'host)
-  ;; (define-polymode poly-rjsx-mode
-  ;;   :hostmode 'poly-rjsx-hostmode
-  ;;   :innermodes '(poly-rjsx-graphql-innermode))
-  ;; (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . poly-rjsx-mode))
-  )
-
 (use-package poly-markdown)
 
 ;; TypeScript
 (use-package typescript-mode
-  :mode ("\\.ts\\'"))
+  :mode ("\\.tsx?\\'"))
 
 (use-package ts-comint
   :after (typescript-mode)
