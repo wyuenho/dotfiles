@@ -194,6 +194,8 @@
  '(lsp-imenu-index-symbol-kinds
    '(Class Method Property Field Constuctor Enum Interface Function Struct))
  '(lsp-imenu-sort-methods '(position))
+ '(lsp-jedi-markup-kind-preferred "plaintext")
+ '(lsp-jedi-trace-server "off")
  '(lsp-keep-workspace-alive nil)
  '(lsp-response-timeout 60)
  '(lsp-signature-auto-activate nil)
