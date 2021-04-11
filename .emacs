@@ -55,20 +55,22 @@ under `user-emacs-directory'.  If it exists, loaded it."
   (delight '((rainbow-mode)
              (lsp-mode)
              (whitespace-cleanup-mode)
-             (tree-sitter-mode          nil tree-sitter)
-             (tree-sitter-hl-mode       nil tree-sitter-hl)
-             (python-black-on-save-mode nil python-black)
-             (auto-fill-function        nil t)
-             (isearch-mode              nil isearch)
-             (abbrev-mode               nil abbrev)
-             (purpose-mode              nil window-purpose)
-             (eldoc-mode                nil eldoc)
-             (move-dup-mode             nil move-dup)
-             (smartparens-mode          nil smartparens)
-             (which-key-mode            nil which-key)
-             (auto-revert-mode          nil autorevert)
-             (visual-line-mode          nil simple)
-             (subword-mode              nil subword))))
+             (tree-sitter-mode              nil tree-sitter)
+             (tree-sitter-hl-mode           nil tree-sitter-hl)
+             (python-black-on-save-mode     nil python-black)
+             (auto-fill-function            nil t)
+             (isearch-mode                  nil isearch)
+             (abbrev-mode                   nil abbrev)
+             (purpose-mode                  nil window-purpose)
+             (eldoc-mode                    nil eldoc)
+             (eldoc-box-hover-mode          nil eldoc-box)
+             (eldoc-box-hover-at-point-mode nil eldoc-box)
+             (move-dup-mode                 nil move-dup)
+             (smartparens-mode              nil smartparens)
+             (which-key-mode                nil which-key)
+             (auto-revert-mode              nil autorevert)
+             (visual-line-mode              nil simple)
+             (subword-mode                  nil subword))))
 
 ;; Theme
 (use-package solarized-theme
@@ -85,7 +87,10 @@ under `user-emacs-directory'.  If it exists, loaded it."
   (pcase-dolist (`(,face . ,alias)
                  '((all-the-icons-dired-dir-face . dired-directory)
                    (icomplete-first-match        . ido-first-match)
-                   (completions-common-part      . flx-highlight-face)))
+                   (completions-common-part      . flx-highlight-face)
+                   (tooltip                      . company-tooltip)
+                   (lsp-signature-posframe       . company-tooltip)
+                   (eldoc-box-body               . company-tooltip)))
     (put face 'theme-face nil)
     (put face 'face-alias alias))
 
@@ -722,6 +727,10 @@ region."
               (require 'dap-cpptools))))
 
 ;; Auto-completion
+(use-package eldoc-box
+  :after (eldoc)
+  :hook (eldoc-mode . eldoc-box-hover-at-point-mode))
+
 (use-package company
   :delight
   :preface
@@ -750,11 +759,8 @@ region."
            company-etags
            company-keywords))))
 
-(use-package company-posframe
-  :delight
-  :hook (company-mode . company-posframe-mode))
-
 (use-package company-box
+  :quelpa (company-box :fetcher github :repo "wyuenho/company-box" :branch "all-the-icons-font-lock-faces")
   :delight
   :hook (company-mode . company-box-mode))
 
