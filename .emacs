@@ -875,6 +875,12 @@ optionally the window if possible."
 (use-package markdown-mode
   :mode (("README\\.md\\'" . gfm-mode)))
 
+(use-package poly-markdown
+  :after (markdown-mode))
+
+(use-package poly-rst
+  :after (rst))
+
 (use-package dotenv-mode
   :mode "\\.env\\..*\\'")
 
@@ -1066,8 +1072,6 @@ optionally the window if possible."
             (lambda ()
               (when (not (key-binding (kbd "C-c f")))
                 (define-key json-mode-map (kbd "C-c f") 'json-pretty-print-buffer)))))
-
-(use-package poly-markdown)
 
 ;; TypeScript
 (use-package typescript-mode
