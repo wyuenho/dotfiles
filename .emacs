@@ -652,6 +652,7 @@ region."
   (setq read-process-output-max (* 1024 1024 10)))
 
 (use-package lsp-jedi
+  :quelpa (lsp-jedi :fetcher github :repo "wyuenho/lsp-jedi" :branch "fix-init-options")
   :after lsp)
 
 (use-package lsp-sourcekit
