@@ -924,6 +924,14 @@ optionally the window if possible."
          ("C-h o" . helpful-symbol)
          ("C-h p" . helpful-at-point)))
 
+(defun eieio-browse-advice (fn &rest args)
+  "Put EIEIO object browser buffer in special mode."
+  (apply fn args)
+  (with-current-buffer (get-buffer "*EIEIO OBJECT BROWSE*")
+    (special-mode)
+    (select-window (get-buffer-window (current-buffer)))))
+(advice-add 'eieio-browse :around 'eieio-browse-advice)
+
 ;; C/C++/Objective-C
 (use-package flycheck-objc-clang
   :after (flycheck)
