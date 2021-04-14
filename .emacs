@@ -1083,7 +1083,7 @@ optionally the window if possible."
 
 ;; TypeScript
 (use-package typescript-mode
-  :mode ("\\.tsx?\\'"))
+  :mode ("\\.ts\\'"))
 
 (use-package ts-comint
   :after (typescript-mode)
