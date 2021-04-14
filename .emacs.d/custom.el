@@ -232,6 +232,7 @@
      ("python" . python-mode)
      ("go" . go-mode)))
  '(markdown-command "multimarkdown --full --to=html")
+ '(markdown-fontify-code-blocks-natively t)
  '(markdown-indent-on-enter nil)
  '(menu-bar-mode t)
  '(minibuffer-depth-indicate-mode t)
