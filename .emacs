@@ -670,9 +670,6 @@ region."
 (use-package dap-mode
   :after (lsp-mode)
   :config
-  (add-hook 'dap-stopped-hook
-            (lambda (_) (call-interactively #'dap-hydra)))
-
   (setq dap-utils-extension-path (expand-file-name "~/.vscode/extensions"))
 
   (add-hook 'js-mode-hook
