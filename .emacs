@@ -630,6 +630,8 @@ region."
 ;; Modern tree-based syntax-highlighting
 (use-package tree-sitter-langs
   :config
+  (tree-sitter-require 'tsx)
+  (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx))
   (add-hook 'tree-sitter-after-on-hook 'tree-sitter-hl-mode))
 
 ;; Static Analysis
@@ -1080,7 +1082,19 @@ optionally the window if possible."
 
 ;; TypeScript
 (use-package typescript-mode
-  :mode ("\\.ts\\'"))
+  :config
+  (define-derived-mode typescript-tsx-mode typescript-mode "TSX"
+    "Major mode for editing TSX files.
+
+Refer to Typescript documentation for syntactic differences between normal and TSX
+variants of Typescript.")
+
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescript-tsx-mode))
+
+  (with-eval-after-load 'all-the-icons
+    (add-to-list 'all-the-icons-mode-icon-alist `(typescript-tsx-mode
+                                                  all-the-icons-fileicon "tsx"
+                                                  :v-adjust -0.1 :face all-the-icons-blue-alt))))
 
 (use-package ts-comint
   :after (typescript-mode)
@@ -1188,7 +1202,6 @@ optionally the window if possible."
 (use-package web-mode
   :functions web-mode-language-at-pos
   :mode ("\\.vue\\'"
-         "\\.tsx\\'"
          "\\.handlebars\\'"
          "\\.underscore\\'"
          "\\.html?\\'"
@@ -1214,9 +1227,7 @@ optionally the window if possible."
               ;; Setup flycheck
               (let ((ext (file-name-extension buffer-file-name)))
                 (when (fboundp 'flycheck-add-mode)
-                  (cond ((string-equal "tsx" ext)
-                         (flycheck-add-mode 'typescript-tslint 'web-mode))
-                        ((string-equal "css" ext)
+                  (cond ((string-equal "css" ext)
                          (flycheck-add-mode 'css-stylelint 'web-mode))
                         ((string-equal "scss" ext)
                          (flycheck-add-mode 'scss-stylelint 'web-mode))
@@ -1233,7 +1244,8 @@ optionally the window if possible."
             (lambda ()
               (when (or (member major-mode '(js-jsx-mode js2-jsx-mode rjsx-mode))
                         (and (eq major-mode 'web-mode)
-                             (member (web-mode-language-at-pos) '("jsx" "tsx"))))
+                             (member (web-mode-language-at-pos) '("jsx" ;; "tsx"
+                                                                  ))))
                 (setq-local emmet-expand-jsx-className? t)))))
 
 ;; Project management
