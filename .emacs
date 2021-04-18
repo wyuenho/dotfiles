@@ -874,12 +874,6 @@ optionally the window if possible."
 (use-package markdown-mode
   :mode (("README\\.md\\'" . gfm-mode)))
 
-(use-package poly-markdown
-  :after (markdown-mode))
-
-(use-package poly-rst
-  :after (rst))
-
 (use-package dotenv-mode
   :mode "\\.env\\..*\\'")
 
