@@ -638,17 +638,18 @@ region."
 (use-package lsp-mode
   :after (which-key)
   :hook (((c-mode-common
-           caml-mode
+           tuareg-mode
+           reason-mode
            css-mode
            enh-ruby-mode
            go-mode
            js-mode
            python-mode
-           reason-mode
            rust-mode
            sh-mode
            swift-mode
            typescript-mode
+           typescript-tsx-mode
            web-mode)
           . (lambda ()
               (when (not (derived-mode-p 'json-mode))
@@ -656,7 +657,40 @@ region."
          (lsp-managed-mode . lsp-mode)
          (lsp-mode . lsp-enable-which-key-integration))
   :config
-  (setq read-process-output-max (* 1024 1024 10)))
+  (setq read-process-output-max (* 1024 1024 10))
+
+  (defvar-local lsp-flycheck-checker-next-checkers nil)
+
+  (defun lsp-flycheck-checker-get-advice (fn checker property)
+    (or (alist-get property (alist-get checker lsp-flycheck-checker-next-checkers))
+        (funcall fn checker property)))
+
+  (advice-add 'flycheck-checker-get :around 'lsp-flycheck-checker-get-advice)
+
+  (add-hook 'lsp-managed-mode-hook
+            (lambda ()
+              (let ((next-checkers
+                     (cond ((derived-mode-p 'sh-mode)
+                            '(sh-shellcheck))
+                           ((derived-mode-p 'css-mode)
+                            '(css-stylelint))
+                           ((derived-mode-p 'web-mode)
+                            '(html-tidy css-stylelint))
+                           ((derived-mode-p 'js-mode)
+                            '(javascript-eslint))
+                           ((derived-mode-p 'typescript-mode)
+                            '(javascript-eslint))
+                           ((derived-mode-p 'python-mode)
+                            '(python-flake8))
+                           ((derived-mode-p 'enh-ruby-mode)
+                            '(ruby-rubocop))
+                           ((derived-mode-p 'go-mode)
+                            '(go-staticcheck))
+                           ((derived-mode-p 'rust-mode)
+                            '(rust-clippy))
+                           (t nil))))
+                (setq lsp-flycheck-checker-next-checkers
+                      `((lsp . ((next-checkers . ,next-checkers)))))))))
 
 (use-package lsp-jedi
   :quelpa (lsp-jedi :fetcher github :repo "wyuenho/lsp-jedi" :branch "fix-init-options")
