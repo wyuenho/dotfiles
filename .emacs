@@ -685,7 +685,7 @@ region."
                            ((derived-mode-p 'enh-ruby-mode)
                             '(ruby-rubocop))
                            ((derived-mode-p 'go-mode)
-                            '(go-staticcheck))
+                            '(golangci-lint))
                            ((derived-mode-p 'rust-mode)
                             '(rust-clippy))
                            (t nil))))
