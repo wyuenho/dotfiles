@@ -4,6 +4,7 @@
 (require 'map)
 (require 'seq)
 (require 'cl-lib)
+(require 'subr-x)
 
 (set-locale-environment "UTF-8")
 (custom-autoload 'package-selected-packages "package")
@@ -711,24 +712,36 @@ region."
   (add-hook 'js-mode-hook
             (lambda ()
               (unless (derived-mode-p 'json-mode)
-                (setq dap-chrome-debug-path
-                      (car (last (file-expand-wildcards (concat dap-utils-extension-path "/msjsdiag.debugger-for-chrome-*")))))
-                (setq dap-chrome-debug-program
-                      (concat "node " dap-chrome-debug-path "/out/src/chromeDebug.js"))
-                (require 'dap-chrome)
+                (when-let ((chrome-debugger-path
+                            (car
+                             (last
+                              (file-expand-wildcards
+                               (concat dap-utils-extension-path
+                                       "/msjsdiag.debugger-for-chrome-*"))))))
+                  (setq dap-chrome-debug-path chrome-debugger-path)
+                  (setq dap-chrome-debug-program
+                        (concat "node " dap-chrome-debug-path "/out/src/chromeDebug.js"))
+                  (require 'dap-chrome))
 
-                (setq dap-firefox-debug-path
-                      (car (last (file-expand-wildcards
-                                  (concat dap-utils-extension-path "/firefox-devtools.vscode-firefox-debug-*")))))
-                (setq dap-firefox-debug-program
-                      (concat "node " dap-firefox-debug-path "/dist/adaptor.bundle.js"))
-                (require 'dap-firefox)
+                (when-let ((firefox-debugger-path
+                            (car
+                             (last
+                              (file-expand-wildcards
+                               (concat
+                                dap-utils-extension-path
+                                "/firefox-devtools.vscode-firefox-debug-*"))))))
+                  (setq dap-firefox-debug-path firefox-debugger-path)
+                  (setq dap-firefox-debug-program
+                        (concat "node " dap-firefox-debug-path "/dist/adaptor.bundle.js"))
+                  (require 'dap-firefox))
 
-                (setq dap-node-debug-path
-                      "/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/extensions/ms-vscode.node-debug2")
-                (setq dap-node-debug-program
-                      (concat "node " dap-node-debug-path "/out/src/nodeDebug.js"))
-                (require 'dap-node))))
+                (let ((node-debugger-path
+                       "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.node-debug2"))
+                  (when (file-exists-p node-debugger-path)
+                    (setq dap-node-debug-path node-debugger-path)
+                    (setq dap-node-debug-program
+                          (concat "node " dap-node-debug-path "/out/src/nodeDebug.js"))
+                    (require 'dap-node))))))
 
   (add-hook 'python-mode-hook
             (lambda ()
@@ -737,27 +750,44 @@ region."
 
   (add-hook 'go-mode-hook
             (lambda ()
-              (setq dap-go-debug-path
-                    (car (last (file-expand-wildcards
-                                (concat dap-utils-extension-path "/golang.go-*")))))
-              (setq dap-go-debug-program
-                    (concat "node" dap-go-debug-path "/dist/debugAdaptor2.js"))
-              (require 'dap-go)))
+              (when-let ((go-debugger-path
+                          (car
+                           (last
+                            (file-expand-wildcards
+                             (concat
+                              dap-utils-extension-path
+                              "/golang.go-*"))))))
+                (setq dap-go-debug-path go-debugger-path)
+                (setq dap-go-debug-program
+                      (concat "node" dap-go-debug-path "/dist/debugAdaptor2.js"))
+                (require 'dap-go))))
 
   (add-hook 'c-mode-common-hook
             (lambda ()
-              (setq dap-lldb-debug-path
-                    (car (last (file-expand-wildcards (concat dap-utils-extension-path "/lanza.lldb-vscode-*")))))
-              (setq dap-lldb-debug-program
-                    (concat dap-lldb-debug-path (concat "/bin/" (symbol-name system-type) "/bin/lldb-vscode")))
-              (require 'dap-lldb)
+              (when-let ((lldb-debugger-path
+                          (car
+                           (last
+                            (file-expand-wildcards
+                             (concat
+                              dap-utils-extension-path
+                              "/lanza.lldb-vscode-*"))))))
+                (setq dap-lldb-debug-path lldb-debugger-path)
+                (setq dap-lldb-debug-program
+                      (concat dap-lldb-debug-path
+                              (concat "/bin/" (symbol-name system-type) "/bin/lldb-vscode")))
+                (require 'dap-lldb))
 
-              (setq dap-cpptools-debug-path
-                    (car (last (file-expand-wildcards
-                                (concat dap-utils-extension-path "/ms-vscode.cpptools-*")))))
-              (setq dap-cpptools-debug-program
-                    (concat dap-cpptools-debug-path "/bin/cpptools"))
-              (require 'dap-cpptools))))
+              (when-let ((cpptools-debugger-path
+                          (car
+                           (last
+                            (file-expand-wildcards
+                             (concat
+                              dap-utils-extension-path
+                              "/ms-vscode.cpptools-*"))))))
+                (setq dap-cpptools-debug-path cpptools-debugger-path)
+                (setq dap-cpptools-debug-program
+                      (concat dap-cpptools-debug-path "/bin/cpptools"))
+                (require 'dap-cpptools)))))
 
 ;; Auto-completion
 (use-package eldoc-box
