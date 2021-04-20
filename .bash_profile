@@ -102,7 +102,7 @@ else
     NVM_DIR="${XDG_CONFIG_HOME}/nvm"
 fi
 
-if [ -f "$NVM_DIR" ]; then
+if [ -d "$NVM_DIR" ]; then
     export NVM_DIR
     source "$NVM_DIR/nvm.sh"
 fi
