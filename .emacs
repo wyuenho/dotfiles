@@ -694,7 +694,6 @@ region."
                       `((lsp . ((next-checkers . ,next-checkers)))))))))
 
 (use-package lsp-jedi
-  :quelpa (lsp-jedi :fetcher github :repo "wyuenho/lsp-jedi" :branch "fix-init-options")
   :after lsp)
 
 (use-package lsp-sourcekit
