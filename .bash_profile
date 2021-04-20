@@ -102,9 +102,10 @@ else
     NVM_DIR="${XDG_CONFIG_HOME}/nvm"
 fi
 
-export NVM_DIR
-
-source "$NVM_DIR/nvm.sh"
+if [ -f "$NVM_DIR" ]; then
+    export NVM_DIR
+    source "$NVM_DIR/nvm.sh"
+fi
 
 if [ -f "$HOME/.avn/bin/avn.sh" ]; then
     source "$HOME/.avn/bin/avn.sh"
