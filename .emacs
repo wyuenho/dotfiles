@@ -1302,16 +1302,7 @@ variants of Typescript.")
                 (setq-local company-backends
                             `(company-web-html
                               company-yasnippet
-                              company-files)))
-
-              ;; Setup flycheck
-              (let ((ext (file-name-extension buffer-file-name)))
-                (when (fboundp 'flycheck-add-mode)
-                  (cond ((string-equal "css" ext)
-                         (flycheck-add-mode 'css-stylelint 'web-mode))
-                        ((string-equal "scss" ext)
-                         (flycheck-add-mode 'scss-stylelint 'web-mode))
-                        (t nil)))))))
+                              company-files))))))
 
 (use-package emmet-mode
   :delight
