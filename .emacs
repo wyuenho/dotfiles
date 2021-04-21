@@ -660,23 +660,52 @@ region."
   :config
   (setq read-process-output-max (* 1024 1024 10))
 
-  (defvar-local lsp-flycheck-checker-next-checkers nil)
+  (defvar-local lsp-flycheck-checkers nil)
 
   (defun lsp-flycheck-checker-get-advice (fn checker property)
-    (or (alist-get property (alist-get checker lsp-flycheck-checker-next-checkers))
+    "Get checker property from buffer-local variable `lsp-flycheck-checkers'.
+
+Result checker CHECKER property PROPERTY from buffer-local
+`lsp-flycheck-checkers', if any. Othewise, from the global
+checker symbol."
+    (or (alist-get property (alist-get checker lsp-flycheck-checkers))
         (funcall fn checker property)))
 
   (advice-add 'flycheck-checker-get :around 'lsp-flycheck-checker-get-advice)
 
   (add-hook 'lsp-managed-mode-hook
             (lambda ()
-              (let ((next-checkers
-                     (cond ((derived-mode-p 'sh-mode)
+              (let ((web-mode-checkers
+                     (cond ((derived-mode-p 'web-mode)
+                            (let ((ext (file-name-extension buffer-file-name)))
+                              (cond ((string-equal "css" ext)
+                                     '(css-stylelint . ((modes . (web-mode)))))
+                                    ((string-equal "less" ext)
+                                     '(less-stylelint . ((modes . (web-mode)))))
+                                    ((string-equal "scss" ext)
+                                     '(scss-stylelint . ((modes . (web-mode)))))
+                                    ((>= (string-match-p "htm" ext) 0)
+                                     '(html-tidy . ((modes . (web-mode))))))))))
+                    (lsp-next-checkers
+                     (cond ((and (derived-mode-p 'sh-mode)
+                                 (memq sh-shell '(sh jsh bash)))
                             '(sh-shellcheck))
                            ((derived-mode-p 'css-mode)
-                            '(css-stylelint))
+                            (cond ((eq major-mode 'scss-mode)
+                                   '(scss-stylelint))
+                                  ((eq major-mode 'less-mode)
+                                   '(less-stylelint))
+                                  (t '(css-stylelint))))
                            ((derived-mode-p 'web-mode)
-                            '(html-tidy css-stylelint))
+                            (let ((ext (file-name-extension buffer-file-name)))
+                              (cond ((string-equal "css" ext)
+                                     '(css-stylelint))
+                                    ((string-equal "less" ext)
+                                     '(less-stylelint))
+                                    ((string-equal "scss" ext)
+                                     '(scss-stylelint))
+                                    ((>= (string-match-p "htm" ext) 0)
+                                     '(html-tidy)))))
                            ((derived-mode-p 'js-mode)
                             '(javascript-eslint))
                            ((derived-mode-p 'typescript-mode)
@@ -690,8 +719,10 @@ region."
                            ((derived-mode-p 'rust-mode)
                             '(rust-clippy))
                            (t nil))))
-                (setq lsp-flycheck-checker-next-checkers
-                      `((lsp . ((next-checkers . ,next-checkers)))))))))
+                (when lsp-next-checkers
+                  (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
+                (when web-mode-checkers
+                  (push web-mode-checkers lsp-flycheck-checkers))))))
 
 (use-package lsp-jedi
   :after lsp)
@@ -861,10 +892,6 @@ region."
   :after (flycheck)
   :hook (flycheck-mode . flycheck-posframe-mode))
 
-(use-package flycheck-pyre
-  :after (flycheck)
-  :hook (flycheck-mode . flycheck-pyre-setup))
-
 ;; REST API
 (use-package restclient
   :commands restclient-mode
@@ -989,10 +1016,6 @@ optionally the window if possible."
 (advice-add 'eieio-browse :around 'eieio-browse-advice)
 
 ;; C/C++/Objective-C
-(use-package flycheck-objc-clang
-  :after (flycheck)
-  :config (flycheck-objc-clang-setup))
-
 (use-package cmake-font-lock
   :hook (cmake-mode . cmake-font-lock-activate))
 
@@ -1292,17 +1315,28 @@ variants of Typescript.")
 
 (use-package emmet-mode
   :delight
-  :after (:any web-mode js2-mode rjsx-mode)
-  :hook (sgml-mode nxml-mode web-mode js-jsx-mode js2-jsx-mode rjsx-mode)
+  :after (:any web-mode
+               js-mode
+               js2-mode
+               rjsx-mode
+               typescript-tsx-mode)
+  :hook (sgml-mode
+         nxml-mode
+         web-mode
+         js-jsx-mode
+         js2-jsx-mode
+         rjsx-mode
+         typescript-tsx-mode)
   :config
   (define-key emmet-mode-keymap (kbd "C-c C-c w") nil)
   (define-key emmet-mode-keymap (kbd "C-c C-m w") 'emmet-wrap-with-markup)
   (add-hook 'emmet-mode-hook
             (lambda ()
-              (when (or (member major-mode '(js-jsx-mode js2-jsx-mode rjsx-mode))
-                        (and (eq major-mode 'web-mode)
-                             (member (web-mode-language-at-pos) '("jsx" ;; "tsx"
-                                                                  ))))
+              (when (member major-mode
+                            '(js-jsx-mode
+                              js2-jsx-mode
+                              rjsx-mode
+                              typesript-tsx-mode))
                 (setq-local emmet-expand-jsx-className? t)))))
 
 ;; Project management
