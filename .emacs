@@ -866,22 +866,6 @@ checker symbol."
               (delq 'company-sort-prefer-same-case-prefix company-transformers)
               (add-to-list 'company-transformers 'company-sort-prefer-same-case-prefix t))))
 
-(use-package orderless
-  :custom (completion-styles '(orderless))
-  :config
-  (with-eval-after-load 'company
-    (defun company-capf--candidates-advice (fn &rest args)
-      (let ((orderless-match-faces [completions-common-part]))
-        (apply fn args)))
-    (advice-add 'company-capf--candidates :around #'company-capf--candidates-advice))
-
-  (with-eval-after-load 'icomplete
-    (add-hook 'minibuffer-setup-hook
-              (lambda ()
-                (when fido-mode
-                  (setq-local completion-styles '(orderless))))
-              t)))
-
 ;; Linting
 (use-package flycheck
   :delight
