@@ -1259,6 +1259,9 @@ variants of Typescript.")
   :mode "\\.swift\\'")
 
 ;; Scala
+(use-package scala-mode
+  :interpreter ("scala" . scala-mode))
+
 (use-package sbt-mode
   :commands sbt-start sbt-command
   :config
@@ -1267,9 +1270,10 @@ variants of Typescript.")
   (substitute-key-definition
    'minibuffer-complete-word
    'self-insert-command
-   minibuffer-local-completion-map)
-  ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
-  (setq sbt:program-options '("-Dsbt.supershell=false")))
+   minibuffer-local-completion-map))
+
+(use-package lsp-metals
+  :after (lsp-mode))
 
 ;; API Blueprints
 (use-package apib-mode
