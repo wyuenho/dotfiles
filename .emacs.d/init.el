@@ -725,7 +725,10 @@ checker symbol."
                   (push web-mode-checkers lsp-flycheck-checkers))))))
 
 (use-package lsp-jedi
-  :after lsp)
+  :after (lsp-mode))
+
+(use-package lsp-pyright
+  :after (lsp-mode))
 
 (use-package lsp-sourcekit
   :after (lsp-mode))
