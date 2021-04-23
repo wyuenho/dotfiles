@@ -639,16 +639,17 @@ region."
 (use-package lsp-mode
   :after (which-key)
   :hook (((c-mode-common
-           tuareg-mode
-           reason-mode
            css-mode
            enh-ruby-mode
            go-mode
            js-mode
            python-mode
+           reason-mode
            rust-mode
+           scala-mode
            sh-mode
            swift-mode
+           tuareg-mode
            typescript-mode
            typescript-tsx-mode
            web-mode)
