@@ -1206,6 +1206,22 @@ variants of Typescript.")
                 (when (member "isort" requirements)
                   (bind-key "C-c f s" 'py-isort-buffer python-mode-map))))))
 
+(add-hook 'flycheck-mode-hook
+          (lambda ()
+            ;; Integrate pipx installed executables with flycheck
+            (when (and (derived-mode-p 'python-mode)
+                       (executable-find "pipx"))
+              (cond ((and (flycheck-disabled-checker-p 'python-flake8)
+                          (executable-find "flake8"))
+                     (make-local-variable 'flycheck-python-flake8-executable)
+                     (setf flycheck-python-flake8-executable "flake8")
+                     (flycheck-reset-enabled-checker 'python-flake8))
+                    ((and (flycheck-disabled-checker-p 'python-mypy)
+                          (executable-find "mypy"))
+                     (make-local-variable 'flycheck-python-mypy-executable)
+                     (setf flycheck-python-flake8-executable "mypy")
+                     (flycheck-reset-enabled-checker 'python-mypy))))))
+
 ;; Ruby
 (use-package yard-mode)
 (use-package enh-ruby-mode
