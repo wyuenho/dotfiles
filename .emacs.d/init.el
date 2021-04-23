@@ -954,10 +954,6 @@ optionally the window if possible."
 (use-package dotenv-mode
   :mode "\\.env\\..*\\'")
 
-(use-package flycheck-yamllint
-  :after (flycheck yaml-mode)
-  :config (flycheck-yamllint-setup))
-
 ;; Emacs Lisp
 (pcase-dolist (`(,key . ,command)
                '(("C-c e f" . byte-compile-file)
