@@ -877,6 +877,58 @@ checker symbol."
 (use-package flycheck
   :delight
   :config
+  (defun flycheck-locate-config-file-xdg (filepath checker)
+    "Locate a configuration file in `XDG_CONFIG_HOME' and `XDG_CONFIG_DIRS.'
+
+FILEPATH can be a relative path to one of the directories in
+`XDG_CONFIG_HOME' and `XDG_CONFIG_DIRS'.  If FILEPATH is a file name, "
+    (let* ((checker-name (or (cadr (split-string (symbol-name checker) "-"))
+                             (symbol-name checker)))
+           (xdg-config-home (or (file-name-as-directory (getenv "XDG_CONFIG_HOME")) "~/.config/"))
+           (xdg-config-dirs (getenv "XDG_CONFIG_DIRS")))
+
+      (seq-some
+       (lambda (dir)
+         (let ((full-path (concat dir filepath)))
+           (file-exists-p full-path)))
+       `(,xdg-config-home
+         ,(file-name-as-directory (concat xdg-config-home checker-name))
+         ,@(and xdg-config-dirs
+                (mapcar
+                 'file-name-as-directory
+                 (split-string xdg-config-dirs ":")))))))
+
+  (setf flycheck-locate-config-file-functions
+        '(flycheck-locate-config-file-by-path
+          flycheck-locate-config-file-ancestor-directories
+          flycheck-locate-config-file-xdg
+          flycheck-locate-config-file-home))
+
+  (defun flycheck-python-needs-module-p-advice (fn checker)
+    "Make sure the checker CHECKER is enabled if `pipx' is installed and the checker executable is found."
+    (if (executable-find "pipx")
+        (cond ((and (or (eq checker 'python-flake8)
+                        (eq checker 'python-mypy))
+                    (executable-find (symbol-value (flycheck-checker-executable-variable checker))))
+               nil)
+              (t (funcall fn checker)))
+      (funcall fn checker)))
+  (advice-add 'flycheck-python-needs-module-p :around 'flycheck-python-needs-module-p-advice)
+
+  (defun flycheck-checker-executable-variable-advice (fn checker)
+    "Set the checker variable if `pipx' is installed and the checker executable if found."
+    (when (executable-find "pipx")
+      (cond ((and (eq checker 'python-flake8)
+                  (executable-find "flake8"))
+             (make-local-variable 'flycheck-python-flake8-executable)
+             (setf flycheck-python-flake8-executable "flake8"))
+            ((and (eq checker 'python-mypy)
+                  (executable-find "mypy"))
+             (make-local-variable 'flycheck-python-mypy-executable)
+             (setf flycheck-python-mypy-executable "mypy"))))
+    (funcall fn checker))
+  (advice-add 'flycheck-checker-executable-variable :around 'flycheck-checker-executable-variable-advice)
+
   (global-flycheck-mode 1))
 
 (use-package flycheck-posframe
@@ -1206,22 +1258,6 @@ variants of Typescript.")
                 :config
                 (when (member "isort" requirements)
                   (bind-key "C-c f s" 'py-isort-buffer python-mode-map))))))
-
-(add-hook 'flycheck-mode-hook
-          (lambda ()
-            ;; Integrate pipx installed executables with flycheck
-            (when (and (derived-mode-p 'python-mode)
-                       (executable-find "pipx"))
-              (cond ((and (flycheck-disabled-checker-p 'python-flake8)
-                          (executable-find "flake8"))
-                     (make-local-variable 'flycheck-python-flake8-executable)
-                     (setf flycheck-python-flake8-executable "flake8")
-                     (flycheck-reset-enabled-checker 'python-flake8))
-                    ((and (flycheck-disabled-checker-p 'python-mypy)
-                          (executable-find "mypy"))
-                     (make-local-variable 'flycheck-python-mypy-executable)
-                     (setf flycheck-python-flake8-executable "mypy")
-                     (flycheck-reset-enabled-checker 'python-mypy))))))
 
 ;; Ruby
 (use-package yard-mode)
