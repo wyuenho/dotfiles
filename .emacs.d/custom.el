@@ -377,6 +377,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(flycheck-posframe-error-face ((t (:inherit error))))
+ '(flycheck-posframe-info-face ((t (:inherit font-lock-function-name-face))))
+ '(flycheck-posframe-warning-face ((t (:inherit warning))))
  '(lsp-headerline-breadcrumb-separator-face ((t (:inherit shadow))))
  '(region ((((type ns)) (:background "selectedTextBackgroundColor" :foreground "selectedTextColor"))))
  '(tree-sitter-hl-face:function\.call ((t nil)))
