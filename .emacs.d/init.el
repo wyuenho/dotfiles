@@ -1074,7 +1074,7 @@ optionally the window if possible."
             "--stdin-filename"
             ,buffer-file-name
             "--ext"
-            ".json,.js,.jsx,.mjs,.cjs,.cjsx,.ts,.tsx")
+            ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx")
     :output-processor (lambda (output-file result-callback)
                         (let* ((data (ignore-error 'json-end-of-file (json-read-file output-file)))
                                (output (and data (arrayp data) (alist-get 'output (aref data 0)))))
@@ -1087,7 +1087,7 @@ optionally the window if possible."
             "--stdin-filename"
             ,buffer-file-name
             "--ext"
-            ".json,.js,.jsx,.mjs,.cjs,.cjsx,.ts,.tsx")))
+            ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx")))
 
 (dolist (mode '(css-mode js-mode markdown-mode scss-mode typescript-mode web-mode yaml-mode))
   (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
@@ -1190,7 +1190,7 @@ optionally the window if possible."
     (define-key js2-mode-map (kbd "C-k") 'sp-kill-whole-line)))
 
 (use-package rjsx-mode
-  :mode ("\\.jsx?\\'" "\\.mjs\\'"))
+  :mode "\\.\\(?:cjs\\|jsx?\\|mjs\\)\\'")
 
 (use-package json-mode
   :config
