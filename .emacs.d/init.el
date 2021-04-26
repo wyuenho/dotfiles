@@ -662,68 +662,69 @@ region."
   :config
   (setq read-process-output-max (* 1024 1024 10))
 
-  (defvar-local lsp-flycheck-checkers nil)
+  (with-eval-after-load 'flycheck
+    (defvar-local lsp-flycheck-checkers nil)
 
-  (defun lsp-flycheck-checker-get-advice (fn checker property)
-    "Get checker property from buffer-local variable `lsp-flycheck-checkers'.
+    (defun lsp-flycheck-checker-get-advice (fn checker property)
+      "Get checker property from buffer-local variable `lsp-flycheck-checkers'.
 
 Result checker CHECKER property PROPERTY from buffer-local
 `lsp-flycheck-checkers', if any. Othewise, from the global
 checker symbol."
-    (or (alist-get property (alist-get checker lsp-flycheck-checkers))
-        (funcall fn checker property)))
+      (or (alist-get property (alist-get checker lsp-flycheck-checkers))
+          (funcall fn checker property)))
 
-  (advice-add 'flycheck-checker-get :around 'lsp-flycheck-checker-get-advice)
+    (advice-add 'flycheck-checker-get :around 'lsp-flycheck-checker-get-advice)
 
-  (add-hook 'lsp-managed-mode-hook
-            (lambda ()
-              (let ((web-mode-checkers
-                     (cond ((derived-mode-p 'web-mode)
-                            (let ((ext (file-name-extension buffer-file-name)))
-                              (cond ((string-equal "css" ext)
-                                     '(css-stylelint . ((modes . (web-mode)))))
-                                    ((string-equal "less" ext)
-                                     '(less-stylelint . ((modes . (web-mode)))))
-                                    ((string-equal "scss" ext)
-                                     '(scss-stylelint . ((modes . (web-mode)))))
-                                    ((>= (string-match-p "htm" ext) 0)
-                                     '(html-tidy . ((modes . (web-mode))))))))))
-                    (lsp-next-checkers
-                     (cond ((and (derived-mode-p 'sh-mode)
-                                 (memq sh-shell '(sh jsh bash)))
-                            '((warning . sh-shellcheck)))
-                           ((derived-mode-p 'css-mode)
-                            (cond ((eq major-mode 'scss-mode)
-                                   '((warning . scss-stylelint)))
-                                  ((eq major-mode 'less-mode)
-                                   '((warning . less-stylelint)))
-                                  (t '((warning . css-stylelint)))))
-                           ((derived-mode-p 'web-mode)
-                            (let ((ext (file-name-extension buffer-file-name)))
-                              (cond ((string-equal "css" ext)
-                                     '((warning . css-stylelint)))
-                                    ((string-equal "less" ext)
-                                     '((warning . less-stylelint)))
-                                    ((string-equal "scss" ext)
+    (add-hook 'lsp-managed-mode-hook
+              (lambda ()
+                (let ((web-mode-checkers
+                       (cond ((derived-mode-p 'web-mode)
+                              (let ((ext (file-name-extension buffer-file-name)))
+                                (cond ((string-equal "css" ext)
+                                       '(css-stylelint . ((modes . (web-mode)))))
+                                      ((string-equal "less" ext)
+                                       '(less-stylelint . ((modes . (web-mode)))))
+                                      ((string-equal "scss" ext)
+                                       '(scss-stylelint . ((modes . (web-mode)))))
+                                      ((>= (string-match-p "htm" ext) 0)
+                                       '(html-tidy . ((modes . (web-mode))))))))))
+                      (lsp-next-checkers
+                       (cond ((and (derived-mode-p 'sh-mode)
+                                   (memq sh-shell '(sh jsh bash)))
+                              '((warning . sh-shellcheck)))
+                             ((derived-mode-p 'css-mode)
+                              (cond ((eq major-mode 'scss-mode)
                                      '((warning . scss-stylelint)))
-                                    ((>= (string-match-p "htm" ext) 0)
-                                     '((warning . html-tidy))))))
-                           ((derived-mode-p 'js-mode)
-                            '((warning . javascript-eslint)))
-                           ((derived-mode-p 'typescript-mode)
-                            '((warning . javascript-eslint)))
-                           ((derived-mode-p 'python-mode)
-                            '((warning . python-flake8)))
-                           ((derived-mode-p 'enh-ruby-mode)
-                            '((warning . ruby-rubocop)))
-                           ((derived-mode-p 'go-mode)
-                            '((warning . golangci-lint)))
-                           ((derived-mode-p 'rust-mode)
-                            '((warning . rust-clippy))))))
-                (when lsp-next-checkers
-                  (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
-                (when web-mode-checkers
-                  (push web-mode-checkers lsp-flycheck-checkers))))))
+                                    ((eq major-mode 'less-mode)
+                                     '((warning . less-stylelint)))
+                                    (t '((warning . css-stylelint)))))
+                             ((derived-mode-p 'web-mode)
+                              (let ((ext (file-name-extension buffer-file-name)))
+                                (cond ((string-equal "css" ext)
+                                       '((warning . css-stylelint)))
+                                      ((string-equal "less" ext)
+                                       '((warning . less-stylelint)))
+                                      ((string-equal "scss" ext)
+                                       '((warning . scss-stylelint)))
+                                      ((>= (string-match-p "htm" ext) 0)
+                                       '((warning . html-tidy))))))
+                             ((derived-mode-p 'js-mode)
+                              '((warning . javascript-eslint)))
+                             ((derived-mode-p 'typescript-mode)
+                              '((warning . javascript-eslint)))
+                             ((derived-mode-p 'python-mode)
+                              '((warning . python-flake8)))
+                             ((derived-mode-p 'enh-ruby-mode)
+                              '((warning . ruby-rubocop)))
+                             ((derived-mode-p 'go-mode)
+                              '((warning . golangci-lint)))
+                             ((derived-mode-p 'rust-mode)
+                              '((warning . rust-clippy))))))
+                  (when lsp-next-checkers
+                    (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
+                  (when web-mode-checkers
+                    (push web-mode-checkers lsp-flycheck-checkers)))))))
 
 (use-package lsp-jedi
   :after (lsp-mode))
