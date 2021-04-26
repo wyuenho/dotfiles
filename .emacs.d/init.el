@@ -826,6 +826,7 @@ checker symbol."
 
 ;; Auto-completion
 (use-package eldoc-box
+  :if (display-graphic-p)
   :after (eldoc)
   :hook (eldoc-mode . eldoc-box-hover-at-point-mode))
 
@@ -858,6 +859,7 @@ checker symbol."
            company-keywords))))
 
 (use-package company-box
+  :if (display-graphic-p)
   :quelpa (company-box :fetcher github :repo "wyuenho/company-box" :branch "all-the-icons-font-lock-faces")
   :delight
   :hook (company-mode . company-box-mode))
@@ -878,6 +880,7 @@ checker symbol."
   (global-flycheck-mode 1))
 
 (use-package flycheck-posframe
+  :if (display-graphic-p)
   :after (flycheck)
   :hook (flycheck-mode . flycheck-posframe-mode))
 
