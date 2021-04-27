@@ -88,3 +88,5 @@
 	line-numbers = true
 	syntax-theme = zenburn
 	tabs = 2
+[init]
+	defaultBranch = main
