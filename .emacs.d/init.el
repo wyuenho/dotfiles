@@ -1747,7 +1747,10 @@ ELEMENT is only added once."
   (dolist (param '(background-mode tty-color-mode screen-gamma
                    alpha font foreground-color background-color
                    mouse-color cursor-color border-color
-                   scroll-bar-foreground scroll-bar-background))
+                   scroll-bar-foreground scroll-bar-background
+                   ;; make sure frame restoration is alway maximized
+                   left top height width fullscreen
+                   GUI:font GUI:height GUI:width GUI:fullscreen))
     (if (assq param frameset-filter-alist)
         (setf (alist-get param frameset-filter-alist) :never)
       (push `(,param . :never) frameset-filter-alist)))
