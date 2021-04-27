@@ -874,6 +874,83 @@ checker symbol."
               (add-to-list 'company-transformers 'company-sort-prefer-same-case-prefix t))))
 
 ;; Linting
+;; TODO: cache all these function by config content
+(defun python-poetry-config-path ()
+  (concat (locate-dominating-file default-directory "pyproject.toml")
+          "pyproject.toml"))
+
+(defun python-pre-commit-config-path ()
+  (concat (locate-dominating-file default-directory ".pre-commit-config.yaml")
+          ".pre-commit-config.yaml"))
+
+(defun python-pre-commit-config ()
+  (use-package yaml)
+  (with-demoted-errors
+      "Error: cannot parse `.pre-commit-config.yaml'"
+    (yaml-parse-string
+     (with-temp-buffer
+       (insert-file-contents (python-pre-commit-config-path))
+       (buffer-string))
+     :object-type 'alist
+     :sequence-type 'list)))
+
+(defun python-use-poetry-p ()
+  (and (python-poetry-config-path)
+       (executable-find "poetry")))
+
+(defun python-use-pre-commit-p (requirements)
+  (and (python-pre-commit-config-path)
+       (or (executable-find "pre-commit")
+           (member "pre-commit" requirements))))
+
+(defun python-project-requirements ()
+  (mapcar (lambda (req) (car (split-string req "==")))
+          (ignore-errors
+            (apply 'process-lines
+                   `(,@(if (python-use-poetry-p)
+                           '("poetry" "run"))
+                     "pip" "list" "--format=freeze")))))
+
+(defun python-pre-commit-config-has-hook-p (id)
+  (member id
+          (flatten-list
+           (cl-loop for repo in (alist-get 'repos (python-pre-commit-config))
+                    collect (cl-loop for hook in (alist-get 'hooks repo)
+                                     collect (alist-get 'id hook))))))
+
+(defun python-pre-commit-virtualenv-path (hook-id)
+  (use-package emacsql-sqlite)
+  (when-let* ((db (emacsql-sqlite
+                   (concat
+                    (file-name-as-directory
+                     (or (getenv "PRE_COMMIT_HOME")
+                         (getenv "XDG_CACHE_HOME")
+                         "~/.cache/"))
+                    "pre-commit/db.db")
+                   :debug t))
+              (repo-config
+               (seq-find
+                (lambda (repo)
+                  (seq-find
+                   (lambda (hook)
+                     (equal (alist-get 'id hook) hook-id))
+                   (alist-get 'hooks repo)))
+                (alist-get 'repos (python-pre-commit-config))))
+              (repo-path
+               (caar (emacsql db [:select [path]
+                                          :from repos
+                                          :where (and (= repo $r1)
+                                                      (= ref $r2))]
+                              (alist-get 'repo repo-config)
+                              (alist-get 'rev repo-config))))
+              (result
+               (car
+                (file-expand-wildcards
+                 (concat (file-name-as-directory (symbol-name repo-path)) "py_env-*")
+                 t))))
+    (emacsql-close db)
+    result))
+
 (use-package flycheck
   :delight
   :config
@@ -905,29 +982,59 @@ FILEPATH can be a relative path to one of the directories in
           flycheck-locate-config-file-home))
 
   (defun flycheck-python-needs-module-p-advice (fn checker)
-    "Make sure the checker CHECKER is enabled if `pipx' is installed and the checker executable is found."
+    "Make sure the checker CHECKER is enabled if the checker executable is found."
     (if (executable-find "pipx")
         (cond ((and (or (eq checker 'python-flake8)
                         (eq checker 'python-mypy))
-                    (executable-find (symbol-value (flycheck-checker-executable-variable checker))))
+                    (let ((requirements (python-project-requirements))
+                          (executable-name (cadr (split-string (symbol-name checker) "-")))
+                          (checker-executable-variable-value
+                           (symbol-value (flycheck-checker-executable-variable checker))))
+                      (or (and (python-use-pre-commit-p requirements)
+                               (python-pre-commit-config-has-hook-p executable-name))
+                          (and (python-use-poetry-p)
+                               (member executable-name requirements))
+                          (and (executable-find "pipx")
+                               checker-executable-variable-value
+                               (executable-find checker-executable-variable-value)))))
                nil)
               (t (funcall fn checker)))
       (funcall fn checker)))
   (advice-add 'flycheck-python-needs-module-p :around 'flycheck-python-needs-module-p-advice)
 
   (defun flycheck-checker-executable-variable-advice (fn checker)
-    "Set the checker variable if `pipx' is installed and the checker executable if found."
-    (when (executable-find "pipx")
-      (cond ((and (eq checker 'python-flake8)
-                  (executable-find "flake8"))
-             (make-local-variable 'flycheck-python-flake8-executable)
-             (setf flycheck-python-flake8-executable "flake8"))
-            ((and (eq checker 'python-mypy)
-                  (executable-find "mypy"))
-             (make-local-variable 'flycheck-python-mypy-executable)
-             (setf flycheck-python-mypy-executable "mypy"))))
+    "Set the checker variable if the checker executable if found."
+    (let* ((requirements (python-project-requirements))
+           (checker-name (symbol-name checker))
+           (executable-name (cadr (split-string checker-name "-")))
+           (flycheck-executable-variable
+            (intern (format "flycheck-%s-executable" checker-name))))
+      (when (or (eq checker 'python-flake8)
+                (eq checker 'python-mypy))
+        (cond ((and (python-use-pre-commit-p requirements)
+                    (python-pre-commit-config-has-hook-p executable-name))
+               (make-local-variable flycheck-executable-variable)
+               (setf (symbol-value flycheck-executable-variable)
+                     (concat (python-pre-commit-virtualenv-path executable-name)
+                             (format "/bin/%s" executable-name))))
+              ((and (python-use-poetry-p) (member executable-name requirements))
+               (make-local-variable flycheck-executable-variable)
+               (setf (symbol-value flycheck-executable-variable)-executable-variable
+                     (concat (string-trim (shell-command-to-string "poetry env info -p"))
+                             (format "/bin/%s" executable-name))))
+              ((and (executable-find "pipx")
+                    (executable-find executable-name))
+               (make-local-variable flycheck-executable-variable)
+               (setf (symbol-value flycheck-executable-variable) executable-name)))))
     (funcall fn checker))
   (advice-add 'flycheck-checker-executable-variable :around 'flycheck-checker-executable-variable-advice)
+
+  (add-hook 'flycheck-status-changed-functions
+            (lambda (status)
+              (use-package spinner)
+              (pcase status
+                (`running (spinner-start 'minibox))
+                (- (spinner-stop)))))
 
   (global-flycheck-mode 1))
 
@@ -1228,36 +1335,47 @@ variants of Typescript.")
 
 ;; Python
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
+
+;; TODO: write an isort mode with reformatter
 (add-hook 'python-mode-hook
           (lambda ()
             (use-package python-docstring
               :delight
               :config (python-docstring-mode))
 
-            (use-package poetry)
+            (when (python-use-poetry-p)
+              (make-local-variable 'python-shell-interpreter)
+              (setf python-shell-interpreter
+                    (concat (string-trim (shell-command-to-string "poetry env info -p")) "/bin/python")))
 
-            (when-let* ((requirements
-                         (ignore-errors (process-lines "pip" "list" "--format=freeze")))
-                        (requirements
-                         (mapcar (lambda (req) (car (split-string req "=="))) requirements)))
+            (use-local-map (copy-keymap python-mode-map))
 
-              (use-package python-black
-                :config
-                (python-black-on-save-mode (if (member "black" requirements) 1 0)))
+            (use-package python-black
+              :after (yaml emacsql-sqlite)
+              :if (or (and (python-use-pre-commit-p (python-project-requirements))
+                           (python-pre-commit-config-has-hook-p "black"))
+                      (member "black" (python-project-requirements)))
+              :config
+              (let ((requirements (python-project-requirements)))
+                (cond ((python-use-pre-commit-p requirements)
+                       (make-local-variable 'python-black-command)
+                       (setf python-black-command
+                             (concat (python-pre-commit-virtualenv-path "black") "bin/black")))
+                      ((python-use-poetry-p)
+                       (make-local-variable 'python-black-command)
+                       (setf python-black-command "poetry")
+                       (make-local-variable 'python-black--base-args)
+                       (setf python-black--base-args (append '("run" "black") python-black--base-args)))))
 
-              (use-package importmagic
-                :delight
-                :config
-                (importmagic-mode (if (member "importmagic" requirements) 1 0))
-                (bind-key "C-c f i" 'importmagic-fix-import python-mode-map)
-                (unbind-key "C-c C-l" 'importmagic-mode-map))
+              (python-black-on-save-mode 1))
 
-              ;; Don't add `py-isort-before-save' to `before-save-hook' or the
-              ;; undo history will be very messed up
-              (use-package py-isort
-                :config
-                (when (member "isort" requirements)
-                  (bind-key "C-c f s" 'py-isort-buffer python-mode-map))))))
+            (use-package importmagic
+              :delight
+              :config
+              (when (member "importmagic" (python-project-requirements))
+                (importmagic-mode 1)
+                (bind-key "C-c f i" 'importmagic-fix-import (current-local-map))
+                (unbind-key "C-c C-l" 'importmagic-mode-map)))))
 
 ;; Ruby
 (use-package yard-mode)
