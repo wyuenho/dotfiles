@@ -1868,10 +1868,11 @@ ELEMENT is only added once."
 
   (purpose-mode 1)
 
-  (add-hook 'after-init-hook
+  (add-hook 'window-setup-hook
             (lambda ()
               (when (file-exists-p purpose-default-layout-file)
-                (purpose-load-window-layout-file))))
+                (purpose-load-window-layout-file))
+              (select-window (get-largest-window))))
 
   ;; Bury all special buffers after setting up dummy buffers and restoring
   ;; session buffers
