@@ -1349,34 +1349,36 @@ variants of Typescript.")
               (setf python-shell-interpreter
                     (concat (string-trim (shell-command-to-string "poetry env info -p")) "/bin/python")))
 
-            (use-local-map (copy-keymap python-mode-map))
-
             (use-package python-black
-              :after (yaml emacsql-sqlite)
-              :if (or (and (python-use-pre-commit-p (python-project-requirements))
-                           (python-pre-commit-config-has-hook-p "black"))
-                      (member "black" (python-project-requirements)))
               :config
               (let ((requirements (python-project-requirements)))
-                (cond ((python-use-pre-commit-p requirements)
-                       (make-local-variable 'python-black-command)
-                       (setf python-black-command
-                             (concat (python-pre-commit-virtualenv-path "black") "bin/black")))
-                      ((python-use-poetry-p)
-                       (make-local-variable 'python-black-command)
-                       (setf python-black-command "poetry")
-                       (make-local-variable 'python-black--base-args)
-                       (setf python-black--base-args (append '("run" "black") python-black--base-args)))))
-
-              (python-black-on-save-mode 1))
+                (when (cond ((and (python-use-pre-commit-p requirements)
+                                  (python-pre-commit-config-has-hook-p "black"))
+                             (make-local-variable 'python-black-command)
+                             (setf python-black-command
+                                   (concat (python-pre-commit-virtualenv-path "black") "/bin/black")))
+                            ((and (python-use-poetry-p)
+                                  (member "black" requirements))
+                             (make-local-variable 'python-black-command)
+                             (setf python-black-command "poetry")
+                             (make-local-variable 'python-black--base-args)
+                             (setf python-black--base-args (append '("run" "black") python-black--base-args)))
+                            ((or (and (executable-find "pipx")
+                                      (executable-find python-black-command)))
+                             t))
+                  (python-black-on-save-mode 1))))
 
             (use-package importmagic
               :delight
               :config
-              (when (member "importmagic" (python-project-requirements))
+              (when (let ((requirements (python-project-requirements)))
+                      (and (member "importmagic" requirements)
+                           (member "epc" requirements)))
                 (importmagic-mode 1)
-                (bind-key "C-c f i" 'importmagic-fix-import (current-local-map))
-                (unbind-key "C-c C-l" 'importmagic-mode-map)))))
+                (let ((local-map (copy-keymap (current-local-map))))
+                  (define-key local-map (kbd "C-c f i") 'importmagix-fix-import)
+                  (use-local-map local-map))
+                (define-key importmagic-mode-map (kbd "C-c C-l") nil)))))
 
 ;; Ruby
 (use-package yard-mode)
