@@ -730,6 +730,7 @@ checker symbol."
   :after (lsp-mode))
 
 (use-package lsp-pyright
+  :quelpa (lsp-pyright :fetcher github :repo "wyuenho/lsp-pyright" :branch "activation-fn")
   :after (lsp-mode))
 
 (use-package lsp-sourcekit
