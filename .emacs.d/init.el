@@ -1063,11 +1063,10 @@ FILEPATH can be a relative path to one of the directories in
 
   (add-hook 'kill-buffer-hook
             (lambda ()
-              (setf
-               (alist-get (buffer-file-name)
-                          python-project-requirements-cache
-                          nil t 'equal)
-               nil)))
+              (setf python-project-requirements-cache
+                    (assoc-delete-all
+                     (buffer-file-name)
+                     python-project-requirements-cache))))
 
   (global-flycheck-mode 1))
 
