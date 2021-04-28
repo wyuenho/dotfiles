@@ -1151,6 +1151,22 @@ optionally the window if possible."
   :mode "\\.env\\..*\\'")
 
 ;; Emacs Lisp
+(defun calculate-lisp-indent-advice (fn &rest args)
+  "Don't indent vectors in `emacs-lisp-mode' like lists."
+  (if (save-excursion
+        (beginning-of-line)
+        (let ((start (point)))
+          (save-excursion
+            (beginning-of-defun)
+            (let ((containing-sexp (elt (parse-partial-sexp (point) start) 1)))
+              (when containing-sexp
+                (setf (point) containing-sexp)
+                (looking-at "\\["))))))
+      (let ((lisp-indent-offset 1))
+        (apply fn args))
+    (apply fn args)))
+(advice-add 'calculate-lisp-indent :around 'calculate-lisp-indent-advice)
+
 (pcase-dolist (`(,key . ,command)
                '(("C-c e f" . byte-compile-file)
                  ("C-c e c" . emacs-lisp-byte-compile)
