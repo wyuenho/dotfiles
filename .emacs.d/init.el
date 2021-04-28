@@ -940,36 +940,45 @@ checker symbol."
 
 (defun python-pre-commit-virtualenv-path (hook-id)
   (use-package emacsql-sqlite)
-  (when-let* ((db (emacsql-sqlite
-                   (concat
-                    (file-name-as-directory
-                     (or (getenv "PRE_COMMIT_HOME")
-                         (getenv "XDG_CACHE_HOME")
-                         "~/.cache/"))
-                    "pre-commit/db.db")
-                   :debug t))
-              (repo-config
-               (seq-find
-                (lambda (repo)
-                  (seq-find
-                   (lambda (hook)
-                     (equal (alist-get 'id hook) hook-id))
-                   (alist-get 'hooks repo)))
-                (alist-get 'repos (python-pre-commit-config))))
-              (repo-path
-               (caar (emacsql db [:select [path]
-                                          :from repos
-                                          :where (and (= repo $r1)
-                                                      (= ref $r2))]
-                              (alist-get 'repo repo-config)
-                              (alist-get 'rev repo-config))))
-              (result
-               (car
-                (file-expand-wildcards
-                 (concat (file-name-as-directory (symbol-name repo-path)) "py_env-*")
-                 t))))
-    (emacsql-close db)
-    result))
+  (let ((db (emacsql-sqlite
+             (concat
+              (file-name-as-directory
+               (or (getenv "PRE_COMMIT_HOME")
+                   (getenv "XDG_CACHE_HOME")
+                   "~/.cache/"))
+              "pre-commit/db.db")
+             :debug t)))
+    (unwind-protect
+        (let* ((repo-config
+                (seq-find
+                 (lambda (repo)
+                   (seq-find
+                    (lambda (hook)
+                      (equal (alist-get 'id hook) hook-id))
+                    (alist-get 'hooks repo)))
+                 (alist-get 'repos (python-pre-commit-config))))
+               (additional-deps
+                (alist-get 'additional_dependencies
+                           (seq-find
+                            (lambda (hook)
+                              (equal (alist-get 'id hook) hook-id))
+                            (alist-get 'hooks repo-config))))
+               (repo-path
+                (caar (emacsql db [:select [path]
+                                   :from repos
+                                   :where (and (= repo $r1)
+                                               (= ref $r2))]
+                               (concat (alist-get 'repo repo-config)
+                                       (if additional-deps
+                                           (concat ":" (string-join additional-deps ":"))))
+                               (alist-get 'rev repo-config))))
+               (result
+                (car
+                 (file-expand-wildcards
+                  (concat (file-name-as-directory (symbol-name repo-path)) "py_env-*")
+                  t))))
+          result)
+      (emacsql-close db))))
 
 (use-package flycheck
   :delight
