@@ -1012,22 +1012,19 @@ FILEPATH can be a relative path to one of the directories in
 
   (defun flycheck-python-needs-module-p-advice (fn checker)
     "Make sure the checker CHECKER is enabled if the checker executable is found."
-    (if (executable-find "pipx")
-        (cond ((and (or (eq checker 'python-flake8)
-                        (eq checker 'python-mypy))
-                    (let ((requirements (python-project-requirements))
-                          (executable-name (cadr (split-string (symbol-name checker) "-")))
-                          (checker-executable-variable-value
-                           (symbol-value (flycheck-checker-executable-variable checker))))
-                      (or (and (python-use-pre-commit-p requirements)
-                               (python-pre-commit-config-has-hook-p executable-name))
-                          (and (python-use-poetry-p)
-                               (member executable-name requirements))
-                          (and (executable-find "pipx")
-                               checker-executable-variable-value
-                               (executable-find checker-executable-variable-value)))))
-               nil)
-              (t (funcall fn checker)))
+    (if (and (or (eq checker 'python-flake8)
+                 (eq checker 'python-mypy))
+             (let ((requirements (python-project-requirements))
+                   (executable-name (cadr (split-string (symbol-name checker) "-")))
+                   (checker-executable-variable-value
+                    (symbol-value (flycheck-checker-executable-variable checker))))
+               (or (and (python-use-pre-commit-p requirements)
+                        (python-pre-commit-config-has-hook-p executable-name))
+                   (and (python-use-poetry-p)
+                        (member executable-name requirements))
+                   (and checker-executable-variable-value
+                        (executable-find checker-executable-variable-value)))))
+        nil
       (funcall fn checker)))
   (advice-add 'flycheck-python-needs-module-p :around 'flycheck-python-needs-module-p-advice)
 
@@ -1051,8 +1048,7 @@ FILEPATH can be a relative path to one of the directories in
                (setf (symbol-value flycheck-executable-variable)
                      (concat (string-trim (shell-command-to-string "poetry env info -p"))
                              (format "/bin/%s" executable-name))))
-              ((and (executable-find "pipx")
-                    (executable-find executable-name))
+              ((executable-find executable-name)
                (make-local-variable flycheck-executable-variable)
                (setf (symbol-value flycheck-executable-variable) executable-name)))))
     (funcall fn checker))
@@ -1399,8 +1395,7 @@ variants of Typescript.")
                              (setf python-black-command "poetry")
                              (make-local-variable 'python-black--base-args)
                              (setf python-black--base-args (append '("run" "black") python-black--base-args)))
-                            ((or (and (executable-find "pipx")
-                                      (executable-find python-black-command)))
+                            ((executable-find python-black-command)
                              t))
                   (python-black-on-save-mode 1))))
 
