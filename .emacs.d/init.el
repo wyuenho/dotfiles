@@ -1215,9 +1215,15 @@ optionally the window if possible."
   :hook (cmake-mode . cmake-font-lock-activate))
 
 ;; Formatting
+(defvar-local python-isort-executable "isort")
+(defvar-local python-isort-arguments '("--stdout" "-"))
 (use-package reformatter
   :quelpa (reformatter :fetcher github :repo "wyuenho/reformatter.el" :branch "post-processor")
   :config
+  (reformatter-define python-isort
+    :program python-isort-executable
+    :args python-isort-arguments)
+
   (reformatter-define yarn-eslint-format
     :program "yarn"
     :args `("--silent"
@@ -1235,6 +1241,7 @@ optionally the window if possible."
                                (output (and data (arrayp data) (alist-get 'output (aref data 0)))))
                           (funcall result-callback output)))
     :exit-code-success-p integerp)
+
   (reformatter-define eslint-format
     :program "eslint_d"
     :args `("--fix-to-stdout"
@@ -1384,7 +1391,6 @@ variants of Typescript.")
 ;; Python
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
 
-;; TODO: write an isort mode with reformatter
 (add-hook 'python-mode-hook
           (lambda ()
             (use-package python-docstring
@@ -1413,6 +1419,24 @@ variants of Typescript.")
                             ((executable-find python-black-command)
                              t))
                   (python-black-on-save-mode 1))))
+
+            (with-eval-after-load 'reformatter
+              (let ((requirements (python-project-requirements)))
+                (when (cond ((and (python-use-pre-commit-p requirements)
+                                (python-pre-commit-config-has-hook-p "isort"))
+                           (setf python-isort-executable
+                                 (concat (python-pre-commit-virtualenv-path "isort") "/bin/isort")))
+                          ((and (python-use-poetry-p)
+                                (member "isort" requirements))
+                           (setf python-isort-executable "poetry"
+                                 python-isort-arguments
+                                 (append '("run" "isort") python-isort-arguments)))
+                          ((executable-find "isort")
+                           (setf python-isort-executable "isort")
+                           (when (executable-find "black")
+                             (setf python-isort-arguments
+                                   (append '("--profile" "black") python-isort-arguments)))))
+                  (python-isort-on-save-mode 1))))
 
             (use-package importmagic
               :delight
