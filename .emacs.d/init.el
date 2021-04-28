@@ -875,7 +875,6 @@ checker symbol."
               (add-to-list 'company-transformers 'company-sort-prefer-same-case-prefix t))))
 
 ;; Linting
-;; TODO: cache all these function by config content
 (defun python-poetry-config-path ()
   (concat (locate-dominating-file default-directory "pyproject.toml")
           "pyproject.toml"))
@@ -884,16 +883,28 @@ checker symbol."
   (concat (locate-dominating-file default-directory ".pre-commit-config.yaml")
           ".pre-commit-config.yaml"))
 
+(defvar python-pre-commit-config-cache nil)
 (defun python-pre-commit-config ()
-  (use-package yaml)
-  (with-demoted-errors
-      "Error: cannot parse `.pre-commit-config.yaml'"
-    (yaml-parse-string
-     (with-temp-buffer
-       (insert-file-contents (python-pre-commit-config-path))
-       (buffer-string))
-     :object-type 'alist
-     :sequence-type 'list)))
+  (let* ((config-path (python-pre-commit-config-path))
+         (modification-time
+          (file-attribute-modification-time (file-attributes config-path)))
+         (cache-value (assoc-default config-path python-pre-commit-config-cache)))
+    (if (equal (alist-get 'modification-time cache-value) modification-time)
+        (alist-get 'content cache-value)
+      (use-package yaml)
+      (let ((content
+             (with-demoted-errors
+                 "Error: cannot parse `.pre-commit-config.yaml'"
+               (yaml-parse-string
+                (with-temp-buffer
+                  (insert-file-contents (python-pre-commit-config-path))
+                  (buffer-string))
+                :object-type 'alist
+                :sequence-type 'list))))
+        (push `(,config-path . ((modification-time . ,modification-time)
+                                (content . ,content)))
+              python-pre-commit-config-cache)
+        content))))
 
 (defun python-use-poetry-p ()
   (and (python-poetry-config-path)
@@ -904,13 +915,21 @@ checker symbol."
        (or (executable-find "pre-commit")
            (member "pre-commit" requirements))))
 
+(defvar python-project-requirements-cache nil)
 (defun python-project-requirements ()
-  (mapcar (lambda (req) (car (split-string req "==")))
-          (ignore-errors
-            (apply 'process-lines
-                   `(,@(if (python-use-poetry-p)
-                           '("poetry" "run"))
-                     "pip" "list" "--format=freeze")))))
+  (let* ((file-path (buffer-file-name))
+         (requirements
+          (assoc-default file-path python-project-requirements-cache)))
+    (unless requirements
+      (setf requirements
+            (mapcar (lambda (req) (car (split-string req "==")))
+                    (ignore-errors
+                      (apply 'process-lines
+                             `(,@(if (python-use-poetry-p)
+                                     '("poetry" "run"))
+                               "pip" "list" "--format=freeze")))))
+      (push (cons file-path requirements) python-project-requirements-cache))
+    requirements))
 
 (defun python-pre-commit-config-has-hook-p (id)
   (member id
@@ -1020,7 +1039,7 @@ FILEPATH can be a relative path to one of the directories in
                              (format "/bin/%s" executable-name))))
               ((and (python-use-poetry-p) (member executable-name requirements))
                (make-local-variable flycheck-executable-variable)
-               (setf (symbol-value flycheck-executable-variable)-executable-variable
+               (setf (symbol-value flycheck-executable-variable)
                      (concat (string-trim (shell-command-to-string "poetry env info -p"))
                              (format "/bin/%s" executable-name))))
               ((and (executable-find "pipx")
@@ -1036,6 +1055,14 @@ FILEPATH can be a relative path to one of the directories in
               (pcase status
                 (`running (spinner-start 'minibox))
                 (- (spinner-stop)))))
+
+  (add-hook 'kill-buffer-hook
+            (lambda ()
+              (setf
+               (alist-get (buffer-file-name)
+                          python-project-requirements-cache
+                          nil t 'equal)
+               nil)))
 
   (global-flycheck-mode 1))
 
