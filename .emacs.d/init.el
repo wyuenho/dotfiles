@@ -1431,9 +1431,9 @@ variants of Typescript.")
                            (setf python-isort-executable "poetry"
                                  python-isort-arguments
                                  (append '("run" "isort") python-isort-arguments)))
-                          ((executable-find "isort")
-                           (setf python-isort-executable "isort")
-                           (when (executable-find "black")
+                          ((executable-find python-isort-executable)
+                           (when (and python-black-command
+                                      (executable-find python-black-command))
                              (setf python-isort-arguments
                                    (append '("--profile" "black") python-isort-arguments)))))
                   (python-isort-on-save-mode 1))))
