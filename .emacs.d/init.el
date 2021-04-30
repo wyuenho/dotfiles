@@ -19,7 +19,7 @@ under `user-emacs-directory'.  If it exists, loaded it."
   (interactive)
   (when-let ((custom-file-path
               (locate-file "custom.el" (list user-emacs-directory))))
-    (setq custom-file custom-file-path)
+    (setf custom-file custom-file-path)
     (load custom-file)))
 (load-custom-file)
 
@@ -42,7 +42,7 @@ under `user-emacs-directory'.  If it exists, loaded it."
       (let ((package (car cache)))
         (package-activate package))))
   (require 'quelpa-use-package)
-  (setq use-package-compute-statistics t)
+  (setf use-package-compute-statistics t)
   (quelpa-use-package-activate-advice))
 
 ;; Remap Unicode charactors to their appropriate fonts
@@ -136,7 +136,7 @@ under `user-emacs-directory'.  If it exists, loaded it."
   :if (memq (window-system) '(mac ns))
   :config (exec-path-from-shell-initialize))
 
-(setq backup-directory-alist
+(setf backup-directory-alist
       `(("." . ,(concat user-emacs-directory "backups"))))
 
 ;; Automatically wrap overly long lines for all text modes
@@ -340,7 +340,7 @@ Optional argument ARG same as `comment-dwim''s."
          :map emacs-lisp-mode-map
          ("C-c e e" . crux-eval-and-replace))
   :config
-  (setq crux-shell shell-file-name))
+  (setf crux-shell shell-file-name))
 
 ;; Saner undo/redo
 (use-package undo-fu
@@ -585,7 +585,7 @@ region."
           ((derived-mode-p 'prog-mode)
            (string-inflection-all-cycle))))
   :config
-  (setq string-inflection-skip-backward-when-done t)
+  (setf string-inflection-skip-backward-when-done t)
   :bind (("C-x C-y" . inflect-string)))
 
 (use-package smart-semicolon
@@ -607,7 +607,7 @@ region."
   (with-eval-after-load 'hideshow
     ;; Unloading is unsafe, so this the best I can do to pretend `hideshow'
     ;; never existed.
-    (setq minor-mode-map-alist
+    (setf minor-mode-map-alist
           (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
           minor-mode-alist
           (assq-delete-all 'hs-minor-mode minor-mode-alist)
@@ -660,7 +660,7 @@ region."
          (lsp-managed-mode . lsp-mode)
          (lsp-mode . lsp-enable-which-key-integration))
   :config
-  (setq read-process-output-max (* 1024 1024 10))
+  (setf read-process-output-max (* 1024 1024 10))
 
   (with-eval-after-load 'flycheck
     (defvar-local lsp-flycheck-checkers nil)
@@ -848,7 +848,7 @@ checker symbol."
               ("C-n" . company-select-next)
               ("C-p" . company-select-previous))
   :config
-  (setq company-backends
+  (setf company-backends
         `(company-bbdb
           (company-semantic company-clang)
           company-cmake
@@ -1101,7 +1101,7 @@ FILEPATH can be a relative path to one of the directories in
               (setq-local company-backends
                           '(company-native-complete company-files company-capf)))))
 
-(setq eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
+(setf eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
 (use-package vterm
   :preface
@@ -1594,7 +1594,7 @@ variants of Typescript.")
   (projectile-rails-global-mode)
   (add-hook 'projectile-rails-mode-hook
             (lambda ()
-              (setq projectile-rails-mode-map (make-sparse-keymap))
+              (setf projectile-rails-mode-map (make-sparse-keymap))
               (define-key projectile-command-map (kbd "C-r") 'projectile-rails-command-map))))
 
 ;; Search
@@ -1623,7 +1623,7 @@ variants of Typescript.")
 
   (add-hook 'ediff-before-setup-hook
             (lambda ()
-              (setq ediff-saved-window-configuration (current-window-configuration))))
+              (setf ediff-saved-window-configuration (current-window-configuration))))
 
   (let ((restore-window-configuration
          (lambda ()
@@ -1697,8 +1697,8 @@ text will become visible.
 
 ELEMENT is only added once."
   (if (eq buffer-invisibility-spec t)
-      (setq buffer-invisibility-spec (list t)))
-  (setq buffer-invisibility-spec
+      (setf buffer-invisibility-spec (list t)))
+  (setf buffer-invisibility-spec
         (delete-dups (cons element buffer-invisibility-spec))))
 (advice-add 'add-to-invisibility-spec :override 'add-to-invisibility-spec-override-advice)
 
@@ -1776,7 +1776,7 @@ ELEMENT is only added once."
               ("\C-m"      . dired-single-buffer))
   :config
   (with-eval-after-load 'window-purpose-x
-    (setq dired-single-magic-buffer-name purpose-x-code1-dired-buffer-name))
+    (setf dired-single-magic-buffer-name purpose-x-code1-dired-buffer-name))
   ;; Make sure dired-hide-details-mode is preserved when reusing the dired
   ;; window
   (defun find-alternate-file-advice (fn &rest args)
@@ -1794,7 +1794,7 @@ ELEMENT is only added once."
           (result (apply fn args)))
       (when is-dired
         (when hide-dotfiles (dired-hide-dotfiles-mode))
-        (setq truncate-lines tl
+        (setf truncate-lines tl
               word-wrap ww
               visual-line-mode vlm
               mode-line-format mlf

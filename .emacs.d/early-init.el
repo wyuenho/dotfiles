@@ -29,7 +29,7 @@
   (push (cons param value) (alist-get 'ns window-system-default-frame-alist nil)))
 
 ;; Set up frame title format
-(setq frame-title-format (list '(:eval
+(setf frame-title-format (list '(:eval
                                  (when (buffer-file-name)
                                    (abbreviate-file-name (buffer-file-name))))))
 
@@ -42,13 +42,14 @@
             (when (display-graphic-p)
               (pcase (window-system)
                 ('ns
-                 (setq ns-use-thin-smoothing t
+                 (setf ns-use-thin-smoothing t
                        ns-use-mwheel-momentum t
-                       ns-use-mwheel-acceleration t))))))
+                       ns-use-mwheel-acceleration t
+                       x-colors (ns-list-colors)))))))
 
 ;; After desktop.el has restored all the buffers, the top of the buffer list in
 ;; the last emacs session should be restored as the top.
-(setq initial-buffer-choice (lambda () (car (buffer-list))))
+(setf initial-buffer-choice (lambda () (car (buffer-list))))
 
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
