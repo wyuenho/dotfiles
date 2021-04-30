@@ -995,18 +995,19 @@ FILEPATH can be a relative path to one of the directories in
     (let* ((checker-name (or (cadr (split-string (symbol-name checker) "-"))
                              (symbol-name checker)))
            (xdg-config-home (or (file-name-as-directory (getenv "XDG_CONFIG_HOME")) "~/.config/"))
-           (xdg-config-dirs (getenv "XDG_CONFIG_DIRS")))
-
-      (seq-some
-       (lambda (dir)
-         (let ((full-path (concat dir filepath)))
-           (file-exists-p full-path)))
-       `(,xdg-config-home
-         ,(file-name-as-directory (concat xdg-config-home checker-name))
-         ,@(and xdg-config-dirs
-                (mapcar
-                 'file-name-as-directory
-                 (split-string xdg-config-dirs ":")))))))
+           (xdg-config-dirs (getenv "XDG_CONFIG_DIRS"))
+           (result
+            (seq-find
+             (lambda (dir)
+               (let ((full-path (concat dir filepath)))
+                 (file-exists-p full-path)))
+             `(,xdg-config-home
+               ,(file-name-as-directory (concat xdg-config-home checker-name))
+               ,@(and xdg-config-dirs
+                      (mapcar
+                       'file-name-as-directory
+                       (split-string xdg-config-dirs ":")))))))
+      (and result (concat result filepath))))
 
   (setf flycheck-locate-config-file-functions
         '(flycheck-locate-config-file-by-path
