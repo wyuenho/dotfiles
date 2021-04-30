@@ -977,9 +977,10 @@ checker symbol."
                                (alist-get 'rev repo-config))))
                (result
                 (car
-                 (file-expand-wildcards
-                  (concat (file-name-as-directory (symbol-name repo-path)) "py_env-*")
-                  t))))
+                 (list
+                  (file-expand-wildcards
+                   (concat (file-name-as-directory (symbol-name repo-path)) "py_env-*")
+                   t)))))
           result)
       (emacsql-close db))))
 
