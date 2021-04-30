@@ -927,6 +927,13 @@ checker symbol."
       (push (cons file-path requirements) python-project-requirements-cache))
     requirements))
 
+(add-hook 'kill-buffer-hook
+          (lambda ()
+            (setf python-project-requirements-cache
+                  (assoc-delete-all
+                   (buffer-file-name)
+                   python-project-requirements-cache))))
+
 (defun python-pre-commit-config-has-hook-p (id)
   (member id
           (flatten-list
@@ -1056,13 +1063,6 @@ FILEPATH can be a relative path to one of the directories in
               (pcase status
                 (`running (spinner-start 'minibox))
                 (- (spinner-stop)))))
-
-  (add-hook 'kill-buffer-hook
-            (lambda ()
-              (setf python-project-requirements-cache
-                    (assoc-delete-all
-                     (buffer-file-name)
-                     python-project-requirements-cache))))
 
   (global-flycheck-mode 1))
 
