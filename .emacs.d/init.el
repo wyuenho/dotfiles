@@ -360,6 +360,25 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-x C--" . default-text-scale-decrease)
          ("C-x C-0" . default-text-scale-reset)))
 
+;; Make sure everything defined in `ido-completion-map' is never overridden by
+;; minor modes in the minibuffer
+(with-eval-after-load 'ido
+  (add-hook 'ido-setup-hook
+            (lambda ()
+              (dolist (map (current-minor-mode-maps))
+                (map-keymap
+                 (lambda (event def)
+                   (when-let (key (and (or (characterp event)
+                                           (and (symbolp event)
+                                                (not (eq event 'remap))
+                                                (not (keymapp def))))
+                                       (if (characterp event)
+                                           (format "%c" event)
+                                         (vector event))))
+                     (when (lookup-key ido-completion-map key)
+                       (define-key map key nil))))
+                 map)))))
+
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
   :config (flx-ido-mode 1))
