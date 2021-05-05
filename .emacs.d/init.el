@@ -954,8 +954,7 @@ checker symbol."
                 (python-project-requirements-from-file
                  (match-string-no-properties 1 req)))
       (let* ((requirement-spec (split-string req ";"))
-             (package-version-spec (string-trim (car requirement-spec)))
-             (python-version-spec (string-trim (cadr requirement-spec))))
+             (package-version-spec (string-trim (car requirement-spec))))
         (car (split-string package-version-spec "=="))))))
 
 (defvar python-project-requirements-cache nil)
