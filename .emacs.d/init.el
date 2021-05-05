@@ -65,8 +65,6 @@ under `user-emacs-directory'.  If it exists, loaded it."
              (abbrev-mode                   nil abbrev)
              (purpose-mode                  nil window-purpose)
              (eldoc-mode                    nil eldoc)
-             (eldoc-box-hover-mode          nil eldoc-box)
-             (eldoc-box-hover-at-point-mode nil eldoc-box)
              (move-dup-mode                 nil move-dup)
              (smartparens-mode              nil smartparens)
              (which-key-mode                nil which-key)
@@ -92,7 +90,6 @@ under `user-emacs-directory'.  If it exists, loaded it."
                    (completions-common-part           . flx-highlight-face)
                    (tooltip                           . company-tooltip)
                    (lsp-signature-posframe            . company-tooltip)
-                   (eldoc-box-body                    . company-tooltip)
                    (flycheck-posframe-background-face . company-tooltip)))
     (put face 'theme-face nil)
     (put face 'face-alias alias))
@@ -842,11 +839,6 @@ checker symbol."
                  (concat dap-cpptools-debug-path "/bin/cpptools"))))))
 
 ;; Auto-completion
-(use-package eldoc-box
-  :if (display-graphic-p)
-  :after (eldoc)
-  :hook (eldoc-mode . eldoc-box-hover-at-point-mode))
-
 (use-package company
   :delight
   :preface
