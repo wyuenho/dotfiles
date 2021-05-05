@@ -358,24 +358,37 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-x C--" . default-text-scale-decrease)
          ("C-x C-0" . default-text-scale-reset)))
 
-;; Make sure everything defined in `ido-completion-map' is never overridden by
-;; minor modes in the minibuffer
-(with-eval-after-load 'ido
-  (add-hook 'ido-setup-hook
-            (lambda ()
-              (dolist (map (current-minor-mode-maps))
-                (map-keymap
-                 (lambda (event def)
-                   (when-let (key (and (or (characterp event)
-                                           (and (symbolp event)
-                                                (not (eq event 'remap))
-                                                (not (keymapp def))))
-                                       (if (characterp event)
-                                           (format "%c" event)
-                                         (vector event))))
-                     (when (lookup-key ido-completion-map key)
-                       (define-key map key nil))))
-                 map)))))
+;; ;; Make sure everything defined in `ido-completion-map' is never overridden by
+;; ;; minor modes in the minibuffer
+;; (defun ido-resurrect-keybinding ()
+;;   (pcase-dolist (`(,minor-mode . ,keymap)
+;;                  (seq-filter
+;;                   (lambda (entry) (symbol-value (car entry)))
+;;                   minor-mode-map-alist))
+;;     (cl-loop for buf in (buffer-list)
+;;              if (and (minibufferp buf)
+;;                      (with-current-buffer buf
+;;                        (symbol-value minor-mode)))
+;;              do
+;;              (map-keymap
+;;               (lambda (event def)
+;;                 (when-let (key (and (or (characterp event)
+;;                                         (and (symbolp event)
+;;                                              (not (eq event 'remap))
+;;                                              (not (keymapp def))))
+;;                                     (if (characterp event)
+;;                                         (format "%c" event)
+;;                                       (vector event))))
+;;                   (when (lookup-key ido-completion-map key)
+;;                     (let ((map (copy-keymap keymap)))
+;;                       (define-key map key nil)
+;;                       (with-current-buffer buf
+;;                         (push (cons minor-mode map)
+;;                               minor-mode-overriding-map-alist))))))
+;;               keymap))))
+
+;; (with-eval-after-load 'ido
+;;   (add-hook 'ido-setup-hook 'ido-resurrect-keybinding))
 
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
