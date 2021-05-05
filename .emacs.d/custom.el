@@ -183,7 +183,7 @@
  '(linum-format "%4d ")
  '(load-prefer-newer t)
  '(lsp-auto-guess-root t)
- '(lsp-disabled-clients '(pyls eslint ocaml-ls))
+ '(lsp-disabled-clients '(pyls eslint ocaml-ls bash-ls))
  '(lsp-eldoc-render-all t)
  '(lsp-headerline-breadcrumb-enable nil)
  '(lsp-idle-delay 0.1)

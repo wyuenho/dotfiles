@@ -678,7 +678,6 @@ region."
            reason-mode
            rust-mode
            scala-mode
-           sh-mode
            swift-mode
            tuareg-mode
            typescript-mode
@@ -720,10 +719,7 @@ checker symbol."
                                       ((>= (string-match-p "htm" ext) 0)
                                        '(html-tidy . ((modes . (web-mode))))))))))
                       (lsp-next-checkers
-                       (cond ((and (derived-mode-p 'sh-mode)
-                                   (memq sh-shell '(sh jsh bash)))
-                              '((warning . sh-shellcheck)))
-                             ((derived-mode-p 'css-mode)
+                       (cond ((derived-mode-p 'css-mode)
                               (cond ((eq major-mode 'scss-mode)
                                      '((warning . scss-stylelint)))
                                     ((eq major-mode 'less-mode)
