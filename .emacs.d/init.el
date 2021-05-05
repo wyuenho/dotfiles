@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t -*-
 (toggle-debug-on-error)
 
+(require 'pcase)
 (require 'map)
 (require 'seq)
 (require 'cl-lib)
@@ -890,13 +891,9 @@ checker symbol."
               (add-to-list 'company-transformers 'company-sort-prefer-same-case-prefix t))))
 
 ;; Linting
-(defun python-poetry-config-path ()
-  (concat (locate-dominating-file default-directory "pyproject.toml")
-          "pyproject.toml"))
-
 (defun python-pre-commit-config-path ()
-  (concat (locate-dominating-file default-directory ".pre-commit-config.yaml")
-          ".pre-commit-config.yaml"))
+  (when-let ((dir (locate-dominating-file default-directory ".pre-commit-config.yaml")))
+    (concat dir ".pre-commit-config.yaml")))
 
 (defvar python-pre-commit-config-cache nil)
 (defun python-pre-commit-config ()
@@ -921,14 +918,44 @@ checker symbol."
               python-pre-commit-config-cache)
         content))))
 
+(defun python-poetry-config-path ()
+  (when-let ((dir (locate-dominating-file default-directory "pyproject.toml")))
+    (concat dir "pyproject.toml")))
+
 (defun python-use-poetry-p ()
   (and (python-poetry-config-path)
+       (with-temp-buffer
+         (insert-file-contents (python-poetry-config-path))
+         (goto-char (point-min))
+         (search-forward "[tool.poetry]" nil t nil))
        (executable-find "poetry")))
 
 (defun python-use-pre-commit-p (requirements)
   (and (python-pre-commit-config-path)
        (or (executable-find "pre-commit")
            (member "pre-commit" requirements))))
+
+(defun python-project-requirements-from-file (&optional file-path)
+  (when-let ((requirements-file
+              (or file-path
+                  (concat
+                   (locate-dominating-file default-directory "requirements.txt")
+                   "requirements.txt"))))
+    (with-temp-buffer
+      (insert-file-contents requirements-file)
+      (goto-char (point-min))
+      (string-lines (string-trim (buffer-string))))))
+
+(defun python-parse-requirement-spec (req)
+  (save-match-data
+    (if (not (null (string-match "^-r +\\(.+\\)$" req)))
+        (mapcar 'python-parse-requirement-spec
+                (python-project-requirements-from-file
+                 (match-string-no-properties 1 req)))
+      (let* ((requirement-spec (split-string req ";"))
+             (package-version-spec (string-trim (car requirement-spec)))
+             (python-version-spec (string-trim (cadr requirement-spec))))
+        (car (split-string package-version-spec "=="))))))
 
 (defvar python-project-requirements-cache nil)
 (defun python-project-requirements ()
@@ -937,12 +964,15 @@ checker symbol."
           (assoc-default file-path python-project-requirements-cache)))
     (unless requirements
       (setf requirements
-            (mapcar (lambda (req) (car (split-string req "==")))
-                    (ignore-errors
-                      (apply 'process-lines
-                             `(,@(if (python-use-poetry-p)
-                                     '("poetry" "run"))
-                               "pip" "list" "--format=freeze")))))
+            (flatten-list
+             (mapcar 'python-parse-requirement-spec
+                     (condition-case err
+                         (or (and (python-use-poetry-p)
+                                  (process-lines "poetry" "run" "pip" "list" "--format=freeze"))
+                             (python-project-requirements-from-file)
+                             (process-lines "pip" "list" "--format=freeze"))
+                       (file-error (and (message "%s" (error-message-string err)) nil))))))
+      (assoc-delete-all file-path python-project-requirements-cache)
       (push (cons file-path requirements) python-project-requirements-cache))
     requirements))
 
@@ -960,48 +990,63 @@ checker symbol."
                     collect (cl-loop for hook in (alist-get 'hooks repo)
                                      collect (alist-get 'id hook))))))
 
+(defvar python-pre-commit-database-cache nil)
 (defun python-pre-commit-virtualenv-path (hook-id)
   (use-package emacsql-sqlite)
-  (let ((db (emacsql-sqlite
-             (concat
-              (file-name-as-directory
-               (or (getenv "PRE_COMMIT_HOME")
-                   (getenv "XDG_CACHE_HOME")
-                   "~/.cache/"))
-              "pre-commit/db.db")
-             :debug t)))
-    (unwind-protect
-        (let* ((repo-config
-                (seq-find
-                 (lambda (repo)
-                   (seq-find
-                    (lambda (hook)
-                      (equal (alist-get 'id hook) hook-id))
-                    (alist-get 'hooks repo)))
-                 (alist-get 'repos (python-pre-commit-config))))
-               (additional-deps
-                (alist-get 'additional_dependencies
-                           (seq-find
-                            (lambda (hook)
-                              (equal (alist-get 'id hook) hook-id))
-                            (alist-get 'hooks repo-config))))
-               (repo-path
-                (caar (emacsql db [:select [path]
-                                   :from repos
-                                   :where (and (= repo $r1)
-                                               (= ref $r2))]
-                               (concat (alist-get 'repo repo-config)
-                                       (if additional-deps
-                                           (concat ":" (string-join additional-deps ":"))))
-                               (alist-get 'rev repo-config))))
-               (result
-                (car
-                 (list
-                  (file-expand-wildcards
-                   (concat (file-name-as-directory (symbol-name repo-path)) "py_env-*")
-                   t)))))
-          result)
-      (emacsql-close db))))
+  (when-let* ((db-file (concat
+                        (file-name-as-directory
+                         (or (getenv "PRE_COMMIT_HOME")
+                             (getenv "XDG_CACHE_HOME")
+                             "~/.cache/"))
+                        "pre-commit/db.db"))
+              (db (and (file-exists-p db-file)
+                       (let ((db-file-mod-time
+                              (file-attribute-modification-time (file-attributes db-file))))
+                         (or (and (equal
+                                   (cdr python-pre-commit-database-cache)
+                                   db-file-mod-time)
+                                  (car python-pre-commit-database-cache))
+                             (when-let ((conn (emacsql-sqlite db-file :debug t)))
+                               (unwind-protect
+                                   (progn
+                                     (setf python-pre-commit-database-cache
+                                           (cons
+                                            (emacsql conn [:select * :from repos])
+                                            db-file-mod-time))
+                                     (car python-pre-commit-database-cache))
+                                 (emacsql-close conn)))))))
+              (repo-config
+               (seq-find
+                (lambda (repo)
+                  (seq-find
+                   (lambda (hook)
+                     (equal (alist-get 'id hook) hook-id))
+                   (alist-get 'hooks repo)))
+                (alist-get 'repos (python-pre-commit-config)))))
+
+    (let* ((additional-deps
+            (alist-get 'additional_dependencies
+                       (seq-find
+                        (lambda (hook)
+                          (equal (alist-get 'id hook) hook-id))
+                        (alist-get 'hooks repo-config))))
+           (repo-url
+            (concat (alist-get 'repo repo-config)
+                    (if additional-deps
+                        (concat ":" (string-join additional-deps ":")))))
+           (repo-dir (symbol-name
+                      (nth 2 (seq-find
+                              (lambda (row)
+                                (and (equal (symbol-name (car row))
+                                            repo-url)
+                                     (equal (symbol-name (cadr row))
+                                            (alist-get 'rev repo-config))))
+                              db)))))
+      (car
+       (last
+        (file-expand-wildcards
+         (concat (file-name-as-directory repo-dir) "py_env-*")
+         t))))))
 
 (use-package flycheck
   :delight
@@ -1013,9 +1058,10 @@ FILEPATH can be a relative path to one of the directories in
 `XDG_CONFIG_HOME' and `XDG_CONFIG_DIRS'.  If FILEPATH is a file name, "
     (let* ((checker-name (or (cadr (split-string (symbol-name checker) "-"))
                              (symbol-name checker)))
-           (xdg-config-home (or (file-name-as-directory (getenv "XDG_CONFIG_HOME")) "~/.config/"))
+           (xdg-config-home (or (file-name-as-directory (getenv "XDG_CONFIG_HOME"))
+                                "~/.config/"))
            (xdg-config-dirs (getenv "XDG_CONFIG_DIRS"))
-           (result
+           (dir
             (seq-find
              (lambda (dir)
                (let ((full-path (concat dir filepath)))
@@ -1026,7 +1072,7 @@ FILEPATH can be a relative path to one of the directories in
                       (mapcar
                        'file-name-as-directory
                        (split-string xdg-config-dirs ":")))))))
-      (and result (concat result filepath))))
+      (and dir (concat dir filepath))))
 
   (setf flycheck-locate-config-file-functions
         '(flycheck-locate-config-file-by-path
@@ -1412,7 +1458,7 @@ variants of Typescript.")
           (lambda ()
             (use-package python-docstring
               :delight
-              :config (python-docstring-mode))
+              :config (python-docstring-mode 1))
 
             (when (python-use-poetry-p)
               (make-local-variable 'python-shell-interpreter)
@@ -1440,19 +1486,19 @@ variants of Typescript.")
             (with-eval-after-load 'reformatter
               (let ((requirements (python-project-requirements)))
                 (when (cond ((and (python-use-pre-commit-p requirements)
-                                (python-pre-commit-config-has-hook-p "isort"))
-                           (setf python-isort-executable
-                                 (concat (python-pre-commit-virtualenv-path "isort") "/bin/isort")))
-                          ((and (python-use-poetry-p)
-                                (member "isort" requirements))
-                           (setf python-isort-executable "poetry"
-                                 python-isort-arguments
-                                 (append '("run" "isort") python-isort-arguments)))
-                          ((executable-find python-isort-executable)
-                           (when (and python-black-command
-                                      (executable-find python-black-command))
-                             (setf python-isort-arguments
-                                   (append '("--profile" "black") python-isort-arguments)))))
+                                  (python-pre-commit-config-has-hook-p "isort"))
+                             (setf python-isort-executable
+                                   (concat (python-pre-commit-virtualenv-path "isort") "/bin/isort")))
+                            ((and (python-use-poetry-p)
+                                  (member "isort" requirements))
+                             (setf python-isort-executable "poetry"
+                                   python-isort-arguments
+                                   (append '("run" "isort") python-isort-arguments)))
+                            ((executable-find python-isort-executable)
+                             (when (and python-black-command
+                                        (executable-find python-black-command))
+                               (setf python-isort-arguments
+                                     (append '("--profile" "black") python-isort-arguments)))))
                   (python-isort-on-save-mode 1))))
 
             (use-package importmagic
@@ -1537,7 +1583,8 @@ variants of Typescript.")
          "\\.handlebars\\'"
          "\\.underscore\\'"
          "\\.html?\\'"
-         "\\.jinja\\'"
+         "\\.jinja2?\\'"
+         "\\.j2\\'"
          "\\.mako\\'"
          "\\.dtl\\'"
          "\\.jsp\\'"
