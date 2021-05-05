@@ -90,6 +90,7 @@ under `user-emacs-directory'.  If it exists, loaded it."
                    (completions-common-part           . flx-highlight-face)
                    (tooltip                           . company-tooltip)
                    (lsp-signature-posframe            . company-tooltip)
+                   (lsp-ui-doc-background             . company-tooltip)
                    (flycheck-posframe-background-face . company-tooltip)))
     (put face 'theme-face nil)
     (put face 'face-alias alias))
@@ -751,6 +752,9 @@ checker symbol."
                     (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
                   (when web-mode-checkers
                     (push web-mode-checkers lsp-flycheck-checkers)))))))
+
+(use-package lsp-ui
+  :after (lsp-mode))
 
 (use-package lsp-jedi
   :after (lsp-mode))
