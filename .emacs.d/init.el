@@ -1699,7 +1699,8 @@ variants of Typescript.")
   (add-hook 'ediff-cleanup-hook
             (lambda ()
               (eval-and-compile (require 'ediff-util))
-              (ediff-janitor nil nil)) 'append))
+              (ediff-janitor nil nil))
+            'append))
 
 (use-package diff-hl
   :config
