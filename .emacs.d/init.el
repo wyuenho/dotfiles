@@ -515,8 +515,6 @@ region."
 (add-hook 'prog-mode-hook
           (lambda ()
             (use-package smartparens
-              :config
-              (require 'smartparens-config)
               :bind (:map smartparens-mode-map
                           ("C-M-a"                      . sp-beginning-of-sexp)
                           ([remap sp-beginning-of-sexp] . beginning-of-defun)
@@ -559,7 +557,9 @@ region."
                           ("M-[" . sp-wrap-square)
                           ("M-{" . sp-wrap-curly)
                           ("M-}" . sp-unwrap-sexp)
-                          ("M-]" . sp-backward-unwrap-sexp)))))
+                          ("M-]" . sp-backward-unwrap-sexp))
+              :config
+              (require 'smartparens-config))))
 
 ;; Cross-machine fomatting
 (use-package editorconfig
