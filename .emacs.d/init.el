@@ -1979,10 +1979,12 @@ ELEMENT is only added once."
 
   (with-eval-after-load 'window-purpose-x
     (add-to-list 'purpose-x-popwin-buffer-names "*Messages*")
+    (add-to-list 'purpose-x-popwin-buffer-names "*Warnings*")
     (purpose-x-popwin-update-conf)
 
     (with-eval-after-load 'ido
       (add-to-list 'purpose-x-popwin-buffer-names ido-completion-buffer)
+      (add-to-list 'purpose-x-popwin-buffer-names " *IDO Trace*")
       (purpose-x-popwin-update-conf))
 
     (with-eval-after-load 'ispell
