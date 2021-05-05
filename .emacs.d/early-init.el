@@ -11,6 +11,7 @@
 (set-face-attribute 'mode-line nil :background "#073642" :foreground "#839496" :underline nil :box nil :overline "#284b54")
 (set-face-attribute 'mode-line-inactive nil :background "#002b36" :foreground "#586e75" :overline "#284b54")
 (set-face-attribute 'mode-line-buffer-id nil :weight 'bold :foreground "#93a1a1")
+(set-face-attribute 'fringe nil :background "#002b36" :foreground "#586e75")
 
 ;; Will at least display native Unicode emojis if the multicolor font
 ;; patch is applied
@@ -18,9 +19,11 @@
 
 ;; Set up initial and default frame params
 (pcase-dolist (`(,param . ,value)
-               '((background-mode . dark)
-                 (fullscreen      . maximized)
-                 (cursor-type     . bar)))
+               '((background-mode        . dark)
+                 (fullscreen             . maximized)
+                 (cursor-type            . bar)
+                 (vertical-scroll-bars   . nil)
+                 (horizontal-scroll-bars . nil)))
   (setf (alist-get param initial-frame-alist) value))
 
 (pcase-dolist (`(,param . ,value)
