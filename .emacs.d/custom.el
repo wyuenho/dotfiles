@@ -30,7 +30,6 @@
  '(case-fold-search t)
  '(column-number-indicator-zero-based nil)
  '(column-number-mode t)
- '(comp-async-report-warnings-errors nil)
  '(company-box-icons-alist 'company-box-icons-all-the-icons)
  '(company-dabbrev-downcase nil)
  '(company-global-modes
@@ -181,7 +180,6 @@
  '(kept-new-versions 10)
  '(linum-delay t)
  '(linum-format "%4d ")
- '(load-prefer-newer t)
  '(lsp-auto-guess-root t)
  '(lsp-disabled-clients '(pyls eslint ocaml-ls bash-ls))
  '(lsp-eldoc-enable-hover nil)
