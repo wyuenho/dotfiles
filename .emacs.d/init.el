@@ -731,8 +731,20 @@ checker symbol."
   :after (lsp-mode))
 
 (use-package lsp-pyright
-  :quelpa (lsp-pyright :fetcher github :repo "wyuenho/lsp-pyright" :branch "activation-fn")
-  :after (lsp-mode))
+  :after (lsp-mode)
+  :config
+  (let ((client (gethash 'pyright lsp-clients)))
+    (setf (lsp--client-major-modes client) nil)
+    (setf (lsp--client-activation-fn client)
+          (lambda (file-name mode)
+            (and (or (not (null (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))))
+                     (eq mode 'python-mode))
+                 (or (locate-dominating-file file-name "pyrightconfig.json")
+                     (when-let ((pep518-config-file-dir (locate-dominating-file file-name "pyproject.toml")))
+                       (with-temp-buffer
+                         (insert-file-contents (concat pep518-config-file-dir "pyproject.toml"))
+                         (goto-char (point-min))
+                         (search-forward "[tool.pyright]" nil t nil)))))))))
 
 (use-package lsp-sourcekit
   :after (lsp-mode))
