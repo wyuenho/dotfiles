@@ -326,6 +326,7 @@
  '(so-long-target-modes '(css-mode js-mode))
  '(solarized-use-variable-pitch nil)
  '(sp-hybrid-kill-excessive-whitespace t)
+ '(sp-ignore-modes-list '(minibuffer-mode minibuffer-inactive-mode))
  '(spaceline-all-the-icons-clock-always-visible nil)
  '(spaceline-all-the-icons-separator-type 'arrow)
  '(standard-indent 2)

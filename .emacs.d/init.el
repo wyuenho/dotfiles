@@ -359,36 +359,6 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-x C--" . default-text-scale-decrease)
          ("C-x C-0" . default-text-scale-reset)))
 
-(with-eval-after-load 'ido
-  ;; Make sure everything defined in `ido-completion-map' is never overridden by
-  ;; minor modes in the minibuffer
-  (add-hook 'minibuffer-setup-hook
-            (lambda ()
-              (when ido-mode
-                (pcase-dolist (`(,minor-mode . ,keymap)
-                               (seq-filter
-                                (lambda (entry) (symbol-value (car entry)))
-                                minor-mode-map-alist))
-                  (map-keymap
-                   (lambda (event def)
-                     (when-let* ((key (and (or (characterp event)
-                                               (and (symbolp event)
-                                                    (not (eq event 'remap))
-                                                    (not (keymapp def))))
-                                           (if (characterp event)
-                                               (format "%c" event)
-                                             (vector event))))
-                                 (def (lookup-key ido-completion-map key))
-                                 (override-map
-                                  (alist-get minor-mode minor-mode-overriding-map-alist (copy-keymap keymap))))
-                       (define-key override-map key def)
-                       (setf (alist-get minor-mode minor-mode-overriding-map-alist) override-map)))
-                   keymap)))))
-
-  (add-hook 'eval-expression-minibuffer-setup-hook
-            (lambda ()
-              (add-to-list minor-mode-overriding-map-alist (cons smartparens-mode smartparens-mode-map)))))
-
 ;; Enhances ido and isearch's fuzzy search
 (use-package flx-ido
   :config (flx-ido-mode 1))
@@ -558,7 +528,10 @@ region."
                           ("M-}" . sp-unwrap-sexp)
                           ("M-]" . sp-backward-unwrap-sexp))
               :config
-              (require 'smartparens-config))))
+              (require 'smartparens-config)
+              (add-hook 'eval-expression-minibuffer-setup-hook
+                        (lambda ()
+                          (smartparens-mode 1))))))
 
 ;; Cross-machine fomatting
 (use-package editorconfig
