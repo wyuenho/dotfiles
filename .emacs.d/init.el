@@ -1464,6 +1464,10 @@ variants of Typescript.")
 
 (add-hook 'python-mode-hook
           (lambda ()
+            (use-package indent-guide
+              :config
+              (indent-guide-mode 1))
+
             (use-package python-docstring
               :delight
               :config (python-docstring-mode 1))
