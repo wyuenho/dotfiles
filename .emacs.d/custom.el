@@ -187,6 +187,7 @@
  '(lsp-auto-guess-root t)
  '(lsp-disabled-clients '(pyls eslint ocaml-ls bash-ls))
  '(lsp-eldoc-enable-hover nil)
+ '(lsp-enable-file-watchers nil)
  '(lsp-headerline-breadcrumb-enable nil)
  '(lsp-idle-delay 0.1)
  '(lsp-imenu-index-symbol-kinds
