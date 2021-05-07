@@ -1220,6 +1220,12 @@ optionally the window if possible."
     (apply fn args)))
 (advice-add 'calculate-lisp-indent :around 'calculate-lisp-indent-advice)
 
+(defun elisp--local-variables-advice (fn &rest args)
+  "Prevents errors in `elisp--local-variables' from causing completion functions to throw."
+  (ignore-errors (apply fn nil args)))
+
+(advice-add 'elisp--local-variables :around 'elisp--local-variables-advice)
+
 (pcase-dolist (`(,key . ,command)
                '(("C-c e f" . byte-compile-file)
                  ("C-c e c" . emacs-lisp-byte-compile)
@@ -1234,12 +1240,6 @@ optionally the window if possible."
 (add-hook 'ielm-mode-hook
           (lambda ()
             (ielm-change-working-buffer (window-buffer (selected-window)))))
-
-(defun elisp--local-variables-advice (fn &rest args)
-  "Prevents errors in `elisp--local-variables' from causing completion functions to throw."
-  (ignore-errors (apply fn nil args)))
-
-(advice-add 'elisp--local-variables :around 'elisp--local-variables-advice)
 
 (use-package macrostep
   :bind (:map emacs-lisp-mode-map
