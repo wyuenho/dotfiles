@@ -1247,6 +1247,12 @@ optionally the window if possible."
           (lambda ()
             (ielm-change-working-buffer (window-buffer (selected-window)))))
 
+(defun elisp--local-variables-advice (fn &rest args)
+  "Prevents errors in `elisp--local-variables' from causing completion functions to throw."
+  (ignore-errors (apply fn nil args)))
+
+(advice-add 'elisp--local-variables :around 'elisp--local-variables-advice)
+
 (use-package macrostep
   :bind (:map emacs-lisp-mode-map
               ("C-c e x" . macrostep-expand)))
