@@ -924,15 +924,18 @@ checker symbol."
            (member "pre-commit" requirements))))
 
 (defun python-project-requirements-from-file (&optional file-path)
-  (when-let ((requirements-file
-              (or file-path
-                  (concat
-                   (locate-dominating-file default-directory "requirements.txt")
-                   "requirements.txt"))))
-    (with-temp-buffer
-      (insert-file-contents requirements-file)
-      (goto-char (point-min))
-      (string-lines (string-trim (buffer-string))))))
+  (let* ((requirements-dir (locate-dominating-file default-directory "requirements.txt"))
+         (requirements-file
+          (or (and file-path
+                   (file-exists-p file-path)
+                   file-path)
+              (and requirements-dir
+                   (concat requirements-dir "requirements.txt")))))
+    (when requirements-file
+      (with-temp-buffer
+        (insert-file-contents requirements-file)
+        (goto-char (point-min))
+        (string-lines (string-trim (buffer-string)))))))
 
 (defun python-parse-requirement-spec (req)
   (save-match-data
