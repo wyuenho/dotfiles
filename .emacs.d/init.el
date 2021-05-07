@@ -1453,6 +1453,7 @@ variants of Typescript.")
 (add-hook 'python-mode-hook
           (lambda ()
             (use-package highlight-indent-guides
+              :delight
               :config
               (highlight-indent-guides-mode 1))
 
