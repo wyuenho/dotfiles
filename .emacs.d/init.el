@@ -1449,9 +1449,9 @@ variants of Typescript.")
 
 (add-hook 'python-mode-hook
           (lambda ()
-            (use-package indent-guide
+            (use-package highlight-indent-guides
               :config
-              (indent-guide-mode 1))
+              (highlight-indent-guides-mode 1))
 
             (use-package python-docstring
               :delight
