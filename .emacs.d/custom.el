@@ -110,6 +110,7 @@
  '(frame-resize-pixelwise t)
  '(garbage-collection-messages t)
  '(gc-cons-threshold 80000000)
+ '(global-aggressive-indent-mode t)
  '(global-auto-revert-mode t)
  '(global-auto-revert-non-file-buffers t)
  '(global-company-mode t)
