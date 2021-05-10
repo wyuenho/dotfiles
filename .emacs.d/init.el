@@ -1517,16 +1517,20 @@ variants of Typescript.")
               (let ((requirements (python-project-requirements)))
                 (when (cond ((and (python-use-pre-commit-p requirements)
                                   (python-pre-commit-config-has-hook-p "black"))
+
                              (make-local-variable 'python-black-command)
                              (setf python-black-command
                                    (concat (python-pre-commit-virtualenv-path "black") "/bin/black")))
+
                             ((and (python-use-poetry-p)
                                   (member "black" requirements))
+
                              ;; Set `python-black-command'
                              (make-local-variable 'python-black-command)
                              (setf python-black-command "poetry")
                              (make-local-variable 'python-black--base-args)
                              (setf python-black--base-args (append '("run" "black") python-black--base-args))
+
                              ;; Set `python-black-d-command'
                              (when-let ((null (string-search "pypoetry" python-black-d-command))
                                         (blackd-location
@@ -1538,27 +1542,32 @@ variants of Typescript.")
                                                (string-trim (buffer-string))
                                              nil))))
                                (make-local-variable 'python-black-d-command)
-                               (setf python-black-d-command blackd-location))
-                             ;; Set `blackd' request headers
-                             (setf python-black-d-request-headers-function
-                                   (lambda ()
-                                     (and (python-pyproject-path)
-                                          (let-alist (python-parse-pyproject)
-                                            `(,@(if .tool.black.line-length
-                                                    `(,(cons "X-Line-Length" (format "%s" .tool.black.line-length))))
-                                              ,@(if (and .tool.black.skip-string-normalization
-                                                         (not (eq .tool.black.skip.string-normalization :false)))
-                                                    `(,(cons "X-Skip-String-Normalization" "true")))
-                                              ,@(if (or .tool.black.fast .tool.black.safe)
-                                                    `(,(cons "X-Fast-Or-Safe" (if .tool.black.fast "fast" "safe"))))
-                                              ,@(if (or .tool.black.pyi .tool.black.target-version)
-                                                    `(,(cons "X-Python-Variant"
-                                                             (if .tool.black.pyi
-                                                                 "pyi"
-                                                               (funcall 'string-join
-                                                                        (append .tool.black.target-version) ",")))))))))))
+                               (setf python-black-d-command blackd-location)))
+
                             ((executable-find python-black-command)
                              t))
+
+                  ;; Set `blackd' request headers
+                  (when (executable-find python-black-d-command)
+                    (make-local-variable 'python-black-d-request-headers-function)
+                    (setf python-black-d-request-headers-function
+                          (lambda ()
+                            (and (python-pyproject-path)
+                                 (let-alist (python-parse-pyproject)
+                                   `(,@(if .tool.black.line-length
+                                           `(,(cons "X-Line-Length" (format "%s" .tool.black.line-length))))
+                                     ,@(if (and .tool.black.skip-string-normalization
+                                                (not (eq .tool.black.skip.string-normalization :false)))
+                                           `(,(cons "X-Skip-String-Normalization" "true")))
+                                     ,@(if (or .tool.black.fast .tool.black.safe)
+                                           `(,(cons "X-Fast-Or-Safe" (if .tool.black.fast "fast" "safe"))))
+                                     ,@(if (or .tool.black.pyi .tool.black.target-version)
+                                           `(,(cons "X-Python-Variant"
+                                                    (if .tool.black.pyi
+                                                        "pyi"
+                                                      (funcall 'string-join
+                                                               (append .tool.black.target-version) ",")))))))))))
+
                   (python-black-on-save-mode 1))))
 
             (with-eval-after-load 'python-isort
