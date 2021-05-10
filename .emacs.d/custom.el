@@ -34,7 +34,6 @@
  '(company-dabbrev-downcase nil)
  '(company-global-modes
    '(c++-mode c-mode css-mode emacs-lisp-mode enh-ruby-mode go-mode inferior-emacs-lisp-mode js-jsx-mode js-mode js2-jsx-mode js2-mode lisp-interaction-mode lisp-mode objc-mode python-mode restclient-mode rjsx-mode ruby-mode rust-mode scss-mode sh-mode typescript-mode web-mode))
- '(company-idle-delay 0)
  '(company-tooltip-align-annotations t)
  '(confirm-kill-processes nil)
  '(create-lockfiles nil)
@@ -101,6 +100,7 @@
  '(flx-ido-mode t)
  '(flx-ido-use-faces t)
  '(flycheck-disabled-checkers '(json-jsonlint json-python-json))
+ '(flycheck-emacs-lisp-load-path 'inherit)
  '(flycheck-flake8rc '(".flake8" "setup.cfg" "tox.ini" "flake8"))
  '(flycheck-global-modes
    '(json-mode js-mode js2-mode rjsx-mode scss-mode css-mode web-mode python-mode ruby-mode markdown-mode yaml-mode enh-ruby-mode go-mode rust-mode swift-mode scala-mode c-mode c++-mode objc-mode))
@@ -133,7 +133,7 @@
    '("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt"))
  '(help-at-pt-display-when-idle '(keymap local-map button kbd-help flymake-diagnostic) nil (help-at-pt))
  '(help-at-pt-timer-delay 0.5)
- '(highlight-indent-guides-method 'bitmap)
+ '(highlight-indent-guides-method 'character)
  '(highlight-indent-guides-responsive 'top)
  '(history-length 250)
  '(ialign-initial-regexp "(\\s+)")
@@ -189,7 +189,6 @@
  '(lsp-eldoc-enable-hover nil)
  '(lsp-enable-file-watchers nil)
  '(lsp-headerline-breadcrumb-enable nil)
- '(lsp-idle-delay 0.1)
  '(lsp-imenu-index-symbol-kinds
    '(Class Method Property Field Constuctor Enum Interface Function Struct))
  '(lsp-imenu-sort-methods '(position))
@@ -267,7 +266,7 @@
      ("melpa" . "https://melpa.org/packages/")))
  '(package-native-compile t)
  '(package-selected-packages
-   '(abridge-diff add-node-modules-path ag aggressive-indent all-the-icons all-the-icons-dired amx apib-mode async auto-compile auto-yasnippet beginend bind-key browse-kill-ring buffer-move bug-hunter cargo cl-lib-highlight clang-format cmake-font-lock company company-box company-native-complete company-prescient company-restclient company-web crm-custom crux csv-mode cycle-quotes dap-mode default-text-scale delight diff-hl dired-collapse dired-hacks-utils dired-hide-dotfiles dired-single docker docker-compose-mode dockerfile-mode dotenv-mode dumb-jump editorconfig elisp-def elisp-refs emacsql-sqlite emmet-mode emojify enh-ruby-mode eterm-256color exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-golangci-lint flycheck-posframe focus fontify-face forge form-feed git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-eldoc go-mode goto-last-change graphql-mode graphviz-dot-mode helpful highlight-indent-guides hl-todo ialign icomplete-vertical ido-completing-read+ ido-vertical-mode iedit imenu-anywhere imenu-list import-js importmagic jq-mode js-doc js2-mode json-mode kurecolor lorem-ipsum lsp-jedi lsp-metals lsp-mode lsp-origami lsp-pyright lsp-sourcekit lsp-ui macrostep magit magit-lfs magit-todos monky move-dup multiple-cursors native-complete nodejs-repl olivetti origami osx-trash package-build package-lint package-safe-delete package-utils pager-default-keybindings paradox pcre2el pdf-tools po-mode prettier projectile projectile-rails protobuf-mode pyimport python-black python-docstring quelpa-use-package rainbow-mode reason-mode reformatter restart-emacs restclient rg rjsx-mode rust-mode sass-mode sbt-mode scala-mode scss-mode shift-number shrink-path smart-semicolon smartparens smooth-scrolling solarized-theme spaceline sphinx-doc spinner string-inflection swift-mode tree-sitter tree-sitter-langs ts-comint tuareg typescript-mode undo-fu unicode-fonts visual-regexp-steroids vterm web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose yaml yaml-mode yard-mode yarn-mode yasnippet yasnippet-snippets))
+   '(abridge-diff add-node-modules-path ag aggressive-indent all-the-icons all-the-icons-dired amx apib-mode auto-compile auto-yasnippet beginend browse-kill-ring buffer-move bug-hunter cargo cl-lib-highlight clang-format cmake-font-lock company company-box company-native-complete company-prescient crm-custom crux csv-mode cycle-quotes dap-mode default-text-scale delight diff-hl dired-collapse dired-hacks-utils dired-hide-dotfiles dired-single docker docker-compose-mode dockerfile-mode dotenv-mode dumb-jump editorconfig elisp-def elisp-refs emacsql-sqlite emmet-mode emojify enh-ruby-mode eterm-256color exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-golangci-lint flycheck-package flycheck-posframe focus fontify-face forge form-feed git-timemachine gitattributes-mode gitconfig-mode gitignore-mode go-mode goto-last-change graphql-mode graphviz-dot-mode helpful highlight-indent-guides hl-todo ialign icomplete-vertical ido-completing-read+ ido-vertical-mode iedit imenu-anywhere imenu-list import-js importmagic jq-mode js-doc js2-mode json-mode kurecolor lorem-ipsum lsp-jedi lsp-metals lsp-mode lsp-origami lsp-pyright lsp-sourcekit lsp-ui macrostep magit magit-lfs magit-todos monky move-dup multiple-cursors native-complete nodejs-repl olivetti origami osx-trash package-build package-lint package-safe-delete package-utils pager-default-keybindings paradox pcre2el pdf-tools po-mode prettier projectile projectile-rails protobuf-mode python-black python-docstring quelpa-use-package reason-mode reformatter restart-emacs rg rjsx-mode rust-mode sass-mode sbt-mode scala-mode scss-mode shift-number shrink-path smart-semicolon smartparens smooth-scrolling solarized-theme spaceline sphinx-doc spinner string-inflection swift-mode tree-sitter tree-sitter-langs ts-comint tuareg typescript-mode undo-fu unicode-fonts verb visual-regexp-steroids vterm web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose yaml yaml-mode yard-mode yarn-mode yasnippet yasnippet-snippets))
  '(paradox-column-width-package 41)
  '(paradox-column-width-version 14)
  '(paradox-display-star-count nil)
@@ -284,8 +283,6 @@
    '(help-mode compilation-mode occur-mode helpful-mode comint-mode recentf-dialog-mode))
  '(py-isort-options '("--profile" "black"))
  '(python-shell-completion-native-enable nil)
- '(quelpa-checkout-melpa-p nil)
- '(quelpa-update-melpa-p nil)
  '(quelpa-upgrade-interval 14)
  '(quelpa-upgrade-p t)
  '(rainbow-html-colors-major-mode-list
