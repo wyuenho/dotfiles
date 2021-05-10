@@ -729,28 +729,6 @@ checker symbol."
 (use-package lsp-ui
   :after (lsp-mode))
 
-(use-package lsp-jedi
-  :after (lsp-mode))
-
-(use-package lsp-pyright
-  :after (lsp-mode)
-  :config
-  (let ((client (gethash 'pyright lsp-clients)))
-    (setf (lsp--client-major-modes client) nil)
-    (setf (lsp--client-activation-fn client)
-          (lambda (file-name mode)
-            (and (or (not (null (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))))
-                     (eq mode 'python-mode))
-                 (or (locate-dominating-file file-name "pyrightconfig.json")
-                     (when-let ((pep518-config-file-dir (locate-dominating-file file-name "pyproject.toml")))
-                       (with-temp-buffer
-                         (insert-file-contents (concat pep518-config-file-dir "pyproject.toml"))
-                         (goto-char (point-min))
-                         (re-search-forward "^\\[tool.pyright\\]$" nil t nil)))))))))
-
-(use-package lsp-sourcekit
-  :after (lsp-mode))
-
 (use-package lsp-origami
   :hook (lsp-after-open . lsp-origami-try-enable))
 
@@ -1626,6 +1604,25 @@ variants of Typescript.")
                   (use-local-map local-map))
                 (define-key importmagic-mode-map (kbd "C-c C-l") nil)))))
 
+(use-package lsp-jedi
+  :after (lsp-mode))
+
+(use-package lsp-pyright
+  :after (lsp-mode)
+  :config
+  (let ((client (gethash 'pyright lsp-clients)))
+    (setf (lsp--client-major-modes client) nil)
+    (setf (lsp--client-activation-fn client)
+          (lambda (file-name mode)
+            (and (or (not (null (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))))
+                     (eq mode 'python-mode))
+                 (or (locate-dominating-file file-name "pyrightconfig.json")
+                     (when-let ((pep518-config-file-dir (locate-dominating-file file-name "pyproject.toml")))
+                       (with-temp-buffer
+                         (insert-file-contents (concat pep518-config-file-dir "pyproject.toml"))
+                         (goto-char (point-min))
+                         (re-search-forward "^\\[tool.pyright\\]$" nil t nil)))))))))
+
 ;; Ruby
 (use-package yard-mode)
 (use-package enh-ruby-mode
@@ -1661,6 +1658,9 @@ variants of Typescript.")
 ;; Swift
 (use-package swift-mode
   :mode "\\.swift\\'")
+
+(use-package lsp-sourcekit
+  :after (lsp-mode))
 
 ;; Scala
 (use-package scala-mode
