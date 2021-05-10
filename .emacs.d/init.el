@@ -1164,30 +1164,39 @@ FILEPATH can be a relative path to one of the directories in
 
   (add-hook 'flycheck-status-changed-functions
             (lambda (status)
-              (use-package spinner)
+              (use-package spinner :ensure t)
               (pcase status
                 (`running (spinner-start 'minibox))
                 (- (spinner-stop)))))
 
   (global-flycheck-mode 1))
 
+(with-eval-after-load 'posframe
+  (defun posframe-poshandler-mouse-pixel-position (_)
+    (let* ((mouse-pos (mouse-pixel-position))
+           (info (list :x-pixel-offset 0 :y-pixel-offset 0
+                       :position (cons (cadr mouse-pos) (cddr mouse-pos)))))
+      (posframe-poshandler-absolute-x-y info))))
+
 (use-package flycheck-posframe
   :if (display-graphic-p)
   :after (flycheck)
-  :hook (flycheck-mode . flycheck-posframe-mode))
+  :hook (flycheck-mode . flycheck-posframe-mode)
+  :config
+  (add-hook 'flycheck-posframe-mode-hook
+            (lambda ()
+              (if flycheck-posframe-mode-hook
+                  (setf flycheck-help-echo-function
+                        (lambda (errors)
+                          (let ((flycheck-posframe-position 'mouse-pixel-position))
+                            (flycheck-posframe-show-posframe errors))))
+                (setf flycheck-help-echo-function
+                      (default-toplevel-value 'flycheck-help-echo-function))))))
 
 ;; REST API
-(use-package restclient
-  :commands restclient-mode
-  :mode (("\\.http\\'" . restclient-mode)
-         ("\\.rest\\'" . restclient-mode))
-  :config
-  (add-hook 'restclient-mode-hook
-            (lambda ()
-              (use-package company-restclient
-                :after (company)
-                :config
-                (setq-local company-backends `(company-restclient))))))
+(use-package org
+  :mode ("\\.org\\'" . org-mode)
+  :config (define-key org-mode-map (kbd "C-c C-r") verb-command-map))
 
 ;; Term and shell
 (with-eval-after-load 'shell
@@ -1316,6 +1325,15 @@ optionally the window if possible."
     (special-mode)
     (select-window (get-buffer-window (current-buffer)))))
 (advice-add 'eieio-browse :around 'eieio-browse-advice)
+
+(use-package flycheck-package
+  :after (flycheck)
+  :config
+  (flycheck-package-setup)
+  (plist-put
+   (symbol-plist 'emacs-lisp-checkdoc)
+   'flycheck-predicate
+   #'package-lint-looks-like-a-package-p))
 
 ;; C/C++/Objective-C
 (use-package cmake-font-lock
@@ -1686,17 +1704,7 @@ variants of Typescript.")
          "\\.soy\\'"
          "\\.as[cp]x\\'"
          "\\.erb\\'"
-         "\\.mustache\\'")
-  :config
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (use-package company-web-html
-                :after (company)
-                :config
-                (setq-local company-backends
-                            `(company-web-html
-                              company-yasnippet
-                              company-files))))))
+         "\\.mustache\\'"))
 
 (use-package emmet-mode
   :delight
