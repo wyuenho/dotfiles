@@ -58,12 +58,13 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (with-eval-after-load 'package
-  (defun package--removable-packages-advice (fn &rest args)
-    "Make sure `package-autoremove' does not consider quelpa-installed packages.
+  (with-eval-after-load 'quelpa
+    (defun package--removable-packages-advice (fn &rest args)
+      "Make sure `package-autoremove' does not consider quelpa-installed packages.
 
 FIXME: this currently does not take into account of package
 versions due to limitations in package.el."
-    (let ((removable-packages (apply fn args))
-          (quelpa-packages (mapcar #'car (quelpa-read-cache))))
-      (cl-set-difference removable-packages quelpa-packages)))
-  (advice-add 'package--removable-packages :around 'package--removable-packages-advice))
+      (let ((removable-packages (apply fn args))
+            (quelpa-packages (mapcar #'car (quelpa-read-cache))))
+        (cl-set-difference removable-packages quelpa-packages)))
+    (advice-add 'package--removable-packages :around 'package--removable-packages-advice)))
