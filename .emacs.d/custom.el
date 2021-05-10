@@ -384,6 +384,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(bold ((t (:weight semi-bold))))
+ '(bold-italic ((t (:slant italic :weight semi-bold))))
  '(flycheck-posframe-error-face ((t (:inherit error))))
  '(flycheck-posframe-info-face ((t (:inherit font-lock-function-name-face))))
  '(flycheck-posframe-warning-face ((t (:inherit warning))))
@@ -392,6 +394,7 @@
  '(highlight-indent-guides-top-even-face ((t (:inherit highlight-indent-guides-top-odd-face))))
  '(lsp-headerline-breadcrumb-separator-face ((t (:inherit shadow))))
  '(region ((((type ns)) (:background "selectedTextBackgroundColor" :foreground "selectedTextColor"))))
+ '(term-bold ((t (:inherit bold))))
  '(tree-sitter-hl-face:function\.call ((t nil)))
  '(tree-sitter-hl-face:method\.call ((t nil)))
  '(tree-sitter-hl-face:property ((t nil))))
