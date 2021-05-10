@@ -58,6 +58,7 @@ under `user-emacs-directory'.  If it exists, loaded it."
   (delight '((rainbow-mode)
              (lsp-mode)
              (whitespace-cleanup-mode)
+             (aggressive-indent-mode        nil aggressive-indent)
              (tree-sitter-mode              nil tree-sitter)
              (tree-sitter-hl-mode           nil tree-sitter-hl)
              (python-black-on-save-mode     nil python-black)
