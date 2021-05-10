@@ -871,16 +871,11 @@ checker symbol."
          (cache-value (assoc-default config-path python-pre-commit-config-cache)))
     (if (equal (alist-get 'modification-time cache-value) modification-time)
         (alist-get 'content cache-value)
-      (use-package yaml :ensure t)
       (let ((content
-             (with-demoted-errors
-                 "Error: cannot parse `.pre-commit-config.yaml'"
-               (yaml-parse-string
-                (with-temp-buffer
-                  (insert-file-contents (python-pre-commit-config-path))
-                  (buffer-string))
-                :object-type 'alist
-                :sequence-type 'list))))
+             (with-temp-buffer
+               (funcall 'call-process "dasel" nil t nil "select" "-f" (expand-file-name (python-pre-commit-config-path)) "-w" "json")
+               (goto-char (point-min))
+               (json-parse-buffer :object-type 'alist :array-type 'list))))
         (assoc-delete-all config-path python-pre-commit-config-cache)
         (push `(,config-path . ((modification-time . ,modification-time)
                                 (content . ,content)))
@@ -907,16 +902,11 @@ checker symbol."
          (cache-value (assoc-default pyproject-path python-pyproject-cache)))
     (if (equal (alist-get 'modification-time cache-value) modification-time)
         (alist-get 'content cache-value)
-      (let* ((program (if (python-use-poetry-p) "poetry" "python"))
-             (args `(,@(if (python-use-poetry-p) '("run" "python")) "-c"
-                     ,(format
-                       "import json;import toml;import os;import sys;json.dump(toml.load('%s'), sys.stdout)"
-                       (expand-file-name (python-pyproject-path)))))
-             (content
-              (with-temp-buffer
-                (apply 'call-process program nil t nil args)
-                (goto-char (point-min))
-                (json-parse-buffer :object-type 'alist))))
+      (let ((content
+             (with-temp-buffer
+               (funcall 'call-process "dasel" nil t nil "select" "-f" (expand-file-name (python-pyproject-path)) "-w" "json")
+               (goto-char (point-min))
+               (json-parse-buffer :object-type 'alist :array-type 'list))))
         (assoc-delete-all pyproject-path python-pyproject-cache)
         (push `(,pyproject-path . ((modification-time . , modification-time)
                                    (content . ,content)))
