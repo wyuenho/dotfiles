@@ -6,6 +6,7 @@
 (require 'seq)
 (require 'cl-lib)
 (require 'subr-x)
+(require 'let-alist)
 
 (set-locale-environment "UTF-8")
 (custom-autoload 'package-selected-packages "package")
@@ -744,7 +745,7 @@ checker symbol."
                        (with-temp-buffer
                          (insert-file-contents (concat pep518-config-file-dir "pyproject.toml"))
                          (goto-char (point-min))
-                         (search-forward "[tool.pyright]" nil t nil)))))))))
+                         (re-search-forward "^\\[tool.pyright\\]$" nil t nil)))))))))
 
 (use-package lsp-sourcekit
   :after (lsp-mode))
@@ -891,7 +892,7 @@ checker symbol."
          (cache-value (assoc-default config-path python-pre-commit-config-cache)))
     (if (equal (alist-get 'modification-time cache-value) modification-time)
         (alist-get 'content cache-value)
-      (use-package yaml)
+      (use-package yaml :ensure t)
       (let ((content
              (with-demoted-errors
                  "Error: cannot parse `.pre-commit-config.yaml'"
@@ -901,22 +902,47 @@ checker symbol."
                   (buffer-string))
                 :object-type 'alist
                 :sequence-type 'list))))
+        (assoc-delete-all config-path python-pre-commit-config-cache)
         (push `(,config-path . ((modification-time . ,modification-time)
                                 (content . ,content)))
               python-pre-commit-config-cache)
         content))))
 
-(defun python-poetry-config-path ()
+(defun python-pyproject-path ()
   (when-let ((dir (locate-dominating-file default-directory "pyproject.toml")))
     (concat dir "pyproject.toml")))
 
 (defun python-use-poetry-p ()
-  (and (python-poetry-config-path)
+  (and (python-pyproject-path)
        (with-temp-buffer
-         (insert-file-contents (python-poetry-config-path))
+         (insert-file-contents (python-pyproject-path))
          (goto-char (point-min))
-         (search-forward "[tool.poetry]" nil t nil))
+         (re-search-forward "^\\[tool.poetry\\]$" nil t nil))
        (executable-find "poetry")))
+
+(defvar python-pyproject-cache nil)
+(defun python-parse-pyproject ()
+  (let* ((pyproject-path (python-pyproject-path))
+         (modification-time
+          (file-attribute-modification-time (file-attributes pyproject-path)))
+         (cache-value (assoc-default pyproject-path python-pyproject-cache)))
+    (if (equal (alist-get 'modification-time cache-value) modification-time)
+        (alist-get 'content cache-value)
+      (let* ((program (if (python-use-poetry-p) "poetry" "python"))
+             (args `(,@(if (python-use-poetry-p) '("run" "python")) "-c"
+                     ,(format
+                       "import json;import toml;import os;import sys;json.dump(toml.load('%s'), sys.stdout)"
+                       (expand-file-name (python-pyproject-path)))))
+             (content
+              (with-temp-buffer
+                (apply 'call-process program nil t nil args)
+                (goto-char (point-min))
+                (json-parse-buffer :object-type 'alist))))
+        (assoc-delete-all pyproject-path python-pyproject-cache)
+        (push `(,pyproject-path . ((modification-time . , modification-time)
+                                   (content . ,content)))
+              python-pyproject-cache)
+        content))))
 
 (defun python-use-pre-commit-p (requirements)
   (and (python-pre-commit-config-path)
@@ -937,15 +963,31 @@ checker symbol."
         (goto-char (point-min))
         (string-lines (string-trim (buffer-string)))))))
 
+;; https://pip.pypa.io/en/stable/cli/pip_install/#requirements-file-format
 (defun python-parse-requirement-spec (req)
   (save-match-data
-    (if (not (null (string-match "^-r +\\(.+\\)$" req)))
-        (mapcar 'python-parse-requirement-spec
-                (python-project-requirements-from-file
-                 (match-string-no-properties 1 req)))
-      (let* ((requirement-spec (split-string req ";"))
-             (package-version-spec (string-trim (car requirement-spec))))
-        (car (split-string package-version-spec "=="))))))
+    (cond ((not (null (or (string-match "\\(-r\\|--requirement\\) +\\(.+\\)$" req)
+                          (string-match "\\(-c\\|--constraint\\) +\\(.+\\)$" req))))
+           (mapcar 'python-parse-requirement-spec
+                   (python-project-requirements-from-file
+                    (match-string-no-properties 1 req))))
+          ;; TODO: fetch the package and read the setup.cfg or setup.py files to
+          ;; extract dependencies
+          ((not (null (string-match "\\(-e\\|--editable\\) +\\(.+\\)$" req)))
+           nil)
+          ;; Options
+          ((not (null (string-match "--[a-zA-Z0-9-_]+" req)))
+           nil)
+          ;; Requirement specifiers
+          (t (let* ((requirement-spec (split-string req ";\\|@\\|--"))
+                    (package-version-spec (string-trim (car requirement-spec)))
+                    (package
+                     (car
+                      (split-string
+                       package-version-spec
+                       "\\(?:!=\\|\\(?:==\\|[<=>~]\\)=\\|[<>]\\)"))))
+               (when package
+                 (string-trim-right package "\\[[a-zA-Z0-9-_]+\\]")))))))
 
 (defvar python-project-requirements-cache nil)
 (defun python-project-requirements ()
@@ -982,7 +1024,7 @@ checker symbol."
 
 (defvar python-pre-commit-database-cache nil)
 (defun python-pre-commit-virtualenv-path (hook-id)
-  (use-package emacsql-sqlite)
+  (use-package emacsql-sqlite :ensure t)
   (when-let* ((db-file (concat
                         (file-name-as-directory
                          (or (getenv "PRE_COMMIT_HOME")
@@ -1106,8 +1148,13 @@ FILEPATH can be a relative path to one of the directories in
               ((and (python-use-poetry-p) (member executable-name requirements))
                (make-local-variable flycheck-executable-variable)
                (setf (symbol-value flycheck-executable-variable)
-                     (concat (string-trim (shell-command-to-string "poetry env info -p"))
-                             (format "/bin/%s" executable-name))))
+                     (with-temp-buffer
+                       (if (zerop
+                            (condition-case err
+                                (call-process "poetry" nil t nil "run" "which" executable-name)
+                              (error (message "%s" (error-message-string err)) nil)))
+                           (string-trim (buffer-string))
+                         nil))))
               ((executable-find executable-name)
                (make-local-variable flycheck-executable-variable)
                (setf (symbol-value flycheck-executable-variable) executable-name)))))
@@ -1274,15 +1321,9 @@ optionally the window if possible."
   :hook (cmake-mode . cmake-font-lock-activate))
 
 ;; Formatting
-(defvar-local python-isort-executable "isort")
-(defvar-local python-isort-arguments '("--stdout" "-"))
 (use-package reformatter
   :quelpa (reformatter :fetcher github :repo "wyuenho/reformatter.el" :branch "post-processor")
   :config
-  (reformatter-define python-isort
-    :program python-isort-executable
-    :args python-isort-arguments)
-
   (reformatter-define yarn-eslint-format
     :program "yarn"
     :args `("--silent"
@@ -1450,24 +1491,42 @@ variants of Typescript.")
 ;; Python
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
 
+(use-package highlight-indent-guides
+  :delight
+  :hook (python-mode . highlight-indent-guides-mode))
+
+(use-package python-docstring
+  :delight
+  :hook (python-mode . python-docstring-mode))
+
+(use-package sphinx-doc
+  :delight
+  :hook (python-mode . sphinx-doc-mode))
+
+(use-package python-black
+  :quelpa (python-black :fetcher github :repo "wyuenho/emacs-python-black" :branch "blackd"))
+
+(use-package python-isort
+  :quelpa (python-isort :fetcher github :repo "wyuenho/emacs-python-isort"))
+
+(use-package importmagic
+  :delight)
+
 (add-hook 'python-mode-hook
           (lambda ()
-            (use-package highlight-indent-guides
-              :delight
-              :config
-              (highlight-indent-guides-mode 1))
-
-            (use-package python-docstring
-              :delight
-              :config (python-docstring-mode 1))
-
+            ;; Set `python-shell-interpreter'
             (when (python-use-poetry-p)
               (make-local-variable 'python-shell-interpreter)
               (setf python-shell-interpreter
-                    (concat (string-trim (shell-command-to-string "poetry env info -p")) "/bin/python")))
+                    (with-temp-buffer
+                      (if (zerop
+                           (condition-case err
+                               (call-process "poetry" nil t nil "run" "which" "python")
+                             (error (message "%s" (error-message-string err)) nil)))
+                          (string-trim (buffer-string))
+                        nil))))
 
-            (use-package python-black
-              :config
+            (with-eval-after-load 'python-black
               (let ((requirements (python-project-requirements)))
                 (when (cond ((and (python-use-pre-commit-p requirements)
                                   (python-pre-commit-config-has-hook-p "black"))
@@ -1476,35 +1535,69 @@ variants of Typescript.")
                                    (concat (python-pre-commit-virtualenv-path "black") "/bin/black")))
                             ((and (python-use-poetry-p)
                                   (member "black" requirements))
+                             ;; Set `python-black-command'
                              (make-local-variable 'python-black-command)
                              (setf python-black-command "poetry")
                              (make-local-variable 'python-black--base-args)
-                             (setf python-black--base-args (append '("run" "black") python-black--base-args)))
+                             (setf python-black--base-args (append '("run" "black") python-black--base-args))
+                             ;; Set `python-black-d-command'
+                             (when-let ((null (string-search "pypoetry" python-black-d-command))
+                                        (blackd-location
+                                         (with-temp-buffer
+                                           (if (zerop
+                                                (condition-case err
+                                                    (call-process "poetry" nil t nil "run" "which" python-black-d-command)
+                                                  (error (message "%s" (error-message-string err)) nil)))
+                                               (string-trim (buffer-string))
+                                             nil))))
+                               (make-local-variable 'python-black-d-command)
+                               (setf python-black-d-command blackd-location))
+                             ;; Set `blackd' request headers
+                             (setf python-black-d-request-headers-function
+                                   (lambda ()
+                                     (and (python-pyproject-path)
+                                          (let-alist (python-parse-pyproject)
+                                            `(,@(if .tool.black.line-length
+                                                    `(,(cons "X-Line-Length" (format "%s" .tool.black.line-length))))
+                                              ,@(if (and .tool.black.skip-string-normalization
+                                                         (not (eq .tool.black.skip.string-normalization :false)))
+                                                    `(,(cons "X-Skip-String-Normalization" "true")))
+                                              ,@(if (or .tool.black.fast .tool.black.safe)
+                                                    `(,(cons "X-Fast-Or-Safe" (if .tool.black.fast "fast" "safe"))))
+                                              ,@(if (or .tool.black.pyi .tool.black.target-version)
+                                                    `(,(cons "X-Python-Variant"
+                                                             (if .tool.black.pyi
+                                                                 "pyi"
+                                                               (funcall 'string-join
+                                                                        (append .tool.black.target-version) ",")))))))))))
                             ((executable-find python-black-command)
                              t))
                   (python-black-on-save-mode 1))))
 
-            (with-eval-after-load 'reformatter
+            (with-eval-after-load 'python-isort
               (let ((requirements (python-project-requirements)))
                 (when (cond ((and (python-use-pre-commit-p requirements)
                                   (python-pre-commit-config-has-hook-p "isort"))
-                             (setf python-isort-executable
+                             (make-local-variable 'python-isort-command)
+                             (setf python-isort-command
                                    (concat (python-pre-commit-virtualenv-path "isort") "/bin/isort")))
                             ((and (python-use-poetry-p)
                                   (member "isort" requirements))
-                             (setf python-isort-executable "poetry"
+                             (make-local-variable 'python-isort-command)
+                             (make-local-variable 'python-isort-arguments)
+                             (setf python-isort-command "poetry"
                                    python-isort-arguments
                                    (append '("run" "isort") python-isort-arguments)))
                             ((executable-find python-isort-executable)
                              (when (and python-black-command
                                         (executable-find python-black-command))
+                               (make-local-variable 'python-isort-arguments)
                                (setf python-isort-arguments
-                                     (append '("--profile" "black") python-isort-arguments)))))
+                                     (append '("--profile" "black") python-isort-arguments)))
+                             t))
                   (python-isort-on-save-mode 1))))
 
-            (use-package importmagic
-              :delight
-              :config
+            (with-eval-after-load 'importmagic
               (when (let ((requirements (python-project-requirements)))
                       (and (member "importmagic" requirements)
                            (member "epc" requirements)))
