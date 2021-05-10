@@ -1575,7 +1575,7 @@ variants of Typescript.")
                              (setf python-isort-command "poetry"
                                    python-isort-arguments
                                    (append '("run" "isort") python-isort-arguments)))
-                            ((executable-find python-isort-executable)
+                            ((executable-find python-isort-command)
                              (when (and python-black-command
                                         (executable-find python-black-command))
                                (make-local-variable 'python-isort-arguments)
