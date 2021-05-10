@@ -89,7 +89,7 @@ if [ -d "$HOME/.pyenv" ]; then
     PYENV_ROOT="$HOME/.pyenv"
     PATH="$HOME/.pyenv/bin:$PATH"
     if [ -x "$(command -v pyenv)" ]; then
-        eval "$(pyenv init -)";
+        eval "$(pyenv init --path)";
         if pyenv commands | grep -q virtualenv; then
             eval "$(pyenv virtualenv-init -)";
         fi
