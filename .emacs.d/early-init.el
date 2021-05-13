@@ -2,10 +2,10 @@
 (require 'cl-lib)
 
 ;; Set up default fonts
-(set-face-attribute 'fixed-pitch nil :family "JetBrains Mono" :weight 'regular :width 'normal)
+(set-face-attribute 'fixed-pitch nil :family "JetBrains Mono NL" :weight 'regular :width 'normal)
 (set-face-attribute 'fixed-pitch-serif nil :family "Courier New" :weight 'regular :width 'normal)
 (set-face-attribute 'variable-pitch nil :family "Noto Sans" :weight 'regular :width 'normal)
-(set-face-attribute 'default nil :family "JetBrains Mono" :weight 'regular :width 'normal)
+(set-face-attribute 'default nil :family "JetBrains Mono NL" :weight 'regular :width 'normal)
 
 (set-face-attribute 'default nil :background "#002b36" :foreground "#839496")
 (set-face-attribute 'mode-line nil :background "#073642" :foreground "#839496" :underline nil :box nil :overline "#284b54")
