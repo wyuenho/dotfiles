@@ -56,13 +56,8 @@ under `user-emacs-directory'.  If it exists, loaded it."
 ;; Turn off useless mode lighters
 (use-package delight
   :config
-  (delight '((rainbow-mode)
-             (lsp-mode)
-             (whitespace-cleanup-mode)
+  (delight '((whitespace-cleanup-mode)
              (aggressive-indent-mode        nil aggressive-indent)
-             (tree-sitter-mode              nil tree-sitter)
-             (tree-sitter-hl-mode           nil tree-sitter-hl)
-             (python-black-on-save-mode     nil python-black)
              (auto-fill-function            nil t)
              (isearch-mode                  nil isearch)
              (abbrev-mode                   nil abbrev)
@@ -576,6 +571,7 @@ region."
 
 ;; Turn on background color for HEX for specific modes
 (use-package rainbow-mode
+  :delight
   :hook (emacs-lisp-mode web-mode js-mode typescript-mode sh-mode))
 
 ;; Cycle through most common programming identifier styles
@@ -636,6 +632,7 @@ region."
 
 ;; Modern tree-based syntax-highlighting
 (use-package tree-sitter-langs
+  :delight (tree-sitter-mode tree-sitter-hl-mode)
   :config
   (tree-sitter-require 'tsx)
   (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx))
@@ -643,6 +640,7 @@ region."
 
 ;; Static Analysis
 (use-package lsp-mode
+  :delight
   :after (which-key)
   :hook (((c-mode-common
            css-mode
@@ -1824,6 +1822,7 @@ variants of Typescript.")
 
 ;; Project management
 (use-package projectile
+  :delight projectile-mode
   :preface
   ;; Bridge projectile and project together so packages that depend on project
   ;; like eglot work
