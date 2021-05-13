@@ -406,6 +406,7 @@ Optional argument ARG same as `comment-dwim''s."
   :after (delight)
   :hook ((dired-mode          . beginend-dired-mode)
          (magit-status-mode   . beginend-magit-status-mode)
+         (magit-revision-mode . beginend-magit-revision-mode)
          (message-mode        . beginend-message-mode)
          (prog-mode           . beginend-prog-mode)
          (occur-mode          . beginend-occur-mode)
