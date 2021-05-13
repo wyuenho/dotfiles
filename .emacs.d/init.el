@@ -7,6 +7,7 @@
 (require 'cl-lib)
 (require 'subr-x)
 (require 'let-alist)
+(require 'rx)
 
 (set-locale-environment "UTF-8")
 (custom-autoload 'package-selected-packages "package")
@@ -861,7 +862,7 @@ checker symbol."
 ;; Linting
 (defun python-pre-commit-config-path ()
   (when-let ((dir (locate-dominating-file default-directory ".pre-commit-config.yaml")))
-    (concat dir ".pre-commit-config.yaml")))
+    (expand-file-name (concat dir ".pre-commit-config.yaml"))))
 
 (defvar python-pre-commit-config-cache nil)
 (defun python-pre-commit-config ()
@@ -872,19 +873,22 @@ checker symbol."
     (if (equal (alist-get 'modification-time cache-value) modification-time)
         (alist-get 'content cache-value)
       (let ((content
-             (with-temp-buffer
-               (funcall 'call-process "dasel" nil t nil "select" "-f" (expand-file-name (python-pre-commit-config-path)) "-w" "json")
-               (goto-char (point-min))
-               (json-parse-buffer :object-type 'alist :array-type 'list))))
+             (condition-case err
+                 (with-temp-buffer
+                   (funcall 'call-process "dasel" nil t nil "select" "-f" (python-pre-commit-config-path) "-w" "json")
+                   (goto-char (point-min))
+                   (json-parse-buffer :object-type 'alist :array-type 'list))
+               (error (error-message-string err) nil))))
         (assoc-delete-all config-path python-pre-commit-config-cache)
-        (push `(,config-path . ((modification-time . ,modification-time)
-                                (content . ,content)))
-              python-pre-commit-config-cache)
+        (when content
+          (push `(,config-path . ((modification-time . ,modification-time)
+                                  (content . ,content)))
+                python-pre-commit-config-cache))
         content))))
 
 (defun python-pyproject-path ()
   (when-let ((dir (locate-dominating-file default-directory "pyproject.toml")))
-    (concat dir "pyproject.toml")))
+    (expand-file-name (concat dir "pyproject.toml"))))
 
 (defun python-use-poetry-p ()
   (and (python-pyproject-path)
@@ -903,14 +907,17 @@ checker symbol."
     (if (equal (alist-get 'modification-time cache-value) modification-time)
         (alist-get 'content cache-value)
       (let ((content
-             (with-temp-buffer
-               (funcall 'call-process "dasel" nil t nil "select" "-f" (expand-file-name (python-pyproject-path)) "-w" "json")
-               (goto-char (point-min))
-               (json-parse-buffer :object-type 'alist :array-type 'list))))
+             (condition-case err
+                 (with-temp-buffer
+                   (funcall 'call-process "dasel" nil t nil "select" "-f" (python-pyproject-path) "-w" "json")
+                   (goto-char (point-min))
+                   (json-parse-buffer :object-type 'alist :array-type 'list))
+               (error (error-message-string err) nil))))
         (assoc-delete-all pyproject-path python-pyproject-cache)
-        (push `(,pyproject-path . ((modification-time . , modification-time)
-                                   (content . ,content)))
-              python-pyproject-cache)
+        (when content
+          (push `(,pyproject-path . ((modification-time . , modification-time)
+                                     (content . ,content)))
+                python-pyproject-cache))
         content))))
 
 (defun python-use-pre-commit-p (requirements)
@@ -918,34 +925,103 @@ checker symbol."
        (or (executable-find "pre-commit")
            (member "pre-commit" requirements))))
 
-(defun python-project-requirements-from-file (&optional file-path)
-  (let* ((requirements-dir (locate-dominating-file default-directory "requirements.txt"))
-         (requirements-file
-          (or (and file-path
-                   (file-exists-p file-path)
-                   file-path)
-              (and requirements-dir
-                   (concat requirements-dir "requirements.txt")))))
-    (when requirements-file
+(defun python-requirements-from-file (anchor-dir file-path)
+  (let ((requirements-file
+         (if (and (null file-path) anchor-dir)
+             (concat (file-name-as-directory anchor-dir) file-path)
+           (expand-file-name file-path (or anchor-dir default-directory)))))
+    (when (file-exists-p requirements-file)
       (with-temp-buffer
         (insert-file-contents requirements-file)
         (goto-char (point-min))
-        (string-lines (string-trim (buffer-string)))))))
+        (seq-remove 'string-empty-p
+                    (mapcar 'string-trim
+                            (string-lines (buffer-string) t)))))))
+
+(defun python-resolve-requirements (anchor-dir file-path)
+  (let ((requirements (python-requirements-from-file anchor-dir file-path)))
+    (save-match-data
+      (flatten-list
+       (cl-loop for req in requirements
+                collect (if (string-match
+                             "\\(?:-\\(?:-\\(?:\\(?:constrai\\|requireme\\)nt\\)\\|[cr]\\)\\)[[:space:]]+\\(.+\\)"
+                             req)
+                            (let ((file-path (match-string 1 req)))
+                              (python-resolve-requirements
+                               (file-name-directory
+                                (expand-file-name file-path anchor-dir))
+                               (file-name-nondirectory file-path)))
+                          (python-parse-requirement-spec req)))))))
 
 ;; https://pip.pypa.io/en/stable/cli/pip_install/#requirements-file-format
 (defun python-parse-requirement-spec (req)
   (save-match-data
-    (cond ((not (null (or (string-match "\\(-r\\|--requirement\\) +\\(.+\\)$" req)
-                          (string-match "\\(-c\\|--constraint\\) +\\(.+\\)$" req))))
-           (mapcar 'python-parse-requirement-spec
-                   (python-project-requirements-from-file
-                    (match-string-no-properties 1 req))))
+    (cond ((string-match "http\\|file\\|git\\(+ssh\\)?://" req) ;; URL
+           ;; https://datatracker.ietf.org/doc/html/rfc3986
+           (rx-let ((pct-encoded (seq "%" (repeat 0 2 hex)))
+                    (gen-delims (any "#/:?@[]"))
+                    (sub-delims (any "!$&-,;="))
+                    (reserved (or gen-delims sub-delims))
+                    (unreserved (any alnum "-._~"))
+                    (scheme (seq (one-or-more alpha) (zero-or-more (any alnum "+-."))))
+                    (userinfo (zero-or-more
+                               (or unreserved pct-encoded sub-delims ":")))
+                    (ipvfuture (seq "v" (one-or-more hex) "."
+                                    (one-or-more (or unreserved sub-delims ":"))))
+                    (dec-octet (or digit
+                                   (seq (any "1-9") digit)
+                                   (seq "1" digit digit)
+                                   (seq "2" (any "0-5") (any "0-5"))))
+                    (ipv4address (seq dec-octet "." dec-octet "." dec-octet "." dec-octet))
+                    (h16 (repeat 1 4 hex))
+                    (ls32 (or (group  h16 ":" h16) ipv4address))
+                    (ipv6address (or (sequence (repeat 6 (sequence  h16 ":")) ls32)
+                                     (sequence "::" (repeat 5 (sequence h16 ":")) ls32)
+                                     (sequence (opt h16) "::" (repeat 4 (sequence h16 ":")) ls32)
+                                     (sequence (opt (repeat 0 1 h16))
+                                               "::"
+                                               (repeat 3 (sequence h16 ":"))
+                                               ls32)
+                                     (sequence (opt (repeat 0 2 h16))
+                                               "::"
+                                               (repeat 2 (sequence h16 ":"))
+                                               ls32)
+                                     (sequence (opt (repeat 0 3 h16)) "::" h16 ":" ls32)
+                                     (sequence (opt (repeat 0 4 h16)) "::" ls32)
+                                     (sequence (opt (repeat 0 5 h16)) "::" h16)
+                                     (sequence (opt (repeat 0 6 h16)) "::")))
+                    (ip-literal (seq "[" (or ipv6address ipvfuture) "]"))
+                    (reg-name (zero-or-more (or unreserved pct-encoded sub-delims)))
+                    (host (or ip-literal ipv4address reg-name))
+                    (port (zero-or-more digit))
+                    (authority (seq (opt userinfo "@") host (opt ":" port)))
+                    (pchar (or unreserved pct-encoded sub-delims ":" "@"))
+                    (segment (zero-or-more pchar))
+                    (segment-nz (one-or-more pchar))
+                    (segment-nz-nc (one-or-more (or unreserved pct-encoded sub-delims "@")))
+                    (path-rootless (seq segment-nz (zero-or-more "/" segment)))
+                    (path-noscheme (seq segment-nz-nc (zero-or-more "/" segment)))
+                    (path-absolute (seq "/" (opt path-rootless)))
+                    (path-abempty (zero-or-more "/" segment))
+                    (path (or path-abempty path-absolute path-noscheme path-rootless))
+                    (query (zero-or-more (or pchar "/" "?")))
+                    (fragment query)
+                    (url (seq scheme authority (opt path) (opt "?" query) (opt "#" fragment))))
+
+             (and (string-match (rx url) req) (match-string 0 req)))
+           )
+          ;; Path
+          ((string-match "^[./]" req)
+           (when-let ((requirement-spec (car (split-string req ";\\|@\\|--")))
+                      (requirement-spec (string-trim requirement-spec)))
+             (when (not (string-empty-p requirement-spec))
+               requirement-spec)))
           ;; TODO: fetch the package and read the setup.cfg or setup.py files to
           ;; extract dependencies
-          ((not (null (string-match "\\(-e\\|--editable\\) +\\(.+\\)$" req)))
+          ((string-match "\\(-e\\|--editable\\) +\\(.+\\)$" req)
            nil)
           ;; Options
-          ((not (null (string-match "--[a-zA-Z0-9-_]+" req)))
+          ((string-match "--[a-zA-Z0-9-_]+" req)
            nil)
           ;; Requirement specifiers
           (t (let* ((requirement-spec (split-string req ";\\|@\\|--"))
@@ -965,16 +1041,26 @@ checker symbol."
           (assoc-default file-path python-project-requirements-cache)))
     (unless requirements
       (setf requirements
-            (flatten-list
-             (mapcar 'python-parse-requirement-spec
-                     (condition-case err
-                         (or (and (python-use-poetry-p)
-                                  (process-lines "poetry" "run" "pip" "list" "--format=freeze"))
-                             (python-project-requirements-from-file)
-                             (process-lines "pip" "list" "--format=freeze"))
-                       (file-error (and (message "%s" (error-message-string err)) nil))))))
+            (mapcar 'python-parse-requirement-spec
+                    (or (and (python-use-poetry-p)
+                             (condition-case err
+                                 (process-lines "poetry" "run" "pip" "list" "--format=freeze" "--disable-pip-version-check")
+                               (error (message "%s" (error-message-string err)) nil)))
+                        ;; TODO: search the project root for something that
+                        ;; looks a virtualenv, activate it and call pip list
+                        ;; --format=freeze in it
+                        (when-let ((project-root-dir (locate-dominating-file
+                                                      (or (and (featurep 'projectile)
+                                                               (projectile-project-root))
+                                                          file-path)
+                                                      "requirements.txt")))
+                          (python-resolve-requirements project-root-dir "requirements.txt"))
+                        (condition-case err
+                            (process-lines "pip" "list" "--format=freeze" "--disable-pip-version-check")
+                          (error (message "%s" (error-message-string err)) nil)))))
       (assoc-delete-all file-path python-project-requirements-cache)
-      (push (cons file-path requirements) python-project-requirements-cache))
+      (when requirements
+        (push (cons file-path requirements) python-project-requirements-cache)))
     requirements))
 
 (add-hook 'kill-buffer-hook
@@ -1118,12 +1204,10 @@ FILEPATH can be a relative path to one of the directories in
                (make-local-variable flycheck-executable-variable)
                (setf (symbol-value flycheck-executable-variable)
                      (with-temp-buffer
-                       (if (zerop
-                            (condition-case err
-                                (call-process "poetry" nil t nil "run" "which" executable-name)
-                              (error (message "%s" (error-message-string err)) nil)))
-                           (string-trim (buffer-string))
-                         nil))))
+                       (when (condition-case err
+                                 (zerop (call-process "poetry" nil t nil "run" "which" executable-name))
+                               (error (message "%s" (error-message-string err)) nil))
+                         (string-trim (buffer-string))))))
               ((executable-find executable-name)
                (make-local-variable flycheck-executable-variable)
                (setf (symbol-value flycheck-executable-variable) executable-name)))))
@@ -1491,10 +1575,10 @@ variants of Typescript.")
   :hook (python-mode . sphinx-doc-mode))
 
 (use-package python-black
+  :delight python-black-on-save-mode
   :quelpa (python-black :fetcher github :repo "wyuenho/emacs-python-black" :branch "blackd"))
 
-(use-package python-isort
-  :quelpa (python-isort :fetcher github :repo "wyuenho/emacs-python-isort"))
+(use-package python-isort)
 
 (use-package importmagic
   :delight)
@@ -1506,10 +1590,9 @@ variants of Typescript.")
               (make-local-variable 'python-shell-interpreter)
               (setf python-shell-interpreter
                     (with-temp-buffer
-                      (if (zerop
-                           (condition-case err
-                               (call-process "poetry" nil t nil "run" "which" "python")
-                             (error (message "%s" (error-message-string err)) nil)))
+                      (if (condition-case err
+                              (zerop (call-process "poetry" nil t nil "run" "which" "python"))
+                            (error (message "%s" (error-message-string err)) nil))
                           (string-trim (buffer-string))
                         nil))))
 
@@ -1520,7 +1603,15 @@ variants of Typescript.")
 
                              (make-local-variable 'python-black-command)
                              (setf python-black-command
-                                   (concat (python-pre-commit-virtualenv-path "black") "/bin/black")))
+                                   (concat (python-pre-commit-virtualenv-path "black") "/bin/black"))
+
+                             (make-local-variable 'python-black-d-command)
+                             (let ((blackd-path (concat (python-pre-commit-virtualenv-path "black") "/bin/blackd")))
+                               (setf python-black-command
+                                     (and (condition-case err
+                                              (zerop (call-process blackd-path nil nil nil "--version"))
+                                            (error (message "%s" (error-message-string err)) nil))
+                                          blackd-path))))
 
                             ((and (python-use-poetry-p)
                                   (member "black" requirements))
@@ -1532,23 +1623,23 @@ variants of Typescript.")
                              (setf python-black--base-args (append '("run" "black") python-black--base-args))
 
                              ;; Set `python-black-d-command'
-                             (when-let ((null (string-search "pypoetry" python-black-d-command))
-                                        (blackd-location
-                                         (with-temp-buffer
-                                           (if (zerop
-                                                (condition-case err
-                                                    (call-process "poetry" nil t nil "run" "which" python-black-d-command)
-                                                  (error (message "%s" (error-message-string err)) nil)))
-                                               (string-trim (buffer-string))
-                                             nil))))
-                               (make-local-variable 'python-black-d-command)
-                               (setf python-black-d-command blackd-location)))
+                             (make-local-variable 'python-black-d-command)
+                             (setf python-black-d-command
+                                   (with-temp-buffer
+                                     (if (condition-case err
+                                             (and (call-process "poetry" nil t nil "run" "which" python-blackd-command)
+                                                  (zerop (call-process "poetry" nil nil nil "run"
+                                                                       python-black-d-command "--version")))
+                                           (error (message "%s" (error-message-string err)) nil))
+                                         (string-trim (buffer-string))
+                                       nil))))
 
                             ((executable-find python-black-command)
                              t))
 
                   ;; Set `blackd' request headers
-                  (when (executable-find python-black-d-command)
+                  (when (and python-black-d-command
+                             (executable-find python-black-d-command))
                     (make-local-variable 'python-black-d-request-headers-function)
                     (setf python-black-d-request-headers-function
                           (lambda ()
