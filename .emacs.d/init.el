@@ -510,6 +510,7 @@ region."
 
                           ("C-M-w"   . sp-copy-sexp)
                           ("C-M-S-t" . sp-push-hybrid-sexp)
+                          ("C-t"     . sp-transpose-sexp)
                           ("C-M-t"   . sp-transpose-hybrid-sexp)
 
                           ("C-S-d" . sp-kill-symbol)
