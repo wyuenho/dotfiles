@@ -108,13 +108,15 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
         source /usr/local/etc/bash_completion
     fi
 
-    # NVM
-    [ -f "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+    # nvm
+    if [ -d "$NVM_DIR" ] && [ -f "$NVM_DIR/bash_completion" ]; then
+        source "$NVM_DIR/bash_completion"
+    fi
 
-    # GVM
+    # gvm
     [ -f "$HOME/.gvm/scripts/completion" ] && source "$HOME/.gvm/scripts/completion"
 
-    # SDKMAN!
+    # sdkman!
     [ -x "$(command -v sdk)" ] && eval "$(sdk completion bash)"
 
     # gcloud
@@ -124,6 +126,11 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
 
     # aws
     [ -x "$(command -v aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
+
+    # pyenv
+    if [ -d "$PYENV_ROOT" ] && [ -f "$PYENV_ROOT/completions/pyenv.bash" ]; then
+        source "$PYENV_ROOT/completions/pyenv.bash"
+    fi
 
     # git-subrepo
     if [ -d "$GIT_SUBREPO_ROOT" ] && [ -f "$GIT_SUBREPO_ROOT/share/completion.bash" ]; then
