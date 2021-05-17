@@ -284,6 +284,8 @@
  '(purpose-x-popwin-major-modes
    '(help-mode compilation-mode occur-mode helpful-mode comint-mode recentf-dialog-mode))
  '(py-isort-options '("--profile" "black"))
+ '(python-indent-guess-indent-offset nil)
+ '(python-indent-guess-indent-offset-verbose nil)
  '(python-shell-completion-native-enable nil)
  '(quelpa-upgrade-interval 14)
  '(quelpa-upgrade-p t)
