@@ -860,9 +860,16 @@ checker symbol."
               (add-to-list 'company-transformers 'company-sort-prefer-same-case-prefix t))))
 
 ;; Linting
+(defun find-file-from-project-root (file-name)
+  (when-let ((dir (locate-dominating-file
+                   (or (and (featurep 'projectile)
+                            (projectile-project-root))
+                       default-directory)
+                   file-name)))
+    (expand-file-name (concat dir file-name))))
+
 (defun python-pre-commit-config-path ()
-  (when-let ((dir (locate-dominating-file default-directory ".pre-commit-config.yaml")))
-    (expand-file-name (concat dir ".pre-commit-config.yaml"))))
+  (find-file-from-project-root ".pre-commit-config.yaml"))
 
 (defvar python-pre-commit-config-cache nil)
 (defun python-pre-commit-config ()
@@ -875,7 +882,7 @@ checker symbol."
       (let ((content
              (condition-case err
                  (with-temp-buffer
-                   (funcall 'call-process "dasel" nil t nil "select" "-f" (python-pre-commit-config-path) "-w" "json")
+                   (funcall 'call-process "dasel" nil t nil "select" "-f" config-path "-w" "json")
                    (goto-char (point-min))
                    (json-parse-buffer :object-type 'alist :array-type 'list))
                (error (error-message-string err) nil))))
@@ -887,16 +894,16 @@ checker symbol."
         content))))
 
 (defun python-pyproject-path ()
-  (when-let ((dir (locate-dominating-file default-directory "pyproject.toml")))
-    (expand-file-name (concat dir "pyproject.toml"))))
+  (find-file-from-project-root "pyproject.toml"))
 
 (defun python-use-poetry-p ()
-  (and (python-pyproject-path)
-       (with-temp-buffer
-         (insert-file-contents (python-pyproject-path))
-         (goto-char (point-min))
-         (re-search-forward "^\\[tool.poetry\\]$" nil t nil))
-       (executable-find "poetry")))
+  (when-let ((pyproject-path (python-pyproject-path)))
+    (and
+     (with-temp-buffer
+       (insert-file-contents pyproject-path)
+       (goto-char (point-min))
+       (re-search-forward "^\\[tool.poetry\\]$" nil t nil))
+     (executable-find "poetry"))))
 
 (defvar python-pyproject-cache nil)
 (defun python-parse-pyproject ()
@@ -909,7 +916,7 @@ checker symbol."
       (let ((content
              (condition-case err
                  (with-temp-buffer
-                   (funcall 'call-process "dasel" nil t nil "select" "-f" (python-pyproject-path) "-w" "json")
+                   (funcall 'call-process "dasel" nil t nil "select" "-f" pyproject-path "-w" "json")
                    (goto-char (point-min))
                    (json-parse-buffer :object-type 'alist :array-type 'list))
                (error (error-message-string err) nil))))
@@ -944,7 +951,9 @@ checker symbol."
       (flatten-list
        (cl-loop for req in requirements
                 collect (if (string-match
-                             "\\(?:-\\(?:-\\(?:\\(?:constrai\\|requireme\\)nt\\)\\|[cr]\\)\\)[[:space:]]+\\(.+\\)"
+                             (rx (or "-r" "-c" "--requirement" "--constraint")
+                                 (+ space)
+                                 (group (+ nonl)))
                              req)
                             (let ((file-path (match-string 1 req)))
                               (python-resolve-requirements
@@ -956,83 +965,94 @@ checker symbol."
 ;; https://pip.pypa.io/en/stable/cli/pip_install/#requirements-file-format
 (defun python-parse-requirement-spec (req)
   (save-match-data
-    (cond ((string-match "http\\|file\\|git\\(+ssh\\)?://" req) ;; URL
-           ;; https://datatracker.ietf.org/doc/html/rfc3986
-           (rx-let ((pct-encoded (seq "%" (repeat 0 2 hex)))
-                    (gen-delims (any "#/:?@[]"))
-                    (sub-delims (any "!$&-,;="))
+    (cond ((string-match (rx (or "http" "file" "git" "git+ssh") "://") req) ;; URL
+           ;; https://datatracker.ietf.org/doc/html/rfc3987#section-2.2
+           (rx-let ((ucschar (in "\uA000-\uD7FF"
+                                 "\uF900-\uFDCF"
+                                 "\uFDF0-\uFFEF"
+                                 "\u10000-\u1FFFD"
+                                 "\u20000-\u2FFFD"
+                                 "\u30000-\u3FFFD"
+                                 "\u40000-\u4FFFD"
+                                 "\u50000-\u5FFFD"
+                                 "\u60000-\u6FFFD"
+                                 "\u70000-\u7FFFD"
+                                 "\u80000-\u8FFFD"
+                                 "\u90000-\u9FFFD"
+                                 "\uA0000-\uAFFFD"
+                                 "\uB0000-\uBFFFD"
+                                 "\uC0000-\uCFFFD"
+                                 "\uD0000-\uDFFFD"
+                                 "\uE0000-\uEFFFD"))
+                    (iprivate (in "\uE000-\uF8FF"
+                                  "\uF0000-\uFFFFD"
+                                  "\u100000-\u10FFFD"))
+                    (pct-encoded (seq "%" (repeat 0 2 hex)))
+                    (gen-delims (in "#/:?@[]"))
+                    (sub-delims (in "!$&-,;="))
                     (reserved (or gen-delims sub-delims))
-                    (unreserved (any alnum "-._~"))
-                    (scheme (seq (one-or-more alpha) (zero-or-more (any alnum "+-."))))
-                    (userinfo (zero-or-more
-                               (or unreserved pct-encoded sub-delims ":")))
-                    (ipvfuture (seq "v" (one-or-more hex) "."
-                                    (one-or-more (or unreserved sub-delims ":"))))
+                    (unreserved (or alnum (in "-._~") ucschar))
+                    (scheme (seq (+ alpha) (* (in alnum "+-."))))
+                    (userinfo (* (or unreserved pct-encoded sub-delims ":")))
+                    (ipvfuture (seq "v" (+ hex) "." (+ (or unreserved sub-delims ":"))))
                     (dec-octet (or digit
-                                   (seq (any "1-9") digit)
+                                   (seq (in "1-9") digit)
                                    (seq "1" digit digit)
-                                   (seq "2" (any "0-5") (any "0-5"))))
+                                   (seq "2" (in "0-5") (in "0-5"))))
                     (ipv4address (seq dec-octet "." dec-octet "." dec-octet "." dec-octet))
                     (h16 (repeat 1 4 hex))
                     (ls32 (or (group  h16 ":" h16) ipv4address))
-                    (ipv6address (or (sequence (repeat 6 (sequence  h16 ":")) ls32)
-                                     (sequence "::" (repeat 5 (sequence h16 ":")) ls32)
-                                     (sequence (opt h16) "::" (repeat 4 (sequence h16 ":")) ls32)
-                                     (sequence (opt (repeat 0 1 h16))
-                                               "::"
-                                               (repeat 3 (sequence h16 ":"))
-                                               ls32)
-                                     (sequence (opt (repeat 0 2 h16))
-                                               "::"
-                                               (repeat 2 (sequence h16 ":"))
-                                               ls32)
-                                     (sequence (opt (repeat 0 3 h16)) "::" h16 ":" ls32)
-                                     (sequence (opt (repeat 0 4 h16)) "::" ls32)
-                                     (sequence (opt (repeat 0 5 h16)) "::" h16)
-                                     (sequence (opt (repeat 0 6 h16)) "::")))
+                    (ipv6address (or (seq (repeat 6 (seq  h16 ":")) ls32)
+                                     (seq "::" (repeat 5 (seq h16 ":")) ls32)
+                                     (seq (? h16) "::" (repeat 4 (seq h16 ":")) ls32)
+                                     (seq (? (repeat 0 1 h16)) "::" (repeat 3 (seq h16 ":")) ls32)
+                                     (seq (? (repeat 0 2 h16)) "::" (repeat 2 (seq h16 ":")) ls32)
+                                     (seq (? (repeat 0 3 h16)) "::" h16 ":" ls32)
+                                     (seq (? (repeat 0 4 h16)) "::" ls32)
+                                     (seq (? (repeat 0 5 h16)) "::" h16)
+                                     (seq (? (repeat 0 6 h16)) "::")))
                     (ip-literal (seq "[" (or ipv6address ipvfuture) "]"))
-                    (reg-name (zero-or-more (or unreserved pct-encoded sub-delims)))
+                    (reg-name (* (or unreserved pct-encoded sub-delims)))
                     (host (or ip-literal ipv4address reg-name))
-                    (port (zero-or-more digit))
-                    (authority (seq (opt userinfo "@") host (opt ":" port)))
+                    (port (* digit))
+                    (authority (seq (? userinfo "@") host (? ":" port)))
                     (pchar (or unreserved pct-encoded sub-delims ":" "@"))
-                    (segment (zero-or-more pchar))
-                    (segment-nz (one-or-more pchar))
-                    (segment-nz-nc (one-or-more (or unreserved pct-encoded sub-delims "@")))
-                    (path-rootless (seq segment-nz (zero-or-more "/" segment)))
-                    (path-noscheme (seq segment-nz-nc (zero-or-more "/" segment)))
-                    (path-absolute (seq "/" (opt path-rootless)))
-                    (path-abempty (zero-or-more "/" segment))
+                    (segment (* pchar))
+                    (segment-nz (+ pchar))
+                    (segment-nz-nc (+ (or unreserved pct-encoded sub-delims "@")))
+                    (path-rootless (seq segment-nz (* "/" segment)))
+                    (path-noscheme (seq segment-nz-nc (* "/" segment)))
+                    (path-absolute (seq "/" (? path-rootless)))
+                    (path-abempty (* "/" segment))
                     (path (or path-abempty path-absolute path-noscheme path-rootless))
-                    (query (zero-or-more (or pchar "/" "?")))
+                    (query (* (or pchar "/" "?" iprivate)))
                     (fragment query)
-                    (url (seq scheme authority (opt path) (opt "?" query) (opt "#" fragment))))
+                    (url (seq scheme authority (? path) (? "?" query) (? "#" fragment))))
 
-             (and (string-match (rx url) req) (match-string 0 req)))
-           )
+             (and (string-match (rx url) req) (match-string 0 req))))
           ;; Path
-          ((string-match "^[./]" req)
-           (when-let ((requirement-spec (car (split-string req ";\\|@\\|--")))
+          ((string-match (rx line-start (in "." "/")) req)
+           (when-let ((requirement-spec (car (split-string req (rx (or ";" "@" "--")))))
                       (requirement-spec (string-trim requirement-spec)))
              (when (not (string-empty-p requirement-spec))
                requirement-spec)))
           ;; TODO: fetch the package and read the setup.cfg or setup.py files to
           ;; extract dependencies
-          ((string-match "\\(-e\\|--editable\\) +\\(.+\\)$" req)
+          ((string-match (rx (or "-e" "--editable") (+ space) (group (+ nonl)) eol) req)
            nil)
           ;; Options
-          ((string-match "--[a-zA-Z0-9-_]+" req)
+          ((string-match (rx "--" (+ (in alnum "-" "_"))) req)
            nil)
           ;; Requirement specifiers
-          (t (let* ((requirement-spec (split-string req ";\\|@\\|--"))
+          (t (let* ((requirement-spec (split-string req (rx (or ";" "@" "--"))))
                     (package-version-spec (string-trim (car requirement-spec)))
                     (package
                      (car
                       (split-string
                        package-version-spec
-                       "\\(?:!=\\|\\(?:==\\|[<=>~]\\)=\\|[<>]\\)"))))
+                       (rx (or "==" "!=" "<=" ">=" "~=" "===" "<" ">"))))))
                (when package
-                 (string-trim-right package "\\[[a-zA-Z0-9-_]+\\]")))))))
+                 (string-trim-right package (rx "[" (+ (in alnum "-" "_")) "]"))))))))
 
 (defvar python-project-requirements-cache nil)
 (defun python-project-requirements ()
@@ -1049,12 +1069,10 @@ checker symbol."
                         ;; TODO: search the project root for something that
                         ;; looks a virtualenv, activate it and call pip list
                         ;; --format=freeze in it
-                        (when-let ((project-root-dir (locate-dominating-file
-                                                      (or (and (featurep 'projectile)
-                                                               (projectile-project-root))
-                                                          file-path)
-                                                      "requirements.txt")))
-                          (python-resolve-requirements project-root-dir "requirements.txt"))
+                        (when-let ((project-root-requirements-file (find-file-from-project-root "requirements.txt")))
+                          (python-resolve-requirements
+                           (file-name-directory project-root-requirements-file)
+                           project-root-requirements-file))
                         (condition-case err
                             (process-lines "pip" "list" "--format=freeze" "--disable-pip-version-check")
                           (error (message "%s" (error-message-string err)) nil)))))
