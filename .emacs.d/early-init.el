@@ -36,7 +36,7 @@
                                  (when (buffer-file-name)
                                    (abbreviate-file-name (buffer-file-name))))))
 
-;; Turn off the turn the tool bar early
+;; Turn off the tool bar early
 (tool-bar-mode -1)
 
 ;; Set up NS port specific variables
