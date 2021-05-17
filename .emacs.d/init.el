@@ -1714,19 +1714,38 @@ variants of Typescript.")
     (setf (lsp--client-major-modes client) nil)
     (setf (lsp--client-activation-fn client)
           (lambda (file-name mode)
-            (and (or (not (null (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))))
+            (and (or (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))
                      (eq mode 'python-mode))
-                 (or (locate-dominating-file file-name "pyrightconfig.json")
-                     (when-let ((pep518-config-file-dir (locate-dominating-file file-name "pyproject.toml")))
+                 (or (find-file-from-project-root "pyrightconfig.json")
+                     (when-let ((pep518-config-file (find-file-from-project-root "pyproject.toml")))
                        (with-temp-buffer
-                         (insert-file-contents (concat pep518-config-file-dir "pyproject.toml"))
+                         (insert-file-contents pep518-config-file)
                          (goto-char (point-min))
                          (re-search-forward "^\\[tool.pyright\\]$" nil t nil)))))))))
 
 ;; Ruby
 (use-package yard-mode)
 (use-package enh-ruby-mode
-  :mode "\\(?:\\.\\(?:rbw?\\|ru\\|rake\\|thor\\|jbuilder\\|rabl\\|gemspec\\|podspec\\|irbrc\\)\\|/\\(?:Gem\\|Rake\\|Cap\\|Thor\\|Puppet\\|Berks\\|Vagrant\\|Guard\\|Pod\\)file\\)\\'"
+  :mode (rx (or ".rb"
+                ".rbw"
+                ".ru"
+                ".rake"
+                ".thor"
+                ".jbuilder"
+                ".rabl"
+                ".gemspec"
+                ".podspec"
+                ".irbrc"
+                "/Gemfile"
+                "/Rakefile"
+                "/Capfile"
+                "/Thorfile"
+                "/Puppetfile"
+                "/Berksfile"
+                "/Vagrantfile"
+                "/Guardfile"
+                "/Prodfile")
+            string-end)
   :interpreter ("ruby1.8" "ruby1.9" "jruby" "rbx" "ruby")
   :config (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
   :hook yard-mode)
@@ -1792,19 +1811,22 @@ variants of Typescript.")
 
 (use-package web-mode
   :functions web-mode-language-at-pos
-  :mode ("\\.vue\\'"
-         "\\.handlebars\\'"
-         "\\.underscore\\'"
-         "\\.html?\\'"
-         "\\.jinja2?\\'"
-         "\\.j2\\'"
-         "\\.mako\\'"
-         "\\.dtl\\'"
-         "\\.jsp\\'"
-         "\\.soy\\'"
-         "\\.as[cp]x\\'"
-         "\\.erb\\'"
-         "\\.mustache\\'"))
+  :mode ((rx (or ".vue"
+                 ".eex"
+                 ".svelte"
+                 ".handlebars"
+                 ".underscore"
+                 ".mustache"
+                 ".hbs"
+                 ".htm"
+                 ".html"
+                 ".jinja"
+                 ".jinja2"
+                 ".j2"
+                 ".mako"
+                 ".dtl"
+                 ".jsp"
+                 ".erb"))))
 
 (use-package emmet-mode
   :delight
