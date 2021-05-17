@@ -1440,43 +1440,38 @@ optionally the window if possible."
             "--ext"
             ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx")))
 
+(use-package prettier
+  :delight
+  :hook (css-mode js-mode markdown-mode scss-mode typescript-mode web-mode yaml-mode))
+
 (dolist (mode '(css-mode js-mode markdown-mode scss-mode typescript-mode web-mode yaml-mode))
   (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook mode-hook
               (lambda ()
                 (let ((formatter
-                       (when-let* ((package-json-dir
-                                    (locate-dominating-file default-directory "package.json"))
-
+                       (when-let* ((package-json-file
+                                    (find-file-from-project-root "package.json"))
                                    (package-json
-                                    (if package-json-dir
-                                        (json-read-file (concat
-                                                         (expand-file-name package-json-dir)
-                                                         "package.json"))
-                                      nil))
-
+                                    (and package-json-file
+                                         (json-read-file package-json-file)))
                                    (devDependencies
-                                    (if package-json
-                                        (alist-get 'devDependencies package-json)
-                                      nil))
-
+                                    (and package-json
+                                         (alist-get 'devDependencies package-json)))
                                    (formatter-styles
                                     '((prettier prettier-eslint prettier)
                                       (eslint eslint-plugin-prettier eslint))))
-
                          (car (seq-filter 'identity
-                                          (map-apply (lambda (command packages)
-                                                       (and
-                                                        (seq-some
-                                                         (lambda (package) (map-contains-key devDependencies package)) packages)
-                                                        command))
-                                                     formatter-styles)))))
-                      (yarn-pnp-p (seq-some 'file-exists-p
-                                            (list (concat default-directory ".pnp.js")
-                                                  (concat default-directory ".pnp.cjs")))))
-                  (unless yarn-pnp-p
-                    (use-package add-node-modules-path
-                      :config (add-node-modules-path)))
+                                          (map-apply
+                                           (lambda (command packages)
+                                             (and (seq-some
+                                                   (lambda (package)
+                                                     (map-contains-key devDependencies package))
+                                                   packages)
+                                                  command))
+                                           formatter-styles)))))
+                      (yarn-pnp-p (find-file-from-project-root ".pnp.js")))
+                  (unless (and yarn-pnp-p (functionp 'add-node-modules-path))
+                    (add-node-modules-path))
                   (cond
                    ((and (eq formatter 'eslint)
                          (or (not (featurep 'lsp-mode))
@@ -1490,13 +1485,10 @@ optionally the window if possible."
                         (progn
                           (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'yarn-eslint-format-buffer)
                           (yarn-eslint-format-on-save-mode))
-                      (progn
-                        (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'eslint-format-buffer)
-                        (eslint-format-on-save-mode))))
+                      (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'eslint-format-buffer)
+                      (eslint-format-on-save-mode)))
                    ((eq formatter 'prettier)
-                    (use-package prettier
-                      :delight
-                      :config
+                    (with-eval-after-load 'prettier
                       (prettier-mode)
                       (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'prettier-prettify)))))))))
 
