@@ -790,18 +790,17 @@ checker symbol."
 
   (add-hook 'c-mode-common-hook
             (lambda ()
-              (use-package dap-lldb
+              (use-package dap-gdb-lldb
                 :custom
-                (dap-lldb-debug-path
+                (dap-gdb-lldb-path
                  (car
                   (last
                    (file-expand-wildcards
                     (concat
                      dap-utils-extension-path
-                     "/lanza.lldb-vscode-*")))))
-                (dap-lldb-debug-program
-                 (concat dap-lldb-debug-path
-                         (concat "/bin/" (symbol-name system-type) "/bin/lldb-vscode"))))
+                     "/webfreak.debug-*")))))
+                (dap-gdb-lldb-debug-program
+                 `("node" ,(concat dap-gdb-lldb-path "/extension/out/src/gdb.js"))))
 
               (use-package dap-cpptools
                 :custom
