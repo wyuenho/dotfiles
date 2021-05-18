@@ -1439,10 +1439,6 @@ optionally the window if possible."
             "--ext"
             ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx")))
 
-(use-package prettier
-  :delight
-  :hook (css-mode js-mode markdown-mode scss-mode typescript-mode web-mode yaml-mode))
-
 (dolist (mode '(css-mode js-mode markdown-mode scss-mode typescript-mode web-mode yaml-mode))
   (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook mode-hook
@@ -1487,7 +1483,9 @@ optionally the window if possible."
                       (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'eslint-format-buffer)
                       (eslint-format-on-save-mode)))
                    ((eq formatter 'prettier)
-                    (with-eval-after-load 'prettier
+                    (use-package prettier
+                      :delight
+                      :config
                       (prettier-mode)
                       (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'prettier-prettify)))))))))
 
