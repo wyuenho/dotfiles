@@ -1,13 +1,14 @@
 ;; -*- lexical-binding: t -*-
 (toggle-debug-on-error)
 
-(require 'pcase)
-(require 'map)
-(require 'seq)
 (require 'cl-lib)
-(require 'subr-x)
+(require 'filenotify)
 (require 'let-alist)
+(require 'map)
+(require 'pcase)
 (require 'rx)
+(require 'seq)
+(require 'subr-x)
 
 (set-locale-environment "UTF-8")
 (custom-autoload 'package-selected-packages "package")
@@ -867,29 +868,48 @@ checker symbol."
                    file-name)))
     (expand-file-name (concat dir file-name))))
 
+(defun python-parse-config-file (file-path)
+  (condition-case err
+      (with-temp-buffer
+        (funcall 'call-process "dasel" nil t nil "select" "-f" file-path "-w" "json")
+        (goto-char (point-min))
+        (json-parse-buffer :object-type 'alist :array-type 'list))
+    (error (message "%s" (error-message-string err)) nil)))
+
+(defvar python-watched-config-files nil)
+(defun python-watch-config-file (config-file cache-var parser)
+  (unless (assoc-default config-file python-watched-config-files)
+    (push (cons config-file
+                (file-notify-add-watch
+                 config-file
+                 '(change)
+                 (lambda (event)
+                   (pcase-let ((`(,_ ,action ,file ,@_)
+                                event))
+                     (pcase action
+                       ((or 'deleted 'renamed)
+                        (file-notify-rm-watch (assoc-default file python-watched-config-files))
+                        (setf (symbol-value cache-var)
+                              (assoc-delete-all file (symbol-value cache-var))
+                              python-watched-config-files
+                              (assoc-delete-all file python-watched-config-files)))
+                       ('changed
+                        (setf (assoc-default file (symbol-value cache-var))
+                              (funcall parser file))))))))
+          python-watched-config-files)))
+
 (defun python-pre-commit-config-path ()
   (find-file-from-project-root ".pre-commit-config.yaml"))
 
 (defvar python-pre-commit-config-cache nil)
 (defun python-pre-commit-config ()
   (let* ((config-path (python-pre-commit-config-path))
-         (modification-time
-          (file-attribute-modification-time (file-attributes config-path)))
          (cache-value (assoc-default config-path python-pre-commit-config-cache)))
-    (if (equal (alist-get 'modification-time cache-value) modification-time)
-        (alist-get 'content cache-value)
-      (let ((content
-             (condition-case err
-                 (with-temp-buffer
-                   (funcall 'call-process "dasel" nil t nil "select" "-f" config-path "-w" "json")
-                   (goto-char (point-min))
-                   (json-parse-buffer :object-type 'alist :array-type 'list))
-               (error (error-message-string err) nil))))
-        (assoc-delete-all config-path python-pre-commit-config-cache)
-        (when content
-          (push `(,config-path . ((modification-time . ,modification-time)
-                                  (content . ,content)))
-                python-pre-commit-config-cache))
+    (if cache-value
+        cache-value
+      (python-watch-config-file config-path 'python-pre-commit-config-cache 'python-parse-config-file)
+      (when-let ((content (python-parse-config-file config-path)))
+        (push (cons config-path content) python-pre-commit-config-cache)
         content))))
 
 (defun python-pyproject-path ()
@@ -907,23 +927,12 @@ checker symbol."
 (defvar python-pyproject-cache nil)
 (defun python-parse-pyproject ()
   (let* ((pyproject-path (python-pyproject-path))
-         (modification-time
-          (file-attribute-modification-time (file-attributes pyproject-path)))
          (cache-value (assoc-default pyproject-path python-pyproject-cache)))
-    (if (equal (alist-get 'modification-time cache-value) modification-time)
-        (alist-get 'content cache-value)
-      (let ((content
-             (condition-case err
-                 (with-temp-buffer
-                   (funcall 'call-process "dasel" nil t nil "select" "-f" pyproject-path "-w" "json")
-                   (goto-char (point-min))
-                   (json-parse-buffer :object-type 'alist :array-type 'list))
-               (error (error-message-string err) nil))))
-        (assoc-delete-all pyproject-path python-pyproject-cache)
-        (when content
-          (push `(,pyproject-path . ((modification-time . , modification-time)
-                                     (content . ,content)))
-                python-pyproject-cache))
+    (if cache-value
+        cache-value
+      (python-watch-config-file pyproject-path 'python-pyproject-cache 'python-parse-config-file)
+      (when-let ((content (python-parse-config-file pyproject-path)))
+        (push `(,pyproject-path . ,content) python-pyproject-cache)
         content))))
 
 (defun python-use-pre-commit-p (requirements)
@@ -1075,82 +1084,110 @@ checker symbol."
                         (condition-case err
                             (process-lines "pip" "list" "--format=freeze" "--disable-pip-version-check")
                           (error (message "%s" (error-message-string err)) nil)))))
-      (assoc-delete-all file-path python-project-requirements-cache)
+      (setf python-project-requirements-cache
+            (assoc-delete-all file-path python-project-requirements-cache))
       (when requirements
         (push (cons file-path requirements) python-project-requirements-cache)))
     requirements))
 
-(add-hook 'kill-buffer-hook
-          (lambda ()
-            (setf python-project-requirements-cache
-                  (assoc-delete-all
-                   (buffer-file-name)
-                   python-project-requirements-cache))))
-
 (defun python-pre-commit-config-has-hook-p (id)
   (member id
           (flatten-list
-           (cl-loop for repo in (alist-get 'repos (python-pre-commit-config))
-                    collect (cl-loop for hook in (alist-get 'hooks repo)
-                                     collect (alist-get 'id hook))))))
+           (cl-loop for repo in (let-alist (python-pre-commit-config) .repos)
+                    collect (cl-loop for hook in (let-alist repo .hooks)
+                                     collect (let-alist hook .id))))))
+
+(defun python-parse-pre-commit-db (db-file)
+  (condition-case err
+      (with-temp-buffer
+        (funcall 'call-process "sqlite3" nil t nil "-json" db-file "select * from repos")
+        (goto-char (point-min))
+        (json-parse-buffer :object-type 'alist :array-type 'list))
+    (error (error-message-string err) nil)))
 
 (defvar python-pre-commit-database-cache nil)
 (defun python-pre-commit-virtualenv-path (hook-id)
-  (use-package emacsql-sqlite :ensure t)
-  (when-let* ((db-file (concat
-                        (file-name-as-directory
-                         (or (getenv "PRE_COMMIT_HOME")
-                             (getenv "XDG_CACHE_HOME")
-                             "~/.cache/"))
-                        "pre-commit/db.db"))
-              (db (and (file-exists-p db-file)
-                       (let ((db-file-mod-time
-                              (file-attribute-modification-time (file-attributes db-file))))
-                         (or (and (equal
-                                   (cdr python-pre-commit-database-cache)
-                                   db-file-mod-time)
-                                  (car python-pre-commit-database-cache))
-                             (when-let ((conn (emacsql-sqlite db-file :debug t)))
-                               (unwind-protect
-                                   (progn
-                                     (setf python-pre-commit-database-cache
-                                           (cons
-                                            (emacsql conn [:select * :from repos])
-                                            db-file-mod-time))
-                                     (car python-pre-commit-database-cache))
-                                 (emacsql-close conn)))))))
+  (when-let* ((db-file
+               (concat
+                (file-name-as-directory
+                 (or (getenv "PRE_COMMIT_HOME")
+                     (getenv "XDG_CACHE_HOME")
+                     "~/.cache/"))
+                "pre-commit/db.db"))
+
+              (db
+               (or (assoc-default db-file python-pre-commit-database-cache)
+                   (let ((content (python-parse-pre-commit-db db-file)))
+                     (python-watch-config-file db-file 'python-pre-commit-database-cache 'python-parse-pre-commit-db)
+                     (push (cons db-file content) python-pre-commit-database-cache)
+                     content)))
+
               (repo-config
                (seq-find
                 (lambda (repo)
                   (seq-find
                    (lambda (hook)
-                     (equal (alist-get 'id hook) hook-id))
-                   (alist-get 'hooks repo)))
-                (alist-get 'repos (python-pre-commit-config)))))
+                     (equal (let-alist hook .id) hook-id))
+                   (let-alist repo .hooks)))
+                (let-alist (python-pre-commit-config) .repos)))
 
-    (let* ((additional-deps
-            (alist-get 'additional_dependencies
-                       (seq-find
-                        (lambda (hook)
-                          (equal (alist-get 'id hook) hook-id))
-                        (alist-get 'hooks repo-config))))
-           (repo-url
-            (concat (alist-get 'repo repo-config)
-                    (if additional-deps
-                        (concat ":" (string-join additional-deps ":")))))
-           (repo-dir (symbol-name
-                      (nth 2 (seq-find
-                              (lambda (row)
-                                (and (equal (symbol-name (car row))
-                                            repo-url)
-                                     (equal (symbol-name (cadr row))
-                                            (alist-get 'rev repo-config))))
-                              db)))))
-      (car
-       (last
-        (file-expand-wildcards
-         (concat (file-name-as-directory repo-dir) "py_env-*")
-         t))))))
+              (repo-url
+               (let ((additional-deps
+                      (let-alist repo-config
+                        (let-alist (seq-find (lambda (hook) (let-alist hook (equal .id hook-id))) .hooks)
+                          .additional_dependencies))))
+                 (concat (let-alist repo-config .repo)
+                         (if additional-deps
+                             (concat ":" (string-join additional-deps ":"))))))
+
+              (repo-dir
+               (let-alist (seq-find
+                           (lambda (row)
+                             (let-alist row
+                               (and (equal .repo repo-url)
+                                    (equal .ref (let-alist repo-config .rev)))))
+                           db)
+                 .path)))
+
+    (car
+     (last
+      (file-expand-wildcards
+       (concat (file-name-as-directory repo-dir) "py_env-*")
+       t)))))
+
+(defun python-cleanup-watchers-and-caches ()
+  (when (and (buffer-file-name)
+             (derived-mode-p 'python-mode))
+    (let* ((buf-file (buffer-file-name))
+           (root (and (featurep 'projectile)
+                      (projectile-project-root (file-name-directory buf-file)))))
+
+      (when (and root
+                 (not (seq-some (lambda (buf)
+                                  (and (not (equal buf (current-buffer)))
+                                       (string-prefix-p root (buffer-file-name buf))))
+                                (buffer-list))))
+
+        (pcase-dolist (`(,config-file . ,watcher) python-watched-config-files)
+          (when (string-prefix-p root config-file)
+            (file-notify-rm-watch watcher)
+            (setf python-watched-config-files
+                  (assoc-delete-all config-file python-watched-config-files))))
+
+        (pcase-dolist (`(,config-file . ,_) python-pre-commit-config-cache)
+          (when (string-prefix-p root config-file)
+            (setf python-pre-commit-config-cache
+                  (assoc-delete-all config-file python-pre-commit-config-cache))))
+
+        (pcase-dolist (`(,config-file . ,_) python-pyproject-cache)
+          (when (string-prefix-p root config-file)
+            (setf python-pyproject-cache
+                  (assoc-delete-all config-file python-pyproject-cache)))))
+
+      (setf python-project-requirements-cache
+            (assoc-delete-all buf-file python-project-requirements-cache)))))
+
+(add-hook 'kill-buffer-hook 'python-cleanup-watchers-and-caches)
 
 (use-package flycheck
   :delight
@@ -1590,6 +1627,101 @@ variants of Typescript.")
 (use-package importmagic
   :delight)
 
+(defun python-black-setup ()
+  (let ((requirements (python-project-requirements)))
+    (when (cond ((and (python-use-pre-commit-p requirements)
+                      (python-pre-commit-config-has-hook-p "black"))
+
+                 (make-local-variable 'python-black-command)
+                 (setf python-black-command
+                       (concat (python-pre-commit-virtualenv-path "black") "/bin/black"))
+
+                 (make-local-variable 'python-black-d-command)
+                 (let ((blackd-path (concat (python-pre-commit-virtualenv-path "black") "/bin/blackd")))
+                   (setf python-black-d-command
+                         (and (condition-case err
+                                  (zerop (call-process blackd-path nil nil nil "--version"))
+                                (error (message "%s" (error-message-string err)) nil))
+                              blackd-path))))
+
+                ((and (python-use-poetry-p)
+                      (member "black" requirements))
+
+                 ;; Set `python-black-command'
+                 (make-local-variable 'python-black-command)
+                 (setf python-black-command "poetry")
+                 (make-local-variable 'python-black--base-args)
+                 (setf python-black--base-args (append '("run" "black") python-black--base-args))
+
+                 ;; Set `python-black-d-command'
+                 (make-local-variable 'python-black-d-command)
+                 (setf python-black-d-command
+                       (with-temp-buffer
+                         (if (condition-case err
+                                 (and (call-process "poetry" nil t nil "run" "which" python-blackd-command)
+                                      (zerop (call-process "poetry" nil nil nil "run"
+                                                           python-black-d-command "--version")))
+                               (error (message "%s" (error-message-string err)) nil))
+                             (string-trim (buffer-string))
+                           nil))))
+
+                ((or (executable-find python-black-command)
+                     (and (executable-find python-black-d-command)
+                          (zerop (call-process python-black-d-command nil nil nil "--version"))))
+                 t)
+                (t
+                 (make-local-variable 'python-black-command)
+                 (make-local-variable 'python-black-d-command)
+                 (setf python-black-command nil
+                       python-black-d-command nil)))
+
+      ;; Set `blackd' request headers
+      (when-let (python-black-d-command
+                 (pyproject-path (python-pyproject-path))
+                 (black-d-request-headers
+                  (let-alist (python-parse-pyproject)
+                    `(,@(if .tool.black.line-length
+                            `(,(cons "X-Line-Length" (format "%s" .tool.black.line-length))))
+                      ,@(if (and .tool.black.skip-string-normalization
+                                 (not (eq .tool.black.skip.string-normalization :false)))
+                            `(,(cons "X-Skip-String-Normalization" "true")))
+                      ,@(if (or .tool.black.fast .tool.black.safe)
+                            `(,(cons "X-Fast-Or-Safe" (if .tool.black.fast "fast" "safe"))))
+                      ,@(if (or .tool.black.pyi .tool.black.target-version)
+                            `(,(cons "X-Python-Variant"
+                                     (if .tool.black.pyi
+                                         "pyi"
+                                       (funcall 'string-join
+                                                (append .tool.black.target-version) ",")))))))))
+        (make-local-variable 'python-black-d-request-headers-function)
+        (setf python-black-d-request-headers-function (lambda () black-d-request-headers)))
+
+      (python-black-on-save-mode 1))))
+
+(defun python-isort-setup ()
+  (let ((requirements (python-project-requirements)))
+    (when (cond ((and (python-use-pre-commit-p requirements)
+                      (python-pre-commit-config-has-hook-p "isort"))
+                 (make-local-variable 'python-isort-command)
+                 (setf python-isort-command
+                       (concat (python-pre-commit-virtualenv-path "isort") "/bin/isort")))
+                ((and (python-use-poetry-p)
+                      (member "isort" requirements))
+                 (make-local-variable 'python-isort-command)
+                 (make-local-variable 'python-isort-arguments)
+                 (setf python-isort-command "poetry"
+                       python-isort-arguments
+                       (append '("run" "isort") python-isort-arguments)))
+                ((executable-find python-isort-command)
+                 (when (and (boundp 'python-black-command)
+                            python-black-command
+                            (executable-find python-black-command))
+                   (make-local-variable 'python-isort-arguments)
+                   (setf python-isort-arguments
+                         (append '("--profile" "black") python-isort-arguments)))
+                 t))
+      (python-isort-on-save-mode 1))))
+
 (add-hook 'python-mode-hook
           (lambda ()
             ;; Set `python-shell-interpreter'
@@ -1604,92 +1736,10 @@ variants of Typescript.")
                         nil))))
 
             (with-eval-after-load 'python-black
-              (let ((requirements (python-project-requirements)))
-                (when (cond ((and (python-use-pre-commit-p requirements)
-                                  (python-pre-commit-config-has-hook-p "black"))
-
-                             (make-local-variable 'python-black-command)
-                             (setf python-black-command
-                                   (concat (python-pre-commit-virtualenv-path "black") "/bin/black"))
-
-                             (make-local-variable 'python-black-d-command)
-                             (let ((blackd-path (concat (python-pre-commit-virtualenv-path "black") "/bin/blackd")))
-                               (setf python-black-command
-                                     (and (condition-case err
-                                              (zerop (call-process blackd-path nil nil nil "--version"))
-                                            (error (message "%s" (error-message-string err)) nil))
-                                          blackd-path))))
-
-                            ((and (python-use-poetry-p)
-                                  (member "black" requirements))
-
-                             ;; Set `python-black-command'
-                             (make-local-variable 'python-black-command)
-                             (setf python-black-command "poetry")
-                             (make-local-variable 'python-black--base-args)
-                             (setf python-black--base-args (append '("run" "black") python-black--base-args))
-
-                             ;; Set `python-black-d-command'
-                             (make-local-variable 'python-black-d-command)
-                             (setf python-black-d-command
-                                   (with-temp-buffer
-                                     (if (condition-case err
-                                             (and (call-process "poetry" nil t nil "run" "which" python-blackd-command)
-                                                  (zerop (call-process "poetry" nil nil nil "run"
-                                                                       python-black-d-command "--version")))
-                                           (error (message "%s" (error-message-string err)) nil))
-                                         (string-trim (buffer-string))
-                                       nil))))
-
-                            ((executable-find python-black-command)
-                             t))
-
-                  ;; Set `blackd' request headers
-                  (when (and python-black-d-command
-                             (executable-find python-black-d-command))
-                    (make-local-variable 'python-black-d-request-headers-function)
-                    (setf python-black-d-request-headers-function
-                          (lambda ()
-                            (and (python-pyproject-path)
-                                 (let-alist (python-parse-pyproject)
-                                   `(,@(if .tool.black.line-length
-                                           `(,(cons "X-Line-Length" (format "%s" .tool.black.line-length))))
-                                     ,@(if (and .tool.black.skip-string-normalization
-                                                (not (eq .tool.black.skip.string-normalization :false)))
-                                           `(,(cons "X-Skip-String-Normalization" "true")))
-                                     ,@(if (or .tool.black.fast .tool.black.safe)
-                                           `(,(cons "X-Fast-Or-Safe" (if .tool.black.fast "fast" "safe"))))
-                                     ,@(if (or .tool.black.pyi .tool.black.target-version)
-                                           `(,(cons "X-Python-Variant"
-                                                    (if .tool.black.pyi
-                                                        "pyi"
-                                                      (funcall 'string-join
-                                                               (append .tool.black.target-version) ",")))))))))))
-
-                  (python-black-on-save-mode 1))))
+              (python-black-setup))
 
             (with-eval-after-load 'python-isort
-              (let ((requirements (python-project-requirements)))
-                (when (cond ((and (python-use-pre-commit-p requirements)
-                                  (python-pre-commit-config-has-hook-p "isort"))
-                             (make-local-variable 'python-isort-command)
-                             (setf python-isort-command
-                                   (concat (python-pre-commit-virtualenv-path "isort") "/bin/isort")))
-                            ((and (python-use-poetry-p)
-                                  (member "isort" requirements))
-                             (make-local-variable 'python-isort-command)
-                             (make-local-variable 'python-isort-arguments)
-                             (setf python-isort-command "poetry"
-                                   python-isort-arguments
-                                   (append '("run" "isort") python-isort-arguments)))
-                            ((executable-find python-isort-command)
-                             (when (and python-black-command
-                                        (executable-find python-black-command))
-                               (make-local-variable 'python-isort-arguments)
-                               (setf python-isort-arguments
-                                     (append '("--profile" "black") python-isort-arguments)))
-                             t))
-                  (python-isort-on-save-mode 1))))
+              (python-isort-setup))
 
             (with-eval-after-load 'importmagic
               (when (let ((requirements (python-project-requirements)))
