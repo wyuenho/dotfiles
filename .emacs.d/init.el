@@ -1349,7 +1349,7 @@ optionally the window if possible."
                 (switch-to-buffer next-vterm-buffer))))))))
   :bind (("M-T" . vterm)
          :map vterm-mode-map
-         ([remap backward-kill-word] . vterm--self-insert)
+         ([remap backward-kill-word]  . vterm--self-insert)
          ([remap sp-kill-hybrid-sexp] . vterm--self-insert))
   :config
   (advice-add 'vterm--sentinel :override 'vterm--sentinel-advice))
