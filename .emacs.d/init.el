@@ -729,7 +729,15 @@ checker symbol."
                     (push web-mode-checkers lsp-flycheck-checkers)))))))
 
 (use-package lsp-ui
-  :after (lsp-mode))
+  :after (lsp-mode)
+  :config
+  (add-hook 'lsp-ui-doc-frame-hook
+            (lambda (_ window)
+              (let* ((frame (window-frame window)))
+                (set-frame-font
+                 (font-spec :family "Menlo" :size 11)
+                 nil
+                 (list frame))))))
 
 (use-package lsp-origami
   :hook (lsp-after-open . lsp-origami-try-enable))
