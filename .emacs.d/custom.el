@@ -332,7 +332,9 @@
  '(so-long-target-modes '(css-mode js-mode))
  '(solarized-use-variable-pitch nil)
  '(sp-hybrid-kill-excessive-whitespace t)
- '(sp-ignore-modes-list '(minibuffer-mode minibuffer-inactive-mode))
+ '(sp-ignore-modes-list '(minibuffer-mode minibuffer-inactive-mode vterm-mode))
+ '(sp-navigate-consider-sgml-tags
+   '(html-mode web-mode rjsx-mode js2-jsx-mode js-jsx-mode nxml-mode))
  '(spaceline-all-the-icons-clock-always-visible nil)
  '(spaceline-all-the-icons-separator-type 'arrow)
  '(standard-indent 2)
