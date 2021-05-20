@@ -370,6 +370,7 @@
  '(vr/engine 'pcre2el)
  '(vterm-always-compile-module t)
  '(vterm-max-scrollback 10000)
+ '(vterm-shell "/bin/bash")
  '(vterm-term-environment-variable "eterm-256color")
  '(web-mode-code-indent-offset 2)
  '(web-mode-css-indent-offset 2)
