@@ -880,8 +880,7 @@ checker symbol."
   (condition-case err
       (with-temp-buffer
         (funcall 'call-process "dasel" nil t nil "select" "-f" file-path "-w" "json")
-        (goto-char (point-min))
-        (json-parse-buffer :object-type 'alist :array-type 'list))
+        (json-parse-string (buffer-string) :object-type 'alist :array-type 'list))
     (error (message "%s" (error-message-string err)) nil)))
 
 (defvar python-watched-config-files nil)
@@ -906,25 +905,41 @@ checker symbol."
                               (funcall parser file))))))))
           python-watched-config-files)))
 
-(defun python-pre-commit-config-path ()
+(defun python-pre-commit-config-file-path ()
   (find-file-from-project-root ".pre-commit-config.yaml"))
 
-(defvar python-pre-commit-config-cache nil)
-(defun python-pre-commit-config ()
-  (let* ((config-path (python-pre-commit-config-path))
-         (cache-value (assoc-default config-path python-pre-commit-config-cache)))
-    (if cache-value
-        cache-value
-      (python-watch-config-file config-path 'python-pre-commit-config-cache 'python-parse-config-file)
-      (when-let ((content (python-parse-config-file config-path)))
-        (push (cons config-path content) python-pre-commit-config-cache)
-        content))))
-
-(defun python-pyproject-path ()
+(defun python-pyproject-file-path ()
   (find-file-from-project-root "pyproject.toml"))
 
+(defvar python-pre-commit-config-cache nil)
+(defvar python-pyproject-cache nil)
+
+(cl-defmacro python-config-file-content (name &key file-path cache-var parser)
+  `(defun ,name ()
+     (let* ((config-file ,file-path)
+            (cache-value (and config-file
+                              (file-exists-p config-file)
+                              (assoc-default config-file ,cache-var))))
+       (if cache-value
+           cache-value
+         (when config-file
+           (python-watch-config-file config-file (quote ,cache-var) (quote ,parser))
+           (when-let ((content (funcall (quote ,parser) config-file)))
+             (push (cons config-file content) ,cache-var)
+             content))))))
+
+(python-config-file-content python-pre-commit-config
+                            :file-path (python-pre-commit-config-file-path)
+                            :cache-var python-pre-commit-config-cache
+                            :parser python-parse-config-file)
+
+(python-config-file-content python-pyproject
+                            :file-path (python-pyproject-file-path)
+                            :cache-var python-pyproject-cache
+                            :parser python-parse-config-file)
+
 (defun python-use-poetry-p ()
-  (when-let ((pyproject-path (python-pyproject-path)))
+  (when-let ((pyproject-path (python-pyproject-file-path)))
     (and
      (with-temp-buffer
        (insert-file-contents pyproject-path)
@@ -932,19 +947,8 @@ checker symbol."
        (re-search-forward "^\\[tool.poetry\\]$" nil t nil))
      (executable-find "poetry"))))
 
-(defvar python-pyproject-cache nil)
-(defun python-parse-pyproject ()
-  (let* ((pyproject-path (python-pyproject-path))
-         (cache-value (assoc-default pyproject-path python-pyproject-cache)))
-    (if cache-value
-        cache-value
-      (python-watch-config-file pyproject-path 'python-pyproject-cache 'python-parse-config-file)
-      (when-let ((content (python-parse-config-file pyproject-path)))
-        (push `(,pyproject-path . ,content) python-pyproject-cache)
-        content))))
-
 (defun python-use-pre-commit-p (requirements)
-  (and (python-pre-commit-config-path)
+  (and (python-pre-commit-config-file-path)
        (or (executable-find "pre-commit")
            (member "pre-commit" requirements))))
 
@@ -1109,8 +1113,7 @@ checker symbol."
   (condition-case err
       (with-temp-buffer
         (funcall 'call-process "sqlite3" nil t nil "-json" db-file "select * from repos")
-        (goto-char (point-min))
-        (json-parse-buffer :object-type 'alist :array-type 'list))
+        (json-parse-string (buffer-string) :object-type 'alist :array-type 'list))
     (error (error-message-string err) nil)))
 
 (defvar python-pre-commit-database-cache nil)
@@ -1125,10 +1128,11 @@ checker symbol."
 
               (db
                (or (assoc-default db-file python-pre-commit-database-cache)
-                   (let ((content (python-parse-pre-commit-db db-file)))
+                   (when (file-exists-p db-file)
                      (python-watch-config-file db-file 'python-pre-commit-database-cache 'python-parse-pre-commit-db)
-                     (push (cons db-file content) python-pre-commit-database-cache)
-                     content)))
+                     (when-let ((content (python-parse-pre-commit-db db-file)))
+                       (push (cons db-file content) python-pre-commit-database-cache)
+                       content))))
 
               (repo-config
                (seq-find
@@ -1182,15 +1186,11 @@ checker symbol."
             (setf python-watched-config-files
                   (assoc-delete-all config-file python-watched-config-files))))
 
-        (pcase-dolist (`(,config-file . ,_) python-pre-commit-config-cache)
-          (when (string-prefix-p root config-file)
-            (setf python-pre-commit-config-cache
-                  (assoc-delete-all config-file python-pre-commit-config-cache))))
-
-        (pcase-dolist (`(,config-file . ,_) python-pyproject-cache)
-          (when (string-prefix-p root config-file)
-            (setf python-pyproject-cache
-                  (assoc-delete-all config-file python-pyproject-cache)))))
+        (dolist (cache '(python-pre-commit-config-cache python-pyproject-cache))
+          (pcase-dolist (`(,config-file . ,_) (symbol-value cache))
+            (when (string-prefix-p root config-file)
+              (setf (symbol-value cache)
+                    (assoc-delete-all config-file (symbol-value cache)))))))
 
       (setf python-project-requirements-cache
             (assoc-delete-all buf-file python-project-requirements-cache)))))
@@ -1683,26 +1683,25 @@ variants of Typescript.")
                  (setf python-black-command nil
                        python-black-d-command nil)))
 
-      ;; Set `blackd' request headers
-      (when-let (python-black-d-command
-                 (pyproject-path (python-pyproject-path))
-                 (black-d-request-headers
-                  (let-alist (python-parse-pyproject)
-                    `(,@(if .tool.black.line-length
-                            `(,(cons "X-Line-Length" (format "%s" .tool.black.line-length))))
-                      ,@(if (and .tool.black.skip-string-normalization
-                                 (not (eq .tool.black.skip.string-normalization :false)))
-                            `(,(cons "X-Skip-String-Normalization" "true")))
-                      ,@(if (or .tool.black.fast .tool.black.safe)
-                            `(,(cons "X-Fast-Or-Safe" (if .tool.black.fast "fast" "safe"))))
-                      ,@(if (or .tool.black.pyi .tool.black.target-version)
-                            `(,(cons "X-Python-Variant"
-                                     (if .tool.black.pyi
-                                         "pyi"
-                                       (funcall 'string-join
-                                                (append .tool.black.target-version) ",")))))))))
+      (defun python-get-black-d-request-headers ()
+        (let-alist (python-pyproject)
+          `(,@(if .tool.black.line-length
+                  `(,(cons "X-Line-Length" (format "%s" .tool.black.line-length))))
+            ,@(if (and .tool.black.skip-string-normalization
+                       (not (eq .tool.black.skip.string-normalization :false)))
+                  `(,(cons "X-Skip-String-Normalization" "true")))
+            ,@(if (or .tool.black.fast .tool.black.safe)
+                  `(,(cons "X-Fast-Or-Safe" (if .tool.black.fast "fast" "safe"))))
+            ,@(if (or .tool.black.pyi .tool.black.target-version)
+                  `(,(cons "X-Python-Variant"
+                           (if .tool.black.pyi
+                               "pyi"
+                             (funcall 'string-join
+                                      (append .tool.black.target-version) ","))))))))
+
+      (when python-black-d-command
         (make-local-variable 'python-black-d-request-headers-function)
-        (setf python-black-d-request-headers-function (lambda () black-d-request-headers)))
+        (setf python-black-d-request-headers-function 'python-get-black-d-request-headers))
 
       (python-black-on-save-mode 1))))
 
