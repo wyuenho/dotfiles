@@ -13,6 +13,12 @@
  '(ag-reuse-window t)
  '(amx-mode t)
  '(apib-drafter-executable "aglio")
+ '(auth-source-protocols
+   '((imap "imap" "imaps" "143" "993")
+     (pop3 "pop3" "pop" "pop3s" "110" "995")
+     (ssh "ssh" "22")
+     (sftp "sftp" "115")
+     (smtp "smtp" "25" "465" "587")))
  '(auth-sources '("~/.authinfo.gpg"))
  '(auto-compile-on-save-mode t)
  '(auto-compile-update-autoloads t)
@@ -128,11 +134,12 @@
  '(global-undo-tree-mode t)
  '(global-whitespace-cleanup-mode t)
  '(gnus-completing-read-function 'gnus-ido-completing-read)
- '(gnutls-algorithm-priority "normal:-vers-tls1.3")
+ '(gnutls-algorithm-priority
+   "SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:%PROFILE_MEDIUM")
  '(gnutls-crlfiles
    '("/opt/local/etc/grid-security/certificates/*.crl.pem" "/etc/grid-security/certificates/*.crl.pem"))
  '(gnutls-trustfiles
-   '("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt"))
+   '("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt" "/etc/certs/ca-certificates.crt"))
  '(help-at-pt-display-when-idle '(keymap local-map button kbd-help flymake-diagnostic) nil (help-at-pt))
  '(help-at-pt-timer-delay 0.5)
  '(highlight-indent-guides-method 'character)
@@ -245,6 +252,7 @@
  '(markdown-fontify-code-blocks-natively t)
  '(markdown-indent-on-enter nil)
  '(menu-bar-mode t)
+ '(message-kill-buffer-on-exit t)
  '(minibuffer-depth-indicate-mode t)
  '(mouse-wheel-flip-direction t)
  '(mouse-wheel-mode t)
@@ -291,10 +299,13 @@
  '(quelpa-upgrade-p t)
  '(rainbow-html-colors-major-mode-list
    '(html-mode php-mode nxml-mode xml-mode web-mode rjsx-mode mhtml-mode))
+ '(read-mail-command 'gnus)
  '(reb-re-syntax 'string)
  '(recentf-auto-cleanup 'never)
  '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/.recentf")
+ '(report-emacs-bug-no-confirmation t)
+ '(report-emacs-bug-no-explanations t)
  '(require-final-newline 'ask)
  '(rg-command-line-flags '("--no-ignore-global" "--threads 8"))
  '(rg-hide-command nil)
@@ -325,8 +336,9 @@
  '(smartparens-global-mode t)
  '(smooth-scrolling-mode t)
  '(smtpmail-default-smtp-server "smtp.gmail.com")
- '(smtpmail-smtp-service 587)
- '(smtpmail-stream-type 'starttls)
+ '(smtpmail-servers-requiring-authorization "smtp\\.gmail\\.com")
+ '(smtpmail-smtp-service 465)
+ '(smtpmail-stream-type 'ssl)
  '(so-long-minor-modes
    '(font-lock-mode display-line-numbers-mode flymake-mode flyspell-mode goto-address-mode goto-address-prog-mode hi-lock-mode highlight-changes-mode hl-line-mode linum-mode nlinum-mode prettify-symbols-mode visual-line-mode whitespace-mode diff-hl-amend-mode diff-hl-flydiff-mode diff-hl-mode dtrt-indent-mode flycheck-mode hl-sexp-mode idle-highlight-mode rainbow-delimiters-mode lsp-mode))
  '(so-long-target-modes '(css-mode js-mode))
@@ -349,7 +361,9 @@
  '(timer-max-repeats 1)
  '(tls-checktrust t)
  '(tls-program
-   '("openssl s_client -connect %h:%p -no_ssl3 -no_ssl2 -ign_eof -CAfile %t" "gnutls-cli --x509cafile %t -p %p --dh-bits=2048 --ocsp --priority='SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:%%PROFILE_MEDIUM' %h"))
+   '("openssl s_client -connect %h:%p -min_protocol TLSv1.2 -ign_eof -CAfile %t -nbio -brief" "gnutls-cli --x509cafile %t -p %p --dh-bits=2048 --ocsp --priority='SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.3:%PROFILE_MEDIUM' %h"))
+ '(tls-success
+   "- Handshake was completed\\|SSL handshake has read \\|CONNECTION ESTABLISHED")
  '(tool-bar-mode nil)
  '(treemacs-change-root-without-asking t)
  '(treemacs-collapse-dirs 3)
