@@ -134,8 +134,7 @@
  '(global-undo-tree-mode t)
  '(global-whitespace-cleanup-mode t)
  '(gnus-completing-read-function 'gnus-ido-completing-read)
- '(gnutls-algorithm-priority
-   "SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:%PROFILE_MEDIUM")
+ '(gnutls-algorithm-priority "PFS:-VERS-ALL:+VERS-TLS1.2:%PROFILE_MEDIUM")
  '(gnutls-crlfiles
    '("/opt/local/etc/grid-security/certificates/*.crl.pem" "/etc/grid-security/certificates/*.crl.pem"))
  '(gnutls-trustfiles
@@ -361,7 +360,7 @@
  '(timer-max-repeats 1)
  '(tls-checktrust t)
  '(tls-program
-   '("openssl s_client -connect %h:%p -min_protocol TLSv1.2 -ign_eof -CAfile %t -nbio -brief" "gnutls-cli --x509cafile %t -p %p --dh-bits=2048 --ocsp --priority='SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.3:%PROFILE_MEDIUM' %h"))
+   '("openssl s_client -connect %h:%p -min_protocol TLSv1.2 -ign_eof -CAfile %t -nbio -brief" "gnutls-cli --x509cafile %t -p %p --dh-bits=2048 --ocsp --priority='PFS:-VERS-ALL:+VERS-TLS1.2:+VERS-TLS1.3:%PROFILE_MEDIUM' %h"))
  '(tls-success
    "- Handshake was completed\\|SSL handshake has read \\|CONNECTION ESTABLISHED")
  '(tool-bar-mode nil)
