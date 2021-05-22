@@ -1208,8 +1208,9 @@ FILEPATH can be a relative path to one of the directories in
 `XDG_CONFIG_HOME' and `XDG_CONFIG_DIRS'.  If FILEPATH is a file name, "
     (let* ((checker-name (or (cadr (split-string (symbol-name checker) "-"))
                              (symbol-name checker)))
-           (xdg-config-home (or (file-name-as-directory (getenv "XDG_CONFIG_HOME"))
-                                "~/.config/"))
+           (xdg-config-home (expand-file-name
+                             (or (file-name-as-directory (getenv "XDG_CONFIG_HOME"))
+                                 "~/.config/")))
            (xdg-config-dirs (getenv "XDG_CONFIG_DIRS"))
            (dir
             (seq-find
