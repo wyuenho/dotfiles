@@ -1121,10 +1121,11 @@ checker symbol."
 (defun python-pre-commit-virtualenv-path (hook-id)
   (when-let* ((db-file
                (concat
-                (file-name-as-directory
-                 (or (getenv "PRE_COMMIT_HOME")
-                     (getenv "XDG_CACHE_HOME")
-                     "~/.cache/"))
+                (expand-file-name
+                 (file-name-as-directory
+                  (or (getenv "PRE_COMMIT_HOME")
+                      (getenv "XDG_CACHE_HOME")
+                      "~/.cache/")))
                 "pre-commit/db.db"))
 
               (db
