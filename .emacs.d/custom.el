@@ -403,6 +403,14 @@
  '(window-divider-mode t)
  '(winner-mode t)
  '(words-include-escapes t)
+ '(world-clock-list
+   '(("America/Los_Angeles" "San Francisco")
+     ("America/New_York" "New York")
+     ("Europe/London" "London")
+     ("Europe/Paris" "Paris")
+     ("Asia/Calcutta" "Bangalore")
+     ("Asia/Hong_Kong" "Hong Kong")
+     ("Asia/Tokyo" "Tokyo")))
  '(x-underline-at-descent-line t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
