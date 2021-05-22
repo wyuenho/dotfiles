@@ -1638,6 +1638,22 @@ variants of Typescript.")
 (use-package importmagic
   :delight)
 
+(defun python-get-black-d-request-headers ()
+  (let-alist (python-pyproject)
+    `(,@(if .tool.black.line-length
+            `(,(cons "X-Line-Length" (format "%s" .tool.black.line-length))))
+      ,@(if (and .tool.black.skip-string-normalization
+                 (not (eq .tool.black.skip.string-normalization :false)))
+            `(,(cons "X-Skip-String-Normalization" "1")))
+      ,@(if (or .tool.black.fast .tool.black.safe)
+            `(,(cons "X-Fast-Or-Safe" (if .tool.black.fast "fast" "safe"))))
+      ,@(if (or .tool.black.pyi .tool.black.target-version)
+            `(,(cons "X-Python-Variant"
+                     (if .tool.black.pyi
+                         "pyi"
+                       (funcall 'string-join
+                                (append .tool.black.target-version) ","))))))))
+
 (defun python-black-setup ()
   (let ((requirements (python-project-requirements)))
     (when (cond ((and (python-use-pre-commit-p requirements)
@@ -1669,7 +1685,7 @@ variants of Typescript.")
                  (setf python-black-d-command
                        (with-temp-buffer
                          (if (condition-case err
-                                 (and (call-process "poetry" nil t nil "run" "which" python-blackd-command)
+                                 (and (call-process "poetry" nil t nil "run" "which" python-black-d-command)
                                       (zerop (call-process "poetry" nil nil nil "run"
                                                            python-black-d-command "--version")))
                                (error (message "%s" (error-message-string err)) nil))
@@ -1685,22 +1701,6 @@ variants of Typescript.")
                  (make-local-variable 'python-black-d-command)
                  (setf python-black-command nil
                        python-black-d-command nil)))
-
-      (defun python-get-black-d-request-headers ()
-        (let-alist (python-pyproject)
-          `(,@(if .tool.black.line-length
-                  `(,(cons "X-Line-Length" (format "%s" .tool.black.line-length))))
-            ,@(if (and .tool.black.skip-string-normalization
-                       (not (eq .tool.black.skip.string-normalization :false)))
-                  `(,(cons "X-Skip-String-Normalization" "true")))
-            ,@(if (or .tool.black.fast .tool.black.safe)
-                  `(,(cons "X-Fast-Or-Safe" (if .tool.black.fast "fast" "safe"))))
-            ,@(if (or .tool.black.pyi .tool.black.target-version)
-                  `(,(cons "X-Python-Variant"
-                           (if .tool.black.pyi
-                               "pyi"
-                             (funcall 'string-join
-                                      (append .tool.black.target-version) ","))))))))
 
       (when python-black-d-command
         (make-local-variable 'python-black-d-request-headers-function)
