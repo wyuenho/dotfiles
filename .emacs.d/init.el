@@ -2256,6 +2256,13 @@ ELEMENT is only added once."
             (rg-mode      . search)
             (vterm-mode   . terminal)))
 
+  (with-eval-after-load 'message
+    (defun message-kill-buffer-advice (fn &rest args)
+      "Quit the window after killing the message buffer."
+      (apply fn args)
+      (quit-window))
+    (advice-add 'message-kill-buffer :around 'message-kill-buffer-advice))
+
   (with-eval-after-load 'window-purpose-x
     (add-to-list 'purpose-x-popwin-buffer-names "*Messages*")
     (add-to-list 'purpose-x-popwin-buffer-names "*Warnings*")
