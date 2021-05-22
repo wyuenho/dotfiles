@@ -731,6 +731,7 @@ checker symbol."
 (use-package lsp-ui
   :after (lsp-mode)
   :config
+  (setf lsp-ui-doc-border (face-foreground 'window-divider))
   (add-hook 'lsp-ui-doc-frame-hook
             (lambda (_ window)
               (let* ((frame (window-frame window)))
