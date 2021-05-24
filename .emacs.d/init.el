@@ -871,8 +871,8 @@ checker symbol."
 ;; Linting
 (defun find-file-from-project-root (file-name)
   (when-let ((dir (locate-dominating-file
-                   (or (and (featurep 'projectile)
-                            (projectile-project-root))
+                   (or (and (functionp 'projectile-acquire-root)
+                            (projectile-acquire-root))
                        default-directory)
                    file-name)))
     (expand-file-name (concat dir file-name))))
@@ -1173,8 +1173,8 @@ checker symbol."
   (when (and (buffer-file-name)
              (derived-mode-p 'python-mode))
     (let* ((buf-file (buffer-file-name))
-           (root (and (featurep 'projectile)
-                      (projectile-project-root (file-name-directory buf-file)))))
+           (root (and (functionp 'projectile-acquire-root)
+                      (projectile-acquire-root (file-name-directory buf-file)))))
 
       (when (and root
                  (not (seq-some (lambda (buf)
@@ -1920,9 +1920,8 @@ variants of Typescript.")
   (defun projectile-project-find-function (dir)
     (let* ((root (projectile-project-root dir)))
       (and root (cons 'transient root))))
-
-  :bind-keymap ("C-c p" . projectile-command-map)
   :config
+  (global-set-key (kbd "C-c p") projectile-command-map)
   (projectile-mode 1)
   (with-eval-after-load 'project
     (add-to-list 'project-find-functions 'projectile-project-find-function))
