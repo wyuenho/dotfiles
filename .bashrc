@@ -141,6 +141,11 @@ fi
 # Direnv
 [ -x "$(command -v direnv)" ] && eval "$(direnv hook bash)"
 
+# pyenv
+if [ -x "$(command -v pyenv)" ]; then
+    eval "$(pyenv init -)"
+fi
+
 # History
 
 HSTR_CONFIG=hicolor,raw-history-view
