@@ -2259,6 +2259,11 @@ ELEMENT is only added once."
             (vterm-mode   . terminal)))
 
   (with-eval-after-load 'message
+    (defun message-send-and-exit-advice (fn &rest args)
+      "Quit the window after killing the message buffer after sending."
+      (apply fn args)
+      (quit-window))
+    (advice-add 'message-send-and-exit :around 'message-send-and-exit-advice)
     (defun message-kill-buffer-advice (fn &rest args)
       "Quit the window after killing the message buffer."
       (apply fn args)
