@@ -113,9 +113,6 @@ under `user-emacs-directory'.  If it exists, loaded it."
   (spaceline-spacemacs-theme)
   (spaceline-toggle-buffer-encoding-abbrev-off))
 
-(use-package powerline
-  :quelpa (powerline :fetcher github :repo "wyuenho/powerline" :branch "nativecomp"))
-
 ;; Replace the major mode name with its icon
 (use-package all-the-icons
   :if (display-graphic-p)
