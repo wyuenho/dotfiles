@@ -40,7 +40,6 @@
 	# from https://help.github.com/articles/remove-sensitive-data
 	remove-file = "!f() { git filter-branch -f --index-filter \"git rm --cached --ignore-unmatch $1\" --prune-empty --tag-name-filter cat -- --all; }; f"
 
-
 [color]
 	ui = true
 
@@ -80,7 +79,7 @@
 	smtpEncryption = tls
 	smtpServer = smtp.gmail.com
 	smtpUser = wyuenho@gmail.com
-	smtpServerPort = 587
+	smtpServerPort = 465
 
 [pull]
 	ff = only
