@@ -1914,19 +1914,11 @@ variants of Typescript.")
 ;; Project management
 (use-package projectile
   :delight projectile-mode
-  :preface
-  ;; Bridge projectile and project together so packages that depend on project
-  ;; like eglot work
-  (defun projectile-project-find-function (dir)
-    (let* ((root (projectile-project-root dir)))
-      (and root (cons 'transient root))))
   :config
-  (global-set-key (kbd "C-c p") projectile-command-map)
+  (global-set-key (kbd "C-x p") projectile-command-map)
   (projectile-mode 1)
-  (with-eval-after-load 'project
-    (add-to-list 'project-find-functions 'projectile-project-find-function))
   (with-eval-after-load 'which-key
-    (which-key-add-key-based-replacements "C-c p" "projectile")
+    (which-key-add-key-based-replacements "C-x p" "projectile")
     (which-key-add-keymap-based-replacements projectile-command-map
       "4" "projectile-other-window"
       "5" "projectile-other-frame"
