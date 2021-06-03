@@ -25,6 +25,14 @@ XDG_CACHE_HOME="$HOME/.cache"
 export XDG_DATA_HOME
 XDG_DATA_HOME="$HOME/.local/share"
 
+# Xcode
+if [ -d "/Library/Developer/CommandLineTools" ]; then
+    MANPATH="/Library/Developer/CommandLineTools/usr/share/man:$MANPATH"
+    if [ -d "/Library/Developer/CommandLineTools/SDKs" ]; then
+        MANPATH="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/share/man:$MANPATH"
+    fi
+fi
+
 # Homebrew
 PATH="/usr/local/sbin:$PATH"
 
