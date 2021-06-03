@@ -79,6 +79,7 @@
 
 [pull]
 	ff = only
+	rebase = merge
 
 [interactive]
 	diffFilter = delta --color-only
