@@ -79,7 +79,7 @@
 
 [pull]
 	ff = only
-	rebase = merge
+	rebase = merges
 
 [interactive]
 	diffFilter = delta --color-only
@@ -89,5 +89,6 @@
 	line-numbers = true
 	syntax-theme = zenburn
 	tabs = 2
+
 [init]
 	defaultBranch = main
