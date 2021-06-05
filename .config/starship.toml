@@ -42,3 +42,7 @@ disabled = true
 
 [zig]
 disabled = true
+
+[nodejs]
+symbol = "   "
+format = "via[$symbol($version) ]($style)"
