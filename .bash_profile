@@ -154,11 +154,6 @@ if [ -f "$HOME/.google-cloud-sdk/path.bash.inc" ]; then
     source "$HOME/.google-cloud-sdk/path.bash.inc"
 fi
 
-# Netlify's Git Credential Helper.
-if [ -f "$HOME/.netlify/helper/path.bash.inc" ]; then
-    source "$HOME/.netlify/helper/path.bash.inc"
-fi
-
 # PWD
 PATH=".:$PATH"
 
