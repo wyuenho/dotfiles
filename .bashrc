@@ -136,6 +136,9 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
     if [ -d "$GIT_SUBREPO_ROOT" ] && [ -f "$GIT_SUBREPO_ROOT/share/completion.bash" ]; then
         source "$GIT_SUBREPO_ROOT/share/completion.bash"
     fi
+
+    # CircleCI
+    [ -x "$(command -v circleci)" ] && eval "$(circleci completion bash)"
 fi
 
 # Direnv
