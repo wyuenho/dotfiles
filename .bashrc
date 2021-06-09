@@ -142,7 +142,9 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
 fi
 
 # Direnv
-[ -x "$(command -v direnv)" ] && eval "$(direnv hook bash)"
+if [ -x "$(command -v direnv)" ]; then
+    eval "$(direnv hook bash)"
+fi
 
 # pyenv
 if [ -x "$(command -v pyenv)" ]; then
