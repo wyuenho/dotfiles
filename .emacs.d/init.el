@@ -2223,13 +2223,7 @@ ELEMENT is only added once."
   (windmove-default-keybindings))
 
 (use-package buffer-move
-  :bind (("C-c b <left>"  . buf-move-left)
-         ("C-c b <right>" . buf-move-right)
-         ("C-c b <up>"    . buf-move-up)
-         ("C-c b <down>"  . buf-move-down))
-  :config
-  (with-eval-after-load 'which-key
-    (which-key-add-key-based-replacements "C-c b" "buffer-move")))
+  :bind (("C-c b" . buf-move)))
 
 (use-package window-purpose
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts")
