@@ -1,10 +1,10 @@
 [user]
 	name = Jimmy Yuen Ho Wong
 	email = wyuenho@gmail.com
-	signingkey = D1D84FDB614C2B7C
+	signingKey = D1D84FDB614C2B7C
 
 [core]
-	excludesfile = ~/.gitignore_global
+	excludesFile = ~/.gitignore_global
 	autocrlf = input
 	pager = delta
 
@@ -62,7 +62,7 @@
 	fsckObjects = true
 
 [commit]
-	gpgsign = true
+	gpgSign = true
 
 [fetch]
 	fsckObjects = false
