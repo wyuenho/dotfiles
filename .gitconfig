@@ -1,7 +1,12 @@
 [core]
 	excludesFile = ~/.gitignore_global
 	autocrlf = input
-	pager = delta
+
+[pager]
+	diff = delta
+	log = delta
+	reflog = delta
+	show = delta
 
 [difftool "ediff"]
 	cmd = emacsclient --eval \"(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")\"
