@@ -387,8 +387,6 @@ Optional argument ARG same as `comment-dwim''s."
               ("C-p"    . icomplete-backward-completions)
               ("C-v"    . icomplete-vertical-toggle)))
 
-(use-package icomplete-vertical)
-
 ;; Convenient iMenu entry search
 (use-package imenu-anywhere
   :bind (("C-\\" . imenu-anywhere)))
