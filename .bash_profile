@@ -81,6 +81,7 @@ if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
     export SDKMAN_DIR
     SDKMAN_DIR="$HOME/.sdkman"
     source "$SDKMAN_DIR/bin/sdkman-init.sh"
+    unset KEYTOOL
 fi
 
 # Python
