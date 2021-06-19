@@ -76,11 +76,6 @@
 
 [push]
 	default = simple
-	gpgSign = true
-
-[tag]
-	gpgSign = true
-	forceSignAnnotated = true
 
 [merge]
 	tool = ediff
