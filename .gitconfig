@@ -2,29 +2,12 @@
 	excludesFile = ~/.gitignore_global
 	autocrlf = input
 
-[pager]
-	diff = delta
-	log = delta
-	reflog = delta
-	show = delta
+[github]
+	user = wyuenho@gmail.com
 
-[difftool "ediff"]
-	cmd = emacsclient --eval \"(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")\"
-
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path =
-
-[mergetool "ediff"]
-	cmd = emacsclient --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"
-
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
-
-[merge]
-	tool = ediff
-	conflictStyle = diff3
+[credential]
+	helper = osxkeychain
+	useHttpPath = true
 
 [alias]
 	co = checkout
@@ -40,49 +23,11 @@
 	# from https://help.github.com/articles/remove-sensitive-data
 	remove-file = "!f() { git filter-branch -f --index-filter \"git rm --cached --ignore-unmatch $1\" --prune-empty --tag-name-filter cat -- --all; }; f"
 
-[color]
-	ui = true
-
-[push]
-	default = simple
-
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	required = true
-	process = git-lfs filter-process
-
-[diff]
-	submodule = log
-
-[github]
-	user = wyuenho@gmail.com
-
-[transfer]
-	fsckObjects = true
-
-[commit]
-	gpgSign = true
-
-[fetch]
-	fsckObjects = false
-
-[credential]
-	helper = osxkeychain
-	useHttpPath = true
-
-[sendemail]
-	smtpEncryption = tls
-	smtpServer = smtp.gmail.com
-	smtpUser = wyuenho@gmail.com
-	smtpServerPort = 465
-
-[pull]
-	ff = only
-	rebase = merges
-
-[interactive]
-	diffFilter = delta --color-only
+[pager]
+	diff = delta
+	log = delta
+	reflog = delta
+	show = delta
 
 [delta]
 	hunk-header-style = syntax
@@ -90,5 +35,69 @@
 	syntax-theme = zenburn
 	tabs = 2
 
+[difftool "ediff"]
+	cmd = emacsclient --eval \"(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")\"
+
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path =
+
+[mergetool "ediff"]
+	cmd = emacsclient --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"
+
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+
+[color]
+	ui = true
+
+[interactive]
+	diffFilter = delta --color-only
+
 [init]
 	defaultBranch = main
+
+[diff]
+	submodule = log
+
+[transfer]
+	fsckObjects = true
+
+[fetch]
+	fsckObjects = false
+
+[pull]
+	ff = only
+	rebase = merges
+
+[commit]
+	gpgSign = true
+
+[push]
+	default = simple
+	gpgSign = true
+
+[tag]
+	gpgSign = true
+	forceSignAnnotated = true
+
+[merge]
+	tool = ediff
+	conflictStyle = diff3
+	autoStash = true
+
+[rebase]
+	autoStash = true
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	required = true
+	process = git-lfs filter-process
+
+[sendemail]
+	smtpEncryption = tls
+	smtpServer = smtp.gmail.com
+	smtpUser = wyuenho@gmail.com
+	smtpServerPort = 465
