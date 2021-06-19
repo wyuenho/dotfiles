@@ -34,6 +34,7 @@
 	line-numbers = true
 	syntax-theme = zenburn
 	tabs = 2
+	max-line-length = 2048
 
 [difftool "ediff"]
 	cmd = emacsclient --eval \"(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")\"
