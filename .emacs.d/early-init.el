@@ -13,10 +13,6 @@
 (set-face-attribute 'mode-line-buffer-id nil :weight 'bold :foreground "#93a1a1")
 (set-face-attribute 'fringe nil :background "#002b36" :foreground "#586e75")
 
-;; Will at least display native Unicode emojis if the multicolor font
-;; patch is applied
-;; (set-fontset-font "fontset-default" 'unicode "Apple Color Emoji" nil 'prepend)
-
 ;; Set up initial and default frame params
 (pcase-dolist (`(,param . ,value)
                '((background-mode        . dark)
