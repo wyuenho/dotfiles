@@ -40,65 +40,24 @@ fi
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)" # Debian
 
 # Aliases
-if [ -x /usr/bin/dircolors ]; then # Debian
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls="ls -Fh --color=auto"
-else
-    alias ls="ls -FhG" # BSD
-fi
-
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
-alias grep='grep --color=auto -C 5 -nH'
-alias fgrep='grep -F'
-alias egrep='grep -E'
-
-alias cp="cp -iPp"
-alias mv="mv -iv"
-
-if diff --color /etc/hostname /etc/hostname > /dev/null 2>&1; then
-    alias diff="diff --color -ur"
-else
-    alias diff="diff -ur"
-fi
-
-if [ -x "$(command -v git)" ]; then
-    alias git='git --config-env=user.email=EMAIL'
-fi
-
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-[ -x "$(command -v hub)" ] && eval "$(hub alias -s)"
-
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
 [ -f ~/.bash_aliases ] && source ~/.bash_aliases
 
 # Prompt
-if [ -x "$(command -v starship)" ]; then
-    eval "$(starship init bash)"
-else
-    # set variable identifying the chroot you work in (used in the prompt below)
-    if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-        debian_chroot=$(cat /etc/debian_chroot)
-    fi
-
-    case "$TERM" in
-        xterm-color|*-256color) color_prompt=yes;;
-    esac
-
-    if [ "$color_prompt" = yes ]; then
-        PS1='${debian_chroot:+($debian_chroot)}\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\[\e[01;35m\]\[\e[0m\]\n\$ '
-    else
-        PS1='${debian_chroot:+($debian_chroot)}\u@\h \w\n\$ '
-    fi
-    unset color_prompt
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
 fi
+
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\[\e[01;35m\]\[\e[0m\]\n\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h \w\n\$ '
+fi
+unset color_prompt
 
 # Bash Completion
 if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq posix; then
@@ -174,9 +133,6 @@ fi
 
 # History
 
-HSTR_CONFIG=hicolor,raw-history-view
-export HSTR_CONFIG
-
 # append new history items to .bash_history
 shopt -s histappend
 
@@ -203,12 +159,17 @@ if "$declared" =~ \ -[aAilrtu]*x[aAilrtu]*\  2>/dev/null; then
 fi
 
 # Better bash history search
-if [ -x "$(command -v hstr)" ]; then
-    alias hh="hstr"
-    # if this is interactive shell, then bind hstr to Ctrl-r (for Vi mode check doc)
-    bind '"\C-r": "\C-a hstr -- \C-j"';
-    # if this is interactive shell, then bind 'kill last command' to Ctrl-x k
-    bind '"\C-xk": "\C-a hstr -k \C-j"';
+if [ -r "/opt/local/share/mcfly/mcfly.bash" ]; then
+    export MCFLY_FUZZY
+    MCFLY_FUZZY=true
+    export MCFLY_RESULTS
+    MCFLY_RESULTS=50
+    source "/opt/local/share/mcfly/mcfly.bash"
+fi
+
+# Feature packed and fast prompt
+if [ -x "$(command -v starship)" ]; then
+    eval "$(starship init bash)"
 fi
 
 # Emacs vterm support
