@@ -1995,6 +1995,8 @@ variants of Typescript.")
               (lambda ()
                 (define-key git-rebase-mode-map (kbd "M-z") 'git-rebase-undo)))))
 
+(use-package magit-libgit)
+
 (use-package forge
   :after (magit)
   :config
