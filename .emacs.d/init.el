@@ -657,8 +657,7 @@ region."
            swift-mode
            tuareg-mode
            typescript-mode
-           typescript-tsx-mode
-           web-mode)
+           typescript-tsx-mode)
           . (lambda ()
               (when (not (derived-mode-p 'json-mode))
                 (lsp-deferred))))

@@ -195,7 +195,7 @@
  '(linum-delay t)
  '(linum-format "%4d ")
  '(lsp-auto-guess-root t)
- '(lsp-disabled-clients '(pyls eslint ocaml-ls bash-ls))
+ '(lsp-disabled-clients '(pyls eslint ocaml-ls bash-ls html-ls css-ls))
  '(lsp-eldoc-enable-hover nil)
  '(lsp-enable-file-watchers nil)
  '(lsp-headerline-breadcrumb-enable nil)
