@@ -138,7 +138,9 @@ under `user-emacs-directory'.  If it exists, loaded it."
       `(("." . ,(concat user-emacs-directory "backups"))))
 
 ;; Automatically wrap overly long lines for all text modes
-(add-hook 'text-mode-hook 'auto-fill-mode)
+(add-hook 'text-mode-hook (lambda ()
+                            (unless (member major-mode '(yaml-mode))
+                              (auto-fill-mode 1))))
 
 ;; Turn on line wrapping for programming, text and message buffers
 (dolist (hook '(prog-mode-hook text-mode-hook messages-buffer-mode-hook Custom-mode-hook))
