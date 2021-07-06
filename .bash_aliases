@@ -1,3 +1,5 @@
+# -*- mode: sh; -*-
+
 # Aliases
 if [ -x /usr/bin/dircolors ]; then # Debian
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
