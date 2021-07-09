@@ -854,7 +854,7 @@ checker symbol."
 
 (use-package company-box
   :if (display-graphic-p)
-  :quelpa (company-box :fetcher github :repo "wyuenho/company-box" :branch "all-the-icons-font-lock-faces")
+  :quelpa (company-box :fetcher github :repo "wyuenho/company-box")
   :delight
   :hook (company-mode . company-box-mode))
 
