@@ -39,15 +39,15 @@
 [difftool "ediff"]
 	cmd = emacsclient --eval \"(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")\"
 
-[difftool "sourcetree"]
+[difftool "opendiff"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path =
+	trustExitCode = true
 
 [mergetool "ediff"]
 	cmd = emacsclient --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"
 
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+[mergetool "opendiff"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\" | cat
 	trustExitCode = true
 
 [color]
@@ -80,6 +80,7 @@
 
 [merge]
 	tool = ediff
+	guitool = opendiff
 	conflictStyle = diff3
 	autoStash = true
 
