@@ -33,7 +33,8 @@
                                    (abbreviate-file-name (buffer-file-name))))))
 
 ;; Turn off the tool bar early
-(tool-bar-mode -1)
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
 
 ;; Set up NS port specific variables
 (add-hook 'window-setup-hook
