@@ -870,8 +870,8 @@ checker symbol."
 ;; Linting
 (defun find-file-from-project-root (file-name)
   (when-let ((dir (locate-dominating-file
-                   (or (and (functionp 'projectile-acquire-root)
-                            (projectile-acquire-root))
+                   (or (and (functionp 'projectile-project-root)
+                            (projectile-project-root))
                        default-directory)
                    file-name)))
     (expand-file-name (concat dir file-name))))
