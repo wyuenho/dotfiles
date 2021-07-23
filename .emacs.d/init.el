@@ -1418,11 +1418,6 @@ optionally the window if possible."
   :bind (:map emacs-lisp-mode-map
               ("C-c e x" . macrostep-expand)))
 
-(use-package cl-lib-highlight
-  :config
-  (cl-lib-highlight-initialize)
-  (cl-lib-highlight-warn-cl-initialize))
-
 (use-package elisp-def
   :delight
   :hook (emacs-lisp-mode . elisp-def-mode))
