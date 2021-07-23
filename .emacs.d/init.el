@@ -90,7 +90,8 @@ under `user-emacs-directory'.  If it exists, loaded it."
                    (tooltip                           . company-tooltip)
                    (lsp-signature-posframe            . company-tooltip)
                    (lsp-ui-doc-background             . company-tooltip)
-                   (flycheck-posframe-background-face . company-tooltip)))
+                   (flycheck-posframe-background-face . company-tooltip)
+                   (company-box-numbers               . company-tooltip-quick-access)))
     (put face 'theme-face nil)
     (put face 'face-alias alias))
 
