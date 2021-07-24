@@ -1287,6 +1287,10 @@ FILEPATH can be a relative path to one of the directories in
 
   (global-flycheck-mode 1))
 
+(use-package flycheck-popup-tip
+  :after flycheck
+  :hook (flycheck-mode . flycheck-popup-tip-mode))
+
 ;; REST API
 (use-package org
   :mode ("\\.org\\'" . org-mode)
