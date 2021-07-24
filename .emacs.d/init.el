@@ -90,7 +90,6 @@ under `user-emacs-directory'.  If it exists, loaded it."
                    (tooltip                           . company-tooltip)
                    (lsp-signature-posframe            . company-tooltip)
                    (lsp-ui-doc-background             . company-tooltip)
-                   (flycheck-posframe-background-face . company-tooltip)
                    (company-box-numbers               . company-tooltip-quick-access)))
     (put face 'theme-face nil)
     (put face 'face-alias alias))
@@ -1287,28 +1286,6 @@ FILEPATH can be a relative path to one of the directories in
                 (- (spinner-stop)))))
 
   (global-flycheck-mode 1))
-
-(with-eval-after-load 'posframe
-  (defun posframe-poshandler-mouse-pixel-position (_)
-    (let* ((mouse-pos (mouse-pixel-position))
-           (info (list :x-pixel-offset 0 :y-pixel-offset 0
-                       :position (cons (cadr mouse-pos) (cddr mouse-pos)))))
-      (posframe-poshandler-absolute-x-y info))))
-
-(use-package flycheck-posframe
-  :if (display-graphic-p)
-  :after (flycheck)
-  :hook (flycheck-mode . flycheck-posframe-mode)
-  :config
-  (add-hook 'flycheck-posframe-mode-hook
-            (lambda ()
-              (if flycheck-posframe-mode-hook
-                  (setf flycheck-help-echo-function
-                        (lambda (errors)
-                          (let ((flycheck-posframe-position 'mouse-pixel-position))
-                            (flycheck-posframe-show-posframe errors))))
-                (setf flycheck-help-echo-function
-                      (default-toplevel-value 'flycheck-help-echo-function))))))
 
 ;; REST API
 (use-package org
