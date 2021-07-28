@@ -1645,7 +1645,8 @@ variants of Typescript.")
                          (and (condition-case err
                                   (zerop (call-process blackd-path nil nil nil "--version"))
                                 (error (message "%s" (error-message-string err)) nil))
-                              blackd-path))))
+                              blackd-path)))
+                 t)
 
                 ((and (python-use-poetry-p)
                       (member "black" requirements))
@@ -1666,7 +1667,8 @@ variants of Typescript.")
                                                            python-black-d-command "--version")))
                                (error (message "%s" (error-message-string err)) nil))
                              (string-trim (buffer-string))
-                           nil))))
+                           nil)))
+                 t)
 
                 ((or (executable-find python-black-command)
                      (and (executable-find python-black-d-command)
@@ -1676,7 +1678,8 @@ variants of Typescript.")
                  (make-local-variable 'python-black-command)
                  (make-local-variable 'python-black-d-command)
                  (setf python-black-command nil
-                       python-black-d-command nil)))
+                       python-black-d-command nil)
+                 t))
 
       (when python-black-d-command
         (make-local-variable 'python-black-d-request-headers-function)
@@ -1690,14 +1693,16 @@ variants of Typescript.")
                       (python-pre-commit-config-has-hook-p "isort"))
                  (make-local-variable 'python-isort-command)
                  (setf python-isort-command
-                       (concat (python-pre-commit-virtualenv-path "isort") "/bin/isort")))
+                       (concat (python-pre-commit-virtualenv-path "isort") "/bin/isort"))
+                 t)
                 ((and (python-use-poetry-p)
                       (member "isort" requirements))
                  (make-local-variable 'python-isort-command)
                  (make-local-variable 'python-isort-arguments)
                  (setf python-isort-command "poetry"
                        python-isort-arguments
-                       (append '("run" "isort") python-isort-arguments)))
+                       (append '("run" "isort") python-isort-arguments))
+                 t)
                 ((executable-find python-isort-command)
                  (when (and (boundp 'python-black-command)
                             python-black-command
