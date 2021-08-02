@@ -164,6 +164,8 @@ if [ -r "/opt/local/share/mcfly/mcfly.bash" ]; then
     MCFLY_FUZZY=true
     export MCFLY_RESULTS
     MCFLY_RESULTS=50
+    export MCFLY_RESULTS_SORT
+    MCFLY_RESULTS_SORT=LAST_RUN
     source "/opt/local/share/mcfly/mcfly.bash"
 fi
 
