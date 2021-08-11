@@ -139,7 +139,7 @@ under `user-emacs-directory'.  If it exists, loaded it."
 
 ;; Automatically wrap overly long lines for all text modes
 (add-hook 'text-mode-hook (lambda ()
-                            (unless (member major-mode '(yaml-mode))
+                            (unless (member major-mode '(yaml-mode markdown-mode))
                               (auto-fill-mode 1))))
 
 ;; Turn on line wrapping for programming, text and message buffers
@@ -1991,7 +1991,6 @@ variants of Typescript.")
   (remove-hook 'forge-post-mode-hook 'turn-on-flyspell))
 
 (use-package magit-todos
-  :quelpa (magit-todos :fetcher github :repo "wyuenho/magit-todos" :branch "fix-95")
   :after (magit)
   :config (magit-todos-mode 1))
 
