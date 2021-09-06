@@ -1201,35 +1201,19 @@ checker symbol."
 (use-package flycheck
   :delight
   :config
-  (defun flycheck-locate-config-file-xdg (filepath checker)
-    "Locate a configuration file in `XDG_CONFIG_HOME' and `XDG_CONFIG_DIRS.'
+  (setf flycheck-pylintrc '("pylintrc" ".pylintrc" "pyproject.toml" "setup.cfg"
+                            (or (getenv "PYLINTRC")
+                                (expand-file-name "~/.config/pylintrc"))
+                            "/etc/pylintrc"))
 
-FILEPATH can be a relative path to one of the directories in
-`XDG_CONFIG_HOME' and `XDG_CONFIG_DIRS'.  If FILEPATH is a file name, "
-    (let* ((checker-name (or (cadr (split-string (symbol-name checker) "-"))
-                             (symbol-name checker)))
-           (xdg-config-home (expand-file-name
-                             (or (file-name-as-directory (getenv "XDG_CONFIG_HOME"))
-                                 "~/.config/")))
-           (xdg-config-dirs (getenv "XDG_CONFIG_DIRS"))
-           (dir
-            (seq-find
-             (lambda (dir)
-               (let ((full-path (concat dir filepath)))
-                 (file-exists-p full-path)))
-             `(,xdg-config-home
-               ,(file-name-as-directory (concat xdg-config-home checker-name))
-               ,@(and xdg-config-dirs
-                      (mapcar
-                       'file-name-as-directory
-                       (split-string xdg-config-dirs ":")))))))
-      (and dir (concat dir filepath))))
+  (setf flycheck-flake8rc '(".flake8" "setup.cfg" "tox.ini"
+                            (expand-file-name "~/.config/flake8")))
 
-  (setf flycheck-locate-config-file-functions
-        '(flycheck-locate-config-file-by-path
-          flycheck-locate-config-file-ancestor-directories
-          flycheck-locate-config-file-xdg
-          flycheck-locate-config-file-home))
+  (setf flycheck-python-mypy-config '("mypy.ini" ".mypy.ini" "pyproject.toml" "setup.cfg"
+                                      (concat (expand-file-name
+                                               (or (file-name-as-directory (getenv "XDG_CONFIG_HOME"))
+                                                   "~/.config/"))
+                                              "mypy/config")))
 
   (defun flycheck-python-needs-module-p-advice (fn checker)
     "Make sure the checker CHECKER is enabled if the checker executable is found."

@@ -109,12 +109,10 @@
  '(flx-ido-use-faces t)
  '(flycheck-disabled-checkers '(json-jsonlint json-python-json))
  '(flycheck-emacs-lisp-load-path 'inherit)
- '(flycheck-flake8rc '(".flake8" "setup.cfg" "tox.ini" "flake8"))
  '(flycheck-global-modes
    '(json-mode js-mode js2-mode rjsx-mode scss-mode css-mode python-mode ruby-mode enh-ruby-mode go-mode rust-mode swift-mode scala-mode c-mode c++-mode objc-mode))
  '(flycheck-javascript-eslint-executable "eslint_d")
  '(flycheck-pos-tip-max-width 80)
- '(flycheck-python-mypy-config '("mypy.ini" "setup.cfg" "mypy/config"))
  '(frame-resize-pixelwise t)
  '(garbage-collection-messages t)
  '(gc-cons-threshold 80000000)
