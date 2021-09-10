@@ -266,17 +266,18 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("C-h b" . which-key-show-top-level)
          ("C-h m" . which-key-show-major-mode))
   :config
+  (which-key-add-key-based-replacements "C-x 4" "window")
+  (which-key-add-key-based-replacements "C-x 5" "frame")
   (which-key-add-keymap-based-replacements ctl-x-map
     "RET" "mule"
-    "4" "other-window"
-    "5" "other-frame"
     "8" "unicode"
     "@" "event-apply"
     "X" "edebug"
+    "x" "buffer"
     "a" "abbrev"
     "n" "narrow"
     "r" "register"
-    "C-a" "edebug")
+    "C-a" "gud")
   (with-eval-after-load 'vc
     (which-key-add-key-based-replacements "C-x v M" "vc-merge")))
 
