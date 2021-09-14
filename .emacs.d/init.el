@@ -1202,19 +1202,19 @@ checker symbol."
 (use-package flycheck
   :delight
   :config
-  (setf flycheck-pylintrc '("pylintrc" ".pylintrc" "pyproject.toml" "setup.cfg"
-                            (or (getenv "PYLINTRC")
-                                (expand-file-name "~/.config/pylintrc"))
+  (setf flycheck-pylintrc `("pylintrc" ".pylintrc" "pyproject.toml" "setup.cfg"
+                            ,(or (getenv "PYLINTRC")
+                                 (expand-file-name "~/.config/pylintrc"))
                             "/etc/pylintrc"))
 
-  (setf flycheck-flake8rc '(".flake8" "setup.cfg" "tox.ini"
-                            (expand-file-name "~/.config/flake8")))
+  (setf flycheck-flake8rc `(".flake8" "setup.cfg" "tox.ini"
+                            ,(expand-file-name "~/.config/flake8")))
 
-  (setf flycheck-python-mypy-config '("mypy.ini" ".mypy.ini" "pyproject.toml" "setup.cfg"
-                                      (concat (expand-file-name
-                                               (or (file-name-as-directory (getenv "XDG_CONFIG_HOME"))
-                                                   "~/.config/"))
-                                              "mypy/config")))
+  (setf flycheck-python-mypy-config `("mypy.ini" ".mypy.ini" "pyproject.toml" "setup.cfg"
+                                      ,(concat (expand-file-name
+                                                (or (file-name-as-directory (getenv "XDG_CONFIG_HOME"))
+                                                    "~/.config/"))
+                                               "mypy/config")))
 
   (defun flycheck-python-needs-module-p-advice (fn checker)
     "Make sure the checker CHECKER is enabled if the checker executable is found."
