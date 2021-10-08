@@ -57,7 +57,8 @@ under `user-emacs-directory'.  If it exists, loaded it."
 ;; Turn off useless mode lighters
 (use-package delight
   :config
-  (delight '((whitespace-cleanup-mode)
+  (delight '((cargo-minor-mode              nil cargo)
+             (whitespace-cleanup-mode)
              (aggressive-indent-mode        nil aggressive-indent)
              (auto-fill-function            nil t)
              (isearch-mode                  nil isearch)
@@ -720,9 +721,7 @@ checker symbol."
                              ((derived-mode-p 'enh-ruby-mode)
                               '((warning . ruby-rubocop)))
                              ((derived-mode-p 'go-mode)
-                              '((warning . golangci-lint)))
-                             ((derived-mode-p 'rust-mode)
-                              '((warning . rust-clippy))))))
+                              '((warning . golangci-lint))))))
                   (when lsp-next-checkers
                     (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
                   (when web-mode-checkers
@@ -1783,7 +1782,6 @@ variants of Typescript.")
   (add-hook 'rust-mode-hook
             (lambda ()
               (use-package cargo
-                :delight
                 :config (cargo-minor-mode)))))
 
 ;; Swift
