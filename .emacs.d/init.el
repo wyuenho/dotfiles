@@ -1530,12 +1530,13 @@ optionally the window if possible."
   :mode "\\.\\(?:cjs\\|jsx?\\|mjs\\)\\'")
 
 (use-package json-mode
+  :quelpa (json-mode :fetcher github :repo "wyuenho/json-mode")
   :config
   (define-key json-mode-map (kbd "C-c C-f") nil)
   (add-hook 'json-mode-hook
             (lambda ()
               (when (not (key-binding (kbd "C-c f")))
-                (define-key json-mode-map (kbd "C-c f") 'json-pretty-print-buffer)))))
+                (define-key json-mode-map (kbd "C-c f") 'json-mode-beautify)))))
 
 ;; TypeScript
 (use-package typescript-mode
