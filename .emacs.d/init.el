@@ -1784,6 +1784,9 @@ variants of Typescript.")
               (use-package cargo
                 :config (cargo-minor-mode)))))
 
+(use-package ron-mode
+  :mode "\\.ron'")
+
 ;; Swift
 (use-package swift-mode
   :mode "\\.swift\\'")
