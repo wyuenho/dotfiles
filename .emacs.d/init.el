@@ -752,17 +752,6 @@ checker symbol."
   (add-hook 'js-mode-hook
             (lambda ()
               (unless (derived-mode-p 'json-mode)
-                (use-package dap-chrome
-                  :custom
-                  (dap-chrome-debug-path
-                   (car
-                    (last
-                     (file-expand-wildcards
-                      (concat dap-utils-extension-path
-                              "/msjsdiag.debugger-for-chrome-*")))))
-                  (dap-chrome-debug-program
-                   (concat "node " dap-chrome-debug-path "/out/src/chromeDebug.js")))
-
                 (use-package dap-firefox
                   :custom
                   (dap-firefox-debug-path
