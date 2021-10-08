@@ -1940,7 +1940,6 @@ variants of Typescript.")
   (with-eval-after-load 'dired
     (add-hook 'dired-mode-hook (lambda () (diff-hl-dired-mode 1))))
   (with-eval-after-load 'magit
-    (add-hook 'magit-post-commit-hook 'diff-hl-update)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
 
