@@ -2,6 +2,10 @@
 (require 'cl-lib)
 
 ;; Set up default fonts
+(custom-set-variables
+ '(face-font-family-alternatives
+   '(("JetBrains Mono NL" "Noto Sans Mono" "DejaVu Sans Mono" "Menlo")
+     ("Noto Sans" "Helvetica Neue" "Helvetica"))))
 (set-face-attribute 'fixed-pitch nil :family "JetBrains Mono NL" :weight 'regular :width 'normal)
 (set-face-attribute 'fixed-pitch-serif nil :family "Courier New" :weight 'regular :width 'normal)
 (set-face-attribute 'variable-pitch nil :family "Noto Sans" :weight 'regular :width 'normal)
