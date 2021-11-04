@@ -126,13 +126,6 @@ if [ -d "$HOME/.rbenv/bin" ]; then
     fi
 fi
 
-# Go
-if [ -f "$HOME/.gvm/scripts/gvm" ]; then
-    source "$HOME/.gvm/scripts/gvm"
-    export GOROOT_BOOTSTRAP
-    GOROOT_BOOTSTRAP=$(go env GOROOT)
-fi
-
 # Rust
 if [ -d "$HOME/.cargo/bin" ]; then
     PATH="$HOME/.cargo/bin:$PATH"
