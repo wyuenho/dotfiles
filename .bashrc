@@ -148,6 +148,11 @@ if [ -x "$(command -v pyenv)" ]; then
     }
 fi
 
+# Feature packed and fast prompt
+if [ -x "$(command -v starship)" ]; then
+    eval "$(starship init bash)"
+fi
+
 # History
 
 # append new history items to .bash_history
@@ -168,12 +173,6 @@ export HISTSIZE
 
 # mem/file sync
 PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
-# Magic fix for command not found error lifted from
-# https://github.com/Bash-it/bash-it/pull/709
-declared="$(declare -p PROMPT_COMMAND)"
-if "$declared" =~ \ -[aAilrtu]*x[aAilrtu]*\  2>/dev/null; then
-    export PROMPT_COMMAND
-fi
 
 # Better bash history search
 if [ -r "/opt/local/share/mcfly/mcfly.bash" ]; then
@@ -186,37 +185,22 @@ if [ -r "/opt/local/share/mcfly/mcfly.bash" ]; then
     source "/opt/local/share/mcfly/mcfly.bash"
 fi
 
-# Feature packed and fast prompt
-if [ -x "$(command -v starship)" ]; then
-    eval "$(starship init bash)"
+# Magic fix for command not found error lifted from
+# https://github.com/Bash-it/bash-it/blob/ab3b8b8f2204181c46ff9dff7d3c401447200420/plugins/available/osx.plugin.bash
+if [[ $OSTYPE == 'darwin'* ]]; then
+    if type update_terminal_cwd > /dev/null 2>&1 ; then
+        if ! [[ $PROMPT_COMMAND =~ (^|;)update_terminal_cwd($|;) ]] ; then
+            PROMPT_COMMAND="${PROMPT_COMMAND%;};update_terminal_cwd"
+            declared="$(declare -p PROMPT_COMMAND)"
+            [[ "$declared" =~ \ -[aAilrtu]*x[aAilrtu]*\  ]] 2>/dev/null
+            [[ $? -eq 0 ]] && export PROMPT_COMMAND
+        fi
+    fi
 fi
 
 # Emacs vterm support
-vterm_printf() {
-    if [ -n "$TMUX" ]; then
-        # Tell tmux to pass the escape sequences through
-        # (Source: http://permalink.gmane.org/gmane.comp.terminal-emulators.tmux.user/1324)
-        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
-    elif [ "${TERM%%-*}" = "screen" ]; then
-        # GNU screen (screen, screen-256color, screen-256color-bce)
-        printf "\eP\e]%s\007\e\\" "$1"
-    else
-        printf "\e]%s\e\\" "$1"
-    fi
-}
-
-vterm_cmd() {
-    local vterm_elisp
-    vterm_elisp=""
-    while [ $# -gt 0 ]; do
-        vterm_elisp="$vterm_elisp""$(printf '"%s" ' "$(printf "%s" "$1" | sed -e 's|\\|\\\\|g' -e 's|"|\\"|g')")"
-        shift
-    done
-    vterm_printf "51;E$vterm_elisp"
-}
-
-vterm_prompt_end() {
-    vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
-}
-
-PS1=$PS1'\[$(vterm_prompt_end)\]'
+if [ "$INSIDE_EMACS" = 'vterm' ] \
+       && [ -n "$EMACS_VTERM_PATH" ] \
+       && [ -f "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh" ]; then
+    source "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh"
+fi
