@@ -1,4 +1,4 @@
-_poetry_99783ea6f545de73_complete()
+_poetry_cc8b1f3ff07198c6_complete()
 {
     local cur script coms opts com
     COMPREPLY=()
@@ -136,5 +136,5 @@ _poetry_99783ea6f545de73_complete()
     fi
 }
 
-complete -o default -F _poetry_99783ea6f545de73_complete poetry
-complete -o default -F _poetry_99783ea6f545de73_complete /Users/wyuenho/.pyenv/versions/3.9.1/bin/poetry
+complete -o default -F _poetry_cc8b1f3ff07198c6_complete poetry
+complete -o default -F _poetry_cc8b1f3ff07198c6_complete /Users/wyuenho/.local/pipx/venvs/poetry/bin/poetry

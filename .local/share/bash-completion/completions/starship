@@ -37,6 +37,9 @@ _starship() {
             module)
                 cmd+="__module"
                 ;;
+            print-config)
+                cmd+="__print__config"
+                ;;
             prompt)
                 cmd+="__prompt"
                 ;;
@@ -49,6 +52,9 @@ _starship() {
             timings)
                 cmd+="__timings"
                 ;;
+            toggle)
+                cmd+="__toggle"
+                ;;
             *)
                 ;;
         esac
@@ -56,7 +62,7 @@ _starship() {
 
     case "${cmd}" in
         starship)
-            opts=" -h -V  --help --version   init prompt module config bug-report time explain timings completions session help  configure"
+            opts=" -h -V  --help --version   init prompt module config print-config toggle bug-report time explain timings completions session help  configure"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -177,7 +183,7 @@ _starship() {
             return 0
             ;;
         starship__module)
-            opts=" -l -h -V -s -p -d -k -j  --list --help --version --status --path --cmd-duration --keymap --jobs  <name> "
+            opts=" -l -h -V -s -p -P -d -k -j  --list --help --version --status --pipestatus --path --logical-path --cmd-duration --keymap --jobs  <name> "
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -192,11 +198,23 @@ _starship() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --pipestatus)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --path)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                     -p)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --logical-path)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                    -P)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -231,8 +249,23 @@ _starship() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        starship__print__config)
+            opts=" -d -h -V  --default --help --version  "
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         starship__prompt)
-            opts=" -h -V -s -p -d -k -j  --help --version --status --path --cmd-duration --keymap --jobs  "
+            opts=" -h -V -s -p -P -d -k -j  --right --help --version --status --pipestatus --path --logical-path --cmd-duration --keymap --jobs  "
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -247,11 +280,23 @@ _starship() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --pipestatus)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --path)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                     -p)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --logical-path)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                    -P)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -318,6 +363,21 @@ _starship() {
             ;;
         starship__timings)
             opts=" -h -V  --help --version  "
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        starship__toggle)
+            opts=" -h -V  --help --version  <name> <key> "
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
