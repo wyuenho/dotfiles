@@ -766,7 +766,7 @@ checker symbol."
                 (use-package dap-node
                   :custom
                   (dap-node-debug-path
-                   "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.node-debug2")
+                   "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.js-debug")
                   (dap-node-debug-program
                    (concat "node " dap-node-debug-path "/out/src/nodeDebug.js"))))))
 
