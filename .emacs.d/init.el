@@ -1979,6 +1979,13 @@ variants of Typescript.")
 (use-package magit-lfs
   :after (magit))
 
+(use-package git-timemachine
+  :config
+  (defun git-timemachine-quit-advice ()
+    "Quit the `git-timemachine' window and kill the buffer."
+    (interactive) (quit-window t))
+  (advice-add 'git-timemachine-quit :override 'git-timemachine-quit-advice))
+
 (use-package abridge-diff
   :after (magit)
   :delight)
