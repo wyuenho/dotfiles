@@ -1574,6 +1574,14 @@ variants of Typescript.")
   :delight
   :hook (python-mode . python-docstring-mode))
 
+(use-package python-insert-docstring
+  :config
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (local-set-key
+               (kbd "C-c I")
+               'python-insert-docstring-with-google-style-at-point))))
+
 (use-package sphinx-doc
   :delight
   :hook (python-mode . sphinx-doc-mode))
