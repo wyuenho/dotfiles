@@ -126,6 +126,13 @@ if [ -d "$HOME/.rbenv/bin" ]; then
     fi
 fi
 
+# Go
+if [ -x "$(command -v go)" ]; then
+    GOPATH="$HOME/Documents/workspace/go"
+    PATH="$GOPATH/bin:$PATH"
+    export GOPATH
+fi
+
 # Rust
 if [ -d "$HOME/.cargo/bin" ]; then
     PATH="$HOME/.cargo/bin:$PATH"
