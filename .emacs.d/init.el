@@ -648,7 +648,6 @@ region."
   :delight
   :after (which-key)
   :hook (((c-mode-common
-           css-mode
            enh-ruby-mode
            go-mode
            js-mode
