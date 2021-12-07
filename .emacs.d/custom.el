@@ -11,6 +11,8 @@
  '(ag-ignore-list '("*.min.js"))
  '(ag-reuse-buffers t)
  '(ag-reuse-window t)
+ '(aggressive-indent-excluded-modes
+   '(elm-mode haskell-mode inf-ruby-mode makefile-mode makefile-gmake-mode python-mode sql-interactive-mode text-mode yaml-mode tcl-mode))
  '(amx-mode t)
  '(apib-drafter-executable "aglio")
  '(auth-source-protocols
