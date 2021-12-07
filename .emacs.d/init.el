@@ -1940,6 +1940,7 @@ variants of Typescript.")
             'append))
 
 (use-package diff-hl
+  :quelpa (diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "fix-171")
   :config
   (unless (display-graphic-p)
     (diff-hl-margin-mode 1))
