@@ -2,12 +2,13 @@
 # ~/.profile is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
 
 # adding an appropriate DISPLAY variable for use with MacPorts.
-export DISPLAY=:0
+DISPLAY=:0
+export DISPLAY
 
 if [ -z "$MANPATH" ]; then # MacOS
     # Must be set first for /usr/libexec/path_helper to modify
-    export MANPATH
     MANPATH=""
+    export MANPATH
 
     # Run again to set MANPATH
     if [ -x /usr/libexec/path_helper ]; then
@@ -16,14 +17,14 @@ if [ -z "$MANPATH" ]; then # MacOS
 fi
 
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-export XDG_CONFIG_HOME
 XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CONFIG_HOME
 
-export XDG_CACHE_HOME
 XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CACHE_HOME
 
-export XDG_DATA_HOME
 XDG_DATA_HOME="$HOME/.local/share"
+export XDG_DATA_HOME
 
 # Xcode CLI Tools
 if [ -d "/Library/Developer/CommandLineTools/usr/share/man" ]; then
@@ -51,48 +52,48 @@ fi
 
 # git-subrepo
 if [ -d "$HOME/.local/git-subrepo" ]; then
-    export GIT_SUBREPO_ROOT
     GIT_SUBREPO_ROOT="$HOME/.local/git-subrepo"
+    export GIT_SUBREPO_ROOT
     PATH="$GIT_SUBREPO_ROOT/lib:$PATH"
     MANPATH="$GIT_SUBREPO_ROOT/man:$MANPATH"
 fi
 
 # Lesspipe
 if [ -x "$(command -v lesspipe.sh)" ]; then
-    export LESSOPEN
     LESSOPEN='| /opt/local/bin/lesspipe.sh %s'
+    export LESSOPEN
 fi
 
 # C/C++
-export CC
 CC="cc"
-export CXX
+export CC
 CXX="c++"
+export CXX
 
 # Java
 if /usr/libexec/java_home -v 11 > /dev/null 2>&1; then
-    export JAVA_HOME
     JAVA_HOME=$(/usr/libexec/java_home -v 11)
-    export KEYTOOL
+    export JAVA_HOME
     KEYTOOL="$JAVA_HOME/jre/bin"
+    export KEYTOOL
 fi
 
 if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
-    export SDKMAN_DIR
     SDKMAN_DIR="$HOME/.sdkman"
+    export SDKMAN_DIR
     source "$SDKMAN_DIR/bin/sdkman-init.sh"
     unset KEYTOOL
 fi
 
 # Python
 if [ -f "$HOME/.pythonrc" ]; then
-    export PYTHONSTARTUP
     PYTHONSTARTUP="$HOME/.pythonrc"
+    export PYTHONSTARTUP
 fi
 
 if [ -d "$HOME/.pyenv" ]; then
-    export PYENV_ROOT
     PYENV_ROOT="$HOME/.pyenv"
+    export PYENV_ROOT
     PATH="$PYENV_ROOT/bin:$PATH"
     if [ -x "$(command -v pyenv)" ]; then
         eval "$(pyenv init --path)";
@@ -150,8 +151,8 @@ fi
 
 # Google Cloud SDK
 if [ -f "$HOME/.google-cloud-sdk/path.bash.inc" ]; then
-    export CLOUDSDK_PYTHON
     CLOUDSDK_PYTHON="python"
+    export CLOUDSDK_PYTHON
     source "$HOME/.google-cloud-sdk/path.bash.inc"
 fi
 
