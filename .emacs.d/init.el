@@ -1260,9 +1260,9 @@ checker symbol."
 
   (global-flycheck-mode 1))
 
-(use-package flycheck-popup-tip
+(use-package flycheck-inline
   :after flycheck
-  :hook (flycheck-mode . flycheck-popup-tip-mode))
+  :hook (flycheck-mode . flycheck-inline-mode))
 
 ;; REST API
 (use-package org
