@@ -201,6 +201,8 @@
  '(lsp-disabled-clients '(pyls eslint ocaml-ls bash-ls html-ls css-ls))
  '(lsp-eldoc-enable-hover nil)
  '(lsp-enable-file-watchers nil)
+ '(lsp-enable-indentation nil)
+ '(lsp-enable-on-type-formatting nil)
  '(lsp-headerline-breadcrumb-enable nil)
  '(lsp-imenu-index-symbol-kinds
    '(Class Method Property Field Constuctor Enum Interface Function Struct))
