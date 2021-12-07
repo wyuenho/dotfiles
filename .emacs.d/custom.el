@@ -32,6 +32,7 @@
  '(backup-directory-alist '(("." . "~/.emacs.d/backups")))
  '(bash-completion-args nil)
  '(bash-completion-prog "/opt/local/bin/bash")
+ '(bidi-paragraph-direction 'left-to-right)
  '(blink-cursor-mode t)
  '(browse-url-chrome-program "chrome")
  '(c-basic-offset 2)
