@@ -46,6 +46,9 @@
             (when (display-graphic-p)
               (pcase (window-system)
                 ('ns
+                 (when (and (fboundp 'set-fontset-font)
+                            (>= emacs-major-version 28))
+                   (set-fontset-font t 'emoji '("Apple Color Emoji" . "iso10646-1") nil 'prepend))
                  (setf ns-use-thin-smoothing t
                        ns-use-mwheel-momentum t
                        ns-use-mwheel-acceleration t
