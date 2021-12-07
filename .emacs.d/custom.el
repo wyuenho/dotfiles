@@ -52,7 +52,6 @@
  '(dabbrev-case-fold-search nil)
  '(dap-auto-configure-mode t)
  '(dap-python-debugger 'debugpy)
- '(debugger-bury-or-kill 'kill)
  '(delete-by-moving-to-trash t)
  '(delete-old-versions t)
  '(delete-selection-mode t)
