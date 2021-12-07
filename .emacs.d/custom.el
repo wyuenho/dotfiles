@@ -257,6 +257,8 @@
  '(markdown-command "multimarkdown --full --to=html")
  '(markdown-fontify-code-blocks-natively t)
  '(markdown-indent-on-enter nil)
+ '(max-lisp-eval-depth 16000)
+ '(max-specpdl-size 25000)
  '(menu-bar-mode t)
  '(message-kill-buffer-on-exit t)
  '(minibuffer-depth-indicate-mode t)
