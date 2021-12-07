@@ -269,6 +269,8 @@
  '(mouse-wheel-tilt-scroll t)
  '(multi-term-program "/opt/local/bin/bash")
  '(multi-term-program-switches "--login")
+ '(native-comp-always-compile t)
+ '(native-comp-async-jobs-number 4)
  '(native-comp-async-report-warnings-errors 'silent)
  '(ns-alternate-modifier 'alt)
  '(ns-command-modifier 'meta)
