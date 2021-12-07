@@ -1199,7 +1199,8 @@ checker symbol."
 
   (setf flycheck-python-mypy-config `("mypy.ini" ".mypy.ini" "pyproject.toml" "setup.cfg"
                                       ,(concat (expand-file-name
-                                                (or (file-name-as-directory (getenv "XDG_CONFIG_HOME"))
+                                                (or (and (getenv "XDG_CONFIG_HOME")
+                                                         (file-name-as-directory (getenv "XDG_CONFIG_HOME")))
                                                     "~/.config/"))
                                                "mypy/config")))
 
