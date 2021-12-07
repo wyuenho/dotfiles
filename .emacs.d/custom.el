@@ -328,6 +328,7 @@
  '(rst-indent-comment 2)
  '(rst-indent-field 2)
  '(rst-indent-literal-normal 2)
+ '(rust-format-on-save t)
  '(rxt-global-mode t)
  '(save-place-mode t)
  '(save-place-save-skipped nil)
