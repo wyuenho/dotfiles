@@ -103,6 +103,9 @@
  '(executable-prefix-env t)
  '(expand-region-fast-keys-enabled nil)
  '(explicit-shell-file-name "/opt/local/bin/bash")
+ '(face-font-family-alternatives
+   '(("JetBrains Mono NL" "Noto Sans Mono" "DejaVu Sans Mono" "Menlo")
+     ("Noto Sans" "Helvetica Neue" "Helvetica")))
  '(fido-mode t)
  '(fill-column 80)
  '(find-file-existing-other-name nil)
