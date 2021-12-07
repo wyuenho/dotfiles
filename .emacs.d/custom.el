@@ -99,7 +99,7 @@
  '(eval-expression-print-maximum-character 4194303)
  '(exec-path-from-shell-arguments '("-l"))
  '(exec-path-from-shell-variables
-   '("PATH" "MANPATH" "GVM_ROOT" "GOPATH" "PYTHONSTARTUP" "PYENV_ROOT" "SDKMAN_DIR" "NVM_DIR" "MAVEN_HOME" "SBT_HOME" "LEININGEN_HOME" "ANT_HOME" "GRADLE_HOME" "KEYTOOL" "JAVA_HOME" "KOTLIN_HOME" "GROOVY_HOME" "XDG_CONFIG_HOME" "XDG_DATA_HOME" "XDG_CACHE_HOME" "XDG_CONFIG_DIRS" "XDG_DATA_DIRS"))
+   '("PATH" "MANPATH" "GOPATH" "PYTHONSTARTUP" "PYENV_ROOT" "SDKMAN_DIR" "NVM_DIR" "MAVEN_HOME" "SBT_HOME" "LEININGEN_HOME" "ANT_HOME" "GRADLE_HOME" "KEYTOOL" "JAVA_HOME" "KOTLIN_HOME" "GROOVY_HOME" "XDG_CONFIG_HOME" "XDG_DATA_HOME" "XDG_CACHE_HOME" "XDG_CONFIG_DIRS" "XDG_DATA_DIRS"))
  '(executable-prefix-env t)
  '(expand-region-fast-keys-enabled nil)
  '(explicit-shell-file-name "/opt/local/bin/bash")
