@@ -1,41 +1,34 @@
-# I don't use bash, but I remember this works.
-# If anyone has an improved, and better version, go ahead, open a pull-request.
-#
-# Copyright (C) 2016 Arvid Gerstmann
-#
+# tealdeer bash completion
 
-_tldr_get_files() {
-	local ret
-	local files="$(find $HOME/.tldrc/tldr-master/pages/$1 -name '*.md' -exec basename {} .md \;)"
+_tealdeer()
+{
+	local cur prev words cword
+	_init_completion || return
 
-	IFS=$'\n\t'
-	for f in $files; do
-	    echo $f
-	done
+	case $prev in
+		-h|--help|-v|--version|-l|--list|-u|--update|-c|--clear-cache|-p|--pager|-r|--raw|--show-paths|--seed-config|-q|--quiet)
+			return
+			;;
+		-f|--render)
+			_filedir
+			return
+			;;
+		-p|--platform)
+			COMPREPLY=( $(compgen -W 'linux macos sunos windows' -- "${cur}") )
+			return
+			;;
+		--color)
+			COMPREPLY=( $(compgen -W 'always auto never' -- "${cur}") )
+			return
+			;;
+	esac
+
+	if [[ $cur == -* ]]; then
+		COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
+		return
+	fi
+
+	COMPREPLY=( $(compgen -W '$( tldr -l | tr -d , )' -- "${cur}") )
 }
 
-_tldr_complete() {
-    COMPREPLY=()
-	local word="${COMP_WORDS[COMP_CWORD]}"
-	local cmpl=""
-    if [ "$word" = "-" ]; then
-        cmpl=$(echo $'\n-v\n-h\n-u\n-c\n-p\n-r' | sort)
-    elif [ "$word" = "--" ]; then
-        cmpl=$(echo $'--version\n--help\n--update\n--clear-cache\n--platform\n--render' | sort)
-    else
-        if [ -d "$HOME/.tldrc/tldr-master/pages" ]; then
-            local platform="$(uname)"
-            cmpl="$(_tldr_get_files common | sort | uniq)"
-            if [ "$platform" = "Darwin" ]; then
-                cmpl="${cmpl}$(_tldr_get_files osx | sort | uniq)"
-            elif [ "$platform" = "Linux" ]; then
-                cmpl="${cmpl}$(_tldr_get_files linux | sort | uniq)"
-            elif [ "$platform" = "SunOS" ]; then
-                cmpl="${cmpl}$(_tldr_get_files sunos | sort | uniq)"
-            fi
-        fi
-    fi
-    COMPREPLY=( $(compgen -W "$cmpl" -- "$word") )
-}
-
-complete -F _tldr_complete tldr
+complete -F _tealdeer tldr
