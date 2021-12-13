@@ -93,9 +93,6 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
         source "$NVM_DIR/bash_completion"
     fi
 
-    # gvm
-    [ -f "$HOME/.gvm/scripts/completion" ] && source "$HOME/.gvm/scripts/completion"
-
     # sdkman!
     [ -x "$(command -v sdk)" ] && eval "$(sdk completion bash)"
 
@@ -175,14 +172,8 @@ export HISTSIZE
 PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
 
 # Better bash history search
-if [ -r "/opt/local/share/mcfly/mcfly.bash" ]; then
-    export MCFLY_FUZZY
-    MCFLY_FUZZY=true
-    export MCFLY_RESULTS
-    MCFLY_RESULTS=50
-    export MCFLY_RESULTS_SORT
-    MCFLY_RESULTS_SORT=LAST_RUN
-    source "/opt/local/share/mcfly/mcfly.bash"
+if [ -r "/opt/local/share/fzf/shell/key-bindings.bash" ]; then
+    source /opt/local/share/fzf/shell/key-bindings.bash
 fi
 
 # Magic fix for command not found error lifted from
