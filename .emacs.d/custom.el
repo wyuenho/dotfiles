@@ -372,6 +372,8 @@
  '(tabulated-list-tty-sort-indicator-asc 94)
  '(tabulated-list-tty-sort-indicator-desc 118)
  '(temp-buffer-resize-mode t)
+ '(tide-completion-ignore-case t)
+ '(tide-default-mode "TSX")
  '(timer-max-repeats 1)
  '(tls-checktrust t)
  '(tls-program

@@ -57,7 +57,8 @@ under `user-emacs-directory'.  If it exists, loaded it."
 ;; Turn off useless mode lighters
 (use-package delight
   :config
-  (delight '((cargo-minor-mode              nil cargo)
+  (delight '((tide-mode                     nil tide)
+             (cargo-minor-mode              nil cargo)
              (whitespace-cleanup-mode)
              (aggressive-indent-mode        nil aggressive-indent)
              (auto-fill-function            nil t)
@@ -656,9 +657,7 @@ region."
            rust-mode
            scala-mode
            swift-mode
-           tuareg-mode
-           typescript-mode
-           typescript-tsx-mode)
+           tuareg-mode)
           . (lambda ()
               (when (not (derived-mode-p 'json-mode))
                 (lsp-deferred))))
@@ -1562,6 +1561,13 @@ variants of Typescript.")
               ("C-c e b" . ts-send-buffer-and-go)
               ("C-c e l" . ts-load-file-and-go)
               ("C-c M-:" . switch-to-ts)))
+
+(use-package tide
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode     . tide-setup)
+         (typescript-tsx-mode . tide-setup))
+  :config
+  (setq-local help-at-pt-display-when-idle '(tide-documentation-at-point)))
 
 ;; Python
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
