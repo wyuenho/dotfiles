@@ -88,11 +88,6 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
         source /usr/local/etc/bash_completion
     fi
 
-    # nvm
-    if [ -d "$NVM_DIR" ] && [ -f "$NVM_DIR/bash_completion" ]; then
-        source "$NVM_DIR/bash_completion"
-    fi
-
     # sdkman!
     [ -x "$(command -v sdk)" ] && eval "$(sdk completion bash)"
 

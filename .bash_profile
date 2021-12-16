@@ -104,19 +104,11 @@ if [ -d "$HOME/.pyenv" ]; then
 fi
 
 # Node
-if [ -z "${XDG_CONFIG_HOME-}" ]; then
-    NVM_DIR="$HOME/.nvm"
-else
-    NVM_DIR="${XDG_CONFIG_HOME}/nvm"
-fi
+if [ -d "$HOME/.volta" ]; then
+    VOLTA_HOME="$HOME/.volta"
+    export VOLTA_HOME
 
-if [ -d "$NVM_DIR" ]; then
-    export NVM_DIR
-    source "$NVM_DIR/nvm.sh"
-fi
-
-if [ -f "$HOME/.avn/bin/avn.sh" ]; then
-    source "$HOME/.avn/bin/avn.sh"
+    PATH="$VOLTA_HOME/bin:$PATH"
 fi
 
 # Ruby
