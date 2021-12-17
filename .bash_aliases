@@ -1,6 +1,5 @@
 # -*- mode: sh; -*-
 
-# Aliases
 if [ -x /usr/bin/dircolors ]; then # Debian
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls="ls -Fh --color=auto"
@@ -27,4 +26,30 @@ fi
 
 if [ -x "$(command -v git)" ]; then
     alias git='git --config-env=user.email=EMAIL'
+fi
+
+if [ -x "$(command -v fzf)" ]; then
+    if [ -x "$(command -v jq)" ]; then
+        jiq() {
+            if [ ! $1 = *."json" ]; then
+                echo "$1 is not a JSON document"
+                return 1
+            fi
+            echo '' | fzf --print-query --preview "cat $1 | jq {q}"
+        }
+    fi
+
+    fe() {
+        local IFS=$'\n'
+        local files
+        files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0))
+        [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
+    }
+
+    fcd() {
+        local dir
+        dir=$(find ${1:-.} -path '*/\.*' -prune \
+                   -o -type d -print 2> /dev/null | fzf +m) &&
+            cd "$dir"
+    }
 fi
