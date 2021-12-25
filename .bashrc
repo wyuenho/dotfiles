@@ -111,6 +111,11 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
 
     # CircleCI
     [ -x "$(command -v circleci)" ] && eval "$(circleci completion bash)"
+
+    # fzf
+    if [ -r "/opt/local/share/fzf/shell/completion.bash" ]; then
+        source /opt/local/share/fzf/shell/completion.bash
+    fi
 fi
 
 # Direnv
