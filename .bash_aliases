@@ -7,7 +7,11 @@ else
     alias ls="ls -FhG" # BSD
 fi
 
-alias ll='ls -alF'
+if [ "$(uname)" = 'Darwin' ]; then
+    alias ll='ls -AFl'
+else
+    alias ll='ls -@AFOel'
+fi
 alias la='ls -A'
 alias l='ls -CF'
 
