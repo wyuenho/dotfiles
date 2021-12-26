@@ -58,12 +58,6 @@ if [ -d "$HOME/.local/git-subrepo" ]; then
     MANPATH="$GIT_SUBREPO_ROOT/man:$MANPATH"
 fi
 
-# Lesspipe
-if [ -x "$(command -v lesspipe.sh)" ]; then
-    LESSOPEN='| /opt/local/bin/lesspipe.sh %s'
-    export LESSOPEN
-fi
-
 # C/C++
 CC="cc"
 export CC
