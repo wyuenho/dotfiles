@@ -8,9 +8,9 @@ else
 fi
 
 if [ "$(uname)" = 'Darwin' ]; then
-    alias ll='ls -AFl'
-else
     alias ll='ls -@AFOel'
+else
+    alias ll='ls -AFl'
 fi
 alias la='ls -A'
 alias l='ls -CF'
