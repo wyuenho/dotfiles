@@ -89,10 +89,15 @@ if [ -d "$HOME/.pyenv" ]; then
     PYENV_ROOT="$HOME/.pyenv"
     export PYENV_ROOT
     PATH="$PYENV_ROOT/bin:$PATH"
-    if [ -x "$(command -v pyenv)" ]; then
+    if [ -x "$(type -P pyenv)" ]; then
         eval "$(pyenv init --path)";
         if pyenv commands | grep -q virtualenv; then
-            eval "$(pyenv virtualenv-init -)";
+            if [ -x "$(type -P starship)" ]; then
+                export PATH="$PYENV_ROOT/plugins/pyenv-virtualenv/shims:${PATH}";
+                export PYENV_VIRTUALENV_INIT=1;
+            else
+                eval "$(pyenv virtualenv-init -)";
+            fi
         fi
     fi
 fi
@@ -108,13 +113,13 @@ fi
 # Ruby
 if [ -d "$HOME/.rbenv/bin" ]; then
     PATH="$HOME/.rbenv/bin:$PATH"
-    if [ -x "$(command -v rbenv)" ]; then
+    if [ -x "$(type -P rbenv)" ]; then
         eval "$(rbenv init -)";
     fi
 fi
 
 # Go
-if [ -x "$(command -v go)" ]; then
+if [ -x "$(type -P go)" ]; then
     GOPATH="$HOME/Documents/workspace/go"
     PATH="$GOPATH/bin:$PATH"
     export GOPATH
@@ -143,7 +148,7 @@ if [ -f "$HOME/.google-cloud-sdk/path.bash.inc" ]; then
 fi
 
 # PWD
-PATH=".:$PATH"
+PATH="::$PATH"
 
 if [ -n "$BASH_VERSION" ]; then
     if [ -f "$HOME/.bashrc" ]; then

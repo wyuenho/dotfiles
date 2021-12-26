@@ -19,7 +19,7 @@ fi
 export MBOX
 MBOX="$HOME/.mail/mbox"
 
-if [ -x "$(command -v emacs)" ]; then
+if [ -x "$(type -P emacs)" ]; then
     export EDITOR
     EDITOR="emacsclient"
 
@@ -59,23 +59,6 @@ export LESS_TERMCAP_ZW=$(tput rsupm)
 # Aliases
 [ -f ~/.bash_aliases ] && source ~/.bash_aliases
 
-# Prompt
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
-esac
-
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\[\e[01;35m\]\[\e[0m\]\n\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h \w\n\$ '
-fi
-unset color_prompt
-
 # Bash Completion
 if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq posix; then
     if [ -f /usr/share/bash-completion/bash_completion ]; then # Debian
@@ -89,7 +72,7 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
     fi
 
     # sdkman!
-    [ -x "$(command -v sdk)" ] && eval "$(sdk completion bash)"
+    [ "$(type -t sdk)" = 'function' ] && eval "$(sdk completion bash)"
 
     # gcloud
     if [ -f "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
@@ -97,7 +80,7 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
     fi
 
     # aws
-    [ -x "$(command -v aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
+    [ -x "$(type -P aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
 
     # pyenv
     if [ -d "$PYENV_ROOT" ] && [ -f "$PYENV_ROOT/completions/pyenv.bash" ]; then
@@ -110,21 +93,21 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
     fi
 
     # CircleCI
-    [ -x "$(command -v circleci)" ] && eval "$(circleci completion bash)"
+    [ -x "$(type -P circleci)" ] && eval "$(circleci completion bash)"
 
     # fzf
     if [ -r "/opt/local/share/fzf/shell/completion.bash" ]; then
-        source /opt/local/share/fzf/shell/completion.bash
+        source '/opt/local/share/fzf/shell/completion.bash'
     fi
 fi
 
 # Direnv
-if [ -x "$(command -v direnv)" ]; then
+if [ -x "$(type -P direnv)" ]; then
     eval "$(direnv hook bash)"
 fi
 
 # pyenv
-if [ -x "$(command -v pyenv)" ]; then
+if [ -x "$(type -P pyenv)" ]; then
     export PYENV_SHELL=bash
     command pyenv rehash 2>/dev/null
     pyenv() {
@@ -145,9 +128,25 @@ if [ -x "$(command -v pyenv)" ]; then
     }
 fi
 
-# Feature packed and fast prompt
-if [ -x "$(command -v starship)" ]; then
+# Prompt
+if [ -x "$(type -P starship)" ]; then
     eval "$(starship init bash)"
+else
+    # set variable identifying the chroot you work in (used in the prompt below)
+    if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+        debian_chroot=$(cat /etc/debian_chroot)
+    fi
+
+    case "$TERM" in
+        xterm-color|*-256color) color_prompt=yes;;
+    esac
+
+    if [ "$color_prompt" = yes ]; then
+        PS1='${debian_chroot:+($debian_chroot)}\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\[\e[01;35m\]\[\e[0m\]\n\$ '
+    else
+        PS1='${debian_chroot:+($debian_chroot)}\u@\h \w\n\$ '
+    fi
+    unset color_prompt
 fi
 
 # History
