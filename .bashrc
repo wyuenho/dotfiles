@@ -170,9 +170,29 @@ export HISTSIZE
 # mem/file sync
 PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
 
-# Better bash history search
-if [ -r "/opt/local/share/fzf/shell/key-bindings.bash" ]; then
-    source /opt/local/share/fzf/shell/key-bindings.bash
+# Better search
+if [ -x "$(type -P fzf)" ]; then
+    FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --color=fg:-1,bg:-1,fg+:15:regular,bg+:0\
+                                        --color=hl:11,hl+:13:bold\
+                                        --color=prompt:10:bold,pointer:15,marker:11,info:4,spinner:5:bold"
+    export FZF_DEFAULT_OPTS
+
+    if [ -x "$(type -P fd)" ] || [ -x "$(type -P git)" ] || [ -x "$(type -P rg)" ]; then
+        FZF_DEFAULT_COMMAND='fd --type f || git ls-tree -r --name-only HEAD || rg --files || find .'
+        export FZF_DEFAULT_COMMAND
+
+        FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        export FZF_CTRL_T_COMMAND
+    fi
+
+    if [ -x "$(type -P fd)" ] || [ -x "$(type -P git)" ]; then
+        FZF_ALT_C_COMMAND='fd --type d || git ls-tree -d -r --name-only HEAD'
+        export FZF_ALT_C_COMMAND
+    fi
+
+    if [ -r '/opt/local/share/fzf/shell/key-bindings.bash' ]; then
+        source '/opt/local/share/fzf/shell/key-bindings.bash'
+    fi
 fi
 
 # Magic fix for command not found error lifted from
