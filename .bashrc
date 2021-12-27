@@ -96,8 +96,17 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
     [ -x "$(type -P circleci)" ] && eval "$(circleci completion bash)"
 
     # fzf
-    if [ -r "/opt/local/share/fzf/shell/completion.bash" ]; then
-        source '/opt/local/share/fzf/shell/completion.bash'
+    case "$(uname -s)" in
+        Darwin)
+            FZF_PREFIX='/opt/local/share/fzf/shell/'
+            ;;
+        Linux)
+            FZF_PREFIX='/usr/share/doc/fzf/examples/'
+            ;;
+        *) ;;
+    esac
+    if [ -r "$FZF_PREFIX/completion.bash" ]; then
+        source "$FZF_PREFIX/completion.bash"
     fi
 fi
 
@@ -190,8 +199,8 @@ if [ -x "$(type -P fzf)" ]; then
         export FZF_ALT_C_COMMAND
     fi
 
-    if [ -r '/opt/local/share/fzf/shell/key-bindings.bash' ]; then
-        source '/opt/local/share/fzf/shell/key-bindings.bash'
+    if [ -r "$FZF_PREFIX/key-bindings.bash" ]; then
+        source "$FZF_PREFIX/key-bindings.bash"
     fi
 fi
 
