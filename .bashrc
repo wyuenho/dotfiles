@@ -95,19 +95,6 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
     # CircleCI
     [ -x "$(type -P circleci)" ] && eval "$(circleci completion bash)"
 
-    # fzf
-    case "$(uname -s)" in
-        Darwin)
-            FZF_PREFIX='/opt/local/share/fzf/shell/'
-            ;;
-        Linux)
-            FZF_PREFIX='/usr/share/doc/fzf/examples/'
-            ;;
-        *) ;;
-    esac
-    if [ -r "$FZF_PREFIX/completion.bash" ]; then
-        source "$FZF_PREFIX/completion.bash"
-    fi
 fi
 
 # Direnv
@@ -180,6 +167,23 @@ export HISTSIZE
 PROMPT_COMMAND="history -a; history -n; ${PROMPT_COMMAND}"
 
 # Better search
+if [ -d "$HOME/.fzf" ]; then
+    PATH="$HOME/.fzf/bin:$PATH"
+    MANPATH="$HOME/.fzf/man:$MANPATH"
+    FZF_PREFIX="$HOME/.fzf/shell"
+else
+    case "$(uname -s)" in
+        Darwin)
+            FZF_PREFIX='/opt/local/share/fzf/shell'
+            ;;
+        Linux)
+            FZF_PREFIX='/usr/share/doc/fzf/examples'
+            ;;
+        *)
+            ;;
+    esac
+fi
+
 if [ -x "$(type -P fzf)" ]; then
     FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --color=fg:-1,bg:-1,fg+:15:regular,bg+:0\
                                         --color=hl:11,hl+:13:bold\
@@ -201,6 +205,10 @@ if [ -x "$(type -P fzf)" ]; then
 
     if [ -r "$FZF_PREFIX/key-bindings.bash" ]; then
         source "$FZF_PREFIX/key-bindings.bash"
+    fi
+
+    if [ -r "$FZF_PREFIX/completion.bash" ]; then
+        source "$FZF_PREFIX/completion.bash"
     fi
 fi
 
