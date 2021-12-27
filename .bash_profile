@@ -26,11 +26,6 @@ export XDG_CACHE_HOME
 XDG_DATA_HOME="$HOME/.local/share"
 export XDG_DATA_HOME
 
-# Xcode CLI Tools
-if [ -d "/Library/Developer/CommandLineTools/usr/share/man" ]; then
-    MANPATH="/Library/Developer/CommandLineTools/usr/share/man:$MANPATH"
-fi
-
 # Homebrew
 PATH="/usr/local/sbin:$PATH"
 
