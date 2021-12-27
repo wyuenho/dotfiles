@@ -29,7 +29,7 @@ else
 fi
 
 if [ -x "$(type -P git)" ]; then
-    alias git='git --config-env=user.email=EMAIL'
+    alias git='git -c user.email=EMAIL'
 fi
 
 if [ -x "$(type -P fzf)" ]; then
