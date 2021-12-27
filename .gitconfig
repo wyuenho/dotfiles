@@ -23,12 +23,6 @@
 	# from https://help.github.com/articles/remove-sensitive-data
 	remove-file = "!f() { git filter-branch -f --index-filter \"git rm --cached --ignore-unmatch $1\" --prune-empty --tag-name-filter cat -- --all; }; f"
 
-[pager]
-	diff = delta
-	log = delta
-	reflog = delta
-	show = delta
-
 [delta]
 	hunk-header-style = syntax
 	line-numbers = true
@@ -41,6 +35,14 @@
 
 [mergetool "ediff"]
 	cmd = emacsclient --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"
+
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 	
+
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
 
 [mergetool]
 	keepBackup = false
@@ -58,6 +60,7 @@
 
 [diff]
 	submodule = log
+	colorMoved = default	
 
 [transfer]
 	fsckObjects = true
