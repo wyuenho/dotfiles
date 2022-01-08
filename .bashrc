@@ -206,18 +206,24 @@ if [ -x "$(type -P fzf)" ]; then
                                         --color=prompt:10:bold,pointer:15,marker:11,info:4,spinner:5:bold"
     export FZF_DEFAULT_OPTS
 
-    if [ -x "$(type -P fd)" ] || [ -x "$(type -P git)" ] || [ -x "$(type -P rg)" ]; then
-        FZF_DEFAULT_COMMAND='fd --type f || git ls-tree -r --name-only HEAD || rg --files || find .'
-        export FZF_DEFAULT_COMMAND
+    FZF_DEFAULT_COMMAND='if [ -x "$(type -P git)" ] && [ -n "$(git rev-parse --show-toplevel)" ]; then
+                             git ls-tree -r --name-only HEAD
+                         elif [ -x "$(type -P fd)" ]; then
+                             fd -uu --no-ignore-parent --type f
+                         elif [ -x "$(type -P rg)" ]; then
+                             rg --no-ignore --no-hidden --files || find .
+                         fi'
+    export FZF_DEFAULT_COMMAND
 
-        FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-        export FZF_CTRL_T_COMMAND
-    fi
+    FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_CTRL_T_COMMAND
 
-    if [ -x "$(type -P fd)" ] || [ -x "$(type -P git)" ]; then
-        FZF_ALT_C_COMMAND='fd --type d || git ls-tree -d -r --name-only HEAD'
-        export FZF_ALT_C_COMMAND
-    fi
+    FZF_ALT_C_COMMAND='if [ -x "$(type -P git)" ] && [ -n "$(git rev-parse --show-toplevel)" ]; then
+                           git ls-tree -d -r --name-only HEAD
+                       elif [ -x "$(type -P fd)" ]; then
+                           fd -uu --no-ignore-parent --type d
+                       fi'
+    export FZF_ALT_C_COMMAND
 
     if [ -r "$FZF_PREFIX/key-bindings.bash" ]; then
         source "$FZF_PREFIX/key-bindings.bash"
