@@ -1,7 +1,11 @@
 # -*- mode: sh; -*-
 
 if [ -x /usr/bin/dircolors ]; then # Debian
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    if [ -r ~/.dircolors ]; then
+        eval "$(dircolors -b ~/.dircolors)"
+    else
+        eval "$(dircolors -b)"
+    fi
     alias ls="ls -Fh --color=auto"
 else
     alias ls="ls -FhG" # BSD
@@ -28,14 +32,10 @@ else
     alias diff="diff -ur"
 fi
 
-if [ -x "$(type -P git)" ]; then
-    alias git='git -c user.email=EMAIL'
-fi
-
 if [ -x "$(type -P fzf)" ]; then
     if [ -x "$(type -P jq)" ]; then
         jiq() {
-            if [ ! $1 = *."json" ]; then
+            if [[ ! $1 = *."json" ]]; then
                 echo "$1 is not a JSON document"
                 return 1
             fi
@@ -46,7 +46,8 @@ if [ -x "$(type -P fzf)" ]; then
     fe() {
         local IFS=$'\n'
         local files
-        files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0))
-        [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
+        files=()
+        while read -r line; do array+=("$line"); done < <(fzf-tmux --query="$1" --multi --select-1 --exit-0)
+        [ -n "${files[*]}" ] && ${EDITOR:-emacsclient} "${files[@]}"
     }
 fi
