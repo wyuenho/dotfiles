@@ -1545,12 +1545,7 @@ optionally the window if possible."
 Refer to Typescript documentation for syntactic differences between normal and TSX
 variants of Typescript.")
 
-  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescript-tsx-mode))
-
-  (with-eval-after-load 'all-the-icons
-    (add-to-list 'all-the-icons-mode-icon-alist `(typescript-tsx-mode
-                                                  all-the-icons-fileicon "tsx"
-                                                  :v-adjust -0.1 :face all-the-icons-blue-alt))))
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescript-tsx-mode)))
 
 (use-package ts-comint
   :after (typescript-mode)
