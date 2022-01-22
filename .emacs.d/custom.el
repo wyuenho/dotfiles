@@ -115,7 +115,7 @@
  '(flycheck-disabled-checkers '(json-jsonlint json-python-json))
  '(flycheck-emacs-lisp-load-path 'inherit)
  '(flycheck-global-modes
-   '(json-mode js-mode js2-mode rjsx-mode scss-mode css-mode python-mode ruby-mode enh-ruby-mode go-mode rust-mode swift-mode scala-mode c-mode c++-mode objc-mode))
+   '(json-mode js-mode js2-mode rjsx-mode scss-mode css-mode python-mode ruby-mode enh-ruby-mode go-mode rust-mode swift-mode scala-mode c-mode c++-mode objc-mode sh-mode))
  '(flycheck-javascript-eslint-executable "eslint_d")
  '(flycheck-pos-tip-max-width 80)
  '(frame-resize-pixelwise t)
