@@ -51,3 +51,7 @@ if [ -x "$(type -P fzf)" ]; then
         [ -n "${files[*]}" ] && ${EDITOR:-emacsclient} "${files[@]}"
     }
 fi
+
+if [ -n "$KITTY_PID" ]; then
+    alias ssh="kitty +kitten ssh"
+fi
