@@ -21,7 +21,7 @@ MBOX="$HOME/.mail/mbox"
 
 if [ -x "$(type -P emacs)" ]; then
     export EDITOR
-    EDITOR="emacsclient"
+    EDITOR="emacsclient -n"
 
     export VISUAL
     VISUAL="$EDITOR"
