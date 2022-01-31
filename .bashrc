@@ -40,37 +40,37 @@ fi
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)" # Debian
 
 # Colorful man pages
-# man 5 terminfo
+# blink
 LESS_TERMCAP_mb=$(tput blink; tput setaf 1)
 export LESS_TERMCAP_mb
-LESS_TERMCAP_md=$(tput bold; tput setaf 1)
-export LESS_TERMCAP_md
-LESS_TERMCAP_me=$(tput sgr0)
-export LESS_TERMCAP_me
-LESS_TERMCAP_so=$(tput bold; tput setaf 7; tput setab 1)
+
+# standout
+LESS_TERMCAP_so=$(tput smso; tput setaf 3; tput setab 7)
 export LESS_TERMCAP_so
-LESS_TERMCAP_se=$(tput rmso; tput sgr0)
+LESS_TERMCAP_se=$(tput rmso; tput op)
 export LESS_TERMCAP_se
-LESS_TERMCAP_us=$(tput smul; tput bold; tput setaf 2)
-export LESS_TERMCAP_us
-LESS_TERMCAP_ue=$(tput rmul; tput sgr0)
-export LESS_TERMCAP_ue
-LESS_TERMCAP_mr=$(tput rev)
-export LESS_TERMCAP_mr
-LESS_TERMCAP_mh=$(tput dim)
-export LESS_TERMCAP_mh
+
+# bold
+LESS_TERMCAP_md=$(tput bold; tput setaf 5)
+export LESS_TERMCAP_md
+
+# italic
 LESS_TERMCAP_ZH=$(tput sitm; tput setaf 2)
 export LESS_TERMCAP_ZH
-LESS_TERMCAP_ZR=$(tput ritm)
+LESS_TERMCAP_ZR=$(tput ritm; tput op)
 export LESS_TERMCAP_ZR
-LESS_TERMCAP_ZN=$(tput ssubm)
-export LESS_TERMCAP_ZN
-LESS_TERMCAP_ZV=$(tput rsubm)
-export LESS_TERMCAP_ZV
-LESS_TERMCAP_ZO=$(tput ssupm)
-export LESS_TERMCAP_ZO
-LESS_TERMCAP_ZW=$(tput rsupm)
-export LESS_TERMCAP_ZW
+
+# underline
+LESS_TERMCAP_us=$(tput smul; tput setaf 2)
+export LESS_TERMCAP_us
+LESS_TERMCAP_ue=$(tput rmul; tput op)
+export LESS_TERMCAP_ue
+
+# Saner ls colors on macOS
+if [ "$(uname -s)" = 'Darwin' ]; then
+    LSCOLORS="ExGxFxdaCxDaDahbadacec"
+    export LSCOLORS
+fi
 
 # Aliases
 [ -f ~/.bash_aliases ] && source ~/.bash_aliases
