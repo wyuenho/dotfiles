@@ -10,6 +10,8 @@
 	useHttpPath = true
 
 [alias]
+	bi = bisect
+	br = branch
 	co = checkout
 	ci = commit
 	st = status
@@ -27,7 +29,7 @@
 	hunk-header-style = syntax
 	line-numbers = true
 	syntax-theme = zenburn
-	tabs = 2
+	tabs = 4
 	max-line-length = 2048
 
 [difftool "ediff"]
@@ -38,7 +40,13 @@
 
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 	
+	path =
+
+[difftool "kitty"]
+	cmd = kitty +kitten diff $LOCAL $REMOTE
+
+[difftool "kitty.gui"]
+	cmd = kitty kitty +kitten diff $LOCAL $REMOTE
 
 [mergetool "sourcetree"]
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
@@ -49,18 +57,15 @@
 	prompt = false
 	hideResolved = true
 
-[color]
-	ui = true
-
 [interactive]
-	diffFilter = delta --color-only
+	diffFilter = ([ $(type -P delta) ] && delta --color-only)
 
 [init]
 	defaultBranch = main
 
 [diff]
 	submodule = log
-	colorMoved = default	
+	colorMoved = default
 
 [transfer]
 	fsckObjects = true
@@ -70,7 +75,7 @@
 
 [pull]
 	ff = only
-	rebase = merges
+	rebase = true
 
 [commit]
 	gpgSign = true
@@ -81,7 +86,7 @@
 [merge]
 	tool = ediff
 	guitool = opendiff
-	conflictStyle = diff3
+	conflictStyle = zdiff3
 	autoStash = true
 
 [rebase]
