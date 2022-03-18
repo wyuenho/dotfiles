@@ -53,12 +53,6 @@ if [ -d "$HOME/.local/git-subrepo" ]; then
     MANPATH="$GIT_SUBREPO_ROOT/man:$MANPATH"
 fi
 
-# C/C++
-CC="cc"
-export CC
-CXX="c++"
-export CXX
-
 # Java
 if /usr/libexec/java_home -v 11 > /dev/null 2>&1; then
     JAVA_HOME=$(/usr/libexec/java_home -v 11)
