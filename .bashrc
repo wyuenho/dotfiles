@@ -253,8 +253,3 @@ if [ "$INSIDE_EMACS" = 'vterm' ] \
        && [ -f "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh" ]; then
     source "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh"
 fi
-
-
-# BEGIN_KITTY_SHELL_INTEGRATION
-if test -n "$KITTY_INSTALLATION_DIR" -a -e "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"; then source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"; fi
-# END_KITTY_SHELL_INTEGRATION
