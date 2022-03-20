@@ -35,9 +35,11 @@ if [ -d /opt/local ]; then
     MANPATH="/opt/local/share/man:$MANPATH"
 fi
 
-# My Own things
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+# Cross-compiler toolchains
+if [ -d /Volumes/toolchains ]; then
+    for triple in /Volumes/toolchains/*/bin; do
+        PATH="$triple:$PATH"
+    done
 fi
 
 # pipx
