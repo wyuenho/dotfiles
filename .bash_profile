@@ -63,7 +63,7 @@ if /usr/libexec/java_home -v 11 > /dev/null 2>&1; then
     export KEYTOOL
 fi
 
-if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
+if [ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
     SDKMAN_DIR="$HOME/.sdkman"
     export SDKMAN_DIR
     source "$SDKMAN_DIR/bin/sdkman-init.sh"
@@ -71,7 +71,7 @@ if [ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
 fi
 
 # Python
-if [ -f "$HOME/.pythonrc" ]; then
+if [ -s "$HOME/.pythonrc" ]; then
     PYTHONSTARTUP="$HOME/.pythonrc"
     export PYTHONSTARTUP
 fi
@@ -94,11 +94,10 @@ if [ -d "$HOME/.pyenv" ]; then
 fi
 
 # Node
-if [ -d "$HOME/.volta" ]; then
-    VOLTA_HOME="$HOME/.volta"
-    export VOLTA_HOME
-
-    PATH="$VOLTA_HOME/bin:$PATH"
+NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/nvm"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    source "$NVM_DIR/nvm.sh"
+    export NVM_DIR
 fi
 
 # Ruby
@@ -122,27 +121,30 @@ if [ -d "$HOME/.cargo/bin" ]; then
 fi
 
 # OPAM configuration
-if [ -f "$HOME/.opam/opam-init/init.sh" ]; then
+if [ -s "$HOME/.opam/opam-init/init.sh" ]; then
     source "$HOME/.opam/opam-init/init.sh"
 fi
 
 # Haskell
-if [ -f "$HOME/.ghcup/env" ]; then
+if [ -s "$HOME/.ghcup/env" ]; then
     source "$HOME/.ghcup/env" # ghcup-env
 fi
 
 # Google Cloud SDK
-if [ -f "$HOME/.google-cloud-sdk/path.bash.inc" ]; then
+if [ -s "$HOME/.google-cloud-sdk/path.bash.inc" ]; then
     CLOUDSDK_PYTHON="python"
     export CLOUDSDK_PYTHON
     source "$HOME/.google-cloud-sdk/path.bash.inc"
 fi
 
+# krew
+if [ -d "$HOME"/.krew/bin ]; then
+    PATH="$HOME/.krew/bin:$PATH"
+fi
+
 # PWD
 PATH="::$PATH"
 
-if [ -n "$BASH_VERSION" ]; then
-    if [ -f "$HOME/.bashrc" ]; then
-        source "$HOME/.bashrc"
-    fi
+if [ -n "$BASH_VERSION" ] && [ -s "$HOME/.bashrc" ]; then
+    source "$HOME/.bashrc"
 fi

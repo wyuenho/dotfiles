@@ -73,25 +73,33 @@ if [ "$(uname -s)" = 'Darwin' ]; then
 fi
 
 # Aliases
-[ -f ~/.bash_aliases ] && source ~/.bash_aliases
+[ -s ~/.bash_aliases ] && source ~/.bash_aliases
 
 # Bash Completion
 if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq posix; then
-    if [ -f /usr/share/bash-completion/bash_completion ]; then # Debian
+    if [ -s /usr/share/bash-completion/bash_completion ]; then # Debian
         source /usr/share/bash-completion/bash_completion
-    elif [ -f /etc/bash_completion ]; then
+    elif [ -s /etc/bash_completion ]; then
         source /etc/bash_completion
-    elif [ -f /opt/local/etc/bash_completion ]; then # MacPorts
+    elif [ -s /opt/local/etc/bash_completion ]; then # MacPorts
         source /opt/local/etc/bash_completion
-    elif [ -f /usr/local/etc/bash_completion ]; then # Homebrew
+    elif [ -s /usr/local/etc/bash_completion ]; then # Homebrew
         source /usr/local/etc/bash_completion
     fi
+
+    # Emacs vterm support
+    if [ -s "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh" ]; then
+        source "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh"
+    fi
+
+    # Node
+    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/bash_completion"
 
     # sdkman!
     [ "$(type -t sdk)" = 'function' ] && eval "$(sdk completion bash)"
 
     # gcloud
-    if [ -f "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
+    if [ -s "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
         source "$HOME/.google-cloud-sdk/completion.bash.inc";
     fi
 
@@ -99,18 +107,17 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
     [ -x "$(type -P aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
 
     # pyenv
-    if [ -d "$PYENV_ROOT" ] && [ -f "$PYENV_ROOT/completions/pyenv.bash" ]; then
+    if [ -s "$PYENV_ROOT/completions/pyenv.bash" ]; then
         source "$PYENV_ROOT/completions/pyenv.bash"
     fi
 
     # git-subrepo
-    if [ -d "$GIT_SUBREPO_ROOT" ] && [ -f "$GIT_SUBREPO_ROOT/share/completion.bash" ]; then
+    if [ -s "$GIT_SUBREPO_ROOT/share/completion.bash" ]; then
         source "$GIT_SUBREPO_ROOT/share/completion.bash"
     fi
 
     # CircleCI
     [ -x "$(type -P circleci)" ] && eval "$(circleci completion bash)"
-
 fi
 
 # Direnv
@@ -245,11 +252,4 @@ if [[ $OSTYPE == 'darwin'* ]]; then
             [[ $? -eq 0 ]] && export PROMPT_COMMAND
         fi
     fi
-fi
-
-# Emacs vterm support
-if [ "$INSIDE_EMACS" = 'vterm' ] \
-       && [ -n "$EMACS_VTERM_PATH" ] \
-       && [ -f "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh" ]; then
-    source "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh"
 fi
