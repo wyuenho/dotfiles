@@ -2214,8 +2214,7 @@ ELEMENT is only added once."
   (purpose-add-user-purposes
    :modes '((message-mode . edit)
             (ag-mode      . search)
-            (rg-mode      . search)
-            (vterm-mode   . terminal)))
+            (rg-mode      . search)))
 
   (with-eval-after-load 'message
     (defun message-send-and-exit-advice (fn &rest args)
@@ -2233,6 +2232,10 @@ ELEMENT is only added once."
     (add-to-list 'purpose-x-popwin-buffer-names "*Messages*")
     (add-to-list 'purpose-x-popwin-buffer-names "*Warnings*")
     (purpose-x-popwin-update-conf)
+
+    (with-eval-after-load 'vterm
+      (add-to-list 'purpose-x-popwin-buffer-names vterm-buffer-name)
+      (purpose-x-popwin-update-conf))
 
     (with-eval-after-load 'ido
       (add-to-list 'purpose-x-popwin-buffer-names ido-completion-buffer)
