@@ -217,6 +217,8 @@ if [ -x "$(type -P fzf)" ]; then
                              git ls-tree -r --name-only HEAD
                          elif [ -x "$(type -P fd)" ]; then
                              fd -uu --no-ignore-parent --type f
+                         elif [ -x "$(type -P fdfind)" ]; then
+                             fdfind -uu --no-ignore-parent --type f
                          elif [ -x "$(type -P rg)" ]; then
                              rg --no-ignore --no-hidden --files || find .
                          fi'
@@ -229,6 +231,8 @@ if [ -x "$(type -P fzf)" ]; then
                            git ls-tree -d -r --name-only HEAD
                        elif [ -x "$(type -P fd)" ]; then
                            fd -uu --no-ignore-parent --type d
+                       elif [ -x "$(type -P fdfind)" ]; then
+                           fdfind -uu --no-ignore-parent --type d
                        fi'
     export FZF_ALT_C_COMMAND
 
