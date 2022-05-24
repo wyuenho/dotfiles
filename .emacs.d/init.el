@@ -1260,9 +1260,21 @@ checker symbol."
 
   (global-flycheck-mode 1))
 
+(use-package quick-peek)
+
 (use-package flycheck-inline
-  :after flycheck
-  :hook (flycheck-mode . flycheck-inline-mode))
+  :init
+  (defun flycheck-inline-quick-peek (msg pos err)
+    (let* ((ov (quick-peek-overlay-ensure-at pos))
+           (contents (quick-peek-overlay-contents ov)))
+      (setf (quick-peek-overlay-contents ov)
+            (concat contents (when contents "\n") (string-trim msg)))
+      (quick-peek-update ov 1 4)))
+  :after (flycheck quick-peek)
+  :hook (flycheck-mode . flycheck-inline-mode)
+  :custom
+  (flycheck-inline-display-function #'flycheck-inline-quick-peek)
+  (flycheck-inline-clear-function #'quick-peek-hide))
 
 ;; REST API
 (use-package org
