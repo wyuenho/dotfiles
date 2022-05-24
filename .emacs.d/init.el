@@ -647,7 +647,6 @@ region."
 ;; Static Analysis
 (use-package lsp-mode
   :delight
-  :after (which-key)
   :hook (((c-mode-common
            enh-ruby-mode
            go-mode
@@ -662,7 +661,9 @@ region."
               (when (not (derived-mode-p 'json-mode))
                 (lsp-deferred))))
          (lsp-managed-mode . lsp-mode)
-         (lsp-mode . lsp-enable-which-key-integration))
+         (lsp-mode . (lambda ()
+                       (with-eval-after-load 'which-key
+                         (lsp-enable-which-key-integration)))))
   :config
   (setf read-process-output-max (* 1024 1024 10))
 
