@@ -1634,13 +1634,14 @@ variants of Typescript.")
                  (setf python-black-command
                        (concat (python-pre-commit-virtualenv-path "black") "/bin/black"))
 
-                 (make-local-variable 'python-black-d-command)
-                 (let ((blackd-path (concat (python-pre-commit-virtualenv-path "black") "/bin/blackd")))
-                   (setf python-black-d-command
-                         (and (condition-case err
-                                  (zerop (call-process blackd-path nil nil nil "--version"))
-                                (error (message "%s" (error-message-string err)) nil))
-                              blackd-path)))
+                 (when (boundp 'python-black-d-command)
+                   (make-local-variable 'python-black-d-command)
+                   (let ((blackd-path (concat (python-pre-commit-virtualenv-path "black") "/bin/blackd")))
+                     (setf python-black-d-command
+                           (and (condition-case err
+                                    (zerop (call-process blackd-path nil nil nil "--version"))
+                                  (error (message "%s" (error-message-string err)) nil))
+                                blackd-path))))
                  t)
 
                 ((and (python-use-poetry-p)
@@ -1653,30 +1654,33 @@ variants of Typescript.")
                  (setf python-black--base-args (append '("run" "black") python-black--base-args))
 
                  ;; Set `python-black-d-command'
-                 (make-local-variable 'python-black-d-command)
-                 (setf python-black-d-command
-                       (with-temp-buffer
-                         (if (condition-case err
-                                 (and (call-process "poetry" nil t nil "run" "which" python-black-d-command)
-                                      (zerop (call-process "poetry" nil nil nil "run"
-                                                           python-black-d-command "--version")))
-                               (error (message "%s" (error-message-string err)) nil))
-                             (string-trim (buffer-string))
-                           nil)))
+                 (when (boundp 'python-black-d-command)
+                   (make-local-variable 'python-black-d-command)
+                   (setf python-black-d-command
+                         (with-temp-buffer
+                           (if (condition-case err
+                                   (and (call-process "poetry" nil t nil "run" "which" python-black-d-command)
+                                        (zerop (call-process "poetry" nil nil nil "run"
+                                                             python-black-d-command "--version")))
+                                 (error (message "%s" (error-message-string err)) nil))
+                               (string-trim (buffer-string))
+                             nil))))
                  t)
 
                 ((or (executable-find python-black-command)
-                     (and (executable-find python-black-d-command)
+                     (and (boundp 'python-black-d-command)
+                          (executable-find python-black-d-command)
                           (zerop (call-process python-black-d-command nil nil nil "--version"))))
                  t)
                 (t
                  (make-local-variable 'python-black-command)
-                 (make-local-variable 'python-black-d-command)
-                 (setf python-black-command nil
-                       python-black-d-command nil)
+                 (setf python-black-command nil)
+                 (when (boundp 'python-black-d-command)
+                   (make-local-variable 'python-black-d-command)
+                   (setf python-black-d-command nil))
                  t))
 
-      (when python-black-d-command
+      (when (bound-and-true-p python-black-d-command)
         (make-local-variable 'python-black-d-request-headers-function)
         (setf python-black-d-request-headers-function 'python-get-black-d-request-headers))
 
