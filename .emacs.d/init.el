@@ -1281,6 +1281,10 @@ checker symbol."
   :mode ("\\.org\\'" . org-mode)
   :config (define-key org-mode-map (kbd "C-c C-r") verb-command-map))
 
+;; API Blueprints
+(use-package apib-mode
+  :mode "\\.apib\\'")
+
 ;; Term and shell
 (with-eval-after-load 'shell
   (use-package native-complete
@@ -1836,10 +1840,6 @@ variants of Typescript.")
 
 (use-package lsp-metals
   :after (lsp-mode))
-
-;; API Blueprints
-(use-package apib-mode
-  :mode "\\.apib\\'")
 
 ;; Web
 (use-package sass-mode
