@@ -2251,6 +2251,7 @@ ELEMENT is only added once."
     (purpose-x-popwin-update-conf)
 
     (with-eval-after-load 'vterm
+      (add-to-list 'purpose-x-popwin-major-modes 'vterm-mode)
       (add-to-list 'purpose-x-popwin-buffer-names vterm-buffer-name)
       (purpose-x-popwin-update-conf))
 
