@@ -1265,12 +1265,14 @@ checker symbol."
 (use-package flycheck-inline
   :init
   (defun flycheck-inline-quick-peek (msg pos err)
-    (let* ((ov (quick-peek-overlay-ensure-at pos))
-           (contents (quick-peek-overlay-contents ov)))
-      (setf (quick-peek-overlay-contents ov)
-            (concat contents (when contents "\n") (string-trim msg)))
-      (quick-peek-update ov 1 4)))
-  :after (flycheck quick-peek)
+    (when (or (not company-mode)
+              (not (company--active-p)))
+      (let* ((ov (quick-peek-overlay-ensure-at pos))
+             (contents (quick-peek-overlay-contents ov)))
+        (setf (quick-peek-overlay-contents ov)
+              (concat contents (when contents "\n") (string-trim msg)))
+        (quick-peek-update ov 1 4))))
+  :after (flycheck quick-peek company)
   :hook (flycheck-mode . flycheck-inline-mode)
   :custom
   (flycheck-inline-display-function #'flycheck-inline-quick-peek)
