@@ -762,12 +762,14 @@ checker symbol."
                   (dap-firefox-debug-program
                    (concat "node " dap-firefox-debug-path "/dist/adaptor.bundle.js")))
 
-                (use-package dap-node
-                  :custom
-                  (dap-node-debug-path
-                   "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.js-debug")
-                  (dap-node-debug-program
-                   (concat "node " dap-node-debug-path "/out/src/nodeDebug.js"))))))
+                ;; https://github.com/emacs-lsp/dap-mode/issues/369
+                ;; (use-package dap-node
+                ;;   :custom
+                ;;   (dap-node-debug-path
+                ;;    "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.js-debug")
+                ;;   (dap-node-debug-program
+                ;;    (concat "node " dap-node-debug-path "/src/extension.js")))
+                )))
 
   (add-hook 'python-mode-hook (lambda () (use-package dap-python)))
 
@@ -783,33 +785,48 @@ checker symbol."
                      dap-utils-extension-path
                      "/golang.go-*")))))
                 (dap-go-debug-program
-                 (concat "node" dap-go-debug-path "/dist/debugAdaptor2.js")))))
+                 (concat "node" dap-go-debug-path "/dist/debugAdaptor.js")))))
 
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              (use-package dap-gdb-lldb
-                :custom
-                (dap-gdb-lldb-path
-                 (car
-                  (last
-                   (file-expand-wildcards
-                    (concat
-                     dap-utils-extension-path
-                     "/webfreak.debug-*")))))
-                (dap-gdb-lldb-debug-program
-                 `("node" ,(concat dap-gdb-lldb-path "/extension/out/src/gdb.js"))))
+  (dolist (mode '(c-mode-common rust-mode))
+    (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
+      (add-hook mode-hook
+                (lambda ()
+                  (use-package dap-gdb-lldb
+                    :custom
+                    (dap-gdb-lldb-path
+                     (car
+                      (last
+                       (file-expand-wildcards
+                        (concat
+                         dap-utils-extension-path
+                         "/webfreak.debug-*")))))
+                    (dap-gdb-lldb-debug-program
+                     `("node" ,(concat dap-gdb-lldb-path "/out/src/gdb.js"))))
 
-              (use-package dap-cpptools
-                :custom
-                (dap-cpptools-debug-path
-                 (car
-                  (last
-                   (file-expand-wildcards
-                    (concat
-                     dap-utils-extension-path
-                     "/ms-vscode.cpptools-*")))))
-                (dap-cpptools-debug-program
-                 (concat dap-cpptools-debug-path "/bin/cpptools"))))))
+                  ;; (use-package dap-codelldb
+                  ;;   :custom
+                  ;;   (dap-codelldb-debug-path
+                  ;;    (car
+                  ;;     (last
+                  ;;      (file-expand-wildcards
+                  ;;       (concats
+                  ;;        dap-utils-extension-path
+                  ;;        "/vadimcn.vscode-lldb-*")))))
+                  ;;   (dap-codelldb-debug-program
+                  ;;    (concat dap-codelldb-debug-path "/adapter/codelldb")))
+
+                  ;; (use-package dap-cpptools
+                  ;;   :custom
+                  ;;   (dap-cpptools-debug-path
+                  ;;    (car
+                  ;;     (last
+                  ;;      (file-expand-wildcards
+                  ;;       (concat
+                  ;;        dap-utils-extension-path
+                  ;;        "/ms-vscode.cpptools-*")))))
+                  ;;   (dap-cpptools-debug-program
+                  ;;    (concat dap-cpptools-debug-path "/debugAdapters/bin/OpenDebugAD7")))
+                  )))))
 
 ;; Auto-completion
 (use-package company
@@ -1730,6 +1747,9 @@ variants of Typescript.")
                             (error (message "%s" (error-message-string err)) nil))
                           (string-trim (buffer-string))
                         nil))))
+
+            (with-eval-after-load 'dap-python
+              (setf dap-python-executable python-shell-interpreter))
 
             (with-eval-after-load 'python-black
               (python-black-setup))
