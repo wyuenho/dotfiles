@@ -1817,11 +1817,9 @@ variants of Typescript.")
 (use-package go-mode
   :mode "\\.go\\'"
   :config
-  (add-hook 'before-save-hook 'gofmt-before-save nil 'local)
   (add-hook 'go-mode-hook
             (lambda ()
-              (with-eval-after-load 'dap-mode
-                (require 'dap-go)))))
+              (add-hook 'before-save-hook 'gofmt-before-save nil 'local))))
 
 (use-package flycheck-golangci-lint
   :after (go-mode)
