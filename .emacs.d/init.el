@@ -1819,7 +1819,20 @@ variants of Typescript.")
   :config
   (add-hook 'go-mode-hook
             (lambda ()
-              (add-hook 'before-save-hook 'gofmt-before-save nil 'local))))
+              (add-hook 'before-save-hook 'gofmt-before-save nil 'local)
+              (with-eval-after-load 'lsp-mode
+                (add-hook 'lsp-managed-mode-hook
+                          (lambda ()
+                            (setq-local lsp-go-use-gofumpt t
+                                        lsp-enable-indentation t
+                                        lsp-enable-on-type-formatting t)
+                            (remove-hook 'before-save-hook 'gofmt-before-save 'local)
+                            (add-hook 'before-save-hook
+                                      (lambda ()
+                                        (condition-case err
+                                            (lsp-format-buffer)
+                                          (error (minibuffer-message (error-message-string err)))))
+                                      nil 'local)))))))
 
 (use-package flycheck-golangci-lint
   :after (go-mode)
