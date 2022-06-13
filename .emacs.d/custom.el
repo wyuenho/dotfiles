@@ -12,7 +12,7 @@
  '(ag-reuse-buffers t)
  '(ag-reuse-window t)
  '(aggressive-indent-excluded-modes
-   '(elm-mode haskell-mode inf-ruby-mode makefile-mode makefile-gmake-mode python-mode sql-interactive-mode text-mode yaml-mode tcl-mode dockerfile-mode))
+   '(elm-mode haskell-mode inf-ruby-mode makefile-mode makefile-gmake-mode python-mode sql-interactive-mode text-mode yaml-mode tcl-mode dockerfile-mode go-mode))
  '(amx-mode t)
  '(apib-drafter-executable "aglio")
  '(auth-source-protocols
@@ -144,6 +144,7 @@
    '("/opt/local/etc/grid-security/certificates/*.crl.pem" "/etc/grid-security/certificates/*.crl.pem"))
  '(gnutls-trustfiles
    '("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt" "/etc/certs/ca-certificates.crt"))
+ '(gofmt-command "gofumpt")
  '(help-at-pt-display-when-idle '(keymap local-map button kbd-help flymake-diagnostic) nil (help-at-pt))
  '(help-at-pt-timer-delay 0.5)
  '(highlight-indent-guides-method 'character)
@@ -203,6 +204,8 @@
  '(lsp-enable-file-watchers nil)
  '(lsp-enable-indentation nil)
  '(lsp-enable-on-type-formatting nil)
+ '(lsp-go-library-directories nil)
+ '(lsp-go-use-gofumpt t)
  '(lsp-headerline-breadcrumb-enable nil)
  '(lsp-imenu-index-symbol-kinds
    '(Class Method Property Field Constuctor Enum Interface Function Struct))

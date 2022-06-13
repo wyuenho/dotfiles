@@ -1817,22 +1817,27 @@ variants of Typescript.")
 (use-package go-mode
   :mode "\\.go\\'"
   :config
+  (defun lsp-go-format-buffer ()
+    (condition-case err
+        (lsp-format-buffer)
+      (error (minibuffer-message (error-message-string err)))))
   (add-hook 'go-mode-hook
             (lambda ()
               (add-hook 'before-save-hook 'gofmt-before-save nil 'local)
               (with-eval-after-load 'lsp-mode
                 (add-hook 'lsp-managed-mode-hook
                           (lambda ()
-                            (setq-local lsp-go-use-gofumpt t
-                                        lsp-enable-indentation t
-                                        lsp-enable-on-type-formatting t)
-                            (remove-hook 'before-save-hook 'gofmt-before-save 'local)
-                            (add-hook 'before-save-hook
-                                      (lambda ()
-                                        (condition-case err
-                                            (lsp-format-buffer)
-                                          (error (minibuffer-message (error-message-string err)))))
-                                      nil 'local)))))))
+                            (if lsp-managed-mode
+                                (progn
+                                  (setq-local lsp-enable-indentation t
+                                              lsp-enable-on-type-formatting t)
+                                  (remove-hook 'before-save-hook 'gofmt-before-save 'local)
+                                  (add-hook 'before-save-hook 'lsp-go-format-buffer nil 'local))
+                              (kill-local-variable 'lsp-enable-indentation)
+                              (kill-local-variable 'lsp-enable-on-type-formatting)
+                              (remove-hook 'before-save-hook 'lsp-go-format-buffer 'local)
+                              (add-hook 'before-save-hook 'gofmt-before-save nil 'local)))
+                          nil 'local)))))
 
 (use-package flycheck-golangci-lint
   :after (go-mode)
