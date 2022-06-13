@@ -33,23 +33,26 @@
 	max-line-length = 2048
 
 [difftool "ediff"]
-	cmd = emacsclient --eval \"(ediff-files \\\"$LOCAL\\\" \\\"$REMOTE\\\")\"
+	cmd = emacsclient --eval "(ediff-files \"$LOCAL\" \"$REMOTE\")"
 
 [mergetool "ediff"]
-	cmd = emacsclient --eval \"(ediff-merge-files-with-ancestor \\\"$LOCAL\\\" \\\"$REMOTE\\\" \\\"$BASE\\\" nil \\\"$MERGED\\\")\"
+	cmd = emacsclient --eval "(ediff-merge-files-with-ancestor \"$LOCAL\" \"$REMOTE\" \"$BASE\" nil \"$MERGED\")"
 
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+[difftool "opendiff"]
+	cmd = opendiff "$LOCAL" "$REMOTE"
 	path =
 
 [difftool "kitty"]
-	cmd = kitty +kitten diff $LOCAL $REMOTE
+	cmd = kitty +kitten diff "$LOCAL" "$REMOTE"
 
 [difftool "kitty.gui"]
-	cmd = kitty kitty +kitten diff $LOCAL $REMOTE
+	cmd = kitty kitty +kitten diff "$LOCAL" "$REMOTE"
 
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+[difftool "difftastic"]
+	cmd = difft "$LOCAL" "$REMOTE"
+
+[mergetool "opendiff"]
+	cmd = opendiff "$LOCAL" "$REMOTE" -ancestor "$BASE" -merge "$MERGED" | cat
 	trustExitCode = true
 
 [mergetool]
