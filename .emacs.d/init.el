@@ -539,10 +539,7 @@ region."
 
 ;; Cross-machine fomatting
 (use-package editorconfig
-  :delight
-  :config
-  (add-to-list 'editorconfig-indentation-alist
-               '(rjsx-mode js2-basic-offset sgml-basic-offset)))
+  :delight)
 
 ;; Performance enhancement for files with really long lines
 (use-package so-long)
