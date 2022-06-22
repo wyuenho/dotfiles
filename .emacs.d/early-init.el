@@ -59,6 +59,40 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (with-eval-after-load 'package
+  (defun package-delete-advice (fn &rest args)
+    "Queue package deletion during native compilation."
+    (if (and (native-comp-available-p)
+             (or comp-files-queue
+                 (> (comp-async-runnings) 0)))
+        (let* ((pkg-desc (car args))
+               (pkg-name (symbol-name (package-desc-name pkg-desc)))
+               (version-string (mapconcat (lambda (n) (format "%s" n)) (package-desc-version pkg-desc) "-"))
+               (optional-args (mapconcat (lambda (arg) (format "%s" arg)) (cdr args) "-"))
+               (func-name (mapconcat 'identity (list "package-delete" pkg-name version-string optional-args) "-"))
+               (func-sym (intern func-name)))
+          (fset func-sym (lambda ()
+                           (condition-case err
+                               (apply fn args)
+                             (error (minibuffer-message "%s" (error-message-string err))))
+                           (remove-hook 'native-comp-async-all-done-hook func-sym)
+                           (unintern func-sym nil)))
+          (add-hook 'native-comp-async-all-done-hook func-sym))
+      (apply fn args)))
+  (advice-add 'package-delete :around 'package-delete-advice)
+
+  (defun package-unpack-advice (pkg-desc)
+    "Recompile dependents after installation."
+    (cl-loop for (_ pkg) in (package--alist)
+             if (member (package-desc-name pkg-desc)
+                        (cl-loop for (req-name _) in (package-desc-reqs pkg)
+                                 collect req-name))
+             do (when (package-activate-1 pkg :reload :deps) ;; copied from package-unpack
+                  (package--compile pkg)
+                  (when package-native-compile
+                    (package--native-compile-async pkg))
+                  (package--load-files-for-activation pkg :reload))))
+  (advice-add 'package-unpack :after 'package-unpack-advice)
+
   (with-eval-after-load 'quelpa
     (defun package--removable-packages-advice (fn &rest args)
       "Make sure `package-autoremove' does not consider quelpa-installed packages.
