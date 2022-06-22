@@ -11,11 +11,7 @@
 (set-face-attribute 'variable-pitch nil :family "Noto Sans" :weight 'regular :width 'normal)
 (set-face-attribute 'default nil :family "JetBrains Mono NL" :weight 'regular :width 'normal)
 
-(set-face-attribute 'default nil :background "#002b36" :foreground "#839496")
-(set-face-attribute 'mode-line nil :background "#073642" :foreground "#839496" :underline nil :box nil :overline "#284b54")
-(set-face-attribute 'mode-line-inactive nil :background "#002b36" :foreground "#586e75" :overline "#284b54")
-(set-face-attribute 'mode-line-buffer-id nil :weight 'bold :foreground "#93a1a1")
-(set-face-attribute 'fringe nil :background "#002b36" :foreground "#586e75")
+(load-theme 'bootstrap t)
 
 ;; Set up initial and default frame params
 (pcase-dolist (`(,param . ,value)
