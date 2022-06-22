@@ -43,11 +43,6 @@ under `user-emacs-directory'.  If it exists, loaded it."
   (setf use-package-compute-statistics t)
   (quelpa-use-package-activate-advice))
 
-;; Remap Unicode charactors to their appropriate fonts
-;; (use-package unicode-fonts
-;;   :config
-;;   (unicode-fonts-setup))
-
 ;; Turn off useless mode lighters
 (use-package delight
   :config
