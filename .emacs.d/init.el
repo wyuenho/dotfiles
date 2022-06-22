@@ -318,6 +318,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Other missing essentials that I don't want to write
 (use-package crux
+  :quelpa (crux :fetcher github :repo "wyuenho/crux" :branch "fix-rename-file-and-buffer")
   :bind (("C-x C-u" . crux-upcase-region)
          ("C-x C-l" . crux-downcase-region)
          ("C-x M-c" . crux-capitalize-region)
