@@ -55,8 +55,17 @@
  '(delete-by-moving-to-trash t)
  '(delete-old-versions t)
  '(delete-selection-mode t)
+ '(desktop-minor-mode-table
+   '((defining-kbd-macro nil)
+     (isearch-mode nil)
+     (vc-mode nil)
+     (vc-dir-mode nil)
+     (erc-track-minor-mode nil)
+     (savehist-mode nil)
+     (anaconda-mode nil)
+     (auto-compile-mode nil)))
  '(desktop-modes-not-to-save
-   '(tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode anaconda-mode auto-compile-mode))
+   '(tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode))
  '(desktop-path '("~/.emacs.d"))
  '(desktop-save 'if-exists)
  '(desktop-save-mode t)
