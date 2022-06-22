@@ -523,6 +523,14 @@ region."
                           ("M-]" . sp-backward-unwrap-sexp))
               :config
               (require 'smartparens-config)
+
+              (with-eval-after-load 'go-mode
+                (sp-with-modes 'go-mode
+                  (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
+                  (sp-local-pair "/*" "*/" :post-handlers '(("| " "SPC")
+                                                            ("* ||\n[i]" "RET"))))
+                (add-to-list 'sp-sexp-suffix (list #'go-mode 'regexp "")))
+
               (add-hook 'eval-expression-minibuffer-setup-hook
                         (lambda ()
                           (smartparens-mode 1))))))
@@ -1568,7 +1576,10 @@ optionally the window if possible."
 Refer to Typescript documentation for syntactic differences between normal and TSX
 variants of Typescript.")
 
-  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescript-tsx-mode)))
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescript-tsx-mode))
+
+  (with-eval-after-load 'smartparens
+    (add-to-list 'sp--html-modes 'typescript-tsx-mode)))
 
 (use-package ts-comint
   :after (typescript-mode)
