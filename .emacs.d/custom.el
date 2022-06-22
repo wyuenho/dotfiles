@@ -56,7 +56,7 @@
  '(delete-old-versions t)
  '(delete-selection-mode t)
  '(desktop-modes-not-to-save
-   '(tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode anaconda-mode))
+   '(tags-table-mode Info-mode info-lookup-mode fundamental-mode help-mode shell-mode completion-list-mode inferior-python-mode comint-mode anaconda-mode auto-compile-mode))
  '(desktop-path '("~/.emacs.d"))
  '(desktop-save 'if-exists)
  '(desktop-save-mode t)
