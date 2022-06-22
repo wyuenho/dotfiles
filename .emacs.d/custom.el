@@ -68,6 +68,7 @@
  '(dired-dwim-target t)
  '(dired-omit-verbose nil)
  '(direnv-mode t)
+ '(display-line-numbers-widen t)
  '(display-line-numbers-width-start t)
  '(display-time-world-list
    '(("America/Los_Angeles" "San Francisco")
