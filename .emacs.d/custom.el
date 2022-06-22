@@ -196,6 +196,7 @@
  '(js2-skip-preprocessor-directives t)
  '(json-reformat:indent-width 2)
  '(kept-new-versions 10)
+ '(libgit-auto-rebuild t)
  '(linum-delay t)
  '(linum-format "%4d ")
  '(lsp-auto-guess-root t)
