@@ -287,10 +287,11 @@
  '(orderless-matching-styles
    '(orderless-regexp orderless-initialism orderless-prefixes orderless-flex))
  '(origami-fold-replacement "▶️")
+ '(package-archive-priorities '(("melpa" . 2) ("nongnu" . 1) ("gnu" . 0)))
  '(package-archives
-   '(("gnu" . "https://elpa.gnu.org/packages/")
-     ("melpa" . "https://melpa.org/packages/")
-     ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+   '(("melpa" . "https://melpa.org/packages/")
+     ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+     ("gnu" . "https://elpa.gnu.org/packages/")))
  '(package-native-compile t)
  '(package-selected-packages
    '(abridge-diff add-node-modules-path ag aggressive-indent all-the-icons all-the-icons-dired amx apib-mode arduino-mode auto-compile auto-yasnippet beginend browse-kill-ring buffer-move bug-hunter cargo cmake-font-lock company company-box company-native-complete company-prescient crm-custom crux csv-mode cycle-quotes dap-mode default-text-scale delight diff-hl dired-collapse dired-hacks-utils dired-hide-dotfiles dired-single direnv docker docker-compose-mode dockerfile-mode dotenv-mode dumb-jump editorconfig elisp-def elisp-refs emacsql-sqlite emmet-mode enh-ruby-mode envrc eterm-256color exec-path-from-shell expand-region flx-ido flx-isearch flycheck flycheck-golangci-lint flycheck-inline flycheck-package flycheck-projectile focus fontify-face forge form-feed git-modes git-timemachine go-mode graphql-mode graphviz-dot-mode helpful highlight-indent-guides hl-todo ialign ido-completing-read+ ido-vertical-mode iedit imenu-anywhere imenu-list import-js importmagic jq-mode js-doc js2-mode json-mode kurecolor lorem-ipsum lsp-jedi lsp-metals lsp-mode lsp-origami lsp-pyright lsp-sourcekit lsp-ui macrostep magit magit-lfs magit-libgit magit-todos markdown-mode monky move-dup multiple-cursors nano-modeline nano-theme native-complete nodejs-repl olivetti origami osx-trash package-build package-lint package-utils pager-default-keybindings paradox pcre2el pdf-tools po-mode powerline prettier projectile projectile-rails protobuf-mode python-black python-docstring python-insert-docstring python-isort quelpa-use-package quick-peek rainbow-mode reason-mode reformatter request restart-emacs rg rjsx-mode ron-mode rust-mode sass-mode sbt-mode scala-mode scss-mode shift-number shrink-path shut-up smart-semicolon smartparens smooth-scrolling solarized-theme spaceline sphinx-doc spinner ssh-config-mode string-inflection svg-lib swift-mode tide tree-sitter tree-sitter-langs ts-comint tuareg typescript-mode udev-mode undo-fu verb visual-regexp-steroids vterm web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose yaml-mode yard-mode yarn-mode yasnippet yasnippet-snippets))
