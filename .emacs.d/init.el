@@ -886,7 +886,7 @@ checker symbol."
       (with-temp-buffer
         (funcall 'call-process "dasel" nil t nil "select" "-f" file-path "-w" "json")
         (json-parse-string (buffer-string) :object-type 'alist :array-type 'list))
-    (error (message "%s" (error-message-string err)) nil)))
+    (error (minibuffer-message "%s" (error-message-string err)) nil)))
 
 (defvar python-watched-config-files nil)
 (defun python-watch-config-file (config-file cache-var parser)
@@ -1090,7 +1090,7 @@ checker symbol."
                     (or (and (python-use-poetry-p)
                              (condition-case err
                                  (process-lines "poetry" "run" "pip" "list" "--format=freeze" "--disable-pip-version-check")
-                               (error (message "%s" (error-message-string err)) nil)))
+                               (error (minibuffer-message "%s" (error-message-string err)) nil)))
                         ;; TODO: search the project root for something that
                         ;; looks a virtualenv, activate it and call pip list
                         ;; --format=freeze in it
@@ -1100,7 +1100,7 @@ checker symbol."
                            project-root-requirements-file))
                         (condition-case err
                             (process-lines "pip" "list" "--format=freeze" "--disable-pip-version-check")
-                          (error (message "%s" (error-message-string err)) nil)))))
+                          (error (minibuffer-message "%s" (error-message-string err)) nil)))))
       (setf python-project-requirements-cache
             (assoc-delete-all file-path python-project-requirements-cache))
       (when requirements
@@ -1260,7 +1260,7 @@ checker symbol."
                      (with-temp-buffer
                        (when (condition-case err
                                  (zerop (call-process "poetry" nil t nil "run" "which" executable-name))
-                               (error (message "%s" (error-message-string err)) nil))
+                               (error (minibuffer-message "%s" (error-message-string err)) nil))
                          (string-trim (buffer-string))))))
               ((executable-find executable-name)
                (make-local-variable flycheck-executable-variable)
@@ -1666,7 +1666,7 @@ variants of Typescript.")
                      (setf python-black-d-command
                            (and (condition-case err
                                     (zerop (call-process blackd-path nil nil nil "--version"))
-                                  (error (message "%s" (error-message-string err)) nil))
+                                  (error (minibuffer-message "%s" (error-message-string err)) nil))
                                 blackd-path))))
                  t)
 
@@ -1688,7 +1688,7 @@ variants of Typescript.")
                                    (and (call-process "poetry" nil t nil "run" "which" python-black-d-command)
                                         (zerop (call-process "poetry" nil nil nil "run"
                                                              python-black-d-command "--version")))
-                                 (error (message "%s" (error-message-string err)) nil))
+                                 (error (minibuffer-message "%s" (error-message-string err)) nil))
                                (string-trim (buffer-string))
                              nil))))
                  t)
