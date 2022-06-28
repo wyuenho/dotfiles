@@ -626,15 +626,14 @@ region."
   :bind ("C-c o" . olivetti-mode))
 
 ;; Much faster PDF viewing
-(add-hook 'doc-view-mode-hook
-          (lambda ()
-            (use-package pdf-tools
-              :config
-              (defun pdf-view-goto-page-advice (fn &rest args)
-                "Ignore `pdf-view-goto-page' error when scrolling."
-                (ignore-errors (apply fn args)))
-              (advice-add 'pdf-view-goto-page :around 'pdf-view-goto-page-advice)
-              (pdf-tools-install))))
+(use-package pdf-tools
+  :config
+  (defun pdf-view-goto-page-advice (fn &rest args)
+    "Ignore `pdf-view-goto-page' error when scrolling."
+    (ignore-errors (apply fn args)))
+  (advice-add 'pdf-view-goto-page :around 'pdf-view-goto-page-advice)
+  (pdf-tools-install)
+  (pdf-loader-install))
 
 ;; Modern tree-based syntax-highlighting
 (use-package tree-sitter-langs
