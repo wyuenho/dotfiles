@@ -1561,7 +1561,7 @@ optionally the window if possible."
 (use-package rjsx-mode
   :mode "\\.\\(?:cjs\\|jsx?\\|mjs\\)\\'")
 
-(use-package jsonian-mode
+(use-package jsonian
   :after so-long
   :config
   (jsonian-no-so-long-mode)
