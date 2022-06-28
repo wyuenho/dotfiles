@@ -657,9 +657,7 @@ region."
            scala-mode
            swift-mode
            tuareg-mode)
-          . (lambda ()
-              (when (not (derived-mode-p 'json-mode))
-                (lsp-deferred))))
+          . lsp-deferred)
          (lsp-managed-mode . lsp-mode)
          (lsp-mode . (lambda ()
                        (with-eval-after-load 'which-key
@@ -749,27 +747,26 @@ checker symbol."
 
   (add-hook 'js-mode-hook
             (lambda ()
-              (unless (derived-mode-p 'json-mode)
-                (use-package dap-firefox
-                  :custom
-                  (dap-firefox-debug-path
-                   (car
-                    (last
-                     (file-expand-wildcards
-                      (concat
-                       dap-utils-extension-path
-                       "/firefox-devtools.vscode-firefox-debug-*")))))
-                  (dap-firefox-debug-program
-                   (concat "node " dap-firefox-debug-path "/dist/adaptor.bundle.js")))
+              (use-package dap-firefox
+                :custom
+                (dap-firefox-debug-path
+                 (car
+                  (last
+                   (file-expand-wildcards
+                    (concat
+                     dap-utils-extension-path
+                     "/firefox-devtools.vscode-firefox-debug-*")))))
+                (dap-firefox-debug-program
+                 (concat "node " dap-firefox-debug-path "/dist/adaptor.bundle.js")))
 
-                ;; https://github.com/emacs-lsp/dap-mode/issues/369
-                ;; (use-package dap-node
-                ;;   :custom
-                ;;   (dap-node-debug-path
-                ;;    "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.js-debug")
-                ;;   (dap-node-debug-program
-                ;;    (concat "node " dap-node-debug-path "/src/extension.js")))
-                )))
+              ;; https://github.com/emacs-lsp/dap-mode/issues/369
+              ;; (use-package dap-node
+              ;;   :custom
+              ;;   (dap-node-debug-path
+              ;;    "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.js-debug")
+              ;;   (dap-node-debug-program
+              ;;    (concat "node " dap-node-debug-path "/src/extension.js")))
+              ))
 
   (add-hook 'python-mode-hook (lambda () (use-package dap-python)))
 
@@ -1564,13 +1561,19 @@ optionally the window if possible."
 (use-package rjsx-mode
   :mode "\\.\\(?:cjs\\|jsx?\\|mjs\\)\\'")
 
-(use-package json-mode
+(use-package jsonian-mode
+  :after so-long
   :config
-  (define-key json-mode-map (kbd "C-c C-f") nil)
-  (add-hook 'json-mode-hook
+  (jsonian-no-so-long-mode)
+  (with-eval-after-load 'flycheck
+    (jsonian-enable-flycheck)))
+
+(use-package jq-format
+  :config
+  (add-hook 'jsonian-mode-hook
             (lambda ()
-              (when (not (key-binding (kbd "C-c f")))
-                (define-key json-mode-map (kbd "C-c f") 'json-mode-beautify)))))
+              (define-key jsonian-mode-map (kbd "C-c f") 'jq-format-json-buffer)
+              (jq-format-json-on-save-mode 1))))
 
 ;; TypeScript
 (use-package typescript-mode
