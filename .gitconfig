@@ -1,5 +1,4 @@
 [core]
-	excludesFile = ~/.gitignore_global
 	autocrlf = input
 
 [github]

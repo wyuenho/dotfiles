@@ -32,7 +32,6 @@ fsmonitor =
 [ui]
 username = Jimmy Yuen Ho Wong <wyuenho@gmail.com>
 merge = emacsclient
-ignore = ~/.hgignore_global
 
 [color]
 status.ignored = white bold
