@@ -1609,6 +1609,8 @@ variants of Typescript.")
 
 ;; Python
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
+(add-to-list 'auto-mode-alist '("\\.pylintrc\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.flake8\\'"   . conf-mode))
 
 (use-package highlight-indent-guides
   :delight
