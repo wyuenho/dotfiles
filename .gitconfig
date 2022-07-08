@@ -62,6 +62,10 @@
 [interactive]
 	diffFilter = ([ $(type -P delta) ] && delta --color-only)
 
+# https://github.com/dandavison/delta/issues/1114
+[add.interactive]
+	useBuiltin = false
+
 [init]
 	defaultBranch = main
 
