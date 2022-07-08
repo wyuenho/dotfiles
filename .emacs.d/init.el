@@ -76,6 +76,7 @@ under `user-emacs-directory'.  If it exists, loaded it."
                  '((all-the-icons-dired-dir-face      . dired-directory)
                    (icomplete-first-match             . ido-first-match)
                    (completions-common-part           . flx-highlight-face)
+                   (company-tooltip-selection         . company-tooltip-mouse)
                    (tooltip                           . company-tooltip)
                    (lsp-signature-posframe            . company-tooltip)
                    (lsp-ui-doc-background             . company-tooltip)
