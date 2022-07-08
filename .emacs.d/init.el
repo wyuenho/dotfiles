@@ -1568,6 +1568,7 @@ optionally the window if possible."
     (jsonian-enable-flycheck)))
 
 (use-package jq-format
+  :delight jq-format-json-on-save-mode
   :config
   (add-hook 'jsonian-mode-hook
             (lambda ()
