@@ -1172,8 +1172,8 @@ checker symbol."
   (when (and (buffer-file-name)
              (derived-mode-p 'python-mode))
     (let* ((buf-file (buffer-file-name))
-           (root (and (functionp 'projectile-acquire-root)
-                      (projectile-acquire-root (file-name-directory buf-file)))))
+           (root (and (functionp 'projectile-project-root)
+                      (projectile-project-root (file-name-directory buf-file)))))
 
       (when (and root
                  (not (seq-some (lambda (buf)
@@ -1203,11 +1203,20 @@ checker symbol."
   :config
   (setf flycheck-pylintrc `("pylintrc" ".pylintrc" "pyproject.toml" "setup.cfg"
                             ,(or (getenv "PYLINTRC")
-                                 (expand-file-name "~/.config/pylintrc"))
+                                 (expand-file-name
+                                  (concat (or (and (getenv "XDG_CONFIG_HOME")
+                                                   (file-name-as-directory (getenv "XDG_CONFIG_HOME")))
+                                              "~/.config/")
+                                          "pylintrc")))
                             "/etc/pylintrc"))
 
   (setf flycheck-flake8rc `(".flake8" "setup.cfg" "tox.ini"
-                            ,(expand-file-name "~/.config/flake8")))
+                            ,(expand-file-name
+                              (concat
+                               (or (and (getenv "XDG_CONFIG_HOME")
+                                        (file-name-as-directory (getenv "XDG_CONFIG_HOME")))
+                                   "~/.config/")
+                               "flake8"))))
 
   (setf flycheck-python-mypy-config `("mypy.ini" ".mypy.ini" "pyproject.toml" "setup.cfg"
                                       ,(concat (expand-file-name
@@ -1744,18 +1753,23 @@ variants of Typescript.")
                  t))
       (python-isort-on-save-mode 1))))
 
+(defun python-poetry-virtualenv-path ()
+  (with-temp-buffer
+    (if (condition-case err
+            (zerop (call-process "poetry" nil t nil "env" "info" "-p"))
+          (error (minibuffer-message "%s" (error-message-string err)) nil))
+        (string-trim (buffer-string))
+      nil)))
+
 (add-hook 'python-mode-hook
           (lambda ()
             ;; Set `python-shell-interpreter'
             (when (python-use-poetry-p)
-              (make-local-variable 'python-shell-interpreter)
-              (setf python-shell-interpreter
-                    (with-temp-buffer
-                      (if (condition-case err
-                              (zerop (call-process "poetry" nil t nil "run" "which" "python"))
-                            (error (message "%s" (error-message-string err)) nil))
-                          (string-trim (buffer-string))
-                        nil))))
+              (when-let ((virtualenv-root (python-poetry-virtualenv-path)))
+                (make-local-variable 'python-shell-interpreter)
+                (make-local-variable 'python-shell-virtualenv-root)
+                (setf python-shell-interpreter (concat virtualenv-root "/bin/python")
+                      python-shell-virtualenv-root virtualenv-root)))
 
             (with-eval-after-load 'dap-python
               (setf dap-python-executable python-shell-interpreter))
@@ -1782,6 +1796,12 @@ variants of Typescript.")
 (use-package lsp-pyright
   :after (lsp-mode)
   :config
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (when (python-use-poetry-p)
+                (setq-local lsp-pyright-python-executable-cmd (concat (python-poetry-virtualenv-path) "/bin/python"))
+                (setq-local lsp-pyright-venv-path (python-poetry-virtualenv-path)))))
+
   (let ((client (gethash 'pyright lsp-clients)))
     (setf (lsp--client-major-modes client) nil)
     (setf (lsp--client-activation-fn client)
@@ -1834,13 +1854,13 @@ variants of Typescript.")
             (lambda ()
               (add-hook 'before-save-hook 'gofmt-before-save nil 'local)
               (with-eval-after-load 'lsp-mode
+                (remove-hook 'before-save-hook 'gofmt-before-save 'local)
                 (add-hook 'lsp-managed-mode-hook
                           (lambda ()
                             (if lsp-managed-mode
                                 (progn
                                   (setq-local lsp-enable-indentation t
                                               lsp-enable-on-type-formatting t)
-                                  (remove-hook 'before-save-hook 'gofmt-before-save 'local)
                                   (add-hook 'before-save-hook 'lsp-go-format-buffer nil 'local))
                               (kill-local-variable 'lsp-enable-indentation)
                               (kill-local-variable 'lsp-enable-on-type-formatting)
