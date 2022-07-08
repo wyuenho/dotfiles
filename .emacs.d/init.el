@@ -1561,6 +1561,7 @@ optionally the window if possible."
 
 (use-package jsonian
   :after so-long
+  :mode ("\\.jsonc?\\'" . jsonian-c-mode)
   :config
   (jsonian-no-so-long-mode)
   (with-eval-after-load 'flycheck
