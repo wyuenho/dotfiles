@@ -46,9 +46,7 @@ under `user-emacs-directory'.  If it exists, loaded it."
 ;; Turn off useless mode lighters
 (use-package delight
   :config
-  (delight '((tide-mode                     nil tide)
-             (cargo-minor-mode              nil cargo)
-             (whitespace-cleanup-mode)
+  (delight '((whitespace-cleanup-mode)
              (aggressive-indent-mode        nil aggressive-indent)
              (auto-fill-function            nil t)
              (isearch-mode                  nil isearch)
@@ -1599,6 +1597,7 @@ variants of Typescript.")
               ("C-c M-:" . switch-to-ts)))
 
 (use-package tide
+  :delight tide-mode
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode     . tide-setup)
          (typescript-tsx-mode . tide-setup))
@@ -1850,12 +1849,12 @@ variants of Typescript.")
 
 ;; Rust
 (use-package rust-mode
-  :mode "\\.rs\\'"
+  :mode "\\.rs\\'")
+
+(use-package cargo
+  :delight cargo-minor-mode
   :config
-  (add-hook 'rust-mode-hook
-            (lambda ()
-              (use-package cargo
-                :config (cargo-minor-mode)))))
+  (cargo-minor-mode))
 
 (use-package ron-mode
   :mode "\\.ron'")
