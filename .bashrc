@@ -126,7 +126,7 @@ if [ -x "$(type -P direnv)" ]; then
 fi
 
 # pyenv
-if [ -x "$(type -P pyenv)" ]; then
+if [ "$(type -t pyenv)" != function ]; then
     export PYENV_SHELL=bash
     command pyenv rehash 2>/dev/null
     pyenv() {
