@@ -879,7 +879,6 @@ checker symbol."
     (expand-file-name (concat dir file-name))))
 
 (use-package flycheck
-  :quelpa (flycheck :fetcher github :repo "wyuenho/flycheck" :branch "fix-1931")
   :delight
   :config
   (with-eval-after-load 'python-x
