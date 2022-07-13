@@ -1286,7 +1286,8 @@ variants of Typescript.")
 (add-hook 'python-mode-hook
           (lambda ()
             (setq-local python-shell-interpreter (python-x-executable-find "python")
-                        python-shell-virtualenv-root (python-x-virtualenv-root))
+                        python-shell-virtualenv-root (python-x-virtualenv-root)
+                        python-shell-exec-path (concat python-shell-virtualenv-root "/bin"))
 
             (with-eval-after-load 'dap-python
               (setq-local dap-python-executable python-shell-interpreter))
@@ -1297,34 +1298,32 @@ variants of Typescript.")
                 (python-black-on-save-mode 1)))
 
             (with-eval-after-load 'python-isort
-              (when-let ((isort-executable (python-x-executable-find python-isort-command)))
+              (when-let ((isort-executable (python-x-executable-find "isort")))
                 (setq-local python-isort-command isort-executable)
-                (python-isort-on-save-mode 1)))))
+                (python-isort-on-save-mode 1)))
+
+            (with-eval-after-load 'lsp-pyright
+              (setq-local lsp-pyright-python-executable-cmd python-shell-interpreter
+                          lsp-pyright-venv-path python-shell-virtualenv-root))))
 
 (use-package lsp-jedi
   :after (lsp-mode))
 
 (use-package lsp-pyright
-  :after (lsp-mode)
-  :config
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (setq-local lsp-pyright-python-executable-cmd python-shell-interpreter
-                          lsp-pyright-venv-path (python-x-virtualenv-root)))
-            100)
-
-  (let ((client (gethash 'pyright lsp-clients)))
-    (setf (lsp--client-major-modes client) nil)
-    (setf (lsp--client-activation-fn client)
-          (lambda (file-name mode)
-            (and (or (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))
-                     (eq mode 'python-mode))
-                 (or (find-file-from-project-root "pyrightconfig.json")
-                     (when-let ((pep518-config-file (find-file-from-project-root "pyproject.toml")))
-                       (with-temp-buffer
-                         (insert-file-contents pep518-config-file)
-                         (goto-char (point-min))
-                         (re-search-forward "^\\[tool.pyright\\]$" nil t nil)))))))))
+:after (lsp-mode)
+:config
+(let ((client (gethash 'pyright lsp-clients)))
+  (setf (lsp--client-major-modes client) nil)
+  (setf (lsp--client-activation-fn client)
+        (lambda (file-name mode)
+          (and (or (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))
+                   (eq mode 'python-mode))
+               (or (find-file-from-project-root "pyrightconfig.json")
+                   (when-let ((pep518-config-file (find-file-from-project-root "pyproject.toml")))
+                     (with-temp-buffer
+                       (insert-file-contents pep518-config-file)
+                       (goto-char (point-min))
+                       (re-search-forward "^\\[tool.pyright\\]$" nil t nil)))))))))
 
 ;; Ruby
 (use-package yard-mode)
