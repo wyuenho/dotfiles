@@ -712,7 +712,9 @@ checker symbol."
                              ((derived-mode-p 'typescript-mode)
                               '((warning . javascript-eslint)))
                              ((derived-mode-p 'python-mode)
-                              '((warning . python-flake8)))
+                              '((warning . python-flake8)
+                                (warning . python-mypy)
+                                (warning . python-pylint)))
                              ((derived-mode-p 'enh-ruby-mode)
                               '((warning . ruby-rubocop)))
                              ((derived-mode-p 'go-mode)
@@ -876,401 +878,12 @@ checker symbol."
                    file-name)))
     (expand-file-name (concat dir file-name))))
 
-(defun python-parse-config-file (file-path)
-  (condition-case err
-      (with-temp-buffer
-        (funcall 'call-process "dasel" nil t nil "select" "-f" file-path "-w" "json")
-        (json-parse-string (buffer-string) :object-type 'alist :array-type 'list))
-    (error (minibuffer-message "%s" (error-message-string err)) nil)))
-
-(defvar python-watched-config-files nil)
-(defun python-watch-config-file (config-file cache-var parser)
-  (unless (assoc-default config-file python-watched-config-files)
-    (push (cons config-file
-                (file-notify-add-watch
-                 config-file
-                 '(change)
-                 (lambda (event)
-                   (pcase-let ((`(,_ ,action ,file ,@_)
-                                event))
-                     (pcase action
-                       ((or 'deleted 'renamed)
-                        (file-notify-rm-watch (assoc-default file python-watched-config-files))
-                        (setf (symbol-value cache-var)
-                              (assoc-delete-all file (symbol-value cache-var))
-                              python-watched-config-files
-                              (assoc-delete-all file python-watched-config-files)))
-                       ('changed
-                        (setf (assoc-default file (symbol-value cache-var))
-                              (funcall parser file))))))))
-          python-watched-config-files)))
-
-(defun python-pre-commit-config-file-path ()
-  (find-file-from-project-root ".pre-commit-config.yaml"))
-
-(defun python-pyproject-file-path ()
-  (find-file-from-project-root "pyproject.toml"))
-
-(defvar python-pre-commit-config-cache nil)
-(defvar python-pyproject-cache nil)
-
-(cl-defmacro python-config-file-content (name &key file-path cache-var parser)
-  `(defun ,name ()
-     (let* ((config-file ,file-path)
-            (cache-value (and config-file
-                              (file-exists-p config-file)
-                              (assoc-default config-file ,cache-var))))
-       (if cache-value
-           cache-value
-         (when config-file
-           (python-watch-config-file config-file (quote ,cache-var) (quote ,parser))
-           (when-let ((content (funcall (quote ,parser) config-file)))
-             (push (cons config-file content) ,cache-var)
-             content))))))
-
-(python-config-file-content python-pre-commit-config
-                            :file-path (python-pre-commit-config-file-path)
-                            :cache-var python-pre-commit-config-cache
-                            :parser python-parse-config-file)
-
-(python-config-file-content python-pyproject
-                            :file-path (python-pyproject-file-path)
-                            :cache-var python-pyproject-cache
-                            :parser python-parse-config-file)
-
-(defun python-use-poetry-p ()
-  (when-let ((pyproject-path (python-pyproject-file-path)))
-    (and
-     (with-temp-buffer
-       (insert-file-contents pyproject-path)
-       (goto-char (point-min))
-       (re-search-forward "^\\[tool.poetry\\]$" nil t nil))
-     (executable-find "poetry"))))
-
-(defun python-use-pre-commit-p (requirements)
-  (and (python-pre-commit-config-file-path)
-       (or (executable-find "pre-commit")
-           (member "pre-commit" requirements))))
-
-(defun python-requirements-from-file (anchor-dir file-path)
-  (let ((requirements-file
-         (if (and (null file-path) anchor-dir)
-             (concat (file-name-as-directory anchor-dir) file-path)
-           (expand-file-name file-path (or anchor-dir default-directory)))))
-    (when (file-exists-p requirements-file)
-      (with-temp-buffer
-        (insert-file-contents requirements-file)
-        (goto-char (point-min))
-        (seq-remove 'string-empty-p
-                    (mapcar 'string-trim
-                            (string-lines (buffer-string) t)))))))
-
-(defun python-resolve-requirements (anchor-dir file-path)
-  (let ((requirements (python-requirements-from-file anchor-dir file-path)))
-    (save-match-data
-      (flatten-list
-       (cl-loop for req in requirements
-                collect (if (string-match
-                             (rx (or "-r" "-c" "--requirement" "--constraint")
-                                 (+ space)
-                                 (group (+ nonl)))
-                             req)
-                            (let ((file-path (match-string 1 req)))
-                              (python-resolve-requirements
-                               (file-name-directory
-                                (expand-file-name file-path anchor-dir))
-                               (file-name-nondirectory file-path)))
-                          (python-parse-requirement-spec req)))))))
-
-;; https://pip.pypa.io/en/stable/cli/pip_install/#requirements-file-format
-(defun python-parse-requirement-spec (req)
-  (save-match-data
-    (cond ((string-match (rx (or "http" "file" "git" "git+ssh") "://") req) ;; URL
-           ;; https://datatracker.ietf.org/doc/html/rfc3987#section-2.2
-           (rx-let ((ucschar (in "\uA000-\uD7FF"
-                                 "\uF900-\uFDCF"
-                                 "\uFDF0-\uFFEF"
-                                 "\u10000-\u1FFFD"
-                                 "\u20000-\u2FFFD"
-                                 "\u30000-\u3FFFD"
-                                 "\u40000-\u4FFFD"
-                                 "\u50000-\u5FFFD"
-                                 "\u60000-\u6FFFD"
-                                 "\u70000-\u7FFFD"
-                                 "\u80000-\u8FFFD"
-                                 "\u90000-\u9FFFD"
-                                 "\uA0000-\uAFFFD"
-                                 "\uB0000-\uBFFFD"
-                                 "\uC0000-\uCFFFD"
-                                 "\uD0000-\uDFFFD"
-                                 "\uE0000-\uEFFFD"))
-                    (iprivate (in "\uE000-\uF8FF"
-                                  "\uF0000-\uFFFFD"
-                                  "\u100000-\u10FFFD"))
-                    (pct-encoded (seq "%" (repeat 0 2 hex)))
-                    (gen-delims (in "#/:?@[]"))
-                    (sub-delims (in "!$&-,;="))
-                    (reserved (or gen-delims sub-delims))
-                    (unreserved (or alnum (in "-._~") ucschar))
-                    (scheme (seq (+ alpha) (* (in alnum "+-."))))
-                    (userinfo (* (or unreserved pct-encoded sub-delims ":")))
-                    (ipvfuture (seq "v" (+ hex) "." (+ (or unreserved sub-delims ":"))))
-                    (dec-octet (or digit
-                                   (seq (in "1-9") digit)
-                                   (seq "1" digit digit)
-                                   (seq "2" (in "0-5") (in "0-5"))))
-                    (ipv4address (seq dec-octet "." dec-octet "." dec-octet "." dec-octet))
-                    (h16 (repeat 1 4 hex))
-                    (ls32 (or (group  h16 ":" h16) ipv4address))
-                    (ipv6address (or (seq (repeat 6 (seq  h16 ":")) ls32)
-                                     (seq "::" (repeat 5 (seq h16 ":")) ls32)
-                                     (seq (? h16) "::" (repeat 4 (seq h16 ":")) ls32)
-                                     (seq (? (repeat 0 1 h16)) "::" (repeat 3 (seq h16 ":")) ls32)
-                                     (seq (? (repeat 0 2 h16)) "::" (repeat 2 (seq h16 ":")) ls32)
-                                     (seq (? (repeat 0 3 h16)) "::" h16 ":" ls32)
-                                     (seq (? (repeat 0 4 h16)) "::" ls32)
-                                     (seq (? (repeat 0 5 h16)) "::" h16)
-                                     (seq (? (repeat 0 6 h16)) "::")))
-                    (ip-literal (seq "[" (or ipv6address ipvfuture) "]"))
-                    (reg-name (* (or unreserved pct-encoded sub-delims)))
-                    (host (or ip-literal ipv4address reg-name))
-                    (port (* digit))
-                    (authority (seq (? userinfo "@") host (? ":" port)))
-                    (pchar (or unreserved pct-encoded sub-delims ":" "@"))
-                    (segment (* pchar))
-                    (segment-nz (+ pchar))
-                    (segment-nz-nc (+ (or unreserved pct-encoded sub-delims "@")))
-                    (path-rootless (seq segment-nz (* "/" segment)))
-                    (path-noscheme (seq segment-nz-nc (* "/" segment)))
-                    (path-absolute (seq "/" (? path-rootless)))
-                    (path-abempty (* "/" segment))
-                    (path (or path-abempty path-absolute path-noscheme path-rootless))
-                    (query (* (or pchar "/" "?" iprivate)))
-                    (fragment query)
-                    (url (seq scheme authority (? path) (? "?" query) (? "#" fragment))))
-
-             (and (string-match (rx url) req) (match-string 0 req))))
-          ;; Path
-          ((string-match (rx line-start (in "." "/")) req)
-           (when-let ((requirement-spec (car (split-string req (rx (or ";" "@" "--")))))
-                      (requirement-spec (string-trim requirement-spec)))
-             (when (not (string-empty-p requirement-spec))
-               requirement-spec)))
-          ;; TODO: fetch the package and read the setup.cfg or setup.py files to
-          ;; extract dependencies
-          ((string-match (rx (or "-e" "--editable") (+ space) (group (+ nonl)) eol) req)
-           nil)
-          ;; Options
-          ((string-match (rx "--" (+ (in alnum "-" "_"))) req)
-           nil)
-          ;; Requirement specifiers
-          (t (let* ((requirement-spec (split-string req (rx (or ";" "@" "--"))))
-                    (package-version-spec (string-trim (car requirement-spec)))
-                    (package
-                     (car
-                      (split-string
-                       package-version-spec
-                       (rx (or "==" "!=" "<=" ">=" "~=" "===" "<" ">"))))))
-               (when package
-                 (string-trim-right package (rx "[" (+ (in alnum "-" "_")) "]"))))))))
-
-(defvar python-project-requirements-cache nil)
-(defun python-project-requirements ()
-  (let* ((file-path (buffer-file-name))
-         (requirements
-          (assoc-default file-path python-project-requirements-cache)))
-    (unless requirements
-      (setf requirements
-            (mapcar 'python-parse-requirement-spec
-                    (or (and (python-use-poetry-p)
-                             (condition-case err
-                                 (process-lines "poetry" "run" "pip" "list" "--format=freeze" "--disable-pip-version-check")
-                               (error (minibuffer-message "%s" (error-message-string err)) nil)))
-                        ;; TODO: search the project root for something that
-                        ;; looks a virtualenv, activate it and call pip list
-                        ;; --format=freeze in it
-                        (when-let ((project-root-requirements-file (find-file-from-project-root "requirements.txt")))
-                          (python-resolve-requirements
-                           (file-name-directory project-root-requirements-file)
-                           project-root-requirements-file))
-                        (condition-case err
-                            (process-lines "pip" "list" "--format=freeze" "--disable-pip-version-check")
-                          (error (minibuffer-message "%s" (error-message-string err)) nil)))))
-      (setf python-project-requirements-cache
-            (assoc-delete-all file-path python-project-requirements-cache))
-      (when requirements
-        (push (cons file-path requirements) python-project-requirements-cache)))
-    requirements))
-
-(defun python-pre-commit-config-has-hook-p (id)
-  (member id
-          (flatten-list
-           (cl-loop for repo in (let-alist (python-pre-commit-config) .repos)
-                    collect (cl-loop for hook in (let-alist repo .hooks)
-                                     collect (let-alist hook .id))))))
-
-(defun python-parse-pre-commit-db (db-file)
-  (condition-case err
-      (with-temp-buffer
-        (funcall 'call-process "sqlite3" nil t nil "-json" db-file "select * from repos")
-        (json-parse-string (buffer-string) :object-type 'alist :array-type 'list))
-    (error (error-message-string err) nil)))
-
-(defvar python-pre-commit-database-cache nil)
-(defun python-pre-commit-virtualenv-path (hook-id)
-  (when-let* ((db-file
-               (concat
-                (expand-file-name
-                 (file-name-as-directory
-                  (or (getenv "PRE_COMMIT_HOME")
-                      (getenv "XDG_CACHE_HOME")
-                      "~/.cache/")))
-                "pre-commit/db.db"))
-
-              (db
-               (or (assoc-default db-file python-pre-commit-database-cache)
-                   (when (file-exists-p db-file)
-                     (python-watch-config-file db-file 'python-pre-commit-database-cache 'python-parse-pre-commit-db)
-                     (when-let ((content (python-parse-pre-commit-db db-file)))
-                       (push (cons db-file content) python-pre-commit-database-cache)
-                       content))))
-
-              (repo-config
-               (seq-find
-                (lambda (repo)
-                  (seq-find
-                   (lambda (hook)
-                     (equal (let-alist hook .id) hook-id))
-                   (let-alist repo .hooks)))
-                (let-alist (python-pre-commit-config) .repos)))
-
-              (repo-url
-               (let ((additional-deps
-                      (let-alist repo-config
-                        (let-alist (seq-find (lambda (hook) (let-alist hook (equal .id hook-id))) .hooks)
-                          .additional_dependencies))))
-                 (concat (let-alist repo-config .repo)
-                         (if additional-deps
-                             (concat ":" (string-join additional-deps ":"))))))
-
-              (repo-dir
-               (let-alist (seq-find
-                           (lambda (row)
-                             (let-alist row
-                               (and (equal .repo repo-url)
-                                    (equal .ref (let-alist repo-config .rev)))))
-                           db)
-                 .path)))
-
-    (car
-     (last
-      (file-expand-wildcards
-       (concat (file-name-as-directory repo-dir) "py_env-*")
-       t)))))
-
-(defun python-cleanup-watchers-and-caches ()
-  (when (and (buffer-file-name)
-             (derived-mode-p 'python-mode))
-    (let* ((buf-file (buffer-file-name))
-           (root (and (functionp 'projectile-project-root)
-                      (projectile-project-root (file-name-directory buf-file)))))
-
-      (when (and root
-                 (not (seq-some (lambda (buf)
-                                  (and (not (equal buf (current-buffer)))
-                                       (string-prefix-p root (buffer-file-name buf))))
-                                (buffer-list))))
-
-        (pcase-dolist (`(,config-file . ,watcher) python-watched-config-files)
-          (when (string-prefix-p root config-file)
-            (file-notify-rm-watch watcher)
-            (setf python-watched-config-files
-                  (assoc-delete-all config-file python-watched-config-files))))
-
-        (dolist (cache '(python-pre-commit-config-cache python-pyproject-cache))
-          (pcase-dolist (`(,config-file . ,_) (symbol-value cache))
-            (when (string-prefix-p root config-file)
-              (setf (symbol-value cache)
-                    (assoc-delete-all config-file (symbol-value cache)))))))
-
-      (setf python-project-requirements-cache
-            (assoc-delete-all buf-file python-project-requirements-cache)))))
-
-(add-hook 'kill-buffer-hook 'python-cleanup-watchers-and-caches)
-
 (use-package flycheck
+  :quelpa (flycheck :fetcher github :repo "wyuenho/flycheck" :branch "fix-1931")
   :delight
   :config
-  (setf flycheck-pylintrc `("pylintrc" ".pylintrc" "pyproject.toml" "setup.cfg"
-                            ,(or (getenv "PYLINTRC")
-                                 (expand-file-name
-                                  (concat (or (and (getenv "XDG_CONFIG_HOME")
-                                                   (file-name-as-directory (getenv "XDG_CONFIG_HOME")))
-                                              "~/.config/")
-                                          "pylintrc")))
-                            "/etc/pylintrc"))
-
-  (setf flycheck-flake8rc `(".flake8" "setup.cfg" "tox.ini"
-                            ,(expand-file-name
-                              (concat
-                               (or (and (getenv "XDG_CONFIG_HOME")
-                                        (file-name-as-directory (getenv "XDG_CONFIG_HOME")))
-                                   "~/.config/")
-                               "flake8"))))
-
-  (setf flycheck-python-mypy-config `("mypy.ini" ".mypy.ini" "pyproject.toml" "setup.cfg"
-                                      ,(concat (expand-file-name
-                                                (or (and (getenv "XDG_CONFIG_HOME")
-                                                         (file-name-as-directory (getenv "XDG_CONFIG_HOME")))
-                                                    "~/.config/"))
-                                               "mypy/config")))
-
-  (defun flycheck-python-needs-module-p-advice (fn checker)
-    "Make sure the checker CHECKER is enabled if the checker executable is found."
-    (if (and (or (eq checker 'python-flake8)
-                 (eq checker 'python-mypy))
-             (let ((requirements (python-project-requirements))
-                   (executable-name (cadr (split-string (symbol-name checker) "-")))
-                   (checker-executable-variable-value
-                    (symbol-value (flycheck-checker-executable-variable checker))))
-               (or (and (python-use-pre-commit-p requirements)
-                        (python-pre-commit-config-has-hook-p executable-name))
-                   (and (python-use-poetry-p)
-                        (member executable-name requirements))
-                   (and checker-executable-variable-value
-                        (executable-find checker-executable-variable-value)))))
-        nil
-      (funcall fn checker)))
-  (advice-add 'flycheck-python-needs-module-p :around 'flycheck-python-needs-module-p-advice)
-
-  (defun flycheck-checker-executable-variable-advice (fn checker)
-    "Set the checker variable if the checker executable if found."
-    (let* ((requirements (python-project-requirements))
-           (checker-name (symbol-name checker))
-           (executable-name (cadr (split-string checker-name "-")))
-           (flycheck-executable-variable
-            (intern (format "flycheck-%s-executable" checker-name))))
-      (when (or (eq checker 'python-flake8)
-                (eq checker 'python-mypy))
-        (cond ((and (python-use-pre-commit-p requirements)
-                    (python-pre-commit-config-has-hook-p executable-name))
-               (make-local-variable flycheck-executable-variable)
-               (setf (symbol-value flycheck-executable-variable)
-                     (concat (python-pre-commit-virtualenv-path executable-name)
-                             (format "/bin/%s" executable-name))))
-              ((and (python-use-poetry-p) (member executable-name requirements))
-               (make-local-variable flycheck-executable-variable)
-               (setf (symbol-value flycheck-executable-variable)
-                     (with-temp-buffer
-                       (when (condition-case err
-                                 (zerop (call-process "poetry" nil t nil "run" "which" executable-name))
-                               (error (minibuffer-message "%s" (error-message-string err)) nil))
-                         (string-trim (buffer-string))))))
-              ((executable-find executable-name)
-               (make-local-variable flycheck-executable-variable)
-               (setf (symbol-value flycheck-executable-variable) executable-name)))))
-    (funcall fn checker))
-  (advice-add 'flycheck-checker-executable-variable :around 'flycheck-checker-executable-variable-advice)
+  (with-eval-after-load 'python-x
+    (python-x-flycheck-setup))
 
   (add-hook 'flycheck-status-changed-functions
             (lambda (status)
@@ -1617,9 +1230,11 @@ variants of Typescript.")
   (setq-local help-at-pt-display-when-idle '(tide-documentation-at-point)))
 
 ;; Python
-(add-to-list 'auto-mode-alist '("\\.pythonrc\\'" . python-mode))
-(add-to-list 'auto-mode-alist '("\\.pylintrc\\'" . conf-mode))
-(add-to-list 'auto-mode-alist '("\\.flake8\\'"   . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.pythonrc\\'"   . python-mode))
+(add-to-list 'auto-mode-alist '("\\.pylintrc\\'"   . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.flake8\\'"     . conf-mode))
+(add-to-list 'auto-mode-alist '("\\poetry.lock\\'" . conf-toml-mode))
+(add-to-list 'auto-mode-alist '("\\Pipfile\\'"     . conf-toml-mode))
 
 (use-package highlight-indent-guides
   :delight
@@ -1643,12 +1258,11 @@ variants of Typescript.")
 
 (use-package python-black
   :delight python-black-on-save-mode
-  :quelpa (python-black :fetcher github :repo "wyuenho/emacs-python-black" :branch "blackd"))
+  ;; :quelpa (python-black :fetcher github :repo "wyuenho/emacs-python-black" :branch "blackd")
+  )
 
-(use-package python-isort)
-
-(use-package importmagic
-  :delight)
+(use-package python-isort
+  :delight python-isort-on-save-mode)
 
 (defun python-get-black-d-request-headers ()
   (let-alist (python-pyproject)
@@ -1666,129 +1280,26 @@ variants of Typescript.")
                        (funcall 'string-join
                                 (append .tool.black.target-version) ","))))))))
 
-(defun python-black-setup ()
-  (let ((requirements (python-project-requirements)))
-    (when (cond ((and (python-use-pre-commit-p requirements)
-                      (python-pre-commit-config-has-hook-p "black"))
-
-                 (make-local-variable 'python-black-command)
-                 (setf python-black-command
-                       (concat (python-pre-commit-virtualenv-path "black") "/bin/black"))
-
-                 (when (boundp 'python-black-d-command)
-                   (make-local-variable 'python-black-d-command)
-                   (let ((blackd-path (concat (python-pre-commit-virtualenv-path "black") "/bin/blackd")))
-                     (setf python-black-d-command
-                           (and (condition-case err
-                                    (zerop (call-process blackd-path nil nil nil "--version"))
-                                  (error (minibuffer-message "%s" (error-message-string err)) nil))
-                                blackd-path))))
-                 t)
-
-                ((and (python-use-poetry-p)
-                      (member "black" requirements))
-
-                 ;; Set `python-black-command'
-                 (make-local-variable 'python-black-command)
-                 (setf python-black-command "poetry")
-                 (make-local-variable 'python-black--base-args)
-                 (setf python-black--base-args (append '("run" "black") python-black--base-args))
-
-                 ;; Set `python-black-d-command'
-                 (when (boundp 'python-black-d-command)
-                   (make-local-variable 'python-black-d-command)
-                   (setf python-black-d-command
-                         (with-temp-buffer
-                           (if (condition-case err
-                                   (and (call-process "poetry" nil t nil "run" "which" python-black-d-command)
-                                        (zerop (call-process "poetry" nil nil nil "run"
-                                                             python-black-d-command "--version")))
-                                 (error (minibuffer-message "%s" (error-message-string err)) nil))
-                               (string-trim (buffer-string))
-                             nil))))
-                 t)
-
-                ((or (executable-find python-black-command)
-                     (and (boundp 'python-black-d-command)
-                          (executable-find python-black-d-command)
-                          (zerop (call-process python-black-d-command nil nil nil "--version"))))
-                 t)
-                (t
-                 (make-local-variable 'python-black-command)
-                 (setf python-black-command nil)
-                 (when (boundp 'python-black-d-command)
-                   (make-local-variable 'python-black-d-command)
-                   (setf python-black-d-command nil))
-                 t))
-
-      (when (bound-and-true-p python-black-d-command)
-        (make-local-variable 'python-black-d-request-headers-function)
-        (setf python-black-d-request-headers-function 'python-get-black-d-request-headers))
-
-      (python-black-on-save-mode 1))))
-
-(defun python-isort-setup ()
-  (let ((requirements (python-project-requirements)))
-    (when (cond ((and (python-use-pre-commit-p requirements)
-                      (python-pre-commit-config-has-hook-p "isort"))
-                 (make-local-variable 'python-isort-command)
-                 (setf python-isort-command
-                       (concat (python-pre-commit-virtualenv-path "isort") "/bin/isort"))
-                 t)
-                ((and (python-use-poetry-p)
-                      (member "isort" requirements))
-                 (make-local-variable 'python-isort-command)
-                 (make-local-variable 'python-isort-arguments)
-                 (setf python-isort-command "poetry"
-                       python-isort-arguments
-                       (append '("run" "isort") python-isort-arguments))
-                 t)
-                ((executable-find python-isort-command)
-                 (when (and (boundp 'python-black-command)
-                            python-black-command
-                            (executable-find python-black-command))
-                   (make-local-variable 'python-isort-arguments)
-                   (setf python-isort-arguments
-                         (append '("--profile" "black") python-isort-arguments)))
-                 t))
-      (python-isort-on-save-mode 1))))
-
-(defun python-poetry-virtualenv-path ()
-  (with-temp-buffer
-    (if (condition-case err
-            (zerop (call-process "poetry" nil t nil "env" "info" "-p"))
-          (error (minibuffer-message "%s" (error-message-string err)) nil))
-        (string-trim (buffer-string))
-      nil)))
+(use-package python-x
+  :quelpa (python-x :fetcher github :repo "wyuenho/emacs-python-x"))
 
 (add-hook 'python-mode-hook
           (lambda ()
-            ;; Set `python-shell-interpreter'
-            (when (python-use-poetry-p)
-              (when-let ((virtualenv-root (python-poetry-virtualenv-path)))
-                (make-local-variable 'python-shell-interpreter)
-                (make-local-variable 'python-shell-virtualenv-root)
-                (setf python-shell-interpreter (concat virtualenv-root "/bin/python")
-                      python-shell-virtualenv-root virtualenv-root)))
+            (setq-local python-shell-interpreter (python-x-executable-find "python")
+                        python-shell-virtualenv-root (python-x-virtualenv-root))
 
             (with-eval-after-load 'dap-python
-              (setf dap-python-executable python-shell-interpreter))
+              (setq-local dap-python-executable python-shell-interpreter))
 
             (with-eval-after-load 'python-black
-              (python-black-setup))
+              (when-let ((black-executable (python-x-executable-find "black")))
+                (setq-local python-black-command black-executable)
+                (python-black-on-save-mode 1)))
 
             (with-eval-after-load 'python-isort
-              (python-isort-setup))
-
-            (with-eval-after-load 'importmagic
-              (when (let ((requirements (python-project-requirements)))
-                      (and (member "importmagic" requirements)
-                           (member "epc" requirements)))
-                (importmagic-mode 1)
-                (let ((local-map (copy-keymap (current-local-map))))
-                  (define-key local-map (kbd "C-c f i") 'importmagix-fix-import)
-                  (use-local-map local-map))
-                (define-key importmagic-mode-map (kbd "C-c C-l") nil)))))
+              (when-let ((isort-executable (python-x-executable-find python-isort-command)))
+                (setq-local python-isort-command isort-executable)
+                (python-isort-on-save-mode 1)))))
 
 (use-package lsp-jedi
   :after (lsp-mode))
@@ -1798,9 +1309,9 @@ variants of Typescript.")
   :config
   (add-hook 'python-mode-hook
             (lambda ()
-              (when (python-use-poetry-p)
-                (setq-local lsp-pyright-python-executable-cmd (concat (python-poetry-virtualenv-path) "/bin/python"))
-                (setq-local lsp-pyright-venv-path (python-poetry-virtualenv-path)))))
+              (setq-local lsp-pyright-python-executable-cmd python-shell-interpreter
+                          lsp-pyright-venv-path (python-x-virtualenv-root)))
+            100)
 
   (let ((client (gethash 'pyright lsp-clients)))
     (setf (lsp--client-major-modes client) nil)
