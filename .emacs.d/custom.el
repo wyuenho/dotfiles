@@ -248,8 +248,6 @@
  '(mac-system-move-file-to-trash-use-finder t)
  '(magit-completing-read-function 'magit-ido-completing-read)
  '(magit-diff-refine-hunk 'all)
- '(magit-diff-use-overlays nil)
- '(magithub-clone-default-directory "~/Documents/workspace")
  '(markdown-code-lang-modes
    '(("ocaml" . tuareg-mode)
      ("elisp" . emacs-lisp-mode)
