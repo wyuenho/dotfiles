@@ -42,11 +42,6 @@ if [ -d /Volumes/toolchains ]; then
     done
 fi
 
-# pipx
-if [ -d "$HOME/.local/bin" ]; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
-
 # git-subrepo
 if [ -d "$HOME/.local/git-subrepo" ]; then
     GIT_SUBREPO_ROOT="$HOME/.local/git-subrepo"
