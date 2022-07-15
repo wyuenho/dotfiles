@@ -881,9 +881,6 @@ checker symbol."
 (use-package flycheck
   :delight
   :config
-  (with-eval-after-load 'python-x
-    (python-x-flycheck-setup))
-
   (add-hook 'flycheck-status-changed-functions
             (lambda (status)
               (use-package spinner :ensure t)
@@ -1229,11 +1226,7 @@ variants of Typescript.")
   (setq-local help-at-pt-display-when-idle '(tide-documentation-at-point)))
 
 ;; Python
-(add-to-list 'auto-mode-alist '("\\.pythonrc\\'"   . python-mode))
-(add-to-list 'auto-mode-alist '("\\.pylintrc\\'"   . conf-mode))
-(add-to-list 'auto-mode-alist '("\\.flake8\\'"     . conf-mode))
-(add-to-list 'auto-mode-alist '("\\poetry.lock\\'" . conf-toml-mode))
-(add-to-list 'auto-mode-alist '("\\Pipfile\\'"     . conf-toml-mode))
+(add-to-list 'auto-mode-alist '("\\Pipfile\\'" . conf-toml-mode))
 
 (use-package highlight-indent-guides
   :delight
@@ -1280,30 +1273,33 @@ variants of Typescript.")
                                 (append .tool.black.target-version) ","))))))))
 
 (use-package python-x
-  :quelpa (python-x :fetcher github :repo "wyuenho/emacs-python-x"))
+  :quelpa (python-x :fetcher github :repo "wyuenho/emacs-python-x")
+  :config
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (setq-local python-shell-interpreter (python-x-executable-find "python")
+                          python-shell-virtualenv-root (python-x-virtualenv-root)
+                          python-shell-exec-path (concat python-shell-virtualenv-root "/bin"))
 
-(add-hook 'python-mode-hook
-          (lambda ()
-            (setq-local python-shell-interpreter (python-x-executable-find "python")
-                        python-shell-virtualenv-root (python-x-virtualenv-root)
-                        python-shell-exec-path (concat python-shell-virtualenv-root "/bin"))
+              (with-eval-after-load 'flycheck
+                (python-x-flycheck-setup))
 
-            (with-eval-after-load 'dap-python
-              (setq-local dap-python-executable python-shell-interpreter))
+              (with-eval-after-load 'lsp-pyright
+                (setq-local lsp-pyright-python-executable-cmd python-shell-interpreter
+                            lsp-pyright-venv-path python-shell-virtualenv-root))
 
-            (with-eval-after-load 'python-black
-              (when-let ((black-executable (python-x-executable-find "black")))
-                (setq-local python-black-command black-executable)
-                (python-black-on-save-mode 1)))
+              (with-eval-after-load 'dap-python
+                (setq-local dap-python-executable python-shell-interpreter))
 
-            (with-eval-after-load 'python-isort
-              (when-let ((isort-executable (python-x-executable-find "isort")))
-                (setq-local python-isort-command isort-executable)
-                (python-isort-on-save-mode 1)))
+              (with-eval-after-load 'python-black
+                (when-let ((black-executable (python-x-executable-find "black")))
+                  (setq-local python-black-command black-executable)
+                  (python-black-on-save-mode 1)))
 
-            (with-eval-after-load 'lsp-pyright
-              (setq-local lsp-pyright-python-executable-cmd python-shell-interpreter
-                          lsp-pyright-venv-path python-shell-virtualenv-root))))
+              (with-eval-after-load 'python-isort
+                (when-let ((isort-executable (python-x-executable-find "isort")))
+                  (setq-local python-isort-command isort-executable)
+                  (python-isort-on-save-mode 1))))))
 
 (use-package lsp-jedi
   :after (lsp-mode))
