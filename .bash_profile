@@ -138,7 +138,7 @@ if [ -d "$HOME"/.krew/bin ]; then
 fi
 
 # PWD
-PATH="::$PATH"
+PATH=":$PATH"
 
 if [ -n "$BASH_VERSION" ] && [ -s "$HOME/.bashrc" ]; then
     source "$HOME/.bashrc"
