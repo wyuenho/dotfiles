@@ -47,6 +47,7 @@
    '(c++-mode c-mode css-mode emacs-lisp-mode enh-ruby-mode go-mode inferior-emacs-lisp-mode js-jsx-mode js-mode js2-jsx-mode js2-mode lisp-interaction-mode lisp-mode objc-mode python-mode restclient-mode rjsx-mode ruby-mode rust-mode scss-mode sh-mode typescript-mode web-mode org-mode))
  '(company-tooltip-align-annotations t)
  '(company-tooltip-limit 20)
+ '(compilation-always-kill t)
  '(confirm-kill-processes nil)
  '(create-lockfiles nil)
  '(css-indent-offset 2)
