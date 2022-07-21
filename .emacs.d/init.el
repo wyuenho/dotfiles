@@ -881,6 +881,11 @@ checker symbol."
 (use-package flycheck
   :delight
   :config
+  ;; https://github.com/flycheck/flycheck/issues/1931
+  (plist-put (symbol-plist 'dockerfile-hadolint)
+             'flycheck-command
+             '("hadolint" "--no-color" source))
+
   (add-hook 'flycheck-status-changed-functions
             (lambda (status)
               (use-package spinner :ensure t)
