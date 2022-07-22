@@ -1452,6 +1452,12 @@ variants of Typescript.")
 (use-package projectile
   :delight projectile-mode
   :config
+  (projectile-register-project-type 'go
+                                    '("go.mod")
+                                    :project-file "go.mod"
+                                    :compile "go build"
+                                    :test "go test ./..."
+                                    :test-suffix "_test")
   (global-set-key (kbd "C-x p") projectile-command-map)
   (projectile-mode 1)
   (with-eval-after-load 'which-key

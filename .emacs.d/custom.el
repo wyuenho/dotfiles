@@ -318,6 +318,8 @@
    '(angular babel babel-flow css flow graphql json json5 less html markdown mdx scss typescript vue yaml))
  '(prettier-pre-warm 'some)
  '(projectile-completion-system 'ido)
+ '(projectile-project-root-functions
+   '(projectile-root-local projectile-root-top-down projectile-root-bottom-up projectile-root-top-down-recurring))
  '(projectile-project-search-path '("~/Documents/workspace"))
  '(purpose-x-code1-dired-goto-file t)
  '(purpose-x-code1-update-idle-delay 0.5)
