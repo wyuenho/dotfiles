@@ -523,13 +523,6 @@ region."
               :config
               (require 'smartparens-config)
 
-              (with-eval-after-load 'go-mode
-                (sp-with-modes 'go-mode
-                  (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
-                  (sp-local-pair "/*" "*/" :post-handlers '(("| " "SPC")
-                                                            ("* ||\n[i]" "RET"))))
-                (add-to-list 'sp-sexp-suffix (list #'go-mode 'regexp "")))
-
               (add-hook 'eval-expression-minibuffer-setup-hook
                         (lambda ()
                           (smartparens-mode 1))))))
