@@ -869,7 +869,7 @@ checker symbol."
                             (projectile-project-root))
                        default-directory)
                    file-name)))
-    (expand-file-name (concat dir file-name))))
+    (expand-file-name (concat (file-name-as-directory dir) file-name))))
 
 (use-package flycheck
   :delight
