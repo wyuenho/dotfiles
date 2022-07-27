@@ -1055,6 +1055,10 @@ optionally the window if possible."
 (use-package reformatter
   :quelpa (reformatter :fetcher github :repo "wyuenho/reformatter.el" :branch "post-processor")
   :config
+  (reformatter-define goimports-format
+    :program "goimports"
+    :exit-code-success-p integerp)
+
   (reformatter-define yarn-eslint-format
     :program "yarn"
     :args `("--silent"
@@ -1333,21 +1337,22 @@ variants of Typescript.")
       (error (minibuffer-message (error-message-string err)))))
   (add-hook 'go-mode-hook
             (lambda ()
-              (add-hook 'before-save-hook 'gofmt-before-save nil 'local)
+              (add-hook 'before-save-hook 'goimports-format-buffer -100 t)
+              (add-hook 'before-save-hook 'gofmt-before-save nil t)
               (with-eval-after-load 'lsp-mode
-                (remove-hook 'before-save-hook 'gofmt-before-save 'local)
                 (add-hook 'lsp-managed-mode-hook
                           (lambda ()
                             (if lsp-managed-mode
                                 (progn
                                   (setq-local lsp-enable-indentation t
                                               lsp-enable-on-type-formatting t)
-                                  (add-hook 'before-save-hook 'lsp-go-format-buffer nil 'local))
+                                  (remove-hook 'before-save-hook 'gofmt-before-save t)
+                                  (add-hook 'before-save-hook 'lsp-go-format-buffer nil t))
                               (kill-local-variable 'lsp-enable-indentation)
                               (kill-local-variable 'lsp-enable-on-type-formatting)
-                              (remove-hook 'before-save-hook 'lsp-go-format-buffer 'local)
-                              (add-hook 'before-save-hook 'gofmt-before-save nil 'local)))
-                          nil 'local)))))
+                              (remove-hook 'before-save-hook 'lsp-go-format-buffer t)
+                              (add-hook 'before-save-hook 'gofmt-before-save nil t)))
+                          nil t)))))
 
 (use-package flycheck-golangci-lint
   :after (go-mode)
