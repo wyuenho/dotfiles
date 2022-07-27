@@ -1273,9 +1273,9 @@ variants of Typescript.")
                        (funcall 'string-join
                                 (append .tool.black.target-version) ","))))))))
 
-(use-package python-x
-  :quelpa (python-x :fetcher github :repo "wyuenho/emacs-python-x")
-  :delight python-x-minor-mode)
+(use-package python-exec-find
+  :quelpa (python-exec-find :fetcher github :repo "wyuenho/emacs-python-exec-find")
+  :delight python-exec-find-minor-mode)
 
 (use-package lsp-jedi
   :after (lsp-mode))
