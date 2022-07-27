@@ -95,6 +95,11 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
     # Node
     [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/bash_completion"
 
+    # Go
+    if [ -x "$(type -P gocomplete)" ]; then
+        complete -C gocomplete go
+    fi
+
     # sdkman!
     [ "$(type -t sdk)" = 'function' ] && eval "$(sdk completion bash)"
 
