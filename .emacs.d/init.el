@@ -637,7 +637,7 @@ region."
 
 ;; Static Analysis
 (use-package lsp-mode
-  :delight
+  :delight (lsp-mode) (lsp-lens-mode)
   :hook (((c-mode-common
            enh-ruby-mode
            go-mode
