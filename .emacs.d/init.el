@@ -1056,8 +1056,7 @@ optionally the window if possible."
   :quelpa (reformatter :fetcher github :repo "wyuenho/reformatter.el" :branch "post-processor")
   :config
   (reformatter-define goimports-format
-    :program "goimports"
-    :exit-code-success-p integerp)
+    :program "goimports")
 
   (reformatter-define yarn-eslint-format
     :program "yarn"
