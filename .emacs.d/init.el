@@ -134,17 +134,23 @@ under `user-emacs-directory'.  If it exists, loaded it."
 
 ;; Make sure xwidget buffers are killed when quitting window
 (with-eval-after-load 'xwidget
+  (when (functionp 'xwidget-webkit-browse-url)
+    (setf browse-url-browser-function 'xwidget-webkit-browse-url)
+    (function-put 'xwidget-webkit-browse-url 'browse-url-browser-kind 'internal))
+
   (when (boundp 'xwidget-webkit-mode-map)
     (define-key xwidget-webkit-mode-map (kbd "q")
       (lambda ()
         (interactive)
         (quit-window t))))
+
   (defun xwidget-kill-buffer-query-function-advice ()
     "Kill xwidget buffer without asking."
     (let ((xwidgets (get-buffer-xwidgets (current-buffer))))
       (or (not xwidgets)
           (not (memq t (mapcar #'xwidget-query-on-exit-flag xwidgets)))
           t)))
+
   (advice-add 'xwidget-kill-buffer-query-function :override 'xwidget-kill-buffer-query-function-advice))
 
 ;; Turn on line wrapping for programming, text and message buffers
