@@ -132,6 +132,21 @@ under `user-emacs-directory'.  If it exists, loaded it."
                             (unless (member major-mode '(yaml-mode markdown-mode))
                               (auto-fill-mode 1))))
 
+;; Make sure xwidget buffers are killed when quitting window
+(with-eval-after-load 'xwidget
+  (when (boundp 'xwidget-webkit-mode-map)
+    (define-key xwidget-webkit-mode-map (kbd "q")
+      (lambda ()
+        (interactive)
+        (quit-window t))))
+  (defun xwidget-kill-buffer-query-function-advice ()
+    "Kill xwidget buffer without asking."
+    (let ((xwidgets (get-buffer-xwidgets (current-buffer))))
+      (or (not xwidgets)
+          (not (memq t (mapcar #'xwidget-query-on-exit-flag xwidgets)))
+          t)))
+  (advice-add 'xwidget-kill-buffer-query-function :override 'xwidget-kill-buffer-query-function-advice))
+
 ;; Turn on line wrapping for programming, text and message buffers
 (dolist (hook '(prog-mode-hook text-mode-hook messages-buffer-mode-hook Custom-mode-hook))
   (add-hook hook 'visual-line-mode))
