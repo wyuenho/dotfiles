@@ -356,9 +356,8 @@ Optional argument ARG same as `comment-dwim''s."
   (setf crux-shell shell-file-name))
 
 ;; Saner undo/redo
-(use-package undo-fu
-  :bind (("M-z"   . undo-fu-only-undo)
-         ("C-M-z" . undo-fu-only-redo)))
+(use-package vundo
+  :bind (("M-z" . vundo)))
 
 ;; So I can see past kills that I can yank
 (use-package browse-kill-ring
