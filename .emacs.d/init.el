@@ -1569,9 +1569,9 @@ variants of Typescript.")
                 (auto-fill-mode -1))))
   (remove-hook 'forge-post-mode-hook 'turn-on-flyspell))
 
-(use-package magit-todos
-  :after (magit)
-  :config (magit-todos-mode 1))
+;; (use-package magit-todos
+;;   :after (magit)
+;;   :config (magit-todos-mode 1))
 
 (use-package magit-lfs
   :after (magit))
@@ -1865,6 +1865,29 @@ ELEMENT is only added once."
               (when (file-exists-p purpose-default-layout-file)
                 (purpose-load-window-layout-file))
               (select-window (get-largest-window))))
+
+  ;; (with-eval-after-load 'debug
+  ;;   (defun purpose--debug (fn &rest args)
+  ;;     "Ignore `pop-to-buffer' display actions given by `debug'."
+  ;;     (advice-remove 'purpose-pop-to-buffer-advice 'pop-to-buffer)
+  ;;     (unwind-protect
+  ;;         (progn
+  ;;           (let* ((pop-to-buffer-definition (symbol-function 'pop-to-buffer))
+  ;;                  (purpose-debug-pop-to-buffer
+  ;;                   (lambda (buffer &optional _action record)
+  ;;                     (if purpose--active-p
+  ;;                         (purpose-pop-buffer buffer record)
+  ;;                       (funcall pop-to-buffer-definition buffer nil record)))))
+  ;;             ;; (cl-letf (((symbol-function 'pop-to-buffer) purpose-debug-pop-to-buffer))
+  ;;             ;;   (apply fn args))
+  ;;             (cl-flet ((pop-to-buffer
+  ;;                         (buffer &optional _action record)
+  ;;                         (funcall purpose-debug-pop-to-buffer _action record)))
+  ;;               (apply fn args))
+  ;;             ))
+  ;;       (advice-add 'purpose-pop-to-buffer-advice :around 'pop-to-buffer)))
+
+  ;;   (advice-add 'debug :around 'purpose--debug))
 
   ;; Bury all special buffers after setting up dummy buffers and restoring
   ;; session buffers
