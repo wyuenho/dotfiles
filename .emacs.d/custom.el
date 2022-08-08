@@ -146,7 +146,7 @@
  '(global-hl-line-mode t)
  '(global-move-dup-mode t)
  '(global-origami-mode t)
- '(global-python-exec-find-minor-mode t)
+ '(global-pet-minor-mode t)
  '(global-so-long-mode t)
  '(global-syntax-subword-mode t)
  '(global-tree-sitter-mode t)
