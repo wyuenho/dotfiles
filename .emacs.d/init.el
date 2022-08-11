@@ -124,6 +124,25 @@ under `user-emacs-directory'.  If it exists, loaded it."
   :if (memq (window-system) '(mac ns))
   :config (exec-path-from-shell-initialize))
 
+(use-package direnv
+  :after (exec-path-from-shell)
+  :config
+  (defvar direnv-pyenv-root nil)
+  (defun direnv-update-directory-environment-advice (&rest _)
+    "Prevent `call-process' and friends from picking up pyenv shims."
+    (when-let ((pyenv-root (or direnv-pyenv-root
+                               (and (executable-find "pyenv")
+                                    (car (ignore-errors (process-lines "pyenv" "root")))))))
+      (setq direnv-pyenv-root pyenv-root
+            exec-path (cl-loop for dir in exec-path
+                               if (not (string-prefix-p pyenv-root dir))
+                               collect dir))
+      (setenv "PATH" (string-join exec-path path-separator))
+      (when (derived-mode-p 'eshell-mode)
+        (setq eshell-path-env exec-path))))
+  (advice-add 'direnv-update-directory-environment :after 'direnv-update-directory-environment-advice)
+  (direnv-mode 1))
+
 (setf backup-directory-alist
       `(("." . ,(concat user-emacs-directory "backups"))))
 
