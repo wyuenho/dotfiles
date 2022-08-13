@@ -1305,10 +1305,6 @@ variants of Typescript.")
                        (funcall 'string-join
                                 (append .tool.black.target-version) ","))))))))
 
-(use-package pet
-  :quelpa (pet :fetcher github :repo "wyuenho/emacs-pet")
-  :delight pet-minor-mode)
-
 (use-package lsp-jedi
   :after (lsp-mode))
 
@@ -1327,6 +1323,11 @@ variants of Typescript.")
                          (insert-file-contents pep518-config-file)
                          (goto-char (point-min))
                          (re-search-forward "^\\[tool.pyright\\]$" nil t nil)))))))))
+
+(use-package pet
+  :quelpa (pet :fetcher github :repo "wyuenho/emacs-pet")
+  :delight
+  :config (add-hook 'python-mode-hook 'pet-mode -10))
 
 ;; Ruby
 (use-package yard-mode)
