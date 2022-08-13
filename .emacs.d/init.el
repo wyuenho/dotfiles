@@ -1252,6 +1252,13 @@ variants of Typescript.")
   (setq-local help-at-pt-display-when-idle '(tide-documentation-at-point)))
 
 ;; Python
+(add-to-list 'auto-mode-alist '("\\.pythonrc\\'"   . python-mode))
+(add-to-list 'auto-mode-alist '("\\.pylintrc\\'"   . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.flake8\\'"     . conf-mode))
+(add-to-list 'auto-mode-alist '("/poetry.lock\\'"  . conf-toml-mode))
+(add-to-list 'auto-mode-alist '("/Pipfile\\'"      . conf-toml-mode))
+(add-to-list 'auto-mode-alist '("/Pipfile.lock\\'" . conf-toml-mode))
+
 (use-package highlight-indent-guides
   :delight
   :hook (python-mode . highlight-indent-guides-mode))
