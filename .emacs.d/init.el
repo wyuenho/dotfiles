@@ -993,7 +993,7 @@ optionally the window if possible."
 (use-package eterm-256color
   :config
   (with-eval-after-load 'term
-    (add-hook 'term-mode 'eterm-256color-mode)))
+    (add-hook 'term-mode-hook 'eterm-256color-mode)))
 
 ;; Markup and config languages
 (use-package markdown-mode
