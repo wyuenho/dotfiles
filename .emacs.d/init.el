@@ -1309,20 +1309,20 @@ variants of Typescript.")
   :after (lsp-mode))
 
 (use-package lsp-pyright
-  :after (lsp-mode)
+  :after (lsp-mode pet)
   :config
+  (pet-def-config-accessor pyrightconfig
+                           :file-name "\\`pyrightconfig.json\\'"
+                           :parser pet-parse-config-file)
   (let ((client (gethash 'pyright lsp-clients)))
     (setf (lsp--client-major-modes client) nil)
     (setf (lsp--client-activation-fn client)
           (lambda (file-name mode)
             (and (or (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))
                      (eq mode 'python-mode))
-                 (or (find-file-from-project-root "pyrightconfig.json")
-                     (when-let ((pep518-config-file (find-file-from-project-root "pyproject.toml")))
-                       (with-temp-buffer
-                         (insert-file-contents pep518-config-file)
-                         (goto-char (point-min))
-                         (re-search-forward "^\\[tool.pyright\\]$" nil t nil)))))))))
+                 (or (pet-pyrightconfig)
+                     (let-alist (pet-pyproject)
+                       .tool.pyright)))))))
 
 (use-package pet
   :quelpa (pet :fetcher github :repo "wyuenho/emacs-pet")
