@@ -269,7 +269,7 @@ Optional argument ARG same as `comment-dwim''s."
                    (let ((comint-input-ring-separator "\n"))
                      (comint-write-input-ring))
                    (quit-window 'kill))))))
-          90)
+          t)
 
 (use-package osx-trash
   :if (and (eq system-type 'darwin)
