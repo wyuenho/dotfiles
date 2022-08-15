@@ -423,6 +423,7 @@
  '(vterm-always-compile-module t)
  '(vterm-max-scrollback 10000)
  '(vterm-term-environment-variable "eterm-256color")
+ '(vundo-roll-back-on-quit nil)
  '(web-mode-code-indent-offset 2)
  '(web-mode-css-indent-offset 2)
  '(web-mode-enable-auto-indentation nil)
