@@ -79,6 +79,7 @@
  '(dired-auto-revert-buffer 'dired-directory-changed-p)
  '(dired-dwim-target t)
  '(dired-omit-verbose nil)
+ '(direnv-mode t)
  '(display-line-numbers-widen t)
  '(display-line-numbers-width-start t)
  '(display-time-world-list
@@ -145,7 +146,6 @@
  '(global-hl-line-mode t)
  '(global-move-dup-mode t)
  '(global-origami-mode t)
- '(global-pet-minor-mode t)
  '(global-so-long-mode t)
  '(global-syntax-subword-mode t)
  '(global-tree-sitter-mode t)
