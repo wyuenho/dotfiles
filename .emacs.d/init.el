@@ -362,7 +362,13 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Saner undo/redo
 (use-package vundo
-  :bind (("M-z" . vundo)))
+  :bind (("M-z" . vundo))
+  :config
+  (with-eval-after-load 'flycheck
+    (add-hook 'vundo-post-exit-hook
+              (lambda ()
+                (when flycheck-mode
+                  (flycheck-buffer))))))
 
 ;; So I can see past kills that I can yank
 (use-package browse-kill-ring
@@ -897,25 +903,20 @@ checker symbol."
     (expand-file-name (concat (file-name-as-directory dir) file-name))))
 
 (use-package flycheck
+  :quelpa (flycheck :fetcher github :repo "wyuenho/flycheck" :branch "my-fixes")
   :delight
   :config
-  ;; https://github.com/flycheck/flycheck/issues/1931
-  (plist-put (symbol-plist 'dockerfile-hadolint)
-             'flycheck-command
-             '("hadolint" "--no-color" source))
-
   (add-hook 'flycheck-status-changed-functions
             (lambda (status)
               (use-package spinner :ensure t)
               (pcase status
                 (`running (spinner-start 'minibox))
-                (- (spinner-stop)))))
-
-  (global-flycheck-mode 1))
+                (- (spinner-stop))))))
 
 (use-package quick-peek)
 
 (use-package flycheck-inline
+  :quelpa (flycheck-inline :fetcher github :repo "wyuenho/flycheck-inline" :branch "flycheck-clear-displayed-errors-function")
   :init
   (defun flycheck-inline-quick-peek (msg pos err)
     (when (or (not company-mode)
@@ -1071,6 +1072,10 @@ optionally the window if possible."
    (symbol-plist 'emacs-lisp-checkdoc)
    'flycheck-predicate
    #'package-lint-looks-like-a-package-p))
+
+(use-package flycheck-cask
+  :after (flycheck)
+  :hook (flycheck-mode . flycheck-cask-setup))
 
 ;; C/C++/Objective-C
 (use-package cmake-font-lock

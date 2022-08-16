@@ -129,6 +129,8 @@
  '(flx-ido-mode t)
  '(flx-ido-use-faces t)
  '(flycheck-disabled-checkers '(json-jsonlint json-python-json))
+ '(flycheck-display-errors-delay 0.2)
+ '(flycheck-emacs-lisp-initialize-packages t)
  '(flycheck-emacs-lisp-load-path 'inherit)
  '(flycheck-global-modes
    '(jsonian-mode js-mode js2-mode rjsx-mode scss-mode css-mode python-mode ruby-mode enh-ruby-mode go-mode rust-mode swift-mode scala-mode c-mode c++-mode objc-mode sh-mode dockerfile-mode))
