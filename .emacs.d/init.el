@@ -1064,8 +1064,14 @@ optionally the window if possible."
     (select-window (get-buffer-window (current-buffer)))))
 (advice-add 'eieio-browse :around 'eieio-browse-advice)
 
+(use-package package-lint
+  :quelpa (package-lint :fetcher github
+                        :repo "wyuenho/package-lint"
+                        :branch "fix-installable-package-detection"
+                        :files (:defaults "data" (:exclude "*flymake.el"))))
+
 (use-package flycheck-package
-  :after (flycheck)
+  :after (flycheck package-lint)
   :config
   (flycheck-package-setup)
   (plist-put
