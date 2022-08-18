@@ -1581,8 +1581,8 @@ variants of Typescript.")
   (defvar watched-git-heads nil
     "A list of .git/logs/HEAD file to watcher mappings.")
 
-  (defun refresh-buffer-based-on-git-state ()
-    "Refresh the current buffer based on the current git state."
+  (defun refresh-buffer-base-on-git-state ()
+    "Refresh the current buffer base on the current git state."
     (if (and (boundp 'magit-mode) (derived-mode-p 'magit-mode))
         (magit-refresh-buffer)
       (unless revert-buffer-in-progress-p
@@ -1600,9 +1600,13 @@ variants of Typescript.")
           (vc-refresh-state))))))
 
   (defun handle-git-state-change (event)
-    "Callback to `file-notify-add-watch'.
+    "Callback to `file-notify-add-watch' to handle git state change.
 
-If EVENT is a file system notification event.  If EVENT is a change event,
+EVENT is a file system notification event.  If EVENT is a change
+event, find all the visible buffers belonging to the same git
+repo and refresh all of the version control minor mode states.
+If EVENT is a deleted or renamed event, remove the file system
+notification watcher.
 
 See `file-notify-add-watch' for more details."
     (pcase-let ((`(,desc ,action ,file ,@_) event))
@@ -1617,7 +1621,7 @@ See `file-notify-add-watch' for more details."
                  (when (not (string-prefix-p " " (buffer-name buf)))
                    (with-current-buffer buf
                      (when (string-prefix-p vc-root (expand-file-name default-directory))
-                       (refresh-buffer-based-on-git-state))))))))))))
+                       (refresh-buffer-base-on-git-state))))))))))))
 
   (defun watch-git-head ()
     (let ((file (buffer-file-name)))
@@ -1630,26 +1634,26 @@ See `file-notify-add-watch' for more details."
                     (file-notify-add-watch head '(change) 'handle-git-state-change))))))))
 
   (defun reap-git-head-watchers ()
-    (let* ((buffer-default-dirs-sans-current
-            (seq-uniq
-             (mapcar
-              (lambda (buf) (with-current-buffer buf (expand-file-name default-directory)))
-              (seq-filter
-               (lambda (buf)
-                 (not (or (string-prefix-p " " (buffer-name buf))
-                          (equal buf (current-buffer)))))
-               (apply 'append
-                      (mapcar
-                       'buffer-list
-                       (seq-filter
-                        (lambda (frame) (not (frame-parent frame)))
-                        (frame-list))))))))
-           (git-heads-to-delete
-            (seq-filter
-             (lambda (git-head)
-               (let ((vc-root (apply 'file-name-concat "/" (seq-subseq (split-string git-head "/") 0 -3))))
-                 (not (seq-some (apply-partially 'string-prefix-p vc-root) buffer-default-dirs-sans-current))))
-             (mapcar 'car watched-git-heads))))
+    (when-let* ((buffer-default-dirs-sans-current
+                 (seq-uniq
+                  (mapcar
+                   (lambda (buf) (with-current-buffer buf (expand-file-name default-directory)))
+                   (seq-filter
+                    (lambda (buf)
+                      (not (or (string-prefix-p " " (buffer-name buf))
+                               (equal buf (current-buffer)))))
+                    (apply 'append
+                           (mapcar
+                            'buffer-list
+                            (seq-filter
+                             (lambda (frame) (not (frame-parent frame)))
+                             (frame-list))))))))
+                (git-heads-to-delete
+                 (seq-filter
+                  (lambda (git-head)
+                    (let ((vc-root (apply 'file-name-concat "/" (seq-subseq (split-string git-head "/") 0 -3))))
+                      (not (seq-some (apply-partially 'string-prefix-p vc-root) buffer-default-dirs-sans-current))))
+                  (mapcar 'car watched-git-heads))))
 
       (dolist (git-head git-heads-to-delete)
         (let ((watcher (assoc-default git-head watched-git-heads)))
