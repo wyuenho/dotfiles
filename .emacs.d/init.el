@@ -904,8 +904,8 @@ checker symbol."
           (with-current-buffer (window-buffer win)
             (save-excursion
               (goto-char (point-min))
-              (forward-line (1- (+ (line-number-at-pos (window-start)) row)))
-              (move-to-column (1- col))
+              (forward-line (1- (+ (line-number-at-pos (window-start win)) row)))
+              (move-to-column (min 0 (1- col)))
               (when-let (errors (flycheck-overlay-errors-at (point)))
                 (flycheck-display-errors errors))))))))
 
