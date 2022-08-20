@@ -163,7 +163,8 @@
  '(gnutls-trustfiles
    '("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt" "/etc/certs/ca-certificates.crt"))
  '(gofmt-command "gofumpt")
- '(help-at-pt-display-when-idle '(keymap local-map button kbd-help flymake-diagnostic) nil (help-at-pt))
+ '(help-at-pt-display-when-idle
+   '(keymap local-map button kbd-help help-echo flymake-diagnostic) nil (help-at-pt))
  '(help-at-pt-timer-delay 0.5)
  '(highlight-indent-guides-method 'character)
  '(highlight-indent-guides-responsive 'top)
