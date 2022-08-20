@@ -790,17 +790,7 @@ checker symbol."
 
   (add-hook 'go-mode-hook
             (lambda ()
-              (use-package dap-go
-                :custom
-                (dap-go-debug-path
-                 (car
-                  (last
-                   (file-expand-wildcards
-                    (concat
-                     dap-utils-extension-path
-                     "/golang.go-*")))))
-                (dap-go-debug-program
-                 (concat "node" dap-go-debug-path "/dist/debugAdaptor.js")))))
+              (use-package dap-dlv-go)))
 
   (dolist (mode '(c-mode-common rust-mode))
     (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
