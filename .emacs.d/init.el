@@ -899,13 +899,13 @@ checker symbol."
         (pcase-let* ((`(,frame ,x . ,y) (mouse-position))
                      (win (window-at x y frame))
                      (`(,body-left ,body-top ,@_) (window-body-edges win))
-                     (col (- x body-left (or display-line-numbers-width 0)))
+                     (col (max 0 (- x body-left (or display-line-numbers-width 0))))
                      (row (- y body-top)))
           (with-current-buffer (window-buffer win)
             (save-excursion
               (goto-char (point-min))
               (forward-line (1- (+ (line-number-at-pos (window-start win)) row)))
-              (move-to-column (min 0 (1- col)))
+              (move-to-column (1- col))
               (when-let (errors (flycheck-overlay-errors-at (point)))
                 (flycheck-display-errors errors))))))))
 
