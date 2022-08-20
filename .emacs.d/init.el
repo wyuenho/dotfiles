@@ -890,6 +890,35 @@ checker symbol."
   :quelpa (flycheck :fetcher github :repo "wyuenho/flycheck" :branch "my-fixes")
   :delight
   :config
+  (defun flycheck-show-help-function (_)
+    (when flycheck-mode
+      (pcase-let* ((`(,frame ,x . ,y) (mouse-position))
+                   (win (window-at x y frame))
+                   (`(,left ,top ,right ,bottom) (window-body-edges win))
+                   (`(,left-fringe-width ,@_) (window-fringes win))
+                   (`(,left-margin-width . ,@_) (window-margins win))
+                   (v-scroll-bar-type (car (window-current-scroll-bars win)))
+                   (left-v-scroll-bar-width (if (eq v-scroll-bar-type 'left)
+                                                (cadr (window-scroll-bars win))
+                                              0))
+                   (col (- x left
+                           (or left-fringe-width 0)
+                           (or left-margin-width 0)
+                           left-v-scroll-bar-width)))
+        (with-current-buffer (window-buffer win)
+          (save-mark-and-excursion
+            (goto-char (point-min))
+            (forward-line (1- (+ (line-number-at-pos (window-start)) (- y top))))
+            (move-to-column col)
+            (flycheck-display-error-at-point-soon))))))
+
+  (add-hook 'flycheck-mode-hook
+            (lambda ()
+              (when (display-mouse-p)
+                (if flycheck-mode
+                    (setq-local show-help-function 'flycheck-show-help-function)
+                  (kill-local-variable 'show-help-function)))))
+
   (add-hook 'flycheck-status-changed-functions
             (lambda (status)
               (use-package spinner :ensure t)
