@@ -900,7 +900,7 @@ checker symbol."
                      (col (- x body-left (or display-line-numbers-width 0)))
                      (row (- y body-top)))
           (with-current-buffer (window-buffer win)
-            (save-mark-and-excursion
+            (save-excursion
               (goto-char (point-min))
               (forward-line (1- (+ (line-number-at-pos (window-start)) row)))
               (move-to-column (1- col))
