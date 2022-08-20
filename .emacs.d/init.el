@@ -886,6 +886,8 @@ checker symbol."
                    file-name)))
     (expand-file-name (concat (file-name-as-directory dir) file-name))))
 
+(use-package spinner)
+
 (use-package flycheck
   :quelpa (flycheck :fetcher github :repo "wyuenho/flycheck" :branch "my-fixes")
   :delight
@@ -916,10 +918,10 @@ checker symbol."
 
   (add-hook 'flycheck-status-changed-functions
             (lambda (status)
-              (use-package spinner :ensure t)
-              (pcase status
-                (`running (spinner-start 'minibox))
-                (- (spinner-stop))))))
+              (when (fboundp 'spinner-start)
+                (pcase status
+                  (`running (spinner-start 'minibox))
+                  (- (spinner-stop)))))))
 
 (use-package quick-peek)
 
