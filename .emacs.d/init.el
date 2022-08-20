@@ -890,27 +890,22 @@ checker symbol."
   :quelpa (flycheck :fetcher github :repo "wyuenho/flycheck" :branch "my-fixes")
   :delight
   :config
-  (defun flycheck-show-help-function (_)
+  (defun flycheck-show-help-function (msg)
     (when flycheck-mode
-      (pcase-let* ((`(,frame ,x . ,y) (mouse-position))
-                   (win (window-at x y frame))
-                   (`(,left ,top ,right ,bottom) (window-body-edges win))
-                   (`(,left-fringe-width ,@_) (window-fringes win))
-                   (`(,left-margin-width . ,@_) (window-margins win))
-                   (v-scroll-bar-type (car (window-current-scroll-bars win)))
-                   (left-v-scroll-bar-width (if (eq v-scroll-bar-type 'left)
-                                                (cadr (window-scroll-bars win))
-                                              0))
-                   (col (- x left
-                           (or left-fringe-width 0)
-                           (or left-margin-width 0)
-                           left-v-scroll-bar-width)))
-        (with-current-buffer (window-buffer win)
-          (save-mark-and-excursion
-            (goto-char (point-min))
-            (forward-line (1- (+ (line-number-at-pos (window-start)) (- y top))))
-            (move-to-column col)
-            (flycheck-display-error-at-point-soon))))))
+      (if (null msg)
+          (flycheck-clear-displayed-errors)
+        (pcase-let* ((`(,frame ,x . ,y) (mouse-position))
+                     (win (window-at x y frame))
+                     (`(,body-left ,body-top ,@_) (window-body-edges win))
+                     (col (- x body-left (or display-line-numbers-width 0)))
+                     (row (- y body-top)))
+          (with-current-buffer (window-buffer win)
+            (save-mark-and-excursion
+              (goto-char (point-min))
+              (forward-line (1- (+ (line-number-at-pos (window-start)) row)))
+              (move-to-column (1- col))
+              (when-let (errors (flycheck-overlay-errors-at (point)))
+                (flycheck-display-errors errors))))))))
 
   (add-hook 'flycheck-mode-hook
             (lambda ()
