@@ -66,12 +66,6 @@ under `user-emacs-directory'.  If it exists, loaded it."
   :config
   (load-theme 'solarized-dark t)
 
-  ;; (pcase-dolist (`(,face . ,spec)
-  ;;                '((region . ((((type ns))
-  ;;                              (:background "selectedTextBackgroundColor" :foreground "selectedTextColor"))))))
-  ;;   (put face 'theme-face nil)
-  ;;   (face-spec-set face spec))
-
   (pcase-dolist (`(,face . ,alias)
                  '((all-the-icons-dired-dir-face      . dired-directory)
                    (icomplete-first-match             . ido-first-match)
