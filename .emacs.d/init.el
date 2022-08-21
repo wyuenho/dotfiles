@@ -1688,9 +1688,9 @@ See `file-notify-add-watch' for more details."
                 (auto-fill-mode -1))))
   (remove-hook 'forge-post-mode-hook 'turn-on-flyspell))
 
-;; (use-package magit-todos
-;;   :after (magit)
-;;   :config (magit-todos-mode 1))
+(use-package magit-todos
+  :after (magit)
+  :config (magit-todos-mode 1))
 
 (use-package magit-lfs
   :after (magit))
