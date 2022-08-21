@@ -1942,18 +1942,18 @@ ELEMENT is only added once."
       (quit-window))
     (advice-add 'message-kill-buffer :around 'message-kill-buffer-advice))
 
-  (with-eval-after-load 'pet
-    (add-to-list 'purpose-x-popwin-buffer-names "*pet info*")
-    (purpose-x-popwin-update-conf))
-
-  (with-eval-after-load 'browse-kill-ring
-    (add-to-list 'purpose-x-popwin-major-modes 'browse-kill-ring-mode)
-    (purpose-x-popwin-update-conf))
-
   (with-eval-after-load 'window-purpose-x
     (add-to-list 'purpose-x-popwin-buffer-names "*Messages*")
     (add-to-list 'purpose-x-popwin-buffer-names "*Warnings*")
     (purpose-x-popwin-update-conf)
+
+    (with-eval-after-load 'pet
+      (add-to-list 'purpose-x-popwin-buffer-names "*pet info*")
+      (purpose-x-popwin-update-conf))
+
+    (with-eval-after-load 'browse-kill-ring
+      (add-to-list 'purpose-x-popwin-major-modes 'browse-kill-ring-mode)
+      (purpose-x-popwin-update-conf))
 
     (with-eval-after-load 'vterm
       (add-to-list 'purpose-x-popwin-major-modes 'vterm-mode)
