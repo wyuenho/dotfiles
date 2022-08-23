@@ -371,6 +371,13 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Sane keyboard scrolling
 (use-package pager-default-keybindings)
 
+;; Scroll when jumping medium distances
+(use-package scroll-on-jump
+  :config
+  (scroll-on-jump-advice-add set-mark-command)
+  (with-eval-after-load 'diff-hl
+    (scroll-on-jump-advice-add diff-hl-next-hunk)))
+
 ;; Adjust frame-wide font size
 (use-package default-text-scale
   :bind (("C-x C-=" . default-text-scale-increase)
