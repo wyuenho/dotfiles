@@ -1030,7 +1030,10 @@ optionally the window if possible."
              (list nil (purecopy (concat
                                   "^\\s-*("
                                   (eval-when-compile
-                                    (regexp-opt '("iter-defun" "iter-lambda" "iter2-defun" "iter2-lambda" "async-defun" "async-lambda") t))
+                                    (regexp-opt '("iter-defun" "iter-lambda"
+                                                  "iter2-defun" "iter2-lambda"
+                                                  "async-defun" "async-lambda")
+                                                t))
                                   "\\s-+\\(" lisp-mode-symbol-regexp "\\)"))
                    2))
 
