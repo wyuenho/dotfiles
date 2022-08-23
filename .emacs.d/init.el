@@ -1201,6 +1201,10 @@ optionally the window if possible."
                       (prettier-mode)
                       (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'prettier-prettify)))))))))
 
+;; Java
+(use-package lsp-java
+  :after (lsp))
+
 ;; Javascript
 (add-hook 'js-mode-hook
           (lambda ()
