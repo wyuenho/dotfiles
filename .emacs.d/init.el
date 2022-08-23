@@ -1026,6 +1026,14 @@ optionally the window if possible."
   :mode "\\.env\\..*\\'")
 
 ;; Emacs Lisp
+(add-to-list 'lisp-imenu-generic-expression
+             (list nil (purecopy (concat
+                                  "^\\s-*("
+                                  (eval-when-compile
+                                    (regexp-opt '("iter-defun" "iter-lambda" "iter2-defun" "iter2-lambda" "async-defun" "async-lambda") t))
+                                  "\\s-+\\(" lisp-mode-symbol-regexp "\\)"))
+                   2))
+
 (defun calculate-lisp-indent-advice (fn &rest args)
   "Don't indent vectors in `emacs-lisp-mode' like lists."
   (if (save-excursion
