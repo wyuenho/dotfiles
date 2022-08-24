@@ -1032,7 +1032,8 @@ optionally the window if possible."
                                   (eval-when-compile
                                     (regexp-opt '("iter-defun" "iter-lambda"
                                                   "iter2-defun" "iter2-lambda"
-                                                  "async-defun" "async-lambda")
+                                                  "async-defun" "async-lambda"
+                                                  "aio-defun" "aio-lambda")
                                                 t))
                                   "\\s-+\\(" lisp-mode-symbol-regexp "\\)"))
                    2))
