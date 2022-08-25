@@ -671,6 +671,7 @@ region."
   :hook (((c-mode-common
            enh-ruby-mode
            go-mode
+           groovy-mode
            js-mode
            python-mode
            reason-mode
