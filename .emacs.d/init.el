@@ -72,9 +72,7 @@ under `user-emacs-directory'.  If it exists, loaded it."
                    (completions-common-part           . flx-highlight-face)
                    (company-tooltip-selection         . company-tooltip-mouse)
                    (tooltip                           . company-tooltip)
-                   (lsp-signature-posframe            . company-tooltip)
-                   (lsp-ui-doc-background             . company-tooltip)
-                   (company-box-numbers               . company-tooltip-quick-access)))
+                   (lsp-ui-doc-background             . company-tooltip)))
     (put face 'theme-face nil)
     (put face 'face-alias alias))
 
@@ -869,11 +867,8 @@ checker symbol."
            company-etags
            company-keywords))))
 
-(use-package company-box
-  :if (display-graphic-p)
-  :quelpa (company-box :fetcher github :repo "wyuenho/company-box")
-  :delight
-  :hook (company-mode . company-box-mode))
+(use-package company-quickhelp
+  :hook (company-mode . company-quickhelp-mode))
 
 (use-package company-prescient
   :hook (company-mode . company-prescient-mode)
@@ -1207,7 +1202,9 @@ optionally the window if possible."
 
 ;; Java
 (use-package lsp-java
-  :after (lsp))
+  :after (lsp)
+  :custom
+  (lsp-java-server-install-dir (car (file-expand-wildcards "~/.vscode/extensions/redhat.java-*/server"))))
 
 ;; Javascript
 (add-hook 'js-mode-hook
