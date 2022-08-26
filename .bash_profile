@@ -27,7 +27,9 @@ XDG_DATA_HOME="$HOME/.local/share"
 export XDG_DATA_HOME
 
 # Homebrew
-PATH="/usr/local/sbin:$PATH"
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 # MacPorts
 if [ -d /opt/local ]; then
