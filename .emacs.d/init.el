@@ -1023,15 +1023,11 @@ optionally the window if possible."
 
 ;; Emacs Lisp
 (add-to-list 'lisp-imenu-generic-expression
-             (list nil (purecopy (concat
-                                  "^\\s-*("
-                                  (eval-when-compile
-                                    (regexp-opt '("iter-defun" "iter-lambda"
-                                                  "iter2-defun" "iter2-lambda"
-                                                  "async-defun" "async-lambda"
-                                                  "aio-defun" "aio-lambda")
-                                                t))
-                                  "\\s-+\\(" lisp-mode-symbol-regexp "\\)"))
+             (list nil (concat
+                        "^\\s-*("
+                        (eval-when-compile
+                          (regexp-opt '("iter-defun" "aio-defun") t))
+                        "\\s-+\\(" lisp-mode-symbol-regexp "\\)")
                    2))
 
 (defun calculate-lisp-indent-advice (fn &rest args)
