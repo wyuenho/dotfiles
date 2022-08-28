@@ -2002,13 +2002,11 @@ ELEMENT is only added once."
   (purpose-x-kill-setup)
   (purpose-x-magit-single-on)
 
-  (purpose-mode 1)
-
   (add-hook 'window-setup-hook
             (lambda ()
-              (when (file-exists-p purpose-default-layout-file)
-                (purpose-load-window-layout-file))
-              (select-window (get-largest-window))))
+              (let ((win (selected-window)))
+                (purpose-mode 1)
+                (select-window win))))
 
   ;; (with-eval-after-load 'debug
   ;;   (defun purpose--debug (fn &rest args)
