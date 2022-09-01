@@ -1588,7 +1588,6 @@ variants of Typescript.")
             'append))
 
 (use-package diff-hl
-  :quelpa (diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "fix-171")
   :config
   (if (display-graphic-p)
       (diff-hl-flydiff-mode 1)
@@ -1598,8 +1597,6 @@ variants of Typescript.")
 
 (use-package magit
   :config
-  (add-hook 'magit-post-refresh-hook 'vc-refresh-state)
-  (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
   (with-eval-after-load 'git-rebase
     ;; Vanilla undo has been completely unbound, this reenable undo in
     ;; `git-rebase-mode'
@@ -1612,7 +1609,7 @@ variants of Typescript.")
   (defvar watched-git-heads nil
     "A list of .git/logs/HEAD file to watcher mappings.")
 
-  (defun refresh-buffer-base-on-git-state ()
+  (defun refresh-git-backed-buffer ()
     "Refresh the current buffer base on the current git state."
     (if (and (boundp 'magit-mode) (derived-mode-p 'magit-mode))
         (magit-refresh-buffer)
@@ -1652,7 +1649,7 @@ See `file-notify-add-watch' for more details."
                  (when (not (string-prefix-p " " (buffer-name buf)))
                    (with-current-buffer buf
                      (when (string-prefix-p vc-root (expand-file-name default-directory))
-                       (refresh-buffer-base-on-git-state))))))))))))
+                       (refresh-git-backed-buffer))))))))))))
 
   (defun watch-git-head ()
     (let ((file (buffer-file-name)))
