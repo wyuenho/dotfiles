@@ -1299,7 +1299,6 @@ variants of Typescript.")
 (add-to-list 'auto-mode-alist '("\\.pylintrc\\'"   . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.flake8\\'"     . conf-mode))
 (add-to-list 'auto-mode-alist '("/poetry.lock\\'"  . conf-toml-mode))
-(add-to-list 'auto-mode-alist '("/Pipfile\\'"      . conf-toml-mode))
 (add-to-list 'auto-mode-alist '("/Pipfile.lock\\'" . conf-toml-mode))
 
 (use-package highlight-indent-guides
