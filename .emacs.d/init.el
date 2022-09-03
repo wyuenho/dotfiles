@@ -1602,8 +1602,6 @@ variants of Typescript.")
     ;; `git-rebase-mode'
     (define-key git-rebase-mode-map (kbd "M-z") 'git-rebase-undo)))
 
-(use-package magit-libgit)
-
 ;; Refresh VC related states reliably across packages.
 (when file-notify--library
   (defvar watched-git-heads nil
