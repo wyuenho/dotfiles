@@ -1367,7 +1367,6 @@ variants of Typescript.")
                        .tool.pyright)))))))
 
 (use-package pet
-  :quelpa (pet :fetcher github :repo "wyuenho/emacs-pet")
   :delight
   :config (add-hook 'python-mode-hook 'pet-mode -10))
 
