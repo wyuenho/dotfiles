@@ -403,6 +403,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package ido-completing-read+)
 
 (use-package ido-vertical-mode
+  :init (require 'icomplete)
   :demand
   :bind (:map icomplete-minibuffer-map
               ("<down>" . icomplete-forward-completions)
