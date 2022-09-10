@@ -951,9 +951,10 @@ checker symbol."
   (flycheck-inline-clear-function #'quick-peek-hide))
 
 ;; REST API
-(use-package org
-  :mode ("\\.org\\'" . org-mode)
-  :config (define-key org-mode-map (kbd "C-c C-r") verb-command-map))
+(use-package verb
+  :config
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-c C-r") verb-command-map)))
 
 ;; API Blueprints
 (use-package apib-mode
