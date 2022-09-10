@@ -47,18 +47,18 @@ under `user-emacs-directory'.  If it exists, loaded it."
 (use-package delight
   :config
   (delight '((whitespace-cleanup-mode)
-             (aggressive-indent-mode        nil aggressive-indent)
-             (auto-fill-function            nil t)
-             (isearch-mode                  nil isearch)
-             (abbrev-mode                   nil abbrev)
-             (purpose-mode                  nil window-purpose)
-             (eldoc-mode                    nil eldoc)
-             (move-dup-mode                 nil move-dup)
-             (smartparens-mode              nil smartparens)
-             (which-key-mode                nil which-key)
-             (auto-revert-mode              nil autorevert)
-             (visual-line-mode              nil simple)
-             (subword-mode                  nil subword))))
+             (aggressive-indent-mode nil aggressive-indent)
+             (auto-fill-function     nil t)
+             (isearch-mode           nil isearch)
+             (abbrev-mode            nil abbrev)
+             (purpose-mode           nil window-purpose)
+             (eldoc-mode             nil eldoc)
+             (move-dup-mode          nil move-dup)
+             (smartparens-mode       nil smartparens)
+             (which-key-mode         nil which-key)
+             (auto-revert-mode       nil autorevert)
+             (visual-line-mode       nil simple)
+             (subword-mode           nil subword))))
 
 ;; Theme
 (use-package solarized-theme
