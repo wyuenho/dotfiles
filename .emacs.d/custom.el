@@ -192,6 +192,7 @@
  '(importmagic-be-quiet t)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
+ '(isearch-lazy-count t)
  '(ispell-program-name "hunspell")
  '(js-chain-indent t)
  '(js-doc-author "Jimmy Yuen Ho Wong")
