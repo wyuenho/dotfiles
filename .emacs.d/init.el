@@ -1995,6 +1995,8 @@ ELEMENT is only added once."
   (purpose-x-kill-setup)
   (purpose-x-magit-single-on)
 
+  (purpose-mode 1)
+
   (add-hook 'window-setup-hook
             (lambda ()
               (let ((win (selected-window)))
