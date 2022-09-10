@@ -1654,7 +1654,8 @@ See `file-notify-add-watch' for more details."
       (when (eq 'Git (vc-backend file))
         (let* ((root (expand-file-name (vc-git-root file)))
                (head (file-name-concat root ".git" "logs" "HEAD")))
-          (unless (assoc-default head watched-git-heads)
+          (unless (or (not (file-exists-p head))
+                      (assoc-default head watched-git-heads))
             (ignore-errors
               (setf (alist-get head watched-git-heads nil nil 'equal)
                     (file-notify-add-watch head '(change) 'handle-git-state-change))))))))
