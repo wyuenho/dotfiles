@@ -102,8 +102,6 @@
  '(eldoc-eval-preferred-function 'eval-expression)
  '(emmet-indentation 2)
  '(emmet-self-closing-tag-style " /")
- '(emojify-display-style 'unicode)
- '(emojify-emoji-styles '(unicode))
  '(enable-local-eval t)
  '(enable-local-variables :all)
  '(enable-recursive-minibuffers t)
