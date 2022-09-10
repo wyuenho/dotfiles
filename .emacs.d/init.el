@@ -565,10 +565,9 @@ region."
 ;; Performance enhancement for files with really long lines
 (use-package so-long)
 
-;; Prettier form-feeds
-(use-package form-feed
-  :delight
-  :hook (((prog-mode text-mode) . form-feed-mode)))
+;; Prettier form feeds
+(use-package page-break-lines-mode
+  :hook (((prog-mode text-mode) . page-break-lines-mode)))
 
 ;; Quick Snippets
 (use-package yasnippet
