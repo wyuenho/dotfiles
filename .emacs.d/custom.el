@@ -304,6 +304,7 @@
  '(orderless-matching-styles
    '(orderless-regexp orderless-initialism orderless-prefixes orderless-flex))
  '(origami-fold-replacement "▶️")
+ '(osx-trash-command '("trash" "-F"))
  '(package-archive-priorities '(("melpa" . 2) ("nongnu" . 1) ("gnu" . 0)))
  '(package-archives
    '(("melpa" . "https://melpa.org/packages/")
