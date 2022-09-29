@@ -1191,12 +1191,9 @@ optionally the window if possible."
                           (yarn-eslint-format-on-save-mode))
                       (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'eslint-format-buffer)
                       (eslint-format-on-save-mode)))
-                   ((eq formatter 'prettier)
-                    (use-package prettier
-                      :delight
-                      :config
-                      (prettier-mode)
-                      (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'prettier-prettify)))))))))
+                   ((and (functionp 'prettier-mode) (functionp 'prettier-prettify) (executable-find "prettier"))
+                    (prettier-mode)
+                    (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'prettier-prettify))))))))
 
 ;; Java
 (use-package lsp-java
@@ -1214,6 +1211,9 @@ optionally the window if possible."
                              ("C-M-x"   . nil)
                              ("<menu-bar>" . nil)))
               (define-key js-mode-map (kbd key) command))))
+
+(use-package prettier
+  :delight)
 
 (use-package import-js
   :after (js)
