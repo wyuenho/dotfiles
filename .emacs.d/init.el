@@ -1741,10 +1741,9 @@ ELEMENT is only added once."
 (advice-add 'add-to-invisibility-spec :override 'add-to-invisibility-spec-override-advice)
 
 (with-eval-after-load 'dired
-  ;; Font lock symlinks
   (defface dired-executable
     '((t (:inherit font-lock-warning-face :weight normal)))
-    "Face used for symbolic links."
+    "Face used for executables."
     :group 'dired-faces)
 
   (defvar dired-executable-face 'dired-executable)
