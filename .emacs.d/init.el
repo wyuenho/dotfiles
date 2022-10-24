@@ -1597,6 +1597,21 @@ variants of Typescript.")
 
 (use-package magit
   :config
+  (add-hook 'magit-post-refresh-hook
+            (lambda ()
+              (dolist (frame (frame-list))
+                (when (not (frame-parent frame))
+                  (dolist (buf (buffer-list frame))
+                    (when (not (string-prefix-p " " (buffer-name buf)))
+                      (with-current-buffer buf
+                        (when vc-mode
+                          (vc-refresh-state)
+                          (let* ((root (expand-file-name (vc-git-root (buffer-file-name))))
+                                 (head (file-name-concat root ".git" "logs" "HEAD")))
+                            (when (and  (file-exists-p head)
+                                        (not (assoc-default head watched-git-heads)))
+                              (watch-git-head)))))))))))
+  (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
   (with-eval-after-load 'git-rebase
     ;; Vanilla undo has been completely unbound, this reenable undo in
     ;; `git-rebase-mode'
@@ -1622,7 +1637,8 @@ variants of Typescript.")
           (vc-dir-refresh)
           (when (bound-and-true-p diff-hl-dir-mode)
             (diff-hl-dir-update)))
-         ((vc-backend (buffer-file-name))
+         ((and (buffer-file-name)
+               (vc-backend (buffer-file-name)))
           (vc-refresh-state))))))
 
   (defun handle-git-state-change (event)
