@@ -106,10 +106,9 @@ if [ -d "$HOME/.rbenv/bin" ]; then
 fi
 
 # Go
-if [ -x "$(type -P go)" ]; then
-    GOPATH="$HOME/Documents/workspace/go"
-    PATH="$GOPATH/bin:$PATH"
-    export GOPATH
+if [ -d "$HOME/.goenv" ]; then
+    export GOENV_ROOT="$HOME/.goenv"
+    export PATH="$GOENV_ROOT/bin:$PATH"
 fi
 
 # Rust

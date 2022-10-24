@@ -100,6 +100,12 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
         complete -C gocomplete go
     fi
 
+    if [ -x "$(type -P goenv)" ]; then
+        eval "$(goenv init -)"
+        export PATH="$GOROOT/bin:$PATH"
+        export PATH="$PATH:$GOPATH/bin"
+    fi
+
     # sdkman!
     [ "$(type -t sdk)" = 'function' ] && eval "$(sdk completion bash)"
 
