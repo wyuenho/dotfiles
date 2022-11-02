@@ -676,7 +676,6 @@ region."
            swift-mode
            tuareg-mode)
           . lsp-deferred)
-         (lsp-managed-mode . lsp-mode)
          (lsp-mode . (lambda ()
                        (with-eval-after-load 'which-key
                          (lsp-enable-which-key-integration)))))
