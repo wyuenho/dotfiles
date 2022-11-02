@@ -497,11 +497,7 @@ region."
       (require 'html-mode-expansions)
       (er/enable-mode-expansions mode 'er/add-html-mode-expansions)))
   :config
-  (add-hook 'js-jsx-mode-hook (load-html-mode-expansions 'js-jsx-mode))
-  (with-eval-after-load 'js2-mode
-    (add-hook 'js2-jsx-mode-hook (load-html-mode-expansions 'js2-jsx-mode)))
-  (with-eval-after-load 'rjsx-mode
-    (add-hook 'rjsx-mode-hook (load-html-mode-expansions 'rjsx-mode))))
+  (add-hook 'js-jsx-mode-hook (load-html-mode-expansions 'js-jsx-mode)))
 
 ;; Navigate source code by syntax
 (add-hook 'prog-mode-hook
@@ -1202,6 +1198,8 @@ optionally the window if possible."
   (lsp-java-server-install-dir (car (file-expand-wildcards "~/.vscode/extensions/redhat.java-*/server"))))
 
 ;; Javascript
+(add-to-list 'auto-mode-alist '("\\.\\(?:cjs\\|jsx?\\|mjs\\)\\'" . js-mode))
+
 (add-hook 'js-mode-hook
           (lambda ()
             (pcase-dolist (`(,key . ,command)
@@ -1237,15 +1235,6 @@ optionally the window if possible."
              ("C-c e b" . nodejs-repl-send-buffer)
              ("C-c e l" . nodejs-repl-load-file)
              ("C-c M-:" . nodejs-repl-switch-to-repl)))
-
-(use-package js2-mode
-  :interpreter ("node" . js2-mode)
-  :config
-  (when (fboundp 'sp-kill-whole-line)
-    (define-key js2-mode-map (kbd "C-k") 'sp-kill-whole-line)))
-
-(use-package rjsx-mode
-  :mode "\\.\\(?:cjs\\|jsx?\\|mjs\\)\\'")
 
 (use-package jsonian
   :after so-long
@@ -1462,8 +1451,8 @@ variants of Typescript.")
    'self-insert-command
    minibuffer-local-completion-map))
 
-(use-package lsp-metals
-  :after (lsp-mode))
+;; (use-package lsp-metals
+;;   :after (lsp-mode))
 
 ;; Web
 (use-package sass-mode
@@ -1495,15 +1484,11 @@ variants of Typescript.")
   :delight
   :after (:any web-mode
                js-mode
-               js2-mode
-               rjsx-mode
                typescript-tsx-mode)
   :hook (sgml-mode
          nxml-mode
          web-mode
          js-jsx-mode
-         js2-jsx-mode
-         rjsx-mode
          typescript-tsx-mode)
   :config
   (define-key emmet-mode-keymap (kbd "C-c C-c w") nil)
@@ -1512,8 +1497,6 @@ variants of Typescript.")
             (lambda ()
               (when (member major-mode
                             '(js-jsx-mode
-                              js2-jsx-mode
-                              rjsx-mode
                               typesript-tsx-mode))
                 (setq-local emmet-expand-jsx-className? t)))))
 
