@@ -1,9 +1,6 @@
 [core]
 	autocrlf = input
 
-[github]
-	user = wyuenho@gmail.com
-
 [credential]
 	helper = osxkeychain
 	useHttpPath = true
@@ -20,7 +17,7 @@
 	spush = push --recurse-submodules=on-demand
 	supdate = submodule update --remote --merge
 	# git change-commits GIT_COMMITTER_NAME "old name" "new name"
-	change-commits = "!f() { VAR=$1; OLD=$2; NEW=$3; shift 3; git filter-branch --env-filter \"if [[ \\\"$`echo $VAR`\\\" = '$OLD' ]]; then export $VAR='$NEW'; fi\" $@; }; f "
+	change-commits = "!f() { VAR=$1; OLD=$2; NEW=$3; shift 3; git filter-branch --env-filter \"if [[ \\\"$`echo $VAR`\\\" = '$OLD' ]]; then export $VAR='$NEW'; fi\" $@; }; f"
 	# from https://help.github.com/articles/remove-sensitive-data
 	remove-file = "!f() { git filter-branch -f --index-filter \"git rm --cached --ignore-unmatch $1\" --prune-empty --tag-name-filter cat -- --all; }; f"
 
@@ -61,10 +58,6 @@
 
 [interactive]
 	diffFilter = ([ $(type -P delta) ] && delta --color-only)
-
-# https://github.com/dandavison/delta/issues/1114
-[add.interactive]
-	useBuiltin = false
 
 [init]
 	defaultBranch = main
@@ -107,5 +100,4 @@
 [sendemail]
 	smtpEncryption = tls
 	smtpServer = smtp.gmail.com
-	smtpUser = wyuenho@gmail.com
 	smtpServerPort = 465
