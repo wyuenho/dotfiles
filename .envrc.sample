@@ -1,11 +1,13 @@
-export EMAIL="wyuenho@users.noreply.github.com"
-export GIT_AUTHOR_NAME="Jimmy Yuen Ho Wong"
-export GIT_COMMITTER_NAME="Jimmy Yuen Ho Wong"
+export EMAIL=''
+export GIT_AUTHOR_NAME=''
+export GIT_AUTHOR_EMAIL=''
+export GIT_COMMITTER_NAME=''
+export GIT_COMMITTER_EMAIL=''
 export GIT_CONFIG_COUNT=2
 export GIT_CONFIG_KEY_0=user.signingKey
-export GIT_CONFIG_VALUE_0=D1D84FDB614C2B7C
+export GIT_CONFIG_VALUE_0=''
 export GIT_CONFIG_KEY_1=sendemail.smtpUser
-export GIT_CONFIG_VALUE_1=wyuenho@gmail.com
+export GIT_CONFIG_VALUE_1=''
 
 [ -x "$(type -P delta)" ] && export GIT_PAGER=delta
 
