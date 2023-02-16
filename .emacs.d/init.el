@@ -14,6 +14,12 @@
 (custom-autoload 'package-selected-packages "package")
 (custom-autoload 'package-activated-list "package")
 
+;; https://github.com/emacs-mirror/emacs/commit/97b928ce09d6034ebcb541fb548e5d4862302add
+(with-eval-after-load 'comp
+  (custom-set-variables '(native-comp-driver-options
+                          (when (eq system-type 'darwin)
+                            '("-Wl,-w")))))
+
 ;; Tell Custom to write and find the custom settings elsewhere
 (defun load-custom-file ()
   "Load custom file.
