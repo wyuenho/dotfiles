@@ -87,6 +87,18 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
         source /usr/local/etc/bash_completion
     fi
 
+    # homebrew
+    if [ -x "$(type -P brew)" ]; then
+        HOMEBREW_PREFIX="$(brew --prefix)"
+        if [ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]; then
+            source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+        else
+            for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+                [ -r "${COMPLETION}" ] && source "${COMPLETION}"
+            done
+        fi
+    fi
+
     # Emacs vterm support
     if [ -s "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh" ]; then
         source "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh"
