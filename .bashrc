@@ -92,18 +92,17 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
         source "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh"
     fi
 
-    # Node
+    # nvm
     [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/bash_completion"
 
     # Go
-    if [ -x "$(type -P gocomplete)" ]; then
-        complete -C gocomplete go
+    if [ -s "$GOENV_ROOT/completions/goenv.bash" ]; then
+        source "$GOENV_ROOT/completions/goenv.bash"
     fi
 
-    if [ -x "$(type -P goenv)" ]; then
-        eval "$(goenv init -)"
-        export PATH="$GOROOT/bin:$PATH"
-        export PATH="$PATH:$GOPATH/bin"
+    # goenv
+    if [ -x "$(type -P gocomplete)" ]; then
+        complete -C gocomplete go
     fi
 
     # sdkman!
@@ -136,9 +135,33 @@ if [ -x "$(type -P direnv)" ]; then
     eval "$(direnv hook bash)"
 fi
 
+# goenv
+if [ "$(type -t goenv)" ]; then
+    GOENV_SHELL=bash
+    export GOENV_SHELL
+    command goenv rehash 2>/dev/null
+    goenv() {
+        local command
+        command="$1"
+        if [ "$#" -gt 0 ]; then
+            shift
+        fi
+
+        case "$command" in
+            rehash|shell)
+                eval "$(goenv "sh-$command" "$@")";;
+            *)
+                command goenv "$command" "$@";;
+        esac
+    }
+
+    goenv rehash --only-manage-paths
+fi
+
 # pyenv
 if [ "$(type -t pyenv)" != function ]; then
-    export PYENV_SHELL=bash
+    PYENV_SHELL=bash
+    export PYENV_SHELL
     command pyenv rehash 2>/dev/null
     pyenv() {
         local command

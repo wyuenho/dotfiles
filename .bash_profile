@@ -81,17 +81,18 @@ if [ -d "$HOME/.pyenv" ]; then
         eval "$(pyenv init --path)";
         if pyenv commands | grep -q virtualenv; then
             if [ -x "$(type -P starship)" ]; then
-                export PATH="$PYENV_ROOT/plugins/pyenv-virtualenv/shims:${PATH}";
-                export PYENV_VIRTUALENV_INIT=1;
+                PATH="$PYENV_ROOT/plugins/pyenv-virtualenv/shims:${PATH}"
+                PYENV_VIRTUALENV_INIT=1
+                export PYENV_VIRTUALENV_INIT
             else
-                eval "$(pyenv virtualenv-init -)";
+                eval "$(pyenv virtualenv-init -)"
             fi
         fi
     fi
 fi
 
 # Node
-NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/nvm"
+NVM_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/nvm"
 if [ -s "$NVM_DIR/nvm.sh" ]; then
     source "$NVM_DIR/nvm.sh"
     export NVM_DIR
@@ -107,8 +108,12 @@ fi
 
 # Go
 if [ -d "$HOME/.goenv" ]; then
-    export GOENV_ROOT="$HOME/.goenv"
-    export PATH="$GOENV_ROOT/bin:$PATH"
+    GOENV_ROOT="$HOME/.goenv"
+    export GOENV_ROOT
+    PATH="$GOENV_ROOT/bin:$PATH"
+    if [ -x "$(type -P goenv)" ] && [ "${PATH#*$GOENV_ROOT/shims}" = "$PATH" ]; then
+        PATH="$PATH:$GOENV_ROOT/shims"
+    fi
 fi
 
 # Rust
