@@ -194,6 +194,31 @@ if [ "$(type -t pyenv)" != function ]; then
 fi
 
 # Prompt
+
+# Magic fix for command not found error lifted from
+# https://github.com/Bash-it/bash-it/blob/feb468b517e1393a46eec020a07ab81d739b2a2b/plugins/available/osx.plugin.bash
+# https://github.com/Bash-it/bash-it/blob/feb468b517e1393a46eec020a07ab81d739b2a2b/lib/preexec.bash
+function safe_append_prompt_command() {
+    local prompt_re prompt_er
+
+    # Match on word-boundaries
+    prompt_re='(^|[^[:alnum:]_])'
+    prompt_er='([^[:alnum:]_]|$)'
+    if [[ ${PROMPT_COMMAND} =~ ${prompt_re}"${1}"${prompt_er} ]]; then
+        return
+    elif [[ -z ${PROMPT_COMMAND} ]]; then
+        PROMPT_COMMAND="${1}"
+    else
+        PROMPT_COMMAND="${1};${PROMPT_COMMAND}"
+    fi
+}
+
+if [[ $OSTYPE == 'darwin'* ]]; then
+    if [ "$(type -t update_terminal_cwd)" == 'function' ]; then
+        safe_append_prompt_command 'update_terminal_cwd'
+    fi
+fi
+
 if [ -x "$(type -P starship)" ]; then
     eval "$(starship init bash)"
 else
@@ -291,15 +316,7 @@ if [ -x "$(type -P fzf)" ]; then
     fi
 fi
 
-# Magic fix for command not found error lifted from
-# https://github.com/Bash-it/bash-it/blob/ab3b8b8f2204181c46ff9dff7d3c401447200420/plugins/available/osx.plugin.bash
-if [[ $OSTYPE == 'darwin'* ]]; then
-    if type update_terminal_cwd > /dev/null 2>&1 ; then
-        if ! [[ $PROMPT_COMMAND =~ (^|;)update_terminal_cwd($|;) ]] ; then
-            PROMPT_COMMAND="${PROMPT_COMMAND%;};update_terminal_cwd"
-            declared="$(declare -p PROMPT_COMMAND)"
-            [[ "$declared" =~ \ -[aAilrtu]*x[aAilrtu]*\  ]] 2>/dev/null
-            [[ $? -eq 0 ]] && export PROMPT_COMMAND
-        fi
-    fi
+# 1password
+if [ -r "$XDG_CONFIG_HOME/op/plugins.sh" ]; then
+    source "$XDG_CONFIG_HOME/op/plugins.sh"
 fi
