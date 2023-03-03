@@ -679,6 +679,7 @@ region."
            rust-mode
            scala-mode
            swift-mode
+           terraform-mode
            tuareg-mode)
           . lsp-deferred)
          (lsp-mode . (lambda ()
