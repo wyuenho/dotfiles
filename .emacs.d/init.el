@@ -1319,10 +1319,19 @@ variants of Typescript.")
 (use-package python-black
   :delight python-black-on-save-mode
   ;; :quelpa (python-black :fetcher github :repo "wyuenho/emacs-python-black" :branch "blackd")
-  )
+  :config
+  (with-eval-after-load 'pet
+    (add-hook 'pet-mode-hook (lambda ()
+                               (when python-black-command
+                                 (python-black-on-save-mode 1))))))
 
 (use-package python-isort
-  :delight python-isort-on-save-mode)
+  :delight python-isort-on-save-mode
+  :config
+  (with-eval-after-load 'pet
+    (add-hook 'pet-mode-hook (lambda ()
+                               (when python-isort-command
+                                 (python-isort-on-save-mode 1))))))
 
 (use-package python-pytest)
 
@@ -1363,7 +1372,8 @@ variants of Typescript.")
 
 (use-package pet
   :delight
-  :config (add-hook 'python-mode-hook 'pet-mode -10))
+  :config
+  (add-hook 'python-mode-hook 'pet-mode -10))
 
 ;; Ruby
 (use-package yard-mode)
