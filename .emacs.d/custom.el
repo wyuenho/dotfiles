@@ -12,7 +12,7 @@
  '(ag-reuse-buffers t)
  '(ag-reuse-window t)
  '(aggressive-indent-excluded-modes
-   '(elm-mode haskell-mode inf-ruby-mode makefile-mode makefile-gmake-mode python-mode sql-interactive-mode text-mode yaml-mode tcl-mode dockerfile-mode go-mode jsonian-mode web-mode java-mode))
+   '(elm-mode haskell-mode inf-ruby-mode makefile-mode makefile-gmake-mode python-mode python-ts-mode sql-interactive-mode text-mode yaml-mode yaml-ts-mode tcl-mode dockerfile-mode dockerfile-ts-mode go-mode go-ts-mode json-ts-mode jsonian-mode web-mode java-mode))
  '(amx-mode t)
  '(apib-drafter-executable "aglio")
  '(auth-source-protocols
