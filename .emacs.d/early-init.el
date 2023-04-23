@@ -55,6 +55,8 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (with-eval-after-load 'package
+  (setq package-install-upgrade-built-in t)
+
   (defun package-delete-advice (fn &rest args)
     "Queue package deletion during native compilation."
     (if (and (native-comp-available-p)
@@ -86,7 +88,9 @@
                   (package--compile pkg)
                   (when package-native-compile
                     (package--native-compile-async pkg))
-                  (package--load-files-for-activation pkg :reload))))
+                  (if (functionp 'package--reload-previously-loaded)
+                      (package--reload-previously-loaded pkg)
+                    (package--load-files-for-activation pkg :reload)))))
   (advice-add 'package-unpack :after 'package-unpack-advice)
 
   (with-eval-after-load 'quelpa

@@ -14,12 +14,6 @@
 (custom-autoload 'package-selected-packages "package")
 (custom-autoload 'package-activated-list "package")
 
-;; https://github.com/emacs-mirror/emacs/commit/97b928ce09d6034ebcb541fb548e5d4862302add
-(with-eval-after-load 'comp
-  (custom-set-variables '(native-comp-driver-options
-                          (when (eq system-type 'darwin)
-                            '("-Wl,-w")))))
-
 ;; Tell Custom to write and find the custom settings elsewhere
 (defun load-custom-file ()
   "Load custom file.
@@ -555,6 +549,8 @@ region."
               :config
               (require 'smartparens-config)
 
+              (add-to-list 'sp--html-modes 'typescript-ts-mode 'tsx-ts-mode)
+
               (add-hook 'eval-expression-minibuffer-setup-hook
                         (lambda ()
                           (smartparens-mode 1))))))
@@ -596,16 +592,16 @@ region."
 ;; Turn on background color for HEX for specific modes
 (use-package rainbow-mode
   :delight
-  :hook (emacs-lisp-mode web-mode js-mode typescript-mode sh-mode))
+  :hook (emacs-lisp-mode web-mode js-base-mode typescript-ts-base-mode sh-mode))
 
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
   :preface
   (defun inflect-string ()
     (interactive)
-    (cond ((derived-mode-p 'scala-mode 'java-mode 'js-mode 'typescript-mode 'go-mode)
+    (cond ((derived-mode-p 'scala-mode 'java-mode 'java-ts-mode 'js-base-mode 'typescript-ts-base-mode 'go-ts-mode)
            (string-inflection-java-style-cycle))
-          ((derived-mode-p 'python-mode 'ruby-mode 'c-mode 'rust-mode)
+          ((derived-mode-p 'python-base-mode 'ruby-base-mode 'c-mode 'c++-mode 'c-ts-base-mode 'rust-ts-mode)
            (string-inflection-python-style-cycle))
           ((derived-mode-p 'prog-mode)
            (string-inflection-all-cycle))))
@@ -615,7 +611,7 @@ region."
 
 (use-package smart-semicolon
   :delight
-  :hook ((c-mode-common js-mode java-mode scala-mode css-mode scss-mode) . smart-semicolon-mode))
+  :hook ((c-mode-common js-base-mode-hook java-mode java-ts-mode scala-mode css-base-mode) . smart-semicolon-mode))
 
 ;; Cycle between quotes
 (use-package cycle-quotes
@@ -658,25 +654,19 @@ region."
   (pdf-tools-install t)
   (pdf-loader-install t))
 
-;; Modern tree-based syntax-highlighting
-(use-package tree-sitter-langs
-  :delight (tree-sitter-mode tree-sitter-hl-mode)
-  :config
-  (tree-sitter-require 'tsx)
-  (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx))
-  (add-hook 'tree-sitter-after-on-hook 'tree-sitter-hl-mode))
-
 ;; Static Analysis
 (use-package lsp-mode
   :delight (lsp-mode) (lsp-lens-mode)
   :hook (((c-mode-common
+           c-ts-base-mode
            enh-ruby-mode
-           go-mode
+           go-ts-mode
            groovy-mode
-           js-mode
-           python-mode
+           js-base-mode
+           typescript-ts-base-mode
+           python-base-mode
            reason-mode
-           rust-mode
+           rust-ts-mode
            scala-mode
            swift-mode
            terraform-mode
@@ -716,7 +706,7 @@ checker symbol."
                                       ((>= (string-match-p "htm" ext) 0)
                                        '(html-tidy . ((modes . (web-mode))))))))))
                       (lsp-next-checkers
-                       (cond ((derived-mode-p 'css-mode)
+                       (cond ((derived-mode-p 'css-base-mode)
                               (cond ((eq major-mode 'scss-mode)
                                      '((warning . scss-stylelint)))
                                     ((eq major-mode 'less-mode)
@@ -732,17 +722,17 @@ checker symbol."
                                        '((warning . scss-stylelint)))
                                       ((>= (string-match-p "htm" ext) 0)
                                        '((warning . html-tidy))))))
-                             ((derived-mode-p 'js-mode)
+                             ((derived-mode-p 'js-base-mode)
                               '((warning . javascript-eslint)))
-                             ((derived-mode-p 'typescript-mode)
+                             ((derived-mode-p 'typescript-ts-base-mode)
                               '((warning . javascript-eslint)))
-                             ((derived-mode-p 'python-mode)
+                             ((derived-mode-p 'python-base-mode)
                               '((warning . python-flake8)
                                 (warning . python-mypy)
                                 (warning . python-pylint)))
                              ((derived-mode-p 'enh-ruby-mode)
                               '((warning . ruby-rubocop)))
-                             ((derived-mode-p 'go-mode)
+                             ((derived-mode-p 'go-ts-mode)
                               '((warning . golangci-lint))))))
                   (when lsp-next-checkers
                     (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
@@ -770,7 +760,7 @@ checker symbol."
   :config
   (setf dap-utils-extension-path (expand-file-name "~/.vscode/extensions"))
 
-  (add-hook 'js-mode-hook
+  (add-hook 'js-base-mode-hook
             (lambda ()
               (use-package dap-firefox
                 :custom
@@ -793,13 +783,13 @@ checker symbol."
               ;;    (concat "node " dap-node-debug-path "/src/extension.js")))
               ))
 
-  (add-hook 'python-mode-hook (lambda () (use-package dap-python)))
+  (add-hook 'python-base-mode-hook (lambda () (use-package dap-python)))
 
-  (add-hook 'go-mode-hook
+  (add-hook 'go-ts-mode-hook
             (lambda ()
               (use-package dap-dlv-go)))
 
-  (dolist (mode '(c-mode-common rust-mode))
+  (dolist (mode '(c-mode-common c-ts-base-mode rust-ts-mode))
     (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
       (add-hook mode-hook
                 (lambda ()
@@ -1149,7 +1139,7 @@ optionally the window if possible."
             "--ext"
             ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx")))
 
-(dolist (mode '(css-mode js-mode markdown-mode scss-mode typescript-mode web-mode yaml-mode))
+(dolist (mode '(css-base-mode js-base-mode markdown-mode typescript-ts-base-mode web-mode yaml-mode))
   (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook mode-hook
               (lambda ()
@@ -1205,7 +1195,7 @@ optionally the window if possible."
 ;; Javascript
 (add-to-list 'auto-mode-alist '("\\.\\(?:cjs\\|jsx?\\|mjs\\)\\'" . js-mode))
 
-(add-hook 'js-mode-hook
+(add-hook 'js-base-mode-hook
           (lambda ()
             (pcase-dolist (`(,key . ,command)
                            '(("M-."     . nil)
@@ -1213,28 +1203,25 @@ optionally the window if possible."
                              ("C-c C-j" . nil)
                              ("C-M-x"   . nil)
                              ("<menu-bar>" . nil)))
-              (define-key js-mode-map (kbd key) command))))
+              (define-key js-base-mode-map (kbd key) command))))
 
 (use-package prettier
   :delight)
 
 (use-package import-js
-  :after (js)
-  :bind (:map js-mode-map
+  :bind (:map js-base-mode-map
               ("C-c t i"   . import-js-import)
               ("C-c t f"   . import-js-fix)
               ("C-c t M-." . import-js-goto))
   :config (run-import-js))
 
 (use-package js-doc
-  :after (js)
-  :bind (:map js-mode-map
+  :bind (:map js-base-mode-map
               ("C-c C-d m" . js-doc-insert-file-doc)
               ("C-c C-d f" . js-doc-insert-function-doc-snippet)))
 
 (use-package nodejs-repl
-  :after (js)
-  :bind(:map js-mode-map
+  :bind(:map js-base-mode-map
              ("C-c e e" . nodejs-repl-send-last-expression)
              ("C-c e r" . nodejs-repl-send-region)
              ("C-c e b" . nodejs-repl-send-buffer)
@@ -1258,36 +1245,14 @@ optionally the window if possible."
               (jq-format-json-on-save-mode 1))))
 
 ;; TypeScript
-(use-package typescript-mode
-  :config
-  (define-derived-mode typescript-tsx-mode typescript-mode "TSX"
-    "Major mode for editing TSX files.
-
-Refer to Typescript documentation for syntactic differences between normal and TSX
-variants of Typescript.")
-
-  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescript-tsx-mode))
-
-  (with-eval-after-load 'smartparens
-    (add-to-list 'sp--html-modes 'typescript-tsx-mode)))
-
 (use-package ts-comint
-  :after (typescript-mode)
-  :bind (:map typescript-mode-map
+  :bind (:map typescript-ts-mode-map
               ("C-x C-e" . ts-send-last-sexp)
               ("C-c e e" . ts-send-last-sexp-and-go)
               ("C-c e r" . ts-send-region-and-go)
               ("C-c e b" . ts-send-buffer-and-go)
               ("C-c e l" . ts-load-file-and-go)
               ("C-c M-:" . switch-to-ts)))
-
-(use-package tide
-  :delight tide-mode
-  :after (typescript-mode company flycheck)
-  :hook ((typescript-mode     . tide-setup)
-         (typescript-tsx-mode . tide-setup))
-  :config
-  (setq-local help-at-pt-display-when-idle '(tide-documentation-at-point)))
 
 ;; Python
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'"   . python-mode))
@@ -1298,15 +1263,15 @@ variants of Typescript.")
 
 (use-package highlight-indent-guides
   :delight
-  :hook (python-mode . highlight-indent-guides-mode))
+  :hook (python-base-mode . highlight-indent-guides-mode))
 
 (use-package python-docstring
   :delight
-  :hook (python-mode . python-docstring-mode))
+  :hook (python-base-mode . python-docstring-mode))
 
 (use-package python-insert-docstring
   :config
-  (add-hook 'python-mode-hook
+  (add-hook 'python-base-mode-hook
             (lambda ()
               (local-set-key
                (kbd "C-c I")
@@ -1314,7 +1279,7 @@ variants of Typescript.")
 
 (use-package sphinx-doc
   :delight
-  :hook (python-mode . sphinx-doc-mode))
+  :hook (python-base-mode . sphinx-doc-mode))
 
 (use-package python-black
   :delight python-black-on-save-mode
@@ -1365,7 +1330,8 @@ variants of Typescript.")
     (setf (lsp--client-activation-fn client)
           (lambda (file-name mode)
             (and (or (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))
-                     (eq mode 'python-mode))
+                     (eq mode 'python-mode)
+                     (eq mode 'python-ts-mode))
                  (or (pet-pyrightconfig)
                      (let-alist (pet-pyproject)
                        .tool.pyright)))))))
@@ -1373,7 +1339,7 @@ variants of Typescript.")
 (use-package pet
   :delight
   :config
-  (add-hook 'python-mode-hook 'pet-mode -10))
+  (add-hook 'python-base-mode-hook 'pet-mode -10))
 
 ;; Ruby
 (use-package yard-mode)
@@ -1403,14 +1369,12 @@ variants of Typescript.")
   :hook yard-mode)
 
 ;; Go
-(use-package go-mode
-  :mode "\\.go\\'"
-  :config
+(with-eval-after-load 'go-ts-mode
   (defun lsp-go-format-buffer ()
     (condition-case err
         (lsp-format-buffer)
       (error (minibuffer-message (error-message-string err)))))
-  (add-hook 'go-mode-hook
+  (add-hook 'go-ts-mode-hook
             (lambda ()
               (add-hook 'before-save-hook 'goimports-format-buffer -100 t)
               (add-hook 'before-save-hook 'gofmt-before-save nil t)
@@ -1427,16 +1391,12 @@ variants of Typescript.")
                               (kill-local-variable 'lsp-enable-on-type-formatting)
                               (remove-hook 'before-save-hook 'lsp-go-format-buffer t)
                               (add-hook 'before-save-hook 'gofmt-before-save nil t)))
-                          nil t)))))
-
-(use-package flycheck-golangci-lint
-  :after (go-mode)
-  :config (flycheck-golangci-lint-setup))
+                          nil t)))
+            (use-package flycheck-golangci-lint
+              :after (go-mode)
+              :config (flycheck-golangci-lint-setup))))
 
 ;; Rust
-(use-package rust-mode
-  :mode "\\.rs\\'")
-
 (use-package cargo
   :delight cargo-minor-mode
   :config
@@ -1473,9 +1433,6 @@ variants of Typescript.")
 (use-package sass-mode
   :mode "\\.sass\\'")
 
-(use-package scss-mode
-  :mode "\\.scss\\'")
-
 (use-package web-mode
   :functions web-mode-language-at-pos
   :mode ((rx (or ".vue"
@@ -1497,22 +1454,21 @@ variants of Typescript.")
 
 (use-package emmet-mode
   :delight
-  :after (:any web-mode
-               js-mode
-               typescript-tsx-mode)
+  :after (:any web-mode)
   :hook (sgml-mode
          nxml-mode
          web-mode
-         js-jsx-mode
-         typescript-tsx-mode)
+         js-base-mode
+         typescript-ts-base-mode)
   :config
   (define-key emmet-mode-keymap (kbd "C-c C-c w") nil)
   (define-key emmet-mode-keymap (kbd "C-c C-m w") 'emmet-wrap-with-markup)
   (add-hook 'emmet-mode-hook
             (lambda ()
               (when (member major-mode
-                            '(js-jsx-mode
-                              typesript-tsx-mode))
+                            '(js-ts-mode
+                              js-jsx-mode
+                              tsx-ts-mode))
                 (setq-local emmet-expand-jsx-className? t)))))
 
 ;; Project management
