@@ -663,14 +663,14 @@ region."
            go-ts-mode
            groovy-mode
            js-base-mode
-           typescript-ts-base-mode
            python-base-mode
            reason-mode
            rust-ts-mode
            scala-mode
            swift-mode
            terraform-mode
-           tuareg-mode)
+           tuareg-mode
+           typescript-ts-base-mode)
           . lsp-deferred)
          (lsp-mode . (lambda ()
                        (with-eval-after-load 'which-key
