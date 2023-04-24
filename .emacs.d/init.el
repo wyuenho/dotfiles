@@ -27,7 +27,8 @@ under `user-emacs-directory'.  If it exists, loaded it."
     (load custom-file)))
 (load-custom-file)
 
-;; Install selected by missing packages
+;; FIXME: deal with quelpa installed packages not available on archives yet
+;; Install selected but missing packages
 (let ((missing (cl-set-difference
                 package-selected-packages
                 package-activated-list)))
