@@ -592,7 +592,7 @@ region."
 ;; Turn on background color for HEX for specific modes
 (use-package rainbow-mode
   :delight
-  :hook (emacs-lisp-mode web-mode js-base-mode typescript-ts-base-mode sh-mode))
+  :hook (emacs-lisp-mode web-mode js-base-mode typescript-ts-base-mode sh-base-mode))
 
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
@@ -956,13 +956,24 @@ checker symbol."
   (use-package native-complete
     :config (native-complete-setup-bash)))
 
-(add-hook 'sh-mode-hook
+(add-hook 'sh-base-mode-hook
           (lambda ()
             (use-package company-native-complete
               :after (company)
               :config
               (setq-local company-backends
                           '(company-native-complete company-files company-capf)))))
+
+(defun sh--guess-shell-advice (fn &rest _)
+  "Map bash to bash-ts.
+
+FN is the `sh--guess-shell'."
+  (let ((shell (apply fn nil)))
+    (cond ((string-match shell "bash") "bash-ts")
+          (t shell))))
+
+(with-eval-after-load 'sh-script
+  (advice-add 'sh--guess-shell :around 'sh--guess-shell-advice))
 
 (setf eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 

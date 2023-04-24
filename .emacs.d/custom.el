@@ -215,7 +215,7 @@
  '(flycheck-emacs-lisp-initialize-packages t)
  '(flycheck-emacs-lisp-load-path 'inherit)
  '(flycheck-global-modes
-   '(jsonian-mode js-ts-mode js-jsx-mode js-mode js2-mode rjsx-mode typescript-ts-mode tsx-ts-mode scss-mode css-mode python-mode python-ts-mode ruby-mode ruby-ts-mode enh-ruby-mode go-ts-mode rust-ts-mode swift-mode scala-mode c-mode c++-mode c-ts-mode c++-ts-mode objc-mode sh-mode dockerfile-ts-mode))
+   '(jsonian-mode js-ts-mode js-jsx-mode js-mode js2-mode rjsx-mode typescript-ts-mode tsx-ts-mode scss-mode css-mode python-mode python-ts-mode ruby-mode ruby-ts-mode enh-ruby-mode go-ts-mode rust-ts-mode swift-mode scala-mode c-mode c++-mode c-ts-mode c++-ts-mode objc-mode sh-mode sh-base-mode dockerfile-ts-mode))
  '(flycheck-javascript-eslint-executable "eslint_d")
  '(flycheck-pos-tip-max-width 80)
  '(frame-resize-pixelwise t)
