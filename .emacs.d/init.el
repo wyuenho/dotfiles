@@ -1865,6 +1865,10 @@ ELEMENT is only added once."
 (use-package buffer-move
   :bind (("C-c b" . buf-move)))
 
+(use-package ibuffer-vc
+  :config
+  (add-hook 'ibuffer-hook 'ibuffer-vc-set-filter-groups-by-vc-root))
+
 (use-package window-purpose
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts")
                           :branch "improve-code1")
@@ -1969,11 +1973,13 @@ ELEMENT is only added once."
 
   ;;   (advice-add 'debug :around 'purpose--debug))
 
-  ;; Bury all special buffers after setting up dummy buffers and restoring
-  ;; session buffers
   (with-eval-after-load 'desktop
     (add-hook 'desktop-after-read-hook
               (lambda ()
+                ;; So ibuffer-filter-groups take effect
+                (ibuffer-list-buffers)
+                ;; Bury all special buffers after setting up dummy buffers and
+                ;; restoring session buffers
                 (dolist (buf (seq-filter
                               (lambda (buf)
                                 (string-match-p "^ \\|\\*" (buffer-name buf)))
