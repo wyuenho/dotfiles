@@ -1167,15 +1167,16 @@ optionally the window if possible."
 ;; Javascript
 (add-to-list 'auto-mode-alist '("\\.\\(?:cjs\\|jsx?\\|mjs\\)\\'" . js-mode))
 
-(add-hook 'js-base-mode-hook
-          (lambda ()
-            (pcase-dolist (`(,key . ,command)
-                           '(("M-."     . nil)
-                             ("C-c M-:" . nil)
-                             ("C-c C-j" . nil)
-                             ("C-M-x"   . nil)
-                             ("<menu-bar>" . nil)))
-              (define-key js-base-mode-map (kbd key) command))))
+(dolist (mode '(js-mode js-ts-mode js-jsx-mode))
+  (add-hook (intern (concat (symbol-name mode) "-hook"))
+            (lambda ()
+              (pcase-dolist (`(,key . ,command)
+                             '(("M-."     . nil)
+                               ("C-c M-:" . nil)
+                               ("C-c C-j" . nil)
+                               ("C-M-x"   . nil)
+                               ("<menu-bar>" . nil)))
+                (define-key (symbol-value (derived-mode-map-name mode)) (kbd key) command)))))
 
 (use-package prettier
   :delight)
