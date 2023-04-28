@@ -560,9 +560,9 @@ region."
   :preface
   (defun inflect-string ()
     (interactive)
-    (cond ((derived-mode-p 'scala-mode 'java-mode 'java-ts-mode 'js-base-mode 'typescript-ts-base-mode 'go-ts-mode)
+    (cond ((derived-mode-p 'scala-mode 'java-mode 'java-ts-mode 'js-base-mode 'typescript-ts-base-mode 'go-mode 'go-ts-mode)
            (string-inflection-java-style-cycle))
-          ((derived-mode-p 'python-base-mode 'ruby-base-mode 'c-mode 'c++-mode 'c-ts-base-mode 'rust-ts-mode)
+          ((derived-mode-p 'python-base-mode 'ruby-base-mode 'c-mode 'c++-mode 'c-ts-base-mode 'rust-mode 'rust-ts-mode)
            (string-inflection-python-style-cycle))
           ((derived-mode-p 'prog-mode)
            (string-inflection-all-cycle))))
@@ -621,7 +621,7 @@ region."
   :hook (((c-mode-common
            c-ts-base-mode
            enh-ruby-mode
-           go-ts-mode
+           go-mode
            groovy-mode
            js-base-mode
            python-base-mode
@@ -693,7 +693,7 @@ checker symbol."
                                 (warning . python-pylint)))
                              ((derived-mode-p 'enh-ruby-mode)
                               '((warning . ruby-rubocop)))
-                             ((derived-mode-p 'go-ts-mode)
+                             ((derived-mode-p 'go-mode)
                               '((warning . golangci-lint))))))
                   (when lsp-next-checkers
                     (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
@@ -746,7 +746,7 @@ checker symbol."
 
   (add-hook 'python-base-mode-hook (lambda () (use-package dap-python)))
 
-  (add-hook 'go-ts-mode-hook
+  (add-hook 'go-mode-hook
             (lambda ()
               (use-package dap-dlv-go)))
 
@@ -1341,12 +1341,14 @@ optionally the window if possible."
   :hook yard-mode)
 
 ;; Go
-(with-eval-after-load 'go-ts-mode
+(use-package go-mode
+  :mode "\\.go\\'"
+  :config
   (defun lsp-go-format-buffer ()
     (condition-case err
         (lsp-format-buffer)
       (error (minibuffer-message (error-message-string err)))))
-  (add-hook 'go-ts-mode-hook
+  (add-hook 'go-mode-hook
             (lambda ()
               (add-hook 'before-save-hook 'goimports-format-buffer -100 t)
               (add-hook 'before-save-hook 'gofmt-before-save nil t)
@@ -1363,10 +1365,11 @@ optionally the window if possible."
                               (kill-local-variable 'lsp-enable-on-type-formatting)
                               (remove-hook 'before-save-hook 'lsp-go-format-buffer t)
                               (add-hook 'before-save-hook 'gofmt-before-save nil t)))
-                          nil t)))
-            (use-package flycheck-golangci-lint
-              :after (go-mode)
-              :config (flycheck-golangci-lint-setup))))
+                          nil t)))))
+
+(use-package flycheck-golangci-lint
+  :after (go-mode)
+  :config (flycheck-golangci-lint-setup))
 
 ;; Rust
 (use-package cargo
