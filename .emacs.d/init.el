@@ -1491,10 +1491,6 @@ optionally the window if possible."
     (define-key projectile-command-map (kbd "s r") 'rg-project))
   (add-hook 'rg-mode-hook 'wgrep-rg-setup))
 
-(use-package dumb-jump
-  :config
-  (add-hook 'xref-backend-functions 'dumb-jump-xref-activate))
-
 ;; Version Control
 
 ;; Save window config before ediff starts and restores it and cleans up when it quits, sanity!
