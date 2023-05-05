@@ -1181,13 +1181,6 @@ optionally the window if possible."
 (use-package prettier
   :delight)
 
-(use-package import-js
-  :bind (:map js-base-mode-map
-              ("C-c t i"   . import-js-import)
-              ("C-c t f"   . import-js-fix)
-              ("C-c t M-." . import-js-goto))
-  :config (run-import-js))
-
 (use-package js-doc
   :bind (:map js-base-mode-map
               ("C-c C-d m" . js-doc-insert-file-doc)
