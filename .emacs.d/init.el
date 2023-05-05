@@ -572,7 +572,7 @@ region."
 
 (use-package smart-semicolon
   :delight
-  :hook ((c-mode-common js-base-mode-hook java-mode java-ts-mode scala-mode css-base-mode) . smart-semicolon-mode))
+  :hook ((c-mode-common js-base-mode java-mode java-ts-mode scala-mode css-base-mode) . smart-semicolon-mode))
 
 ;; Cycle between quotes
 (use-package cycle-quotes
