@@ -1856,7 +1856,12 @@ ELEMENT is only added once."
 
 (use-package ibuffer-vc
   :config
-  (add-hook 'ibuffer-hook 'ibuffer-vc-set-filter-groups-by-vc-root))
+  (add-hook 'ibuffer-hook
+            (lambda ()
+              (dolist (buf (buffer-list))
+                (with-current-buffer buf
+                  (when (derived-mode-p 'ibuffer-mode)
+                    (setq ibuffer-filter-groups (ibuffer-vc-generate-filter-groups-by-vc-root))))))))
 
 (use-package window-purpose
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts")
@@ -1965,8 +1970,6 @@ ELEMENT is only added once."
   (with-eval-after-load 'desktop
     (add-hook 'desktop-after-read-hook
               (lambda ()
-                ;; So ibuffer-filter-groups take effect
-                (ibuffer-list-buffers)
                 ;; Bury all special buffers after setting up dummy buffers and
                 ;; restoring session buffers
                 (dolist (buf (seq-filter
