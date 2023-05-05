@@ -1649,10 +1649,6 @@ See `file-notify-add-watch' for more details."
     (interactive) (quit-window t))
   (advice-add 'git-timemachine-quit :override 'git-timemachine-quit-advice))
 
-(use-package abridge-diff
-  :after (magit)
-  :delight)
-
 (use-package monky
   :bind (("C-x v M-m" . monky-status)))
 
