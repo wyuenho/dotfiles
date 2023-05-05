@@ -87,7 +87,7 @@ under `user-emacs-directory'.  If it exists, loaded it."
       (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
 
   (with-eval-after-load 'dired
-    (set-face-attribute 'dired-header nil :underline t :foreground nil :background nil)))
+    (set-face-attribute 'dired-header nil :underline t :foreground 'unspecified :background 'unspecified)))
 
 ;; Fancy mode line
 (use-package spaceline
