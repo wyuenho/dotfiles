@@ -321,6 +321,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Saner undo/redo
 (use-package vundo
+  :quelpa (vundo :fetcher github :repo "casouri/vundo")
   :bind (("M-z" . vundo))
   :config
   (with-eval-after-load 'flycheck
