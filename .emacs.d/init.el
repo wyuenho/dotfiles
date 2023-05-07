@@ -1668,7 +1668,7 @@ text will become visible.
 ELEMENT is only added once."
   (if (eq buffer-invisibility-spec t)
       (setf buffer-invisibility-spec (list t)))
-  (setf buffer-invisibility-spec
+  (setq buffer-invisibility-spec
         (delete-dups (cons element buffer-invisibility-spec))))
 (advice-add 'add-to-invisibility-spec :override 'add-to-invisibility-spec-override-advice)
 
