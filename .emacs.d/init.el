@@ -1396,8 +1396,8 @@ optionally the window if possible."
    'self-insert-command
    minibuffer-local-completion-map))
 
-;; (use-package lsp-metals
-;;   :after (lsp-mode))
+(use-package lsp-metals
+  :after (lsp-mode))
 
 ;; Web
 (use-package sass-mode
