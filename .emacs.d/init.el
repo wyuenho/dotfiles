@@ -929,7 +929,7 @@ checker symbol."
 (defun sh--guess-shell-advice (fn &rest _)
   "Map bash to bash-ts.
 
-FN is the `sh--guess-shell'."
+FN is `sh--guess-shell'."
   (let ((shell (apply fn nil)))
     (cond ((string-match shell "bash") "bash-ts")
           (t shell))))
