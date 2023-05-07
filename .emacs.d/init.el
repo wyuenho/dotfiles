@@ -1855,14 +1855,14 @@ ELEMENT is only added once."
 (use-package buffer-move
   :bind (("C-c b" . buf-move)))
 
-(use-package ibuffer-vc
+(use-package ibuffer-projectile
   :config
   (add-hook 'ibuffer-hook
             (lambda ()
               (dolist (buf (buffer-list))
                 (with-current-buffer buf
                   (when (derived-mode-p 'ibuffer-mode)
-                    (setq ibuffer-filter-groups (ibuffer-vc-generate-filter-groups-by-vc-root))))))))
+                    (setq ibuffer-filter-groups (ibuffer-projectile-generate-filter-groups))))))))
 
 (use-package window-purpose
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts")
