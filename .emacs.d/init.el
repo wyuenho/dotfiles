@@ -19,7 +19,7 @@
   "Load custom file.
 
 Sets `custom-file' by searching for a file named `custom.el'
-under `user-emacs-directory'.  If it exists, loaded it."
+under `user-emacs-directory'.  If it exists, load it."
   (interactive)
   (when-let ((custom-file-path
               (locate-file "custom.el" (list user-emacs-directory))))
