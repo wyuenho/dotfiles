@@ -1004,7 +1004,7 @@ optionally the window if possible."
             (beginning-of-defun)
             (let ((containing-sexp (elt (parse-partial-sexp (point) start) 1)))
               (when containing-sexp
-                (setf (point) containing-sexp)
+                (goto-char containing-sexp)
                 (looking-at "\\["))))))
       (let ((lisp-indent-offset 1))
         (apply fn args))
