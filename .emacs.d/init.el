@@ -164,6 +164,13 @@ under `user-emacs-directory'.  If it exists, load it."
                      ;; Renumber the current buffer after reverting the buffer
                      (add-hook 'after-revert-hook 'linum-update-current)))))
 
+;; No sane person will program from right to left, so turn this major perf
+;; bottleneck off
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (setq-local bidi-paragraph-direction 'left-to-right
+                        bidi-inhibit-bpa nil)))
+
 ;; More sensible comment-dwim
 (with-eval-after-load 'newcomment
   (defun comment-dwim-advice (comment-dwim &rest args)
@@ -542,13 +549,6 @@ region."
     (which-key-add-key-based-replacements "C-c &" "yasnippet")))
 
 (use-package yasnippet-snippets)
-
-;; No sane person will program from right to left, so turn this major perf
-;; bottleneck off
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (setq-local bidi-paragraph-direction 'left-to-right
-                        bidi-inhibit-bpa nil)))
 
 ;; Turn on background color for HEX for specific modes
 (use-package rainbow-mode
