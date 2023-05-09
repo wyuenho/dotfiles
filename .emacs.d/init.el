@@ -820,17 +820,17 @@ checker symbol."
                   ;;   (dap-codelldb-debug-program
                   ;;    (concat dap-codelldb-debug-path "/adapter/codelldb")))
 
-                  ;; (use-package dap-cpptools
-                  ;;   :custom
-                  ;;   (dap-cpptools-debug-path
-                  ;;    (car
-                  ;;     (last
-                  ;;      (file-expand-wildcards
-                  ;;       (concat
-                  ;;        dap-utils-extension-path
-                  ;;        "/ms-vscode.cpptools-*")))))
-                  ;;   (dap-cpptools-debug-program
-                  ;;    (concat dap-cpptools-debug-path "/debugAdapters/bin/OpenDebugAD7")))
+                  (use-package dap-cpptools
+                    :custom
+                    (dap-cpptools-debug-path
+                     (car
+                      (last
+                       (file-expand-wildcards
+                        (concat
+                         dap-utils-extension-path
+                         (format "/ms-vscode.cpptools-*-%s-*" system-type))))))
+                    (dap-cpptools-debug-program
+                     (concat dap-cpptools-debug-path "/debugAdapters/bin/OpenDebugAD7")))
                   )))))
 
 ;; Auto-completion
