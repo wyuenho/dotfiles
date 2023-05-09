@@ -93,6 +93,25 @@
                     (package--load-files-for-activation pkg :reload)))))
   (advice-add 'package-unpack :after 'package-unpack-advice)
 
+  (defun package--get-activatable-pkg-advice (pkg-name)
+    "So `package-activate' can activate the correct version."
+    (let ((pkg-descs (sort (cdr (assq pkg-name package-alist))
+                           (lambda (p1 p2)
+                             (let ((v1 (package-desc-version p1))
+                                   (v2 (package-desc-version p2)))
+                               (or
+                                ;; Prefer VC packages.
+                                (package-vc-p p1)
+                                (package-vc-p p2)
+                                (version-list-< v2 v1)))))))
+      (while
+          (when pkg-descs
+            (let ((available-version (package-desc-version (car pkg-descs))))
+              (package-disabled-p pkg-name available-version)))
+        (setq pkg-descs (cdr pkg-descs)))
+      (car pkg-descs)))
+  (advice-add 'package--get-activatable-pkg :override 'package--get-activatable-pkg-advice)
+
   (with-eval-after-load 'quelpa
     (defun package--removable-packages-advice (fn &rest args)
       "Make sure `package-autoremove' does not consider quelpa-installed packages.
