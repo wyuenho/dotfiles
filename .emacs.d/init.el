@@ -1120,6 +1120,10 @@ optionally the window if possible."
   (reformatter-define goimports-format
     :program "goimports")
 
+  (reformatter-define rustfmt-format
+    :program "rustfmt"
+    :args `("--emit stdout"))
+
   (reformatter-define yarn-eslint-format
     :program "yarn"
     :args `("--silent"
