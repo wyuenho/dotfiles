@@ -50,6 +50,7 @@ under `user-emacs-directory'.  If it exists, load it."
   (delight '((whitespace-cleanup-mode)
              (aggressive-indent-mode nil aggressive-indent)
              (auto-fill-function     nil t)
+             (gcmh-mode              nil gcmh)
              (isearch-mode           nil isearch)
              (abbrev-mode            nil abbrev)
              (purpose-mode           nil window-purpose)
