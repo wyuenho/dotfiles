@@ -44,7 +44,7 @@
  '(company-box-icons-alist 'company-box-icons-all-the-icons)
  '(company-dabbrev-downcase nil)
  '(company-global-modes
-   '(c++-mode c-mode css-mode c++-ts-mode c-ts-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode inferior-emacs-lisp-mode js-ts-mode js-jsx-mode js-mode js2-jsx-mode js2-mode lisp-interaction-mode lisp-mode objc-mode python-mode python-ts-mode restclient-mode rjsx-mode ruby-mode rust-ts-mode rust-mode rust-ts-mode scss-mode sh-mode sh-base-mode typescript-ts-mode tsx-ts-mode web-mode org-mode))
+   '(c++-mode c-mode css-mode c++-ts-mode c-ts-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode inferior-emacs-lisp-mode js-ts-mode js-jsx-mode js-mode lisp-interaction-mode lisp-mode objc-mode python-mode python-ts-mode restclient-mode ruby-mode rust-ts-mode rust-mode rust-ts-mode scss-mode sh-mode sh-base-mode typescript-ts-mode tsx-ts-mode web-mode org-mode))
  '(company-tooltip-align-annotations t)
  '(company-tooltip-limit 20)
  '(compilation-always-kill t)
@@ -131,7 +131,7 @@
  '(flycheck-emacs-lisp-initialize-packages t)
  '(flycheck-emacs-lisp-load-path 'inherit)
  '(flycheck-global-modes
-   '(jsonian-mode js-ts-mode js-jsx-mode js-mode js2-mode rjsx-mode typescript-ts-mode tsx-ts-mode scss-mode css-mode css-ts-mode python-mode python-ts-mode ruby-mode ruby-ts-mode enh-ruby-mode go-mode go-ts-mode rust-mode rust-ts-mode swift-mode scala-mode c-mode c++-mode c-ts-mode c++-ts-mode objc-mode sh-mode sh-base-mode dockerfile-ts-mode))
+   '(jsonian-mode js-ts-mode js-jsx-mode js-mode typescript-ts-mode tsx-ts-mode scss-mode css-mode css-ts-mode python-mode python-ts-mode ruby-mode ruby-ts-mode enh-ruby-mode go-mode go-ts-mode rust-mode rust-ts-mode swift-mode scala-mode c-mode c++-mode c-ts-mode c++-ts-mode objc-mode sh-mode sh-base-mode dockerfile-ts-mode))
  '(flycheck-javascript-eslint-executable "eslint_d")
  '(flycheck-pos-tip-max-width 80)
  '(frame-resize-pixelwise t)
@@ -257,9 +257,9 @@
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(major-mode-remap-alist
    '((python-mode . python-ts-mode)
-     (ruby-mode . ruby-ts-mode)
      (js-mode . js-ts-mode)
-     (css-mode . css-ts-mode)))
+     (css-mode . css-ts-mode)
+     (conf-toml-mode . toml-ts-mode)))
  '(markdown-code-lang-modes
    '(("ocaml" . tuareg-mode)
      ("elisp" . emacs-lisp-mode)
@@ -281,7 +281,7 @@
      ("html" . web-mode)
      ("css" . css-ts-mode)
      ("python" . python-ts-mode)
-     ("go" . go-mode)))
+     ("go" . go-ts-mode)))
  '(markdown-command "multimarkdown --full --to=html")
  '(markdown-fontify-code-blocks-natively t)
  '(markdown-indent-on-enter nil)

@@ -126,7 +126,7 @@ under `user-emacs-directory'.  If it exists, load it."
 
 ;; Automatically wrap overly long lines for all text modes
 (add-hook 'text-mode-hook (lambda ()
-                            (unless (member major-mode '(yaml-mode markdown-mode))
+                            (unless (member major-mode '(yaml-mode yaml-ts-mode markdown-mode))
                               (auto-fill-mode 1))))
 
 ;; Make sure xwidget buffers are killed when quitting window
@@ -465,7 +465,8 @@ region."
       (require 'html-mode-expansions)
       (er/enable-mode-expansions mode 'er/add-html-mode-expansions)))
   :config
-  (add-hook 'js-jsx-mode-hook (load-html-mode-expansions 'js-jsx-mode)))
+  (dolist (mode '(js-jsx-mode tsx-ts-mode))
+    (add-hook (derived-mode-hook-name mode) (load-html-mode-expansions mode))))
 
 ;; Navigate source code by syntax
 (add-hook 'prog-mode-hook
@@ -518,7 +519,42 @@ region."
               :config
               (require 'smartparens-config)
 
-              (add-to-list 'sp--html-modes 'typescript-ts-mode 'tsx-ts-mode)
+              (with-eval-after-load 'c-ts-mode
+                (add-to-list 'sp-c-modes 'c-ts-mode 'c++-ts-mode)
+                (require 'smartparens-c))
+
+              (with-eval-after-load 'js
+                (require 'smartparens-javascript)
+                (add-to-list 'sp--html-modes 'js-mode)
+                (add-to-list 'sp--html-modes 'js-jsx-mode)
+                (add-to-list 'sp--html-modes 'js-ts-mode)
+                (add-to-list 'sp-sexp-suffix '(js-ts-mode regexp "")))
+
+              (with-eval-after-load 'typescript-ts-mode
+                (add-to-list 'sp-sexp-suffix '(typescript-ts-mode regexp ""))
+                (add-to-list 'sp--html-modes 'tsx-ts-mode))
+
+              (with-eval-after-load 'rust-ts-mode
+                (require 'smartparens-rust)
+                (sp-with-modes '(rust-ts-mode)
+                  (sp-local-pair "'" "'"
+                                 :unless '(sp-in-comment-p sp-in-string-quotes-p sp-in-rust-lifetime-context)
+                                 :post-handlers'(:rem sp-escape-quotes-after-insert))
+                  (sp-local-pair "<" ">"
+                                 :when '(sp-rust-filter-angle-brackets)
+                                 :skip-match 'sp-rust-skip-match-angle-bracket))
+
+                (add-to-list 'sp-sexp-suffix (list #'rust-ts-mode 'regexp "")))
+
+              (with-eval-after-load 'python-ts-mode
+                (require 'smartparens-python)
+                (sp-with-modes 'python-ts-mode
+                  (sp-local-pair "'" "'" :unless '(sp-in-comment-p sp-in-string-quotes-p) :post-handlers '(:add sp-python-fix-tripple-quotes))
+                  (sp-local-pair "\"" "\"" :post-handlers '(:add sp-python-fix-tripple-quotes))
+                  (sp-local-pair "'''" "'''")
+                  (sp-local-pair "\\'" "\\'")
+                  (sp-local-pair "\"\"\"" "\"\"\"")
+                  (sp-local-pair "(" ")" :post-handlers '(:add sp-python-maybe-add-colon-python))))
 
               (add-hook 'eval-expression-minibuffer-setup-hook
                         (lambda ()
@@ -563,7 +599,7 @@ region."
     (interactive)
     (cond ((derived-mode-p 'scala-mode 'java-mode 'java-ts-mode 'js-base-mode 'typescript-ts-base-mode 'go-mode 'go-ts-mode)
            (string-inflection-java-style-cycle))
-          ((derived-mode-p 'python-base-mode 'ruby-base-mode 'c-mode 'c++-mode 'c-ts-base-mode 'rust-mode 'rust-ts-mode)
+          ((derived-mode-p 'python-base-mode 'ruby-base-mode 'enh-ruby-mode 'c-mode 'c++-mode 'c-ts-base-mode 'rust-mode 'rust-ts-mode)
            (string-inflection-python-style-cycle))
           ((derived-mode-p 'prog-mode)
            (string-inflection-all-cycle))))
@@ -623,10 +659,12 @@ region."
            c-ts-base-mode
            enh-ruby-mode
            go-mode
+           go-ts-mode
            groovy-mode
            js-base-mode
            python-base-mode
            reason-mode
+           rust-mode
            rust-ts-mode
            scala-mode
            swift-mode
@@ -747,11 +785,13 @@ checker symbol."
 
   (add-hook 'python-base-mode-hook (lambda () (use-package dap-python)))
 
-  (add-hook 'go-mode-hook
-            (lambda ()
-              (use-package dap-dlv-go)))
+  (dolist (mode '(go-mode go-ts-mode))
+    (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
+      (add-hook mode-hook
+                (lambda ()
+                  (use-package dap-dlv-go)))))
 
-  (dolist (mode '(c-mode-common c-ts-base-mode rust-ts-mode))
+  (dolist (mode '(c-mode-common c-ts-base-mode rust-mode rust-ts-mode))
     (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
       (add-hook mode-hook
                 (lambda ()
@@ -980,6 +1020,12 @@ optionally the window if possible."
     (add-hook 'term-mode-hook 'eterm-256color-mode)))
 
 ;; Markup and config languages
+(use-package yaml-ts-mode)
+
+(use-package toml-ts-mode)
+
+(use-package dockerfile-ts-mode)
+
 (use-package markdown-mode
   :mode (("README\\.md\\'" . gfm-mode)))
 
@@ -1074,10 +1120,6 @@ optionally the window if possible."
   :after (flycheck)
   :hook (flycheck-mode . flycheck-cask-setup))
 
-;; C/C++/Objective-C
-(use-package cmake-font-lock
-  :hook (cmake-mode . cmake-font-lock-activate))
-
 ;; Formatting
 (use-package reformatter
   :quelpa (reformatter :fetcher github :repo "wyuenho/reformatter.el" :branch "post-processor")
@@ -1112,7 +1154,7 @@ optionally the window if possible."
             "--ext"
             ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx")))
 
-(dolist (mode '(css-base-mode js-base-mode markdown-mode typescript-ts-base-mode web-mode yaml-mode))
+(dolist (mode '(css-base-mode js-base-mode markdown-mode typescript-ts-base-mode web-mode yaml-mode yaml-ts-mode))
   (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook mode-hook
               (lambda ()
@@ -1212,6 +1254,8 @@ optionally the window if possible."
               (jq-format-json-on-save-mode 1))))
 
 ;; TypeScript
+(use-package typescript-ts-mode)
+
 (use-package ts-comint
   :bind (:map typescript-ts-mode-map
               ("C-x C-e" . ts-send-last-sexp)
@@ -1335,6 +1379,9 @@ optionally the window if possible."
   :config (remove-hook 'enh-ruby-mode-hook 'erm-define-faces)
   :hook yard-mode)
 
+;; C/C++/Objective-C
+(use-package cmake-ts-mode)
+
 ;; Go
 (use-package go-mode
   :mode "\\.go\\'"
@@ -1363,10 +1410,17 @@ optionally the window if possible."
                           nil t)))))
 
 (use-package flycheck-golangci-lint
-  :after (go-mode)
+  :after (flycheck go-ts-mode)
   :config (flycheck-golangci-lint-setup))
 
 ;; Rust
+(use-package rust-ts-mode
+  :config
+  (with-eval-after-load 'reformatter
+    (when (featurep 'rustfmt-format-on-save-mode)
+      (setq-local rustfmt-format-on-save-mode-lighter nil)
+      (add-hook 'rust-ts-mode-hook 'rustfmt-format-on-save-mode))))
+
 (use-package cargo
   :delight cargo-minor-mode
   :config
