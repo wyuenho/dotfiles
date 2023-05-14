@@ -311,7 +311,7 @@
  '(parens-require-spaces nil)
  '(prescient-persist-mode t)
  '(prettier-enabled-parsers
-   '(angular babel babel-flow css flow graphql json json5 less html markdown mdx scss typescript vue yaml))
+   '(angular babel babel-flow css flow graphql json json5 less html mdx scss typescript vue yaml))
  '(prettier-pre-warm 'some)
  '(projectile-completion-system 'ido)
  '(projectile-project-root-functions
