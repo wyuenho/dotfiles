@@ -245,7 +245,7 @@
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(major-mode-remap-alist
    '((python-mode . python-ts-mode)
-     (js-mode . js-ts-mode)
+     (js-mode . typescript-ts-mode)
      (css-mode . css-ts-mode)
      (conf-toml-mode . toml-ts-mode)))
  '(markdown-code-lang-modes
