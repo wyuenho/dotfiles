@@ -273,11 +273,6 @@ Optional argument ARG same as `comment-dwim''s."
                    (quit-window 'kill))))))
           t)
 
-(use-package osx-trash
-  :if (and (eq system-type 'darwin)
-           (not (fboundp 'system-move-file-to-trash)))
-  :config (osx-trash-setup))
-
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
   :delight
