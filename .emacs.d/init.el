@@ -1155,7 +1155,7 @@ optionally the window if possible."
             "--ext"
             ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx")))
 
-(dolist (mode '(css-base-mode js-base-mode markdown-mode typescript-ts-base-mode web-mode yaml-mode yaml-ts-mode))
+(dolist (mode '(css-base-mode js-base-mode typescript-ts-base-mode web-mode yaml-mode yaml-ts-mode))
   (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook mode-hook
               (lambda ()
