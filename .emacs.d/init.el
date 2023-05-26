@@ -1246,14 +1246,6 @@ optionally the window if possible."
   (with-eval-after-load 'flycheck
     (jsonian-enable-flycheck)))
 
-(use-package jq-format
-  :delight jq-format-json-on-save-mode
-  :config
-  (add-hook 'jsonian-mode-hook
-            (lambda ()
-              (define-key jsonian-mode-map (kbd "C-c f") 'jq-format-json-buffer)
-              (jq-format-json-on-save-mode 1))))
-
 ;; TypeScript
 (use-package typescript-ts-mode)
 
