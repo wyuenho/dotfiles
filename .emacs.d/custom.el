@@ -312,6 +312,7 @@
  '(prescient-persist-mode t)
  '(prettier-enabled-parsers
    '(angular babel babel-flow babel-ts css espree flow graphql json json5 json-stringify less html markdown mdx meriyah scss sh typescript vue yaml))
+ '(prettier-inline-errors-flag t)
  '(prettier-pre-warm 'some)
  '(projectile-completion-system 'ido)
  '(projectile-project-root-functions
