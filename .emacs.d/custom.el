@@ -206,7 +206,7 @@
  '(libgit-auto-rebuild t)
  '(linum-delay t)
  '(linum-format "%4d ")
- '(load-prefer-newer t t)
+ '(load-prefer-newer t)
  '(lsp-auto-guess-root t)
  '(lsp-auto-touch-files nil)
  '(lsp-debounce-full-sync-notifications-interval 0.25)
