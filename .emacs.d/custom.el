@@ -233,7 +233,6 @@
  '(lsp-ui-doc-include-signature t)
  '(lsp-ui-imenu-auto-refresh t)
  '(lsp-ui-sideline-ignore-duplicate t)
- '(lsp-ui-sideline-show-code-actions nil)
  '(lsp-ui-sideline-show-diagnostics nil)
  '(mac-emulate-three-button-mouse t)
  '(mac-input-method-mode t)
