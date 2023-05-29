@@ -86,6 +86,8 @@
              if (member (package-desc-name pkg-desc)
                         (cl-loop for (req-name _) in (package-desc-reqs pkg)
                                  collect req-name))
+             ;; FIXME: advice `package-activate-1' so it deals with versions
+             ;; properly
              do (when (package-activate-1 pkg :reload :deps) ;; copied from package-unpack
                   (package--compile pkg)
                   (when package-native-compile
@@ -123,4 +125,11 @@ versions due to limitations in package.el."
       (let ((removable-packages (apply fn args))
             (quelpa-packages (mapcar #'car (quelpa-read-cache))))
         (cl-set-difference removable-packages quelpa-packages)))
-    (advice-add 'package--removable-packages :around 'package--removable-packages-advice)))
+    (advice-add 'package--removable-packages :around 'package--removable-packages-advice))
+
+
+  ;; FIXME: `package-autoremove' can't remove obsolete package because
+  ;; `package--removable-packages' only returns the package name, but not the
+  ;; version or the package description struct. Furthermore, the removable code
+  ;; path always takes the latest version from `package-alist', which is wrong.
+  )
