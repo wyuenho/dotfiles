@@ -234,7 +234,9 @@
  '(lsp-ui-doc-include-signature t)
  '(lsp-ui-doc-use-webkit t)
  '(lsp-ui-imenu-auto-refresh t)
+ '(lsp-ui-imenu-enable nil)
  '(lsp-ui-sideline-ignore-duplicate t)
+ '(lsp-ui-sideline-show-code-actions t)
  '(lsp-ui-sideline-show-diagnostics nil)
  '(mac-emulate-three-button-mouse t)
  '(mac-input-method-mode t)
@@ -454,6 +456,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((((class color) (min-colors 89)) (:foreground "#839496" :background "#002b36"))))
  '(bold ((t (:weight semi-bold))))
  '(bold-italic ((t (:slant italic :weight semi-bold))))
  '(flycheck-posframe-error-face ((t (:inherit error))))
