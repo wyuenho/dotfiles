@@ -1,4 +1,6 @@
 ;; -*- lexical-binding: t -*-
+(setenv "LSP_USE_PLISTS" "true")
+
 (require 'cl-lib)
 
 ;; Set up default fonts
