@@ -209,7 +209,8 @@
  '(load-prefer-newer t)
  '(lsp-auto-guess-root t)
  '(lsp-debounce-full-sync-notifications-interval 0.25)
- '(lsp-disabled-clients '(pyls pylsp ruff-lsp eslint ocaml-ls bash-ls html-ls css-ls))
+ '(lsp-disabled-clients
+   '(pyls pylsp ruff-lsp eslint ocaml-ls bash-ls html-ls css-ls))
  '(lsp-eldoc-enable-hover nil)
  '(lsp-enable-indentation nil)
  '(lsp-enable-on-type-formatting nil)
@@ -231,6 +232,7 @@
    "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp")
  '(lsp-ui-doc-alignment 'window)
  '(lsp-ui-doc-include-signature t)
+ '(lsp-ui-doc-use-webkit t)
  '(lsp-ui-imenu-auto-refresh t)
  '(lsp-ui-sideline-ignore-duplicate t)
  '(lsp-ui-sideline-show-diagnostics nil)
