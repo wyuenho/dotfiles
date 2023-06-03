@@ -133,3 +133,23 @@ versions due to limitations in package.el."
   ;; version or the package description struct. Furthermore, the removable code
   ;; path always takes the latest version from `package-alist', which is wrong.
   )
+
+(defvar compile-log-buffer-names nil)
+
+(with-eval-after-load 'native-compile
+  (add-to-list 'compile-log-buffer-names comp-log-buffer-name)
+  (add-to-list 'compile-log-buffer-names comp-async-buffer-name))
+
+(with-eval-after-load 'bytecomp
+  (add-to-list 'compile-log-buffer-names byte-compile-log-buffer))
+
+(defun get-buffer-create-advice (fn &rest args)
+  "Bury `compile-log-buffer-names' after creation and ensure `compilation-mode' is on."
+  (let ((buffer (apply fn args)))
+    (when (member (buffer-name buffer) compile-log-buffer-names)
+      (with-current-buffer buffer
+        (unless (derived-mode-p 'compilation-mode)
+          (compilation-mode)))
+      (bury-buffer-internal buffer))
+    buffer))
+(advice-add 'get-buffer-create :around 'get-buffer-create-advice)

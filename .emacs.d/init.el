@@ -2002,6 +2002,15 @@ ELEMENT is only added once."
     (add-to-list 'purpose-x-popwin-buffer-names "*Warnings*")
     (purpose-x-popwin-update-conf)
 
+    (with-eval-after-load 'bytecomp
+      (add-to-list 'purpose-x-popwin-buffer-names byte-compile-log-buffer)
+      (purpose-x-popwin-update-conf))
+
+    (with-eval-after-load 'native-compile
+      (add-to-list 'purpose-x-popwin-buffer-names comp-log-buffer-name)
+      (add-to-list 'purpose-x-popwin-buffer-names comp-async-buffer-name)
+      (purpose-x-popwin-update-conf))
+
     (with-eval-after-load 'pet
       (add-to-list 'purpose-x-popwin-buffer-names "*pet info*")
       (purpose-x-popwin-update-conf))
