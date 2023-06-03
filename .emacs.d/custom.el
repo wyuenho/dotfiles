@@ -232,6 +232,7 @@
  '(lsp-signature-function 'lsp-signature-posframe)
  '(lsp-sourcekit-executable
    "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp")
+ '(lsp-typescript-surveys-enabled nil)
  '(lsp-ui-doc-alignment 'window)
  '(lsp-ui-doc-include-signature t)
  '(lsp-ui-imenu-auto-refresh t)
