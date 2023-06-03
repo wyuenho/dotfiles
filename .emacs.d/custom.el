@@ -208,6 +208,8 @@
  '(linum-format "%4d ")
  '(load-prefer-newer t)
  '(lsp-auto-guess-root t)
+ '(lsp-clients-typescript-prefer-use-project-ts-server t)
+ '(lsp-completion-default-behaviour :insert)
  '(lsp-debounce-full-sync-notifications-interval 0.25)
  '(lsp-disabled-clients
    '(pyls pylsp ruff-lsp eslint ocaml-ls bash-ls html-ls css-ls))
@@ -232,7 +234,6 @@
    "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp")
  '(lsp-ui-doc-alignment 'window)
  '(lsp-ui-doc-include-signature t)
- '(lsp-ui-doc-use-webkit t)
  '(lsp-ui-imenu-auto-refresh t)
  '(lsp-ui-imenu-enable nil)
  '(lsp-ui-sideline-ignore-duplicate t)
