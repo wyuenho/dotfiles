@@ -206,7 +206,7 @@
  '(libgit-auto-rebuild t)
  '(linum-delay t)
  '(linum-format "%4d ")
- '(load-prefer-newer t)
+ '(load-prefer-newer t t)
  '(lsp-auto-guess-root t)
  '(lsp-clients-typescript-prefer-use-project-ts-server t)
  '(lsp-completion-default-behaviour :insert)
