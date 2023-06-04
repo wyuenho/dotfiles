@@ -3,59 +3,49 @@
 
 (require 'cl-lib)
 
-;; Set up default fonts
-(custom-set-variables
- '(face-font-family-alternatives
-   '(("JetBrains Mono NL" "Noto Sans Mono" "DejaVu Sans Mono" "Menlo")
-     ("Noto Sans" "Helvetica Neue" "Helvetica"))))
-(set-face-attribute 'fixed-pitch nil :family "JetBrains Mono NL" :weight 'regular :width 'normal)
-(set-face-attribute 'fixed-pitch-serif nil :family "Courier New" :weight 'regular :width 'normal)
-(set-face-attribute 'variable-pitch nil :family "Noto Sans" :weight 'regular :width 'normal)
-(set-face-attribute 'default nil :family "JetBrains Mono NL" :weight 'regular :width 'normal)
+;; Bury the noisy compile logs
+(defvar compile-log-buffer-names nil)
 
-(load-theme 'bootstrap t)
+(defun get-buffer-create-advice (fn &rest args)
+  "Bury `compile-log-buffer-names' after creation and ensure `compilation-mode' is on."
+  (let ((buffer (apply fn args)))
+    (when (member (buffer-name buffer) compile-log-buffer-names)
+      (with-current-buffer buffer
+        (unless (derived-mode-p 'compilation-mode)
+          (compilation-mode)))
+      (bury-buffer-internal buffer))
+    buffer))
+(advice-add 'get-buffer-create :around 'get-buffer-create-advice)
 
-;; Set up initial and default frame params
-(pcase-dolist (`(,param . ,value)
-               '((background-mode        . dark)
-                 (fullscreen             . maximized)
-                 (cursor-type            . bar)
-                 (vertical-scroll-bars   . nil)
-                 (horizontal-scroll-bars . nil)))
-  (setf (alist-get param initial-frame-alist) value))
+(with-eval-after-load 'native-compile
+  (add-to-list 'compile-log-buffer-names comp-log-buffer-name)
+  (add-to-list 'compile-log-buffer-names comp-async-buffer-name))
 
-(pcase-dolist (`(,param . ,value)
-               '((ns-transparent-titlebar . nil)
-                 (ns-appearance           . dark)))
-  (push (cons param value) (alist-get 'ns window-system-default-frame-alist nil)))
+(with-eval-after-load 'bytecomp
+  (add-to-list 'compile-log-buffer-names byte-compile-log-buffer))
 
-;; Set up frame title format
-(setf frame-title-format (list '(:eval
-                                 (when (buffer-file-name)
-                                   (abbreviate-file-name (buffer-file-name))))))
+;; Stop Tramp from abusing these calls to set a NOW on customized variables
+(with-eval-after-load 'files-x
+  (defun connection-local-set-profile-variables-advice (fn &rest args)
+    (cl-letf (((symbol-function 'custom-set-variables)
+               (lambda (&rest args)
+                 (dolist (item args)
+                   (let ((symbol (nth 0 item))
+                         (exp (nth 1 item)))
+                     (setopt symbol exp))))))
+      (apply fn args)))
+  (advice-add 'connection-local-set-profile-variables :around 'connection-local-set-profile-variables-advice)
+  (defun connection-local-set-profiles-advice (fn &rest args)
+    (cl-letf (((symbol-function 'custom-set-variables)
+               (lambda (&rest args)
+                 (dolist (item args)
+                   (let ((symbol (nth 0 item))
+                         (exp (nth 1 item)))
+                     (setopt symbol exp))))))
+      (apply fn args)))
+  (advice-add 'connection-local-set-profiles :around 'connection-local-set-profiles-advice))
 
-;; Turn off the tool bar early
-(when (fboundp 'tool-bar-mode)
-  (tool-bar-mode -1))
-
-;; Set up NS port specific variables
-(add-hook 'window-setup-hook
-          (lambda ()
-            (when (display-graphic-p)
-              (pcase (window-system)
-                ('ns
-                 (setf ns-use-thin-smoothing t
-                       ns-use-mwheel-momentum t
-                       ns-use-mwheel-acceleration t
-                       x-colors (ns-list-colors)))))))
-
-;; After desktop.el has restored all the buffers, the top of the buffer list in
-;; the last emacs session should be restored as the top.
-(setf initial-buffer-choice (lambda () (car (buffer-list))))
-
-;; No more yes and no and y and n inconsistencies
-(fset 'yes-or-no-p 'y-or-n-p)
-
+;; Patch package.el so it's slightly less insane
 (with-eval-after-load 'package
   (setq package-install-upgrade-built-in t)
 
@@ -134,22 +124,55 @@ versions due to limitations in package.el."
   ;; path always takes the latest version from `package-alist', which is wrong.
   )
 
-(defvar compile-log-buffer-names nil)
+;; Set up default fonts
+(custom-set-variables
+ '(face-font-family-alternatives
+   '(("JetBrains Mono NL" "Noto Sans Mono" "DejaVu Sans Mono" "Menlo")
+     ("Noto Sans" "Helvetica Neue" "Helvetica"))))
+(set-face-attribute 'fixed-pitch nil :family "JetBrains Mono NL" :weight 'regular :width 'normal)
+(set-face-attribute 'fixed-pitch-serif nil :family "Courier New" :weight 'regular :width 'normal)
+(set-face-attribute 'variable-pitch nil :family "Noto Sans" :weight 'regular :width 'normal)
+(set-face-attribute 'default nil :family "JetBrains Mono NL" :weight 'regular :width 'normal)
 
-(with-eval-after-load 'native-compile
-  (add-to-list 'compile-log-buffer-names comp-log-buffer-name)
-  (add-to-list 'compile-log-buffer-names comp-async-buffer-name))
+(load-theme 'bootstrap t)
 
-(with-eval-after-load 'bytecomp
-  (add-to-list 'compile-log-buffer-names byte-compile-log-buffer))
+;; Set up initial and default frame params
+(pcase-dolist (`(,param . ,value)
+               '((background-mode        . dark)
+                 (fullscreen             . maximized)
+                 (cursor-type            . bar)
+                 (vertical-scroll-bars   . nil)
+                 (horizontal-scroll-bars . nil)))
+  (setf (alist-get param initial-frame-alist) value))
 
-(defun get-buffer-create-advice (fn &rest args)
-  "Bury `compile-log-buffer-names' after creation and ensure `compilation-mode' is on."
-  (let ((buffer (apply fn args)))
-    (when (member (buffer-name buffer) compile-log-buffer-names)
-      (with-current-buffer buffer
-        (unless (derived-mode-p 'compilation-mode)
-          (compilation-mode)))
-      (bury-buffer-internal buffer))
-    buffer))
-(advice-add 'get-buffer-create :around 'get-buffer-create-advice)
+(pcase-dolist (`(,param . ,value)
+               '((ns-transparent-titlebar . nil)
+                 (ns-appearance           . dark)))
+  (push (cons param value) (alist-get 'ns window-system-default-frame-alist nil)))
+
+;; Set up frame title format
+(setf frame-title-format (list '(:eval
+                                 (when (buffer-file-name)
+                                   (abbreviate-file-name (buffer-file-name))))))
+
+;; Turn off the tool bar early
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
+
+;; Set up NS port specific variables
+(add-hook 'window-setup-hook
+          (lambda ()
+            (when (display-graphic-p)
+              (pcase (window-system)
+                ('ns
+                 (setf ns-use-thin-smoothing t
+                       ns-use-mwheel-momentum t
+                       ns-use-mwheel-acceleration t
+                       x-colors (ns-list-colors)))))))
+
+;; After desktop.el has restored all the buffers, the top of the buffer list in
+;; the last emacs session should be restored as the top.
+(setf initial-buffer-choice (lambda () (car (buffer-list))))
+
+;; No more yes and no and y and n inconsistencies
+(fset 'yes-or-no-p 'y-or-n-p)
