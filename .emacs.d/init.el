@@ -346,9 +346,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package vertico
   :config
-  (vertico-mode)
-  (setopt vertico-resize nil
-          vertico-cycle t))
+  (vertico-mode))
 
 (use-package vertico-directory
   :after vertico
