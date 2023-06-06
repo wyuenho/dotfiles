@@ -13,7 +13,6 @@
  '(ag-reuse-window t)
  '(aggressive-indent-excluded-modes
    '(elm-mode haskell-mode inf-ruby-mode makefile-mode makefile-gmake-mode python-mode python-ts-mode sql-interactive-mode text-mode yaml-mode yaml-ts-mode tcl-mode dockerfile-mode dockerfile-ts-mode go-mode go-ts-mode json-ts-mode jsonian-mode web-mode java-mode))
- '(amx-mode t)
  '(apib-drafter-executable "aglio")
  '(auth-source-protocols
    '((imap "imap" "imaps" "143" "993")
@@ -121,12 +120,9 @@
      ("Noto Sans" "Helvetica Neue" "Helvetica")))
  '(fancy-compilation-mode t)
  '(fancy-compilation-override-colors nil)
- '(fido-mode t)
  '(fill-column 80)
  '(find-file-existing-other-name nil)
  '(find-file-suppress-same-file-warnings t)
- '(flx-ido-mode t)
- '(flx-ido-use-faces t)
  '(flycheck-disabled-checkers '(json-jsonlint json-python-json))
  '(flycheck-emacs-lisp-initialize-packages t)
  '(flycheck-emacs-lisp-load-path 'inherit)
@@ -155,7 +151,6 @@
  '(global-tree-sitter-mode t)
  '(global-undo-tree-mode t)
  '(global-whitespace-cleanup-mode t)
- '(gnus-completing-read-function 'gnus-ido-completing-read)
  '(gnutls-algorithm-priority
    "PFS:-VERS-ALL:+VERS-TLS1.2:%PROFILE_MEDIUM:%SAFE_RENEGOTIATION")
  '(gnutls-crlfiles
@@ -173,18 +168,6 @@
  '(ialign-pcre-mode t)
  '(ibuffer-elide-long-columns t)
  '(ibuffer-expert t)
- '(icomplete-mode t)
- '(icomplete-vertical-mode t)
- '(ido-cannot-complete-command 'ignore)
- '(ido-create-new-buffer 'always)
- '(ido-enable-flex-matching t)
- '(ido-everywhere t)
- '(ido-mode 'both nil (ido))
- '(ido-ubiquitous-mode t)
- '(ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
- '(ido-vertical-indicator "")
- '(ido-vertical-mode t)
- '(ido-vertical-padding "")
  '(imagemagick-render-type 1)
  '(imenu-auto-rescan t)
  '(imenu-auto-rescan-maxout 524288)
@@ -245,7 +228,6 @@
  '(mac-mouse-wheel-mode t)
  '(mac-print-mode t)
  '(mac-system-move-file-to-trash-use-finder t)
- '(magit-completing-read-function 'magit-ido-completing-read)
  '(magit-diff-refine-hunk 'all)
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(major-mode-remap-alist
@@ -311,7 +293,7 @@
  '(package-menu-use-current-if-no-marks nil)
  '(package-native-compile t)
  '(package-selected-packages
-   '(add-node-modules-path ag aggressive-indent all-the-icons all-the-icons-dired amx apib-mode arduino-mode auto-compile auto-yasnippet beginend bind-key browse-kill-ring buffer-move bug-hunter buttercup cargo cask-mode company company-native-complete company-prescient company-quickhelp coverage crm-custom crux csv-mode cycle-quotes dap-mode default-text-scale delight diff-hl dired-collapse dired-hacks-utils dired-hide-dotfiles dired-single direnv docker-compose-mode dotenv-mode editorconfig eglot eldoc elisp-def elisp-refs emmet-mode enh-ruby-mode eterm-256color exec-path-from-shell expand-region faceup flx-ido flx-isearch flycheck flycheck-cask flycheck-golangci-lint flycheck-inline flycheck-package flycheck-plantuml flycheck-projectile flymake focus fontify-face forge gcmh git-commit git-modes git-timemachine go-mode graphql-mode graphviz-dot-mode groovy-mode helpful highlight-indent-guides hl-todo ialign ibuffer-projectile ido-completing-read+ ido-vertical-mode iedit imenu-anywhere imenu-list impostman jq-mode jsonian jsonrpc kurecolor lorem-ipsum lsp-docker lsp-java lsp-jedi lsp-metals lsp-mode lsp-origami lsp-pyright lsp-sourcekit lsp-ui macrostep magit magit-lfs magit-todos markdown-mode monky move-dup multiple-cursors native-complete nodejs-repl olivetti origami package-build package-lint page-break-lines pager-default-keybindings pcre2el pdf-tools pet plantuml-mode po-mode powerline prettier projectile projectile-rails protobuf-mode python-black python-docstring python-insert-docstring python-isort python-pytest quelpa-use-package quick-peek rainbow-mode reason-mode reformatter repeat-help request rg ron-mode sass-mode sbt-mode scala-mode scroll-on-jump shift-number shrink-path shut-up smart-semicolon smartparens smooth-scrolling soap-client solarized-theme spaceline sphinx-doc spinner ssh-config-mode string-inflection svg-lib swift-mode terraform-mode ts-comint tuareg udev-mode use-package use-package-ensure-system-package verb verilog-mode visual-regexp-steroids vterm vundo web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose yard-mode yarn-mode yasnippet yasnippet-snippets))
+   '(add-node-modules-path ag aggressive-indent all-the-icons all-the-icons-dired apib-mode arduino-mode auto-compile auto-yasnippet beginend bind-key browse-kill-ring buffer-move bug-hunter buttercup cape capf-autosuggest cargo cask-mode company company-native-complete company-prescient company-quickhelp corfu corfu-prescient corfu-terminal coverage crux csv-mode cycle-quotes dap-mode default-text-scale delight diff-hl dired-collapse dired-hacks-utils dired-hide-dotfiles dired-single direnv docker-compose-mode dotenv-mode editorconfig eglot eldoc elisp-def elisp-refs embark emmet-mode enh-ruby-mode eterm-256color exec-path-from-shell expand-region faceup flycheck flycheck-cask flycheck-golangci-lint flycheck-inline flycheck-package flycheck-plantuml flycheck-projectile flymake focus fontify-face forge gcmh git-commit git-modes git-timemachine go-mode graphql-mode graphviz-dot-mode groovy-mode helpful highlight-indent-guides hl-todo ialign ibuffer-projectile iedit imenu-anywhere imenu-list impostman jq-mode jsonian jsonrpc kurecolor lorem-ipsum lsp-docker lsp-java lsp-jedi lsp-metals lsp-mode lsp-origami lsp-pyright lsp-sourcekit lsp-ui macrostep magit magit-lfs magit-todos marginalia markdown-mode monky move-dup multiple-cursors native-complete nodejs-repl olivetti origami package-build package-lint page-break-lines pager-default-keybindings pcre2el pdf-tools pet plantuml-mode po-mode powerline prettier projectile projectile-rails protobuf-mode python-black python-docstring python-insert-docstring python-isort python-pytest quelpa quelpa-use-package quick-peek rainbow-mode reason-mode reformatter repeat-help request rg ron-mode sass-mode sbt-mode scala-mode scroll-on-jump shift-number shrink-path shut-up smart-semicolon smartparens smooth-scrolling soap-client solarized-theme spaceline sphinx-doc spinner ssh-config-mode string-inflection svg-lib swift-mode terraform-mode ts-comint tuareg udev-mode use-package use-package-ensure-system-package verb verilog-mode vertico vertico-prescient visual-regexp-steroids vterm vundo web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose yard-mode yarn-mode yasnippet yasnippet-snippets))
  '(page-break-lines-lighter "")
  '(parens-require-spaces nil)
  '(prescient-persist-mode t)
@@ -319,7 +301,6 @@
    '(angular babel babel-flow babel-ts css espree flow graphql json json5 json-stringify less html markdown mdx meriyah scss sh typescript vue yaml))
  '(prettier-inline-errors-flag t)
  '(prettier-pre-warm 'some)
- '(projectile-completion-system 'ido)
  '(projectile-project-root-functions
    '(projectile-root-local projectile-root-marked projectile-root-top-down projectile-root-bottom-up projectile-root-top-down-recurring))
  '(projectile-project-search-path '("~/Documents/workspace"))

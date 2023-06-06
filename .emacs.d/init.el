@@ -70,8 +70,6 @@ under `user-emacs-directory'.  If it exists, load it."
 
   (pcase-dolist (`(,face . ,alias)
                  '((all-the-icons-dired-dir-face      . dired-directory)
-                   (icomplete-first-match             . ido-first-match)
-                   (completions-common-part           . flx-highlight-face)
                    (company-tooltip-selection         . company-tooltip-mouse)
                    (tooltip                           . company-tooltip)
                    (lsp-ui-doc-background             . company-tooltip)))
@@ -346,35 +344,39 @@ Optional argument ARG same as `comment-dwim''s."
          ("C-x C--" . default-text-scale-decrease)
          ("C-x C-0" . default-text-scale-reset)))
 
-;; Enhances ido and isearch's fuzzy search
-(use-package flx-ido
-  :config (flx-ido-mode 1))
-
-(use-package flx-isearch
-  :bind (("C-M-s" . flx-isearch-forward)
-         ("C-M-r" . flx-isearch-backward))
-  :config (flx-isearch-mode 1))
-
-;; Use ido with M-x
-(use-package amx
-  :bind (("M-X" . amx-major-mode-commands)))
-
-;; Use ido for even more things than ido-everywhere
-(use-package crm-custom
+(use-package vertico
   :config
-  (crm-custom-mode 1))
+  (vertico-mode)
+  (setopt vertico-resize nil
+          vertico-cycle t))
 
-(use-package ido-completing-read+)
+(use-package vertico-directory
+  :after vertico
+  :config
+  (keymap-set vertico-map "RET" #'vertico-directory-enter)
+  (keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
+  (keymap-set vertico-map "S-DEL" #'vertico-directory-delete-word)
+  (with-eval-after-load rfn-eshadow-overlay
+    (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)))
 
-(use-package ido-vertical-mode
-  :init (require 'icomplete)
-  :demand
-  :bind (:map icomplete-minibuffer-map
-              ("<down>" . icomplete-forward-completions)
-              ("C-n"    . icomplete-forward-completions)
-              ("<up>"   . icomplete-backward-completions)
-              ("C-p"    . icomplete-backward-completions)
-              ("C-v"    . icomplete-vertical-toggle)))
+(use-package vertico-mouse
+  :after vertico
+  :config (vertico-mouse-mode))
+
+(use-package vertico-prescient
+  :after vertico
+  :config (vertico-prescient-mode))
+
+(use-package marginalia
+  :after vertico
+  :config
+  (marginalia-mode))
+
+(use-package embark
+  :after vertico
+  :config
+  (keymap-set vertico-map "C-," #'embark-dwim)
+  (keymap-set vertico-map "C-." #'embark-act))
 
 ;; Convenient iMenu entry search
 (use-package imenu-anywhere
