@@ -24,27 +24,6 @@
 (with-eval-after-load 'bytecomp
   (add-to-list 'compile-log-buffer-names byte-compile-log-buffer))
 
-;; Stop Tramp from abusing these calls to set a NOW on customized variables
-(with-eval-after-load 'files-x
-  (defun connection-local-set-profile-variables-advice (fn &rest args)
-    (cl-letf (((symbol-function 'custom-set-variables)
-               (lambda (&rest args)
-                 (dolist (item args)
-                   (let ((symbol (indirect-variable (nth 0 item)))
-                         (exp (nth 1 item)))
-                     (setopt symbol exp))))))
-      (apply fn args)))
-  (advice-add 'connection-local-set-profile-variables :around 'connection-local-set-profile-variables-advice)
-  (defun connection-local-set-profiles-advice (fn &rest args)
-    (cl-letf (((symbol-function 'custom-set-variables)
-               (lambda (&rest args)
-                 (dolist (item args)
-                   (let ((symbol (indirect-variable (nth 0 item)))
-                         (exp (nth 1 item)))
-                     (setopt symbol exp))))))
-      (apply fn args)))
-  (advice-add 'connection-local-set-profiles :around 'connection-local-set-profiles-advice))
-
 ;; Patch package.el so it's slightly less insane
 (with-eval-after-load 'package
   (setq package-install-upgrade-built-in t)
@@ -86,25 +65,6 @@
                       (package--reload-previously-loaded pkg)
                     (package--load-files-for-activation pkg :reload)))))
   (advice-add 'package-unpack :after 'package-unpack-advice)
-
-  (defun package--get-activatable-pkg-advice (pkg-name)
-    "So `package-activate' can activate the correct version."
-    (let ((pkg-descs (sort (cdr (assq pkg-name package-alist))
-                           (lambda (p1 p2)
-                             (let ((v1 (package-desc-version p1))
-                                   (v2 (package-desc-version p2)))
-                               (or
-                                ;; Prefer VC packages.
-                                (package-vc-p p1)
-                                (package-vc-p p2)
-                                (version-list-< v2 v1)))))))
-      (while
-          (when pkg-descs
-            (let ((available-version (package-desc-version (car pkg-descs))))
-              (package-disabled-p pkg-name available-version)))
-        (setq pkg-descs (cdr pkg-descs)))
-      (car pkg-descs)))
-  (advice-add 'package--get-activatable-pkg :override 'package--get-activatable-pkg-advice)
 
   (with-eval-after-load 'quelpa
     (defun package--removable-packages-advice (fn &rest args)
