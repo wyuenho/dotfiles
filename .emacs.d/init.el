@@ -72,7 +72,8 @@ under `user-emacs-directory'.  If it exists, load it."
                  '((all-the-icons-dired-dir-face      . dired-directory)
                    (company-tooltip-selection         . company-tooltip-mouse)
                    (tooltip                           . company-tooltip)
-                   (lsp-ui-doc-background             . company-tooltip)))
+                   ;; (lsp-ui-doc-background             . company-tooltip)
+                   ))
     (put face 'theme-face nil)
     (put face 'face-alias alias))
 
@@ -317,14 +318,15 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Saner undo/redo
 (use-package vundo
   :bind (("M-z" . vundo))
-  :config
-  (with-eval-after-load 'flycheck
-    (add-hook 'vundo-post-exit-hook
-              (lambda ()
-                (when flycheck-mode
-                  (flycheck-buffer))))))
+  ;; :config
+  ;; (with-eval-after-load 'flycheck
+  ;;   (add-hook 'vundo-post-exit-hook
+  ;;             (lambda ()
+  ;;               (when flycheck-mode
+  ;;                 (flycheck-buffer)))))
+  )
 
-;; So I can see past kills that I can yank
+;; So I can see past kills that I can gyank
 (use-package browse-kill-ring
   :config (browse-kill-ring-default-keybindings))
 
@@ -658,8 +660,7 @@ region."
   (pdf-loader-install t))
 
 ;; Static Analysis
-(use-package lsp-mode
-  :delight (lsp-mode) (lsp-lens-mode)
+(use-package eglot
   :hook (((c-mode-common
            c-ts-base-mode
            enh-ruby-mode
@@ -676,177 +677,197 @@ region."
            terraform-mode
            tuareg-mode
            typescript-ts-base-mode)
-          . lsp-deferred)
-         (lsp-mode . (lambda ()
-                       (with-eval-after-load 'which-key
-                         (lsp-enable-which-key-integration)))))
-  :config
-  (setf read-process-output-max (* 1024 1024 10))
+          . eglot-ensure)))
 
-  (with-eval-after-load 'flycheck
-    (defvar-local lsp-flycheck-checkers nil)
+;; (use-package lsp-mode
+;;   :delight (lsp-mode) (lsp-lens-mode)
+;;   :hook (((c-mode-common
+;;            c-ts-base-mode
+;;            enh-ruby-mode
+;;            go-mode
+;;            go-ts-mode
+;;            groovy-mode
+;;            js-base-mode
+;;            python-base-mode
+;;            reason-mode
+;;            rust-mode
+;;            rust-ts-mode
+;;            scala-mode
+;;            swift-mode
+;;            terraform-mode
+;;            tuareg-mode
+;;            typescript-ts-base-mode)
+;;           . lsp-deferred)
+;;          (lsp-mode . (lambda ()
+;;                        (with-eval-after-load 'which-key
+;;                          (lsp-enable-which-key-integration)))))
+;;   :config
+;;   (setf read-process-output-max (* 1024 1024 10))
 
-    (defun lsp-flycheck-checker-get-advice (fn checker property)
-      "Get checker property from buffer-local variable `lsp-flycheck-checkers'.
+;;   (with-eval-after-load 'flycheck
+;;     (defvar-local lsp-flycheck-checkers nil)
 
-Result checker CHECKER property PROPERTY from buffer-local
-`lsp-flycheck-checkers', if any. Othewise, from the global
-checker symbol."
-      (or (alist-get property (alist-get checker lsp-flycheck-checkers))
-          (funcall fn checker property)))
+;;     (defun lsp-flycheck-checker-get-advice (fn checker property)
+;;       "Get checker property from buffer-local variable `lsp-flycheck-checkers'.
 
-    (advice-add 'flycheck-checker-get :around 'lsp-flycheck-checker-get-advice)
+;; Result checker CHECKER property PROPERTY from buffer-local
+;; `lsp-flycheck-checkers', if any. Othewise, from the global
+;; checker symbol."
+;;       (or (alist-get property (alist-get checker lsp-flycheck-checkers))
+;;           (funcall fn checker property)))
 
-    (add-hook 'lsp-managed-mode-hook
-              (lambda ()
-                (let ((web-mode-checkers
-                       (cond ((derived-mode-p 'web-mode)
-                              (let ((ext (file-name-extension buffer-file-name)))
-                                (cond ((string-equal "css" ext)
-                                       '(css-stylelint . ((modes . (web-mode)))))
-                                      ((string-equal "less" ext)
-                                       '(less-stylelint . ((modes . (web-mode)))))
-                                      ((string-equal "scss" ext)
-                                       '(scss-stylelint . ((modes . (web-mode)))))
-                                      ((>= (string-match-p "htm" ext) 0)
-                                       '(html-tidy . ((modes . (web-mode))))))))))
-                      (lsp-next-checkers
-                       (cond ((derived-mode-p 'css-base-mode)
-                              (cond ((eq major-mode 'scss-mode)
-                                     '((warning . scss-stylelint)))
-                                    ((eq major-mode 'less-mode)
-                                     '((warning . less-stylelint)))
-                                    (t '((warning . css-stylelint)))))
-                             ((derived-mode-p 'web-mode)
-                              (let ((ext (file-name-extension buffer-file-name)))
-                                (cond ((string-equal "css" ext)
-                                       '((warning . css-stylelint)))
-                                      ((string-equal "less" ext)
-                                       '((warning . less-stylelint)))
-                                      ((string-equal "scss" ext)
-                                       '((warning . scss-stylelint)))
-                                      ((>= (string-match-p "htm" ext) 0)
-                                       '((warning . html-tidy))))))
-                             ((derived-mode-p 'js-base-mode)
-                              '((warning . javascript-eslint)))
-                             ((derived-mode-p 'typescript-ts-base-mode)
-                              '((warning . javascript-eslint)))
-                             ((derived-mode-p 'python-base-mode)
-                              '((warning . python-flake8)
-                                (warning . python-mypy)
-                                (warning . python-pylint)))
-                             ((derived-mode-p 'enh-ruby-mode)
-                              '((warning . ruby-rubocop)))
-                             ((derived-mode-p 'go-mode)
-                              '((warning . golangci-lint))))))
-                  (when lsp-next-checkers
-                    (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
-                  (when web-mode-checkers
-                    (push web-mode-checkers lsp-flycheck-checkers)))))))
+;;     (advice-add 'flycheck-checker-get :around 'lsp-flycheck-checker-get-advice)
 
-(use-package lsp-ui
-  :after (lsp-mode)
-  :config
-  (setf lsp-ui-doc-border (face-foreground 'window-divider))
-  (add-hook 'lsp-ui-doc-frame-hook
-            (lambda (_ window)
-              (let* ((frame (window-frame window)))
-                (set-frame-font
-                 (font-spec :family "Menlo" :size 11)
-                 nil
-                 (list frame))))))
+;;     (add-hook 'lsp-managed-mode-hook
+;;               (lambda ()
+;;                 (let ((web-mode-checkers
+;;                        (cond ((derived-mode-p 'web-mode)
+;;                               (let ((ext (file-name-extension buffer-file-name)))
+;;                                 (cond ((string-equal "css" ext)
+;;                                        '(css-stylelint . ((modes . (web-mode)))))
+;;                                       ((string-equal "less" ext)
+;;                                        '(less-stylelint . ((modes . (web-mode)))))
+;;                                       ((string-equal "scss" ext)
+;;                                        '(scss-stylelint . ((modes . (web-mode)))))
+;;                                       ((>= (string-match-p "htm" ext) 0)
+;;                                        '(html-tidy . ((modes . (web-mode))))))))))
+;;                       (lsp-next-checkers
+;;                        (cond ((derived-mode-p 'css-base-mode)
+;;                               (cond ((eq major-mode 'scss-mode)
+;;                                      '((warning . scss-stylelint)))
+;;                                     ((eq major-mode 'less-mode)
+;;                                      '((warning . less-stylelint)))
+;;                                     (t '((warning . css-stylelint)))))
+;;                              ((derived-mode-p 'web-mode)
+;;                               (let ((ext (file-name-extension buffer-file-name)))
+;;                                 (cond ((string-equal "css" ext)
+;;                                        '((warning . css-stylelint)))
+;;                                       ((string-equal "less" ext)
+;;                                        '((warning . less-stylelint)))
+;;                                       ((string-equal "scss" ext)
+;;                                        '((warning . scss-stylelint)))
+;;                                       ((>= (string-match-p "htm" ext) 0)
+;;                                        '((warning . html-tidy))))))
+;;                              ((derived-mode-p 'js-base-mode)
+;;                               '((warning . javascript-eslint)))
+;;                              ((derived-mode-p 'typescript-ts-base-mode)
+;;                               '((warning . javascript-eslint)))
+;;                              ((derived-mode-p 'python-base-mode)
+;;                               '((warning . python-flake8)
+;;                                 (warning . python-mypy)
+;;                                 (warning . python-pylint)))
+;;                              ((derived-mode-p 'enh-ruby-mode)
+;;                               '((warning . ruby-rubocop)))
+;;                              ((derived-mode-p 'go-mode)
+;;                               '((warning . golangci-lint))))))
+;;                   (when lsp-next-checkers
+;;                     (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
+;;                   (when web-mode-checkers
+;;                     (push web-mode-checkers lsp-flycheck-checkers)))))))
 
-(use-package lsp-origami
-  :hook (lsp-after-open . lsp-origami-try-enable))
+;; (use-package lsp-ui
+;;   :after (lsp-mode)
+;;   :config
+;;   (setf lsp-ui-doc-border (face-foreground 'window-divider))
+;;   (add-hook 'lsp-ui-doc-frame-hook
+;;             (lambda (_ window)
+;;               (let* ((frame (window-frame window)))
+;;                 (set-frame-font
+;;                  (font-spec :family "Menlo" :size 11)
+;;                  nil
+;;                  (list frame))))))
+
+;; (use-package lsp-origami
+;;   :hook (lsp-after-open . lsp-origami-try-enable))
 
 ;; LSP debugging support
-(use-package dap-mode
-  :after (lsp-mode)
-  :config
-  (setf dap-utils-extension-path (expand-file-name "~/.vscode/extensions"))
+;; (use-package dap-mode
+;;   :after (lsp-mode)
+;;   :config
+;;   (setf dap-utils-extension-path (expand-file-name "~/.vscode/extensions"))
 
-  (dolist (mode '(js-base-mode typescript-ts-mode))
-    (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
-      (add-hook 'mode-hook
-                (lambda ()
-                  (when-let* ((firefox-debug-path
-                               (car
-                                (last
-                                 (file-expand-wildcards
-                                  (concat
-                                   dap-utils-extension-path
-                                   "/firefox-devtools.vscode-firefox-debug-*")))))
-                              (firefox-debug-program
-                               (concat "node " dap-firefox-debug-path "/dist/adaptor.bundle.js")))
-                    (use-package dap-firefox
-                      :config
-                      (setopt dap-firefox-debug-path firefox-debug-path
-                              dap-firefox-debug-program firefox-debug-program)))
+;;   (dolist (mode '(js-base-mode typescript-ts-mode))
+;;     (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
+;;       (add-hook 'mode-hook
+;;                 (lambda ()
+;;                   (when-let* ((firefox-debug-path
+;;                                (car
+;;                                 (last
+;;                                  (file-expand-wildcards
+;;                                   (concat
+;;                                    dap-utils-extension-path
+;;                                    "/firefox-devtools.vscode-firefox-debug-*")))))
+;;                               (firefox-debug-program
+;;                                (concat "node " dap-firefox-debug-path "/dist/adaptor.bundle.js")))
+;;                     (use-package dap-firefox
+;;                       :config
+;;                       (setopt dap-firefox-debug-path firefox-debug-path
+;;                               dap-firefox-debug-program firefox-debug-program)))
 
-                  ;; https://github.com/emacs-lsp/dap-mode/issues/369
-                  ;; (when-let* ((node-debug-path
-                  ;;              "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.js-debug")
-                  ;;             (node-debug-program
-                  ;;              (concat "node " dap-node-debug-path "/src/extension.js")))
-                  ;;   (use-package dap-node
-                  ;;     :config
-                  ;;     (setopt dap-node-debug-path node-debug-path
-                  ;;             dap-node-debug-program node-debug-program)))
-                  ))))
+;;                   ;; https://github.com/emacs-lsp/dap-mode/issues/369
+;;                   ;; (when-let* ((node-debug-path
+;;                   ;;              "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.js-debug")
+;;                   ;;             (node-debug-program
+;;                   ;;              (concat "node " dap-node-debug-path "/src/extension.js")))
+;;                   ;;   (use-package dap-node
+;;                   ;;     :config
+;;                   ;;     (setopt dap-node-debug-path node-debug-path
+;;                   ;;             dap-node-debug-program node-debug-program)))
+;;                   ))))
 
-  (add-hook 'python-base-mode-hook (lambda () (use-package dap-python)))
+;;   (add-hook 'python-base-mode-hook (lambda () (use-package dap-python)))
 
-  (dolist (mode '(go-mode go-ts-mode))
-    (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
-      (add-hook mode-hook
-                (lambda ()
-                  (use-package dap-dlv-go)))))
+;;   (dolist (mode '(go-mode go-ts-mode))
+;;     (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
+;;       (add-hook mode-hook
+;;                 (lambda ()
+;;                   (use-package dap-dlv-go)))))
 
-  (dolist (mode '(c-mode-common c-ts-base-mode rust-mode rust-ts-mode))
-    (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
-      (add-hook mode-hook
-                (lambda ()
-                  (when-let* ((gdb-lldb-path
-                               (car
-                                (last
-                                 (file-expand-wildcards
-                                  (concat
-                                   dap-utils-extension-path
-                                   "/webfreak.debug-*")))))
-                              (gdb-lldb-debug-program
-                               `("node" ,(concat dap-gdb-lldb-path "/out/src/gdb.js"))))
-                    (use-package dap-gdb-lldb
-                      :config
-                      (setopt dap-gdb-lldb-path gdb-lldb-path
-                              dap-gdb-lldb-debug-program gdb-lldb-debug-program)))
+;;   (dolist (mode '(c-mode-common c-ts-base-mode rust-mode rust-ts-mode))
+;;     (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
+;;       (add-hook mode-hook
+;;                 (lambda ()
+;;                   (when-let* ((gdb-lldb-path
+;;                                (car
+;;                                 (last
+;;                                  (file-expand-wildcards
+;;                                   (concat
+;;                                    dap-utils-extension-path
+;;                                    "/webfreak.debug-*")))))
+;;                               (gdb-lldb-debug-program
+;;                                `("node" ,(concat dap-gdb-lldb-path "/out/src/gdb.js"))))
+;;                     (use-package dap-gdb-lldb
+;;                       :config
+;;                       (setopt dap-gdb-lldb-path gdb-lldb-path
+;;                               dap-gdb-lldb-debug-program gdb-lldb-debug-program)))
 
-                  (when-let* ((codelldb-debug-path
-                               (car
-                                (last
-                                 (file-expand-wildcards
-                                  (concats
-                                   dap-utils-extension-path
-                                   "/vadimcn.vscode-lldb-*")))))
-                              (codelldb-debug-program
-                               (concat dap-codelldb-debug-path "/adapter/codelldb")))
-                    (use-package dap-codelldb
-                      :config
-                      (setopt dap-codelldb-debug-path codelldb-debug-path
-                              dap-codelldb-debug-program codelldb-debug-program)))
+;;                   (when-let* ((codelldb-debug-path
+;;                                (car
+;;                                 (last
+;;                                  (file-expand-wildcards
+;;                                   (concats
+;;                                    dap-utils-extension-path
+;;                                    "/vadimcn.vscode-lldb-*")))))
+;;                               (codelldb-debug-program
+;;                                (concat dap-codelldb-debug-path "/adapter/codelldb")))
+;;                     (use-package dap-codelldb
+;;                       :config
+;;                       (setopt dap-codelldb-debug-path codelldb-debug-path
+;;                               dap-codelldb-debug-program codelldb-debug-program)))
 
-                  (when-let* ((cpptools-debug-path
-                               (car
-                                (last
-                                 (file-expand-wildcards
-                                  (concat
-                                   dap-utils-extension-path
-                                   (format "/ms-vscode.cpptools-*-%s-*" system-type))))))
-                              (cpptools-debug-program
-                               (concat dap-cpptools-debug-path "/debugAdapters/bin/OpenDebugAD7")))
-                    (use-package dap-cpptools
-                      :config
-                      (setopt dap-cpptools-debug-path cpptools-debug-path
-                              dap-cpptools-debug-program cpptools-debug-program))))))))
+;;                   (when-let* ((cpptools-debug-path
+;;                                (car
+;;                                 (last
+;;                                  (file-expand-wildcards
+;;                                   (concat
+;;                                    dap-utils-extension-path
+;;                                    (format "/ms-vscode.cpptools-*-%s-*" system-type))))))
+;;                               (cpptools-debug-program
+;;                                (concat dap-cpptools-debug-path "/debugAdapters/bin/OpenDebugAD7")))
+;;                     (use-package dap-cpptools
+;;                       :config
+;;                       (setopt dap-cpptools-debug-path cpptools-debug-path
+;;                               dap-cpptools-debug-program cpptools-debug-program))))))))
 
 ;; Auto-completion
 (use-package company
@@ -898,91 +919,91 @@ checker symbol."
                    file-name)))
     (expand-file-name (concat (file-name-as-directory dir) file-name))))
 
-(use-package spinner)
+;; (use-package spinner)
 
-(use-package flycheck
-  :quelpa (flycheck :fetcher github :repo "wyuenho/flycheck" :branch "my-fixes")
-  :delight
-  :config
+;; (use-package flycheck
+;;   :quelpa (flycheck :fetcher github :repo "wyuenho/flycheck" :branch "my-fixes")
+;;   :delight
+;;   :config
 
-  (flycheck-define-checker python-ruff
-    "A Python syntax and style checker using the ruff utility.
-To override the path to the ruff executable, set
-`flycheck-python-ruff-executable'.
-See URL `http://pypi.python.org/pypi/ruff'."
-    :command ("ruff"
-              "--format=text"
-              (eval (when buffer-file-name
-                      (concat "--stdin-filename=" buffer-file-name)))
-              "-")
-    :standard-input t
-    :error-filter (lambda (errors)
-                    (let ((errors (flycheck-sanitize-errors errors)))
-                      (seq-map #'flycheck-flake8-fix-error-level errors)))
-    :error-patterns
-    ((warning line-start
-              (file-name) ":" line ":" (optional column ":") " "
-              (id (one-or-more (any alpha)) (one-or-more digit)) " "
-              (message (one-or-more not-newline))
-              line-end))
-    :modes python-mode)
+;;   (flycheck-define-checker python-ruff
+;;     "A Python syntax and style checker using the ruff utility.
+;; To override the path to the ruff executable, set
+;; `flycheck-python-ruff-executable'.
+;; See URL `http://pypi.python.org/pypi/ruff'."
+;;     :command ("ruff"
+;;               "--format=text"
+;;               (eval (when buffer-file-name
+;;                       (concat "--stdin-filename=" buffer-file-name)))
+;;               "-")
+;;     :standard-input t
+;;     :error-filter (lambda (errors)
+;;                     (let ((errors (flycheck-sanitize-errors errors)))
+;;                       (seq-map #'flycheck-flake8-fix-error-level errors)))
+;;     :error-patterns
+;;     ((warning line-start
+;;               (file-name) ":" line ":" (optional column ":") " "
+;;               (id (one-or-more (any alpha)) (one-or-more digit)) " "
+;;               (message (one-or-more not-newline))
+;;               line-end))
+;;     :modes python-mode)
 
-  (add-to-list 'flycheck-checkers 'python-ruff)
+;;   (add-to-list 'flycheck-checkers 'python-ruff)
 
-  (defun flycheck-show-help-function (msg)
-    (when flycheck-mode
-      (if (null msg)
-          (flycheck-clear-displayed-errors)
-        (pcase-let* ((`(,frame ,x . ,y) (mouse-position))
-                     (win (window-at x y frame))
-                     (`(,body-left ,body-top ,@_) (window-body-edges win))
-                     (col (max 1 (- x body-left (or display-line-numbers-width 0))))
-                     (row (- y body-top)))
-          (with-current-buffer (window-buffer win)
-            (save-excursion
-              (goto-char (point-min))
-              (forward-line (1- (+ (line-number-at-pos (window-start win)) row)))
-              (move-to-column (1- col))
-              (when-let (errors (flycheck-overlay-errors-at (point)))
-                (flycheck-display-errors errors))))))))
+;;   (defun flycheck-show-help-function (msg)
+;;     (when flycheck-mode
+;;       (if (null msg)
+;;           (flycheck-clear-displayed-errors)
+;;         (pcase-let* ((`(,frame ,x . ,y) (mouse-position))
+;;                      (win (window-at x y frame))
+;;                      (`(,body-left ,body-top ,@_) (window-body-edges win))
+;;                      (col (max 1 (- x body-left (or display-line-numbers-width 0))))
+;;                      (row (- y body-top)))
+;;           (with-current-buffer (window-buffer win)
+;;             (save-excursion
+;;               (goto-char (point-min))
+;;               (forward-line (1- (+ (line-number-at-pos (window-start win)) row)))
+;;               (move-to-column (1- col))
+;;               (when-let (errors (flycheck-overlay-errors-at (point)))
+;;                 (flycheck-display-errors errors))))))))
 
-  (add-hook 'flycheck-mode-hook
-            (lambda ()
-              (when (display-mouse-p)
-                (if flycheck-mode
-                    (setq-local show-help-function 'flycheck-show-help-function)
-                  (kill-local-variable 'show-help-function)))))
+;;   (add-hook 'flycheck-mode-hook
+;;             (lambda ()
+;;               (when (display-mouse-p)
+;;                 (if flycheck-mode
+;;                     (setq-local show-help-function 'flycheck-show-help-function)
+;;                   (kill-local-variable 'show-help-function)))))
 
-  (add-hook 'flycheck-status-changed-functions
-            (lambda (status)
-              (when (fboundp 'spinner-start)
-                (pcase status
-                  (`running (spinner-start 'minibox))
-                  (- (spinner-stop)))))))
+;;   (add-hook 'flycheck-status-changed-functions
+;;             (lambda (status)
+;;               (when (fboundp 'spinner-start)
+;;                 (pcase status
+;;                   (`running (spinner-start 'minibox))
+;;                   (- (spinner-stop)))))))
 
-(use-package quick-peek)
+;; (use-package quick-peek)
 
-(use-package flycheck-inline
-  :quelpa (flycheck-inline :fetcher github :repo "wyuenho/flycheck-inline" :branch "flycheck-clear-displayed-errors-function")
-  :init
-  (defun flycheck-inline-quick-peek (msg pos err)
-    (when (or (not company-mode)
-              (not (company--active-p)))
-      (pcase-let* ((`(,_ ,body-top ,_ ,body-bottom) (window-body-edges))
-                   (line-offset (- (line-number-at-pos (point))
-                                   (line-number-at-pos (window-start))))
-                   (quick-peek-position
-                    (if (< (- body-bottom body-top line-offset) 10) 'above 'below))
-                   (ov (quick-peek-overlay-ensure-at pos))
-                   (contents (quick-peek-overlay-contents ov)))
-        (setf (quick-peek-overlay-contents ov)
-              (concat contents (when contents "\n") (string-trim msg)))
-        (quick-peek-update ov 1 4))))
-  :after (flycheck quick-peek company)
-  :hook (flycheck-mode . flycheck-inline-mode)
-  :custom
-  (flycheck-inline-display-function #'flycheck-inline-quick-peek)
-  (flycheck-inline-clear-function #'quick-peek-hide))
+;; (use-package flycheck-inline
+;;   :quelpa (flycheck-inline :fetcher github :repo "wyuenho/flycheck-inline" :branch "flycheck-clear-displayed-errors-function")
+;;   :init
+;;   (defun flycheck-inline-quick-peek (msg pos err)
+;;     (when (or (not company-mode)
+;;               (not (company--active-p)))
+;;       (pcase-let* ((`(,_ ,body-top ,_ ,body-bottom) (window-body-edges))
+;;                    (line-offset (- (line-number-at-pos (point))
+;;                                    (line-number-at-pos (window-start))))
+;;                    (quick-peek-position
+;;                     (if (< (- body-bottom body-top line-offset) 10) 'above 'below))
+;;                    (ov (quick-peek-overlay-ensure-at pos))
+;;                    (contents (quick-peek-overlay-contents ov)))
+;;         (setf (quick-peek-overlay-contents ov)
+;;               (concat contents (when contents "\n") (string-trim msg)))
+;;         (quick-peek-update ov 1 4))))
+;;   :after (flycheck quick-peek company)
+;;   :hook (flycheck-mode . flycheck-inline-mode)
+;;   :custom
+;;   (flycheck-inline-display-function #'flycheck-inline-quick-peek)
+;;   (flycheck-inline-clear-function #'quick-peek-hide))
 
 ;; REST API
 (use-package verb
@@ -1140,18 +1161,18 @@ optionally the window if possible."
                         :branch "fix-installable-package-detection"
                         :files (:defaults "data" (:exclude "*flymake.el"))))
 
-(use-package flycheck-package
-  :after (flycheck package-lint)
-  :config
-  (flycheck-package-setup)
-  (plist-put
-   (symbol-plist 'emacs-lisp-checkdoc)
-   'flycheck-predicate
-   #'package-lint-looks-like-a-package-p))
+;; (use-package flycheck-package
+;;   :after (flycheck package-lint)
+;;   :config
+;;   (flycheck-package-setup)
+;;   (plist-put
+;;    (symbol-plist 'emacs-lisp-checkdoc)
+;;    'flycheck-predicate
+;;    #'package-lint-looks-like-a-package-p))
 
-(use-package flycheck-cask
-  :after (flycheck)
-  :hook (flycheck-mode . flycheck-cask-setup))
+;; (use-package flycheck-cask
+;;   :after (flycheck)
+;;   :hook (flycheck-mode . flycheck-cask-setup))
 
 ;; Formatting
 (use-package reformatter
@@ -1221,13 +1242,14 @@ optionally the window if possible."
                     (add-node-modules-path))
                   (cond
                    ((and (eq formatter 'eslint)
-                         (or (not (featurep 'lsp-mode))
-                             (with-eval-after-load 'lsp-mode
-                               (or (not lsp-mode)
-                                   (and lsp-mode
-                                        (member 'eslint
-                                                (lsp-foreach-workspace
-                                                 (lsp--workspace-server-id lsp--cur-workspace))))))))
+                         ;; (or (not (featurep 'lsp-mode))
+                         ;;     (with-eval-after-load 'lsp-mode
+                         ;;       (or (not lsp-mode)
+                         ;;           (and lsp-mode
+                         ;;                (member 'eslint
+                         ;;                        (lsp-foreach-workspace
+                         ;;                         (lsp--workspace-server-id lsp--cur-workspace)))))))
+                         )
                     (if (or yarn-pnp-p (executable-find "yarn"))
                         (progn
                           (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'yarn-eslint-format-buffer)
@@ -1239,10 +1261,10 @@ optionally the window if possible."
                     (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'prettier-prettify))))))))
 
 ;; Java
-(use-package lsp-java
-  :after (lsp)
-  :custom
-  (lsp-java-server-install-dir (car (file-expand-wildcards "~/.vscode/extensions/redhat.java-*/server"))))
+;; (use-package lsp-java
+;;   :after (lsp)
+;;   :custom
+;;   (lsp-java-server-install-dir (car (file-expand-wildcards "~/.vscode/extensions/redhat.java-*/server"))))
 
 ;; Javascript
 (add-to-list 'auto-mode-alist '("\\.\\(?:cjs\\|jsx?\\|mjs\\)\\'" . js-mode))
@@ -1297,8 +1319,9 @@ optionally the window if possible."
   :mode ("\\.json[c5]?\\'" . jsonian-c-mode)
   :config
   (jsonian-no-so-long-mode)
-  (with-eval-after-load 'flycheck
-    (jsonian-enable-flycheck)))
+  ;; (with-eval-after-load 'flycheck
+  ;;   (jsonian-enable-flycheck))
+  )
 
 ;; TypeScript
 (use-package typescript-ts-mode)
@@ -1374,25 +1397,25 @@ optionally the window if possible."
                        (funcall 'string-join
                                 (append .tool.black.target-version) ","))))))))
 
-(use-package lsp-jedi
-  :after (lsp-mode))
+;; (use-package lsp-jedi
+;;   :after (lsp-mode))
 
-(use-package lsp-pyright
-  :after (lsp-mode pet)
-  :config
-  (pet-def-config-accessor pyrightconfig
-                           :file-name "\\`pyrightconfig.json\\'"
-                           :parser pet-parse-config-file)
-  (let ((client (gethash 'pyright lsp-clients)))
-    (setf (lsp--client-major-modes client) nil)
-    (setf (lsp--client-activation-fn client)
-          (lambda (file-name mode)
-            (and (or (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))
-                     (eq mode 'python-mode)
-                     (eq mode 'python-ts-mode))
-                 (or (pet-pyrightconfig)
-                     (let-alist (pet-pyproject)
-                       .tool.pyright)))))))
+;; (use-package lsp-pyright
+;;   :after (lsp-mode pet)
+;;   :config
+;;   (pet-def-config-accessor pyrightconfig
+;;                            :file-name "\\`pyrightconfig.json\\'"
+;;                            :parser pet-parse-config-file)
+;;   (let ((client (gethash 'pyright lsp-clients)))
+;;     (setf (lsp--client-major-modes client) nil)
+;;     (setf (lsp--client-activation-fn client)
+;;           (lambda (file-name mode)
+;;             (and (or (string-match-p "py[iw]?" (or (file-name-extension file-name) ""))
+;;                      (eq mode 'python-mode)
+;;                      (eq mode 'python-ts-mode))
+;;                  (or (pet-pyrightconfig)
+;;                      (let-alist (pet-pyproject)
+;;                        .tool.pyright)))))))
 
 (use-package pet
   :delight
@@ -1432,33 +1455,34 @@ optionally the window if possible."
 ;; Go
 (use-package go-mode
   :mode "\\.go\\'"
-  :config
-  (defun lsp-go-format-buffer ()
-    (condition-case err
-        (lsp-format-buffer)
-      (error (minibuffer-message (error-message-string err)))))
-  (add-hook 'go-mode-hook
-            (lambda ()
-              (add-hook 'before-save-hook 'goimports-format-buffer -100 t)
-              (add-hook 'before-save-hook 'gofmt-before-save nil t)
-              (with-eval-after-load 'lsp-mode
-                (add-hook 'lsp-managed-mode-hook
-                          (lambda ()
-                            (if lsp-managed-mode
-                                (progn
-                                  (setq-local lsp-enable-indentation t
-                                              lsp-enable-on-type-formatting t)
-                                  (remove-hook 'before-save-hook 'gofmt-before-save t)
-                                  (add-hook 'before-save-hook 'lsp-go-format-buffer nil t))
-                              (kill-local-variable 'lsp-enable-indentation)
-                              (kill-local-variable 'lsp-enable-on-type-formatting)
-                              (remove-hook 'before-save-hook 'lsp-go-format-buffer t)
-                              (add-hook 'before-save-hook 'gofmt-before-save nil t)))
-                          nil t)))))
+  ;; :config
+  ;; (defun lsp-go-format-buffer ()
+  ;;   (condition-case err
+  ;;       (lsp-format-buffer)
+  ;;     (error (minibuffer-message (error-message-string err)))))
+  ;; (add-hook 'go-mode-hook
+  ;;           (lambda ()
+  ;;             (add-hook 'before-save-hook 'goimports-format-buffer -100 t)
+  ;;             (add-hook 'before-save-hook 'gofmt-before-save nil t)
+  ;;             (with-eval-after-load 'lsp-mode
+  ;;               (add-hook 'lsp-managed-mode-hook
+  ;;                         (lambda ()
+  ;;                           (if lsp-managed-mode
+  ;;                               (progn
+  ;;                                 (setq-local lsp-enable-indentation t
+  ;;                                             lsp-enable-on-type-formatting t)
+  ;;                                 (remove-hook 'before-save-hook 'gofmt-before-save t)
+  ;;                                 (add-hook 'before-save-hook 'lsp-go-format-buffer nil t))
+  ;;                             (kill-local-variable 'lsp-enable-indentation)
+  ;;                             (kill-local-variable 'lsp-enable-on-type-formatting)
+  ;;                             (remove-hook 'before-save-hook 'lsp-go-format-buffer t)
+  ;;                             (add-hook 'before-save-hook 'gofmt-before-save nil t)))
+  ;;                         nil t))))
+  )
 
-(use-package flycheck-golangci-lint
-  :after (flycheck go-ts-mode)
-  :config (flycheck-golangci-lint-setup))
+;; (use-package flycheck-golangci-lint
+;;   :after (flycheck go-ts-mode)
+;;   :config (flycheck-golangci-lint-setup))
 
 ;; Rust
 (use-package rust-ts-mode
@@ -1480,8 +1504,8 @@ optionally the window if possible."
 (use-package swift-mode
   :mode "\\.swift\\'")
 
-(use-package lsp-sourcekit
-  :after (lsp-mode))
+;; (use-package lsp-sourcekit
+;;   :after (lsp-mode))
 
 ;; Scala
 (use-package scala-mode
@@ -1497,8 +1521,8 @@ optionally the window if possible."
    'self-insert-command
    minibuffer-local-completion-map))
 
-(use-package lsp-metals
-  :after (lsp-mode))
+;; (use-package lsp-metals
+;;   :after (lsp-mode))
 
 ;; Web
 (use-package sass-mode
