@@ -297,6 +297,7 @@
  '(page-break-lines-lighter "")
  '(parens-require-spaces nil)
  '(prescient-persist-mode t)
+ '(prescient-sort-full-matches-first t)
  '(prettier-enabled-parsers
    '(angular babel babel-flow babel-ts css espree flow graphql json json5 json-stringify less html markdown mdx meriyah scss sh typescript vue yaml))
  '(prettier-inline-errors-flag t)
@@ -407,7 +408,6 @@
  '(vc-follow-symlinks nil)
  '(vc-suppress-confirm t)
  '(vertico-cycle t)
- '(vertico-preselect 'first)
  '(vertico-resize nil)
  '(vr/engine 'pcre2el)
  '(vterm-always-compile-module t)
