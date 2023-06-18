@@ -130,6 +130,8 @@
    '(jsonian-mode js-ts-mode js-jsx-mode js-mode typescript-ts-mode tsx-ts-mode scss-mode css-mode css-ts-mode python-mode python-ts-mode ruby-mode ruby-ts-mode enh-ruby-mode go-mode go-ts-mode rust-mode rust-ts-mode swift-mode scala-mode c-mode c++-mode c-ts-mode c++-ts-mode objc-mode sh-mode sh-base-mode dockerfile-ts-mode))
  '(flycheck-javascript-eslint-executable "eslint_d")
  '(flycheck-pos-tip-max-width 80)
+ '(flymake-mode-line-format
+   '(" " flymake-mode-line-exception flymake-mode-line-counters))
  '(frame-resize-pixelwise t)
  '(garbage-collection-messages t)
  '(gcmh-high-cons-threshold 80000000)
