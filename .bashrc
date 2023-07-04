@@ -117,9 +117,6 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
         complete -C gocomplete go
     fi
 
-    # sdkman!
-    [ "$(type -t sdk)" = 'function' ] && eval "$(sdk completion bash)"
-
     # gcloud
     if [ -s "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
         source "$HOME/.google-cloud-sdk/completion.bash.inc";
