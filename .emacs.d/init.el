@@ -672,7 +672,6 @@ region."
 ;;            rust-ts-mode
 ;;            scala-mode
 ;;            swift-mode
-;;            terraform-mode
 ;;            tuareg-mode
 ;;            typescript-ts-base-mode)
 ;;           . eglot-ensure)))
@@ -692,7 +691,6 @@ region."
            rust-ts-mode
            scala-mode
            swift-mode
-           terraform-mode
            tuareg-mode
            typescript-ts-base-mode)
           . lsp-deferred)
