@@ -26,8 +26,6 @@
 
 ;; Patch package.el so it's slightly less insane
 (with-eval-after-load 'package
-  (setq package-install-upgrade-built-in t)
-
   (defun package-delete-advice (fn &rest args)
     "Queue package deletion during native compilation."
     (if (and (native-comp-available-p)
