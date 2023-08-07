@@ -1,5 +1,7 @@
 [core]
 	autocrlf = input
+	fsmonitor = true
+	untrackedCache = true
 
 [credential]
 	helper = osxkeychain
