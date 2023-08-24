@@ -125,11 +125,6 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
     # aws
     [ -x "$(type -P aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
 
-    # pyenv
-    if [ -s "$PYENV_ROOT/completions/pyenv.bash" ]; then
-        source "$PYENV_ROOT/completions/pyenv.bash"
-    fi
-
     # git-subrepo
     if [ -s "$GIT_SUBREPO_ROOT/share/completion.bash" ]; then
         source "$GIT_SUBREPO_ROOT/share/completion.bash"
@@ -165,29 +160,6 @@ if [ "$(type -t goenv)" ]; then
     }
 
     goenv rehash --only-manage-paths
-fi
-
-# pyenv
-if [ "$(type -t pyenv)" != function ]; then
-    PYENV_SHELL=bash
-    export PYENV_SHELL
-    command pyenv rehash 2>/dev/null
-    pyenv() {
-        local command
-        command="${1:-}"
-        if [ "$#" -gt 0 ]; then
-            shift
-        fi
-
-        case "$command" in
-            activate|deactivate|rehash|shell)
-                eval "$(pyenv "sh-$command" "$@")"
-                ;;
-            *)
-                command pyenv "$command" "$@"
-                ;;
-        esac
-    }
 fi
 
 # Prompt

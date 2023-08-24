@@ -73,24 +73,6 @@ if [ -s "$HOME/.pythonrc" ]; then
     export PYTHONSTARTUP
 fi
 
-if [ -d "$HOME/.pyenv" ]; then
-    PYENV_ROOT="$HOME/.pyenv"
-    export PYENV_ROOT
-    PATH="$PYENV_ROOT/bin:$PATH"
-    if [ -x "$(type -P pyenv)" ]; then
-        eval "$(pyenv init --path)";
-        if pyenv commands | grep -q virtualenv; then
-            if [ -x "$(type -P starship)" ]; then
-                PATH="$PYENV_ROOT/plugins/pyenv-virtualenv/shims:${PATH}"
-                PYENV_VIRTUALENV_INIT=1
-                export PYENV_VIRTUALENV_INIT
-            else
-                eval "$(pyenv virtualenv-init -)"
-            fi
-        fi
-    fi
-fi
-
 # Node
 NVM_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/nvm"
 if [ -s "$NVM_DIR/nvm.sh" ]; then
