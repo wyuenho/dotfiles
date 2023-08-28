@@ -83,11 +83,9 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
         source /etc/bash_completion
     elif [ -s /opt/local/etc/bash_completion ]; then # MacPorts
         source /opt/local/etc/bash_completion
-    elif [ -s /usr/local/etc/bash_completion ]; then # Homebrew
-        source /usr/local/etc/bash_completion
     fi
 
-    # homebrew
+    # Homebrew
     if [ -x "$(type -P brew)" ]; then
         HOMEBREW_PREFIX="$(brew --prefix)"
         if [ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]; then
@@ -96,6 +94,10 @@ if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COM
             for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
                 [ -r "${COMPLETION}" ] && source "${COMPLETION}"
             done
+        fi
+
+        if [ -s "${HOMEBREW_PREFIX}/etc/bash_completion" ]; then
+            source "${HOMEBREW_PREFIX}/etc/bash_completion"
         fi
     fi
 
