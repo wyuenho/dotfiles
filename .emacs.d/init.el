@@ -2110,12 +2110,6 @@ ELEMENT is only added once."
 
   (purpose-mode 1)
 
-  (add-hook 'window-setup-hook
-            (lambda ()
-              (let ((win (selected-window)))
-                (purpose-mode 1)
-                (select-window win))))
-
   ;; (with-eval-after-load 'debug
   ;;   (defun purpose--debug (fn &rest args)
   ;;     "Ignore `pop-to-buffer' display actions given by `debug'."

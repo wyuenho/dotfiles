@@ -125,12 +125,7 @@ versions due to limitations in package.el."
                 ('ns
                  (setf ns-use-thin-smoothing t
                        ns-use-mwheel-momentum t
-                       ns-use-mwheel-acceleration t
-                       x-colors (ns-list-colors)))))))
-
-;; After desktop.el has restored all the buffers, the top of the buffer list in
-;; the last emacs session should be restored as the top.
-(setf initial-buffer-choice (lambda () (car (buffer-list))))
+                       ns-use-mwheel-acceleration t))))))
 
 ;; No more yes and no and y and n inconsistencies
 (fset 'yes-or-no-p 'y-or-n-p)
