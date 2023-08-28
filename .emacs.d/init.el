@@ -686,6 +686,7 @@ region."
     (expand-file-name (concat (file-name-as-directory dir) file-name))))
 
 (use-package lsp-mode
+  :after (projectile)
   :delight (lsp-mode) (lsp-lens-mode)
   :hook (((c-mode-common
            c-ts-base-mode
@@ -1350,7 +1351,7 @@ optionally the window if possible."
              ("C-c M-:" . nodejs-repl-switch-to-repl)))
 
 (use-package jsonian
-  :after so-long
+  :after (so-long)
   :mode ("\\.json[c5]?\\'" . jsonian-c-mode)
   :config
   (jsonian-no-so-long-mode)
@@ -1622,7 +1623,7 @@ optionally the window if possible."
       "s" "projectile-search")))
 
 (use-package projectile-rails
-  :after projectile
+  :after (projectile)
   :delight
   :config
   (projectile-rails-global-mode)
