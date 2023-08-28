@@ -103,3 +103,6 @@
 	smtpEncryption = tls
 	smtpServer = smtp.gmail.com
 	smtpServerPort = 465
+
+[index]
+	version = 4
