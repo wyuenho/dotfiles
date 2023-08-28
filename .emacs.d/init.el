@@ -677,6 +677,14 @@ region."
 ;;            typescript-ts-base-mode)
 ;;           . eglot-ensure)))
 
+(defun find-file-from-project-root (file-name)
+  (when-let ((dir (locate-dominating-file
+                   (or (and (functionp 'projectile-project-root)
+                            (projectile-project-root))
+                       default-directory)
+                   file-name)))
+    (expand-file-name (concat (file-name-as-directory dir) file-name))))
+
 (use-package lsp-mode
   :delight (lsp-mode) (lsp-lens-mode)
   :hook (((c-mode-common
@@ -700,6 +708,19 @@ region."
                          (lsp-enable-which-key-integration)))))
   :config
   (setf read-process-output-max (* 1024 1024 10))
+
+  (with-eval-after-load 'lsp-javascript
+    (let ((client (gethash 'deno-ls lsp-clients)))
+      (setf (lsp--client-major-modes client) nil)
+      (setf (lsp--client-priority client) -1)
+      (setf (lsp--client-activation-fn client)
+            (lambda (file-name &optional _)
+              (and (or (string-match-p "\\.mjs\\|\\.[jt]sx?\\'" file-name)
+                       (and (derived-mode-p 'js-base-mode 'typescript-mode 'typescript-ts-base-mode)
+                            (not (derived-mode-p 'json-mode))))
+                   (or
+                    (find-file-from-project-root "deno.json")
+                    (find-file-from-project-root "deno.jsonc")))))))
 
   (with-eval-after-load 'flycheck
     (defvar-local lsp-flycheck-checkers nil)
@@ -908,14 +929,6 @@ checker symbol."
               (add-to-list 'company-transformers 'company-sort-prefer-same-case-prefix t))))
 
 ;; Linting
-(defun find-file-from-project-root (file-name)
-  (when-let ((dir (locate-dominating-file
-                   (or (and (functionp 'projectile-project-root)
-                            (projectile-project-root))
-                       default-directory)
-                   file-name)))
-    (expand-file-name (concat (file-name-as-directory dir) file-name))))
-
 (use-package spinner)
 
 (use-package flycheck
@@ -1207,34 +1220,49 @@ optionally the window if possible."
             "--stdin-filename"
             ,buffer-file-name
             "--ext"
-            ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx")))
+            ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx"))
 
-(dolist (mode '(css-base-mode js-base-mode jsonian-mode typescript-ts-base-mode web-mode yaml-mode yaml-ts-mode))
+  (reformatter-define denofmt-format
+    :program "deno"
+    :args `("fmt" "-")))
+
+(dolist (mode '(
+                ;; css-base-mode
+                js-base-mode
+                jsonian-mode
+                typescript-ts-base-mode
+                ;; web-mode
+                ;; yaml-mode
+                ;; yaml-ts-mode
+                ))
   (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook mode-hook
               (lambda ()
-                (let ((formatter
-                       (when-let* ((package-json-file
-                                    (find-file-from-project-root "package.json"))
-                                   (package-json
-                                    (and package-json-file
-                                         (json-read-file package-json-file)))
-                                   (devDependencies
-                                    (and package-json
-                                         (alist-get 'devDependencies package-json)))
-                                   (formatter-styles
-                                    '((prettier prettier-eslint prettier)
-                                      (eslint eslint-plugin-prettier eslint))))
-                         (car (seq-filter 'identity
-                                          (map-apply
-                                           (lambda (command packages)
-                                             (and (seq-some
-                                                   (lambda (package)
-                                                     (map-contains-key devDependencies package))
-                                                   packages)
-                                                  command))
-                                           formatter-styles)))))
-                      (yarn-pnp-p (find-file-from-project-root ".pnp.js")))
+                (let* ((formatter-styles
+                        '((prettier prettier-eslint prettier)
+                          (eslint eslint-plugin-prettier eslint)))
+                       (formatter
+                        (or (when-let* ((package-json-file
+                                         (find-file-from-project-root "package.json"))
+                                        (package-json
+                                         (and package-json-file
+                                              (json-read-file package-json-file)))
+                                        (devDependencies
+                                         (and package-json
+                                              (alist-get 'devDependencies package-json))))
+                              (car (seq-filter 'identity
+                                               (map-apply
+                                                (lambda (command packages)
+                                                  (and (seq-some
+                                                        (lambda (package)
+                                                          (map-contains-key devDependencies package))
+                                                        packages)
+                                                       command))
+                                                formatter-styles))))
+                            (and (or (find-file-from-project-root "deno.json")
+                                     (find-file-from-project-root "deno.jsonc"))
+                                 'denofmt)))
+                       (yarn-pnp-p (find-file-from-project-root ".pnp.js")))
                   (unless (and yarn-pnp-p (functionp 'add-node-modules-path))
                     (add-node-modules-path))
                   (cond
@@ -1252,6 +1280,9 @@ optionally the window if possible."
                           (yarn-eslint-format-on-save-mode))
                       (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'eslint-format-buffer)
                       (eslint-format-on-save-mode)))
+                   ((eq formatter 'denofmt)
+                    (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'denofmt-format-buffer)
+                    (denofmt-format-on-save-mode))
                    ((and (functionp 'prettier-mode) (functionp 'prettier-prettify) (executable-find "prettier"))
                     (prettier-mode)
                     (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'prettier-prettify))))))))
@@ -1263,7 +1294,8 @@ optionally the window if possible."
   (lsp-java-server-install-dir (car (file-expand-wildcards "~/.vscode/extensions/redhat.java-*/server"))))
 
 ;; Javascript
-(add-to-list 'auto-mode-alist '("\\.\\(?:cjs\\|jsx?\\|mjs\\)\\'" . js-mode))
+(add-to-list 'auto-mode-alist '("\\(?:\\.\\(?:[cm]?js\\)\\)" . js-ts-mode))
+(add-to-list 'auto-mode-alist '("\\(?:\\.jsx\\)" . js-jsx-mode))
 
 (dolist (mode '(js-mode js-ts-mode js-jsx-mode))
   (add-hook (intern (concat (symbol-name mode) "-hook"))
@@ -1275,6 +1307,13 @@ optionally the window if possible."
                                ("C-M-x"   . nil)
                                ("<menu-bar>" . nil)))
                 (define-key (symbol-value (derived-mode-map-name mode)) (kbd key) command)))))
+
+(use-package jsdoc
+  :config
+  (dolist (mode '(js-mode js-ts-mode js-jsx-mode typescript-ts-mode tsx-ts-mode))
+    (add-hook (intern (concat (symbol-name mode) "-hook"))
+              (lambda ()
+                (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c d") 'jsdoc)))))
 
 (use-package prettier
   :delight
@@ -1319,7 +1358,9 @@ optionally the window if possible."
     (jsonian-enable-flycheck)))
 
 ;; TypeScript
-(use-package typescript-ts-mode)
+(use-package typescript-ts-mode
+  :config
+  (add-to-list 'typescript-ts-mode--keywords "satisfies"))
 
 (use-package ts-comint
   :bind (:map typescript-ts-mode-map
