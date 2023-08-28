@@ -516,7 +516,8 @@ region."
               (require 'smartparens-config)
 
               (with-eval-after-load 'c-ts-mode
-                (add-to-list 'sp-c-modes 'c-ts-mode 'c++-ts-mode)
+                (add-to-list 'sp-c-modes 'c-ts-mode)
+                (add-to-list 'sp-c-modes 'c++-ts-mode)
                 (require 'smartparens-c))
 
               (with-eval-after-load 'js
