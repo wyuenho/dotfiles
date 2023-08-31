@@ -303,8 +303,6 @@
    '(angular babel babel-flow babel-ts css espree flow graphql json json5 json-stringify less html markdown mdx meriyah scss sh typescript vue yaml))
  '(prettier-inline-errors-flag t)
  '(prettier-pre-warm 'some)
- '(projectile-project-root-functions
-   '(projectile-root-local projectile-root-marked projectile-root-top-down projectile-root-bottom-up projectile-root-top-down-recurring))
  '(projectile-project-search-path '("~/Documents/workspace"))
  '(purpose-x-code1-dired-goto-file t)
  '(purpose-x-code1-update-idle-delay 0.5)
