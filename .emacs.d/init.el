@@ -117,9 +117,9 @@ under `user-emacs-directory'.  If it exists, load it."
   :if (memq (window-system) '(mac ns))
   :config (exec-path-from-shell-initialize))
 
-(use-package direnv
-  :quelpa (direnv :fetcher github :repo "wyuenho/emacs-direnv" :branch "early-reliable-update-env")
-  :after (exec-path-from-shell))
+(use-package envrc
+  :config
+  (add-hook 'change-major-mode-after-body-hook 'envrc-mode))
 
 (setf backup-directory-alist
       `(("." . ,(concat user-emacs-directory "backups"))))
