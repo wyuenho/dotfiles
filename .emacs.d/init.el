@@ -1679,7 +1679,8 @@ optionally the window if possible."
               (dolist (frame (frame-list))
                 (when (not (frame-parent frame))
                   (dolist (buf (buffer-list frame))
-                    (when (not (string-prefix-p " " (buffer-name buf)))
+                    (when (and (not (string-prefix-p " " (buffer-name buf)))
+                               (buffer-live-p buf))
                       (with-current-buffer buf
                         (when vc-mode
                           (vc-refresh-state)
