@@ -127,7 +127,7 @@ under `user-emacs-directory'.  If it exists, load it."
 ;; Automatically wrap overly long lines for all text modes
 (add-hook 'text-mode-hook (lambda ()
                             (unless (member major-mode '(yaml-mode yaml-ts-mode markdown-mode))
-                              (auto-fill-mode 1))))
+                              (auto-fill-mode))))
 
 ;; Make sure xwidget buffers are killed when quitting window
 (with-eval-after-load 'xwidget
@@ -157,10 +157,10 @@ under `user-emacs-directory'.  If it exists, load it."
 ;; Turn on subword mode and linum mode for all prog and text modes
 (dolist (hook '(prog-mode-hook text-mode-hook conf-mode-hook go-dot-mod-mode-hook))
   (add-hook hook (lambda ()
-                   (subword-mode 1)
+                   (subword-mode)
                    (if (fboundp 'display-line-numbers-mode)
-                       (display-line-numbers-mode 1)
-                     (linum-mode 1)
+                       (display-line-numbers-mode)
+                     (linum-mode)
                      ;; Renumber the current buffer after reverting the buffer
                      (add-hook 'after-revert-hook 'linum-update-current)))))
 
@@ -448,7 +448,7 @@ region."
     (if (not (use-region-p))
         (progn
           (er/expand-region arg)
-          (read-only-mode 1)
+          (read-only-mode)
           (let ((keymap (make-sparse-keymap)))
             (define-key keymap (kbd "=") 'er/expand-region)
             (define-key keymap (kbd "-") 'er/contract-region)
@@ -553,9 +553,7 @@ region."
                   (sp-local-pair "\"\"\"" "\"\"\"")
                   (sp-local-pair "(" ")" :post-handlers '(:add sp-python-maybe-add-colon-python))))
 
-              (add-hook 'eval-expression-minibuffer-setup-hook
-                        (lambda ()
-                          (smartparens-mode 1))))))
+              (add-hook 'eval-expression-minibuffer-setup-hook 'smartparens-mode))))
 
 ;; Cross-machine fomatting
 (use-package editorconfig
@@ -1406,7 +1404,7 @@ optionally the window if possible."
   (with-eval-after-load 'pet
     (add-hook 'pet-mode-hook (lambda ()
                                (when python-black-command
-                                 (python-black-on-save-mode 1))))))
+                                 (python-black-on-save-mode))))))
 
 (use-package python-isort
   :delight python-isort-on-save-mode
@@ -1414,7 +1412,7 @@ optionally the window if possible."
   (with-eval-after-load 'pet
     (add-hook 'pet-mode-hook (lambda ()
                                (when python-isort-command
-                                 (python-isort-on-save-mode 1))))))
+                                 (python-isort-on-save-mode))))))
 
 (use-package python-pytest)
 
@@ -1612,7 +1610,7 @@ optionally the window if possible."
                                     :test "go test ./..."
                                     :test-suffix "_test")
   (global-set-key (kbd "C-x p") projectile-command-map)
-  (projectile-mode 1)
+  (projectile-mode)
   (with-eval-after-load 'which-key
     (which-key-add-key-based-replacements "C-x p" "projectile")
     (which-key-add-keymap-based-replacements projectile-command-map
@@ -1670,10 +1668,10 @@ optionally the window if possible."
 (use-package diff-hl
   :config
   (if (display-graphic-p)
-      (diff-hl-flydiff-mode 1)
-    (diff-hl-margin-mode 1))
+      (diff-hl-flydiff-mode)
+    (diff-hl-margin-mode))
   (with-eval-after-load 'dired
-    (add-hook 'dired-mode-hook (lambda () (diff-hl-dired-mode 1)))))
+    (add-hook 'dired-mode-hook 'diff-hl-dired-mode)))
 
 (use-package magit
   :config
@@ -1798,7 +1796,7 @@ See `file-notify-add-watch' for more details."
 
 (use-package magit-todos
   :after (magit)
-  :config (magit-todos-mode 1))
+  :config (magit-todos-mode))
 
 (use-package magit-lfs
   :after (magit))
@@ -2108,7 +2106,7 @@ ELEMENT is only added once."
   (purpose-x-kill-setup)
   (purpose-x-magit-single-on)
 
-  (purpose-mode 1)
+  (purpose-mode)
 
   ;; (with-eval-after-load 'debug
   ;;   (defun purpose--debug (fn &rest args)
