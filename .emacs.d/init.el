@@ -663,16 +663,19 @@ region."
 ;;            go-mode
 ;;            go-ts-mode
 ;;            groovy-mode
-;;            js-base-mode
 ;;            python-base-mode
 ;;            reason-mode
 ;;            rust-mode
 ;;            rust-ts-mode
 ;;            scala-mode
 ;;            swift-mode
-;;            tuareg-mode
-;;            typescript-ts-base-mode)
-;;           . eglot-ensure)))
+;;            tuareg-mode)
+;;           . eglot-ensure))
+;;   :config
+;;   (add-hook 'eglot-managed-mode-hook
+;;             (lambda ()
+;;               (when (eglot-managed-p)
+;;                 (flycheck-mode -1)))))
 
 (defun find-file-from-project-root (file-name)
   (when-let ((dir (locate-dominating-file
@@ -698,13 +701,14 @@ region."
            rust-ts-mode
            scala-mode
            swift-mode
-           tuareg-mode
-           typescript-ts-base-mode)
-          . lsp-deferred)
-         (lsp-mode . (lambda ()
-                       (with-eval-after-load 'which-key
-                         (lsp-enable-which-key-integration)))))
+           tuareg-mode)
+          . lsp-deferred))
   :config
+  (add-hook 'lsp-mode-hook
+            (lambda ()
+              (with-eval-after-load 'which-key
+                (lsp-enable-which-key-integration))))
+
   (setf read-process-output-max (* 1024 1024 10))
 
   (with-eval-after-load 'lsp-javascript
@@ -766,6 +770,11 @@ checker symbol."
                                        '((warning . html-tidy))))))
                              ((derived-mode-p 'js-base-mode)
                               '((warning . javascript-eslint)))
+                             ((and (derived-mode-p 'typescript-ts-base-mode)
+                                   (or
+                                    (find-file-from-project-root "deno.json")
+                                    (find-file-from-project-root "deno.jsonc")))
+                              '((warning . deno-lint)))
                              ((derived-mode-p 'typescript-ts-base-mode)
                               '((warning . javascript-eslint)))
                              ((derived-mode-p 'python-base-mode)
@@ -802,7 +811,7 @@ checker symbol."
   :config
   (setf dap-utils-extension-path (expand-file-name "~/.vscode/extensions"))
 
-  (dolist (mode '(js-base-mode typescript-ts-mode))
+  (dolist (mode '(js-base-mode typescript-ts-base-mode))
     (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
       (add-hook 'mode-hook
                 (lambda ()
@@ -1256,10 +1265,7 @@ optionally the window if possible."
                                                           (map-contains-key devDependencies package))
                                                         packages)
                                                        command))
-                                                formatter-styles))))
-                            (and (or (find-file-from-project-root "deno.json")
-                                     (find-file-from-project-root "deno.jsonc"))
-                                 'denofmt)))
+                                                formatter-styles))))))
                        (yarn-pnp-p (find-file-from-project-root ".pnp.js")))
                   (unless (and yarn-pnp-p (functionp 'add-node-modules-path))
                     (add-node-modules-path))
@@ -1278,10 +1284,9 @@ optionally the window if possible."
                           (yarn-eslint-format-on-save-mode))
                       (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'eslint-format-buffer)
                       (eslint-format-on-save-mode)))
-                   ((eq formatter 'denofmt)
-                    (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'denofmt-format-buffer)
-                    (denofmt-format-on-save-mode))
-                   ((and (functionp 'prettier-mode) (functionp 'prettier-prettify) (executable-find "prettier"))
+                   ((and (eq formatter 'prettier)
+                         (featurep 'prettier)
+                         (executable-find "prettier"))
                     (prettier-mode)
                     (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'prettier-prettify))))))))
 
@@ -1360,8 +1365,27 @@ optionally the window if possible."
   :config
   (add-to-list 'typescript-ts-mode--keywords "satisfies"))
 
+(use-package flycheck-deno
+  :after (flycheck)
+  :config
+  (flycheck-deno-setup))
+
+(use-package tide
+  :config
+  (add-hook 'typescript-ts-base-mode-hook
+            (lambda ()
+              (cond ((or (find-file-from-project-root "tsconfig.json")
+                         (find-file-from-project-root "jsconfig.json"))
+                     (tide-setup)
+                     (tide-hl-identifier-mode))
+                    ((or (find-file-from-project-root "deno.json")
+                         (find-file-from-project-root "deno.jsonc"))
+                     (lsp-deferred)
+                     (define-key typescript-ts-base-mode-map (kbd "C-c f") 'denofmt-format-buffer)
+                     (denofmt-format-on-save-mode))))))
+
 (use-package ts-comint
-  :bind (:map typescript-ts-mode-map
+  :bind (:map typescript-ts-base-mode-map
               ("C-x C-e" . ts-send-last-sexp)
               ("C-c e e" . ts-send-last-sexp-and-go)
               ("C-c e r" . ts-send-region-and-go)
