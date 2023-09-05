@@ -1100,9 +1100,23 @@ optionally the window if possible."
     (add-hook 'term-mode-hook 'eterm-256color-mode)))
 
 ;; Markup and config languages
-(use-package yaml-ts-mode)
+(use-package yaml-mode
+  :config
+  (add-hook 'yaml-mode-hook
+            (lambda ()
+              (with-eval-after-load 'prettier
+                (when (executable-find "prettier")
+                  (prettier-mode)
+                  (define-key yaml-mode-map (kbd "C-c f") 'prettier-prettify))))))
 
-(use-package toml-ts-mode)
+(use-package toml-ts-mode
+  :config
+  (add-hook 'toml-ts-mode-hook
+            (lambda ()
+              (with-eval-after-load 'prettier
+                (when (executable-find "prettier")
+                  (prettier-mode)
+                  (define-key toml-ts-mode-map (kbd "C-c f") 'prettier-prettify))))))
 
 (use-package dockerfile-ts-mode)
 
@@ -1234,15 +1248,11 @@ optionally the window if possible."
     :program "deno"
     :args `("fmt" "-")))
 
-(dolist (mode '(
-                ;; css-base-mode
+(dolist (mode '(css-base-mode
                 js-base-mode
                 jsonian-mode
                 typescript-ts-base-mode
-                ;; web-mode
-                ;; yaml-mode
-                ;; yaml-ts-mode
-                ))
+                web-mode))
   (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
     (add-hook mode-hook
               (lambda ()
