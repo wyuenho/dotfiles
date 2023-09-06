@@ -992,6 +992,28 @@ See URL `http://pypi.python.org/pypi/ruff'."
   ;;                   (setq-local show-help-function 'flycheck-show-help-function)
   ;;                 (kill-local-variable 'show-help-function)))))
 
+
+  ;; With `flycheck' and `purpose-x-code-1' turned on, under `emacs-lisp-mode',
+  ;; `diff-hl-dired-mode' on the dired `*Files*' will create git index lock
+  ;; contention during `vc-git-dir-status-update' because some checkers like
+  ;; emacs-lisp keeps creating and deleting files in the directory in-place.
+  (defun flycheck-checker-arguments-advice (fn &rest args)
+    "Ensure all checkers using `source-inplace' use `source' instead.
+
+Some checkers like pyright might refuse to work properly, but
+that's probably a command definition error. In that case, fix it
+and submit a PR.
+
+FN is `flycheck-checker-arguments', ARGS is its arguments."
+    (let* ((checker (car args))
+           (result (apply fn args))
+           (source-inplace-pos (seq-position result 'source-inplace)))
+      (when source-inplace-pos
+        (setf (elt result source-inplace-pos) 'source))
+      result))
+
+  (advice-add 'flycheck-checker-arguments :around 'flycheck-checker-arguments-advice)
+
   (add-hook 'flycheck-status-changed-functions
             (lambda (status)
               (when (fboundp 'spinner-start)
