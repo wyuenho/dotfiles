@@ -76,7 +76,10 @@ fi
 [ -s ~/.bash_aliases ] && source ~/.bash_aliases
 
 # Bash Completion
-if [ -z "$INSIDE_EMACS" ] || [ "$INSIDE_EMACS" = "vterm" ] || [ "$EMACS_BASH_COMPLETE" = "t" ] && ! shopt -oq posix; then
+if [ -z "$INSIDE_EMACS" ] \
+       || [ "$INSIDE_EMACS" = "vterm" ] \
+       || [ "$EMACS_BASH_COMPLETE" = "t" ] \
+       && ! shopt -oq posix; then
     if [ -s /usr/share/bash-completion/bash_completion ]; then # Debian
         source /usr/share/bash-completion/bash_completion
     elif [ -s /etc/bash_completion ]; then
@@ -282,7 +285,11 @@ if [ -x "$(type -P fzf)" ]; then
         source "$FZF_PREFIX/key-bindings.bash"
     fi
 
-    if [ -r "$FZF_PREFIX/completion.bash" ]; then
+    if [ -z "$INSIDE_EMACS" ] \
+           || [ "$INSIDE_EMACS" = "vterm" ] \
+           || [ "$EMACS_BASH_COMPLETE" = "t" ] \
+           && ! shopt -oq posix \
+           && [ -r "$FZF_PREFIX/completion.bash" ]; then
         source "$FZF_PREFIX/completion.bash"
     fi
 fi
