@@ -115,7 +115,7 @@ fi
 
 # Google Cloud SDK
 if [ -s "$HOME/.google-cloud-sdk/path.bash.inc" ]; then
-    CLOUDSDK_PYTHON="python"
+    CLOUDSDK_PYTHON="$(which python)"
     export CLOUDSDK_PYTHON
     source "$HOME/.google-cloud-sdk/path.bash.inc"
 fi
