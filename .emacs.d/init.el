@@ -1545,7 +1545,7 @@ optionally the window if possible."
                           nil t)))))
 
 (use-package flycheck-golangci-lint
-  :after (flycheck go-ts-mode)
+  :after (flycheck)
   :config (flycheck-golangci-lint-setup))
 
 ;; Rust
