@@ -779,7 +779,8 @@ checker symbol."
                              ((derived-mode-p 'typescript-ts-base-mode)
                               '((warning . javascript-eslint)))
                              ((derived-mode-p 'python-base-mode)
-                              '((warning . python-flake8)
+                              '((warning . python-ruff)
+                                (warning . python-flake8)
                                 (warning . python-mypy)
                                 (warning . python-pylint)))
                              ((derived-mode-p 'enh-ruby-mode)
@@ -943,30 +944,6 @@ checker symbol."
   :quelpa (flycheck :fetcher github :repo "wyuenho/flycheck" :branch "my-fixes")
   :delight
   :config
-
-  (flycheck-define-checker python-ruff
-    "A Python syntax and style checker using the ruff utility.
-To override the path to the ruff executable, set
-`flycheck-python-ruff-executable'.
-See URL `http://pypi.python.org/pypi/ruff'."
-    :command ("ruff"
-              "--format=text"
-              (eval (when buffer-file-name
-                      (concat "--stdin-filename=" buffer-file-name)))
-              "-")
-    :standard-input t
-    :error-filter (lambda (errors)
-                    (let ((errors (flycheck-sanitize-errors errors)))
-                      (seq-map #'flycheck-flake8-fix-error-level errors)))
-    :error-patterns
-    ((warning line-start
-              (file-name) ":" line ":" (optional column ":") " "
-              (id (one-or-more (any alpha)) (one-or-more digit)) " "
-              (message (one-or-more not-newline))
-              line-end))
-    :modes python-mode)
-
-  (add-to-list 'flycheck-checkers 'python-ruff)
 
   ;; (defun flycheck-show-help-function (msg)
   ;;   (when flycheck-mode
