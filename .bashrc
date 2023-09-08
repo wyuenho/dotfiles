@@ -30,7 +30,7 @@ if [ -x "$(type -P emacs)" ]; then
     ALTERNATE_EDITOR=
 
     export SUDO_EDITOR
-    SUDO_EDITOR="vim"
+    SUDO_EDITOR="vi"
 
     export HGMERGE
     HGMERGE="$EDITOR"
