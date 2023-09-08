@@ -1737,11 +1737,11 @@ optionally the window if possible."
         (magit-refresh-buffer)
       (unless revert-buffer-in-progress-p
         (cond
+         ((bound-and-true-p diff-hl-dired-mode)
+          (diff-hl-dired-update))
          ((or (bound-and-true-p diff-hl-flydiff-mode)
               (bound-and-true-p diff-hl-mode))
           (diff-hl-update))
-         ((bound-and-true-p diff-hl-dired-mode)
-          (diff-hl-dired-update))
          ((bound-and-true-p vc-dir-mode)
           (vc-dir-refresh)
           (when (bound-and-true-p diff-hl-dir-mode)
