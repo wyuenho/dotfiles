@@ -62,6 +62,22 @@ under `user-emacs-directory'.  If it exists, load it."
              (visual-line-mode       nil simple)
              (subword-mode           nil subword))))
 
+;; Replace the major mode name with its icon
+(use-package all-the-icons
+  :quelpa (all-the-icons :fetcher github :repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg"))
+  :if (display-graphic-p)
+  :config
+  (with-eval-after-load 'powerline
+    (defun powerline-major-mode-advice (fn &rest args)
+      (let* ((major-mode-segment (apply fn args))
+             (props (text-properties-at 0 major-mode-segment))
+             (icon (all-the-icons-icon-for-mode major-mode))
+             (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
+        (if face-prop
+            (apply 'propertize icon 'face face-prop props)
+          major-mode-segment)))
+    (advice-add 'powerline-major-mode :around 'powerline-major-mode-advice)))
+
 ;; Theme
 (use-package solarized-theme
   :if (display-graphic-p)
@@ -94,22 +110,6 @@ under `user-emacs-directory'.  If it exists, load it."
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
   (spaceline-toggle-buffer-encoding-abbrev-off))
-
-;; Replace the major mode name with its icon
-(use-package all-the-icons
-  :quelpa (all-the-icons :fetcher github :repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg"))
-  :if (display-graphic-p)
-  :config
-  (with-eval-after-load 'powerline
-    (defun powerline-major-mode-advice (fn &rest args)
-      (let* ((major-mode-segment (apply fn args))
-             (props (text-properties-at 0 major-mode-segment))
-             (icon (all-the-icons-icon-for-mode major-mode))
-             (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
-        (if face-prop
-            (apply 'propertize icon 'face face-prop props)
-          major-mode-segment)))
-    (advice-add 'powerline-major-mode :around 'powerline-major-mode-advice)))
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
 ;; should be done ASAP on init.
