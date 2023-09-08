@@ -87,7 +87,6 @@
 [merge]
 	tool = ediff
 	guitool = opendiff
-	conflictStyle = zdiff3
 	autoStash = true
 
 [rebase]
