@@ -1430,7 +1430,6 @@ optionally the window if possible."
 
 (use-package python-black
   :delight python-black-on-save-mode
-  ;; :quelpa (python-black :fetcher github :repo "wyuenho/emacs-python-black" :branch "blackd")
   :config
   (with-eval-after-load 'pet
     (add-hook 'pet-mode-hook (lambda ()
@@ -1446,22 +1445,6 @@ optionally the window if possible."
                                  (python-isort-on-save-mode))))))
 
 (use-package python-pytest)
-
-(defun python-get-black-d-request-headers ()
-  (let-alist (python-pyproject)
-    `(,@(if .tool.black.line-length
-            `(,(cons "X-Line-Length" (format "%s" .tool.black.line-length))))
-      ,@(if (and .tool.black.skip-string-normalization
-                 (not (eq .tool.black.skip.string-normalization :false)))
-            `(,(cons "X-Skip-String-Normalization" "1")))
-      ,@(if (or .tool.black.fast .tool.black.safe)
-            `(,(cons "X-Fast-Or-Safe" (if .tool.black.fast "fast" "safe"))))
-      ,@(if (or .tool.black.pyi .tool.black.target-version)
-            `(,(cons "X-Python-Variant"
-                     (if .tool.black.pyi
-                         "pyi"
-                       (funcall 'string-join
-                                (append .tool.black.target-version) ","))))))))
 
 (use-package lsp-jedi
   :after (lsp-mode))
