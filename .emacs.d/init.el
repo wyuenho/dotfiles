@@ -1158,7 +1158,6 @@ optionally the window if possible."
   :hook (emacs-lisp-mode . elisp-def-mode))
 
 (use-package helpful
-  :quelpa (helpful :fetcher github :repo "wyuenho/helpful" :branch "fix-nil-pos-for-defvar")
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
          ("C-h k" . helpful-key)
