@@ -771,11 +771,6 @@ checker symbol."
                                        '((warning . html-tidy))))))
                              ((derived-mode-p 'js-base-mode)
                               '((warning . javascript-eslint)))
-                             ((and (derived-mode-p 'typescript-ts-base-mode)
-                                   (or
-                                    (find-file-from-project-root "deno.json")
-                                    (find-file-from-project-root "deno.jsonc")))
-                              '((warning . deno-lint)))
                              ((derived-mode-p 'typescript-ts-base-mode)
                               '((warning . javascript-eslint)))
                              ((derived-mode-p 'python-base-mode)
@@ -1366,11 +1361,6 @@ optionally the window if possible."
 (use-package typescript-ts-mode
   :config
   (add-to-list 'typescript-ts-mode--keywords "satisfies"))
-
-(use-package flycheck-deno
-  :after (flycheck)
-  :config
-  (flycheck-deno-setup))
 
 (use-package tide
   :config
