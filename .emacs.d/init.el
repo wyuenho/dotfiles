@@ -106,6 +106,7 @@ under `user-emacs-directory'.  If it exists, load it."
 
 ;; Fancy mode line
 (use-package spaceline
+  :quelpa (spaceline :fetcher github :repo "wyuenho/spaceline" :branch "my-fixes")
   :config
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
@@ -1157,6 +1158,7 @@ optionally the window if possible."
   :hook (emacs-lisp-mode . elisp-def-mode))
 
 (use-package helpful
+  :quelpa (helpful :fetcher github :repo "wyuenho/helpful" :branch "fix-nil-pos-for-defvar")
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
          ("C-h k" . helpful-key)
