@@ -678,13 +678,17 @@ region."
 ;;               (when (eglot-managed-p)
 ;;                 (flycheck-mode -1)))))
 
-(defun find-file-from-project-root (file-name)
-  (when-let ((dir (locate-dominating-file
-                   (or (and (functionp 'projectile-project-root)
-                            (projectile-project-root))
-                       default-directory)
-                   file-name)))
-    (expand-file-name (concat (file-name-as-directory dir) file-name))))
+(defun find-file-from-project-root (&rest file-names)
+  (when-let ((root
+              (or (and (functionp 'projectile-project-root)
+                       (projectile-project-root))
+                  (and (functionp 'project-current)
+                       (functionp 'project-root)
+                       (expand-file-name (project-root (project-current)))))))
+    (seq-some
+     (lambda (file-name)
+       (car (file-expand-wildcards (concat (file-name-as-directory root) file-name) t)))
+     file-names)))
 
 (use-package lsp-mode
   :after (projectile)
@@ -704,6 +708,7 @@ region."
            swift-mode
            tuareg-mode)
           . lsp-deferred))
+  :demand
   :config
   (add-hook 'lsp-mode-hook
             (lambda ()
@@ -721,9 +726,7 @@ region."
               (and (or (string-match-p "\\.mjs\\|\\.[jt]sx?\\'" file-name)
                        (and (derived-mode-p 'js-base-mode 'typescript-mode 'typescript-ts-base-mode)
                             (not (derived-mode-p 'json-mode))))
-                   (or
-                    (find-file-from-project-root "deno.json")
-                    (find-file-from-project-root "deno.jsonc")))))))
+                   (find-file-from-project-root "deno.jsonc?"))))))
 
   (with-eval-after-load 'flycheck
     (defvar-local lsp-flycheck-checkers nil)
@@ -1360,21 +1363,21 @@ optionally the window if possible."
 ;; TypeScript
 (use-package typescript-ts-mode
   :config
-  (add-to-list 'typescript-ts-mode--keywords "satisfies"))
+  (add-to-list 'typescript-ts-mode--keywords "satisfies")
+  (add-hook 'typescript-ts-base-mode-hook
+            (lambda ()
+              (when (find-file-from-project-root "deno.jsonc?")
+                (lsp-deferred)
+                (define-key typescript-ts-base-mode-map (kbd "C-c f") 'denofmt-format-buffer)
+                (denofmt-format-on-save-mode)))))
 
 (use-package tide
   :config
   (add-hook 'typescript-ts-base-mode-hook
             (lambda ()
-              (cond ((or (find-file-from-project-root "tsconfig.json")
-                         (find-file-from-project-root "jsconfig.json"))
-                     (tide-setup)
-                     (tide-hl-identifier-mode))
-                    ((or (find-file-from-project-root "deno.json")
-                         (find-file-from-project-root "deno.jsonc"))
-                     (lsp-deferred)
-                     (define-key typescript-ts-base-mode-map (kbd "C-c f") 'denofmt-format-buffer)
-                     (denofmt-format-on-save-mode))))))
+              (when (find-file-from-project-root "[jt]sconfig.json")
+                (tide-setup)
+                (tide-hl-identifier-mode)))))
 
 (use-package ts-comint
   :bind (:map typescript-ts-base-mode-map
