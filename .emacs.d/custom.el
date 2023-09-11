@@ -127,7 +127,7 @@
  '(flycheck-emacs-lisp-initialize-packages t)
  '(flycheck-emacs-lisp-load-path 'inherit)
  '(flycheck-global-modes
-   '(jsonian-mode js-ts-mode js-jsx-mode js-mode typescript-ts-mode tsx-ts-mode scss-mode css-mode css-ts-mode python-mode python-ts-mode ruby-mode ruby-ts-mode enh-ruby-mode go-mode go-ts-mode rust-mode rust-ts-mode swift-mode scala-mode c-mode c++-mode c-ts-mode c++-ts-mode objc-mode sh-mode sh-base-mode dockerfile-ts-mode))
+   '(bash-ts-mode c++-mode c++-ts-mode c-mode c-ts-mode css-mode css-ts-mode dockerfile-ts-mode enh-ruby-mode go-mode go-ts-mode js-jsx-mode js-mode js-ts-mode json-ts-mode jsonian-mode objc-mode python-mode python-ts-mode ruby-mode ruby-ts-mode rust-mode rust-ts-mode scala-mode scss-mode sh-base-mode sh-mode swift-mode tsx-ts-mode typescript-ts-mode))
  '(flycheck-javascript-eslint-executable "eslint_d")
  '(flycheck-pos-tip-max-width 80)
  '(flymake-mode-line-format
@@ -235,8 +235,10 @@
  '(major-mode-remap-alist
    '((python-mode . python-ts-mode)
      (js-mode . js-ts-mode)
+     (js-jsx-mode . js-ts-mode)
      (css-mode . css-ts-mode)
-     (conf-toml-mode . toml-ts-mode)))
+     (conf-toml-mode . toml-ts-mode)
+     (sh-mode . bash-ts-mode)))
  '(markdown-code-lang-modes
    '(("ocaml" . tuareg-mode)
      ("elisp" . emacs-lisp-mode)

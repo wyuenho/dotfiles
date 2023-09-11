@@ -1041,11 +1041,6 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
               (setq-local company-backends
                           '(company-native-complete company-files company-capf)))))
 
-(add-hook 'sh-mode-hook
-          (lambda ()
-            (when (eq sh-shell 'bash)
-              (bash-ts-mode))))
-
 (setf eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
 (use-package vterm
