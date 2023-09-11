@@ -1043,16 +1043,10 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
               (setq-local company-backends
                           '(company-native-complete company-files company-capf)))))
 
-(defun sh--guess-shell-advice (fn &rest _)
-  "Map bash to bash-ts.
-
-FN is `sh--guess-shell'."
-  (let ((shell (apply fn nil)))
-    (cond ((string-match shell "bash") "bash-ts")
-          (t shell))))
-
-(with-eval-after-load 'sh-script
-  (advice-add 'sh--guess-shell :around 'sh--guess-shell-advice))
+(add-hook 'sh-mode-hook
+          (lambda ()
+            (when (eq sh-shell 'bash)
+              (bash-ts-mode))))
 
 (setf eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
