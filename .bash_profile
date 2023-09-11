@@ -80,6 +80,13 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
     export NVM_DIR
 fi
 
+# bun
+BUN_INSTALL="$HOME/.bun"
+if [ -d "$BUN_INSTALL/bin" ]; then
+    export BUN_INSTALL
+    PATH="$BUN_INSTALL/bin:$PATH"
+fi
+
 # Ruby
 if [ -d "$HOME/.rbenv/bin" ]; then
     PATH="$HOME/.rbenv/bin:$PATH"
