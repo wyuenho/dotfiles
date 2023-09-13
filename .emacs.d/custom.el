@@ -449,6 +449,7 @@
  ;; If there is more than one, they won't work right.
  '(bold ((t (:weight semi-bold))))
  '(bold-italic ((t (:slant italic :weight semi-bold))))
+ '(dired-broken-symlink ((t (:inherit error :underline (:color foreground-color :style wave)))))
  '(flycheck-posframe-error-face ((t (:inherit error))))
  '(flycheck-posframe-info-face ((t (:inherit font-lock-function-name-face))))
  '(flycheck-posframe-warning-face ((t (:inherit warning))))
