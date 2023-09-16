@@ -35,10 +35,11 @@ under `user-emacs-directory'.  If it exists, load it."
   (when missing
     (with-demoted-errors "%s"
       (package-refresh-contents))
-    (dolist (package missing)
-      (with-demoted-errors "%s"
-        (package-install package t)
-        (package-activate package)))
+    (let ((noninteractive t))
+      (dolist (package missing)
+        (with-demoted-errors "%s"
+          (package-install package t)
+          (package-activate package))))
     (add-hook 'window-setup-hook 'load-custom-file))
   (require 'quelpa-use-package)
   (setf use-package-compute-statistics t)
