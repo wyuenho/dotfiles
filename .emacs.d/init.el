@@ -1366,7 +1366,11 @@ optionally the window if possible."
 
 (use-package highlight-indent-guides
   :delight
-  :hook (python-base-mode . highlight-indent-guides-mode))
+  :hook ((python-base-mode
+          yaml-mode
+          yaml-ts-mode
+          conf-toml-mode)
+         . highlight-indent-guides-mode))
 
 (use-package python-docstring
   :delight
