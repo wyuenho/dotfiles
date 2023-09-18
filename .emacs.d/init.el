@@ -434,37 +434,9 @@ Optional argument ARG same as `comment-dwim''s."
          ("M-s m" . vr/mc-mark)))
 
 ;; More convenient region selection
-(use-package expand-region
-  :commands (er/contract-region)
-  :bind (("M-=" . er/expand-region)
-         ("M--" . er/contract-region)
-         ([remap kill-ring-save] . expand-region-or-kill-ring-save))
-  :preface
-  (defun expand-region-or-kill-ring-save (beg end &optional arg)
-    "Select things at point before saving the region to the kill ring.
-
-Save region to kill ring if there is one, otherwise expand the
-region at point, optionally ARG number of times before saving the
-region."
-    (interactive "r\np")
-    (if (not (use-region-p))
-        (progn
-          (er/expand-region arg)
-          (read-only-mode)
-          (let ((keymap (make-sparse-keymap)))
-            (define-key keymap (kbd "=") 'er/expand-region)
-            (define-key keymap (kbd "-") 'er/contract-region)
-            (define-key keymap (kbd "RET") 'kill-ring-save)
-            (set-transient-map keymap t (lambda () (read-only-mode 0)))))
-      (kill-ring-save beg end)))
-
-  (defun load-html-mode-expansions (mode)
-    (lambda ()
-      (require 'html-mode-expansions)
-      (er/enable-mode-expansions mode 'er/add-html-mode-expansions)))
-  :config
-  (dolist (mode '(js-jsx-mode tsx-ts-mode))
-    (add-hook (derived-mode-hook-name mode) (load-html-mode-expansions mode))))
+(use-package expreg
+  :bind (("M-=" . expreg-expand)
+         ("M--" . expreg-contract)))
 
 ;; Navigate source code by syntax
 (add-hook 'prog-mode-hook
