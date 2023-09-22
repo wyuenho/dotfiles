@@ -107,7 +107,6 @@ under `user-emacs-directory'.  If it exists, load it."
 
 ;; Fancy mode line
 (use-package spaceline
-  :quelpa (spaceline :fetcher github :repo "wyuenho/spaceline" :branch "my-fixes")
   :config
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
