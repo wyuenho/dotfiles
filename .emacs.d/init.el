@@ -339,12 +339,6 @@ Optional argument ARG same as `comment-dwim''s."
   (with-eval-after-load 'diff-hl
     (scroll-on-jump-advice-add diff-hl-next-hunk)))
 
-;; Adjust frame-wide font size
-(use-package default-text-scale
-  :bind (("C-x C-=" . default-text-scale-increase)
-         ("C-x C--" . default-text-scale-decrease)
-         ("C-x C-0" . default-text-scale-reset)))
-
 (use-package vertico
   :config
   (vertico-mode))
