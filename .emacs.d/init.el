@@ -782,30 +782,25 @@ checker symbol."
     (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
       (add-hook 'mode-hook
                 (lambda ()
-                  (when-let* ((firefox-debug-path
-                               (car
-                                (last
-                                 (file-expand-wildcards
-                                  (concat
-                                   dap-utils-extension-path
-                                   "/firefox-devtools.vscode-firefox-debug-*")))))
-                              (firefox-debug-program
-                               (concat "node " dap-firefox-debug-path "/dist/adaptor.bundle.js")))
-                    (use-package dap-firefox
-                      :config
-                      (setopt dap-firefox-debug-path firefox-debug-path
-                              dap-firefox-debug-program firefox-debug-program)))
+                  (use-package dap-firefox
+                    :config
+                    (setopt dap-firefox-debug-path
+                            (car
+                             (last
+                              (file-expand-wildcards
+                               (concat
+                                dap-utils-extension-path
+                                "/firefox-devtools.vscode-firefox-debug-*"))))
+                            dap-firefox-debug-program
+                            (concat "node " dap-firefox-debug-path "/dist/adaptor.bundle.js")))
 
                   ;; https://github.com/emacs-lsp/dap-mode/issues/369
-                  ;; (when-let* ((node-debug-path
-                  ;;              "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.js-debug")
-                  ;;             (node-debug-program
-                  ;;              (concat "node " dap-node-debug-path "/src/extension.js")))
-                  ;;   (use-package dap-node
-                  ;;     :config
-                  ;;     (setopt dap-node-debug-path node-debug-path
-                  ;;             dap-node-debug-program node-debug-program)))
-                  ))))
+                  (use-package dap-node
+                    :config
+                    (setopt dap-node-debug-path
+                            "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/ms-vscode.js-debug"
+                            dap-node-debug-program
+                            (concat "node " dap-node-debug-path "/src/extension.js")))))))
 
   (add-hook 'python-base-mode-hook (lambda () (use-package dap-python)))
 
@@ -819,47 +814,42 @@ checker symbol."
     (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
       (add-hook mode-hook
                 (lambda ()
-                  (when-let* ((gdb-lldb-path
-                               (car
-                                (last
-                                 (file-expand-wildcards
-                                  (concat
-                                   dap-utils-extension-path
-                                   "/webfreak.debug-*")))))
-                              (gdb-lldb-debug-program
-                               `("node" ,(concat dap-gdb-lldb-path "/out/src/gdb.js"))))
-                    (use-package dap-gdb-lldb
-                      :config
-                      (setopt dap-gdb-lldb-path gdb-lldb-path
-                              dap-gdb-lldb-debug-program gdb-lldb-debug-program)))
+                  (use-package dap-gdb-lldb
+                    :config
+                    (setopt dap-gdb-lldb-path
+                            (car
+                             (last
+                              (file-expand-wildcards
+                               (concat
+                                dap-utils-extension-path
+                                "/webfreak.debug-*"))))
+                            dap-gdb-lldb-debug-program
+                            `("node" ,(concat dap-gdb-lldb-path "/out/src/gdb.js"))))
 
-                  (when-let* ((codelldb-debug-path
-                               (car
-                                (last
-                                 (file-expand-wildcards
-                                  (concats
-                                   dap-utils-extension-path
-                                   "/vadimcn.vscode-lldb-*")))))
-                              (codelldb-debug-program
-                               (concat dap-codelldb-debug-path "/adapter/codelldb")))
-                    (use-package dap-codelldb
-                      :config
-                      (setopt dap-codelldb-debug-path codelldb-debug-path
-                              dap-codelldb-debug-program codelldb-debug-program)))
+                  (use-package dap-codelldb
+                    :config
+                    (setopt dap-codelldb-debug-path
+                            (car
+                             (last
+                              (file-expand-wildcards
+                               (concat
+                                dap-utils-extension-path
+                                "/vadimcn.vscode-lldb-*"))))
+                            dap-codelldb-debug-program
+                            (concat dap-codelldb-debug-path "/adapter/codelldb")))
 
-                  (when-let* ((cpptools-debug-path
-                               (car
-                                (last
-                                 (file-expand-wildcards
-                                  (concat
-                                   dap-utils-extension-path
-                                   (format "/ms-vscode.cpptools-*-%s-*" system-type))))))
-                              (cpptools-debug-program
-                               (concat dap-cpptools-debug-path "/debugAdapters/bin/OpenDebugAD7")))
-                    (use-package dap-cpptools
-                      :config
-                      (setopt dap-cpptools-debug-path cpptools-debug-path
-                              dap-cpptools-debug-program cpptools-debug-program))))))))
+                  (use-package dap-cpptools
+                    :config
+                    (setopt dap-cpptools-debug-path
+                            (car
+                             (last
+                              (file-expand-wildcards
+                               (concat
+                                dap-utils-extension-path
+                                (format "/ms-vscode.cpptools-*-%s-*" system-type)))))
+                            dap-cpptools-debug-program
+                            (list
+                             (concat dap-cpptools-debug-path "/debugAdapters/bin/OpenDebugAD7")))))))))
 
 ;; Auto-completion
 (use-package company
