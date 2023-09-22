@@ -233,7 +233,10 @@
  '(magit-diff-refine-hunk 'all)
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(major-mode-remap-alist
-   '((python-mode . python-ts-mode)
+   '((c-mode . c-ts-mode)
+     (c++-mode . c++-ts-mode)
+     (c-or-c++-mode . c-or-c++-ts-mode)
+     (python-mode . python-ts-mode)
      (js-mode . js-ts-mode)
      (js-jsx-mode . js-ts-mode)
      (css-mode . css-ts-mode)
