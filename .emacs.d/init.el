@@ -1187,7 +1187,11 @@ optionally the window if possible."
 
   (reformatter-define denofmt-format
     :program "deno"
-    :args `("fmt" "-")))
+    :args `("fmt" "-"))
+
+  (reformatter-define clang-format
+    :program "clang-format"
+    :args `("--style" "GNU")))
 
 (dolist (mode '(css-base-mode
                 js-base-mode
