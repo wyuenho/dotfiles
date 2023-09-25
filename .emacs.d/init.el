@@ -348,7 +348,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (keymap-set vertico-map "RET" #'vertico-directory-enter)
   (keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
-  (keymap-set vertico-map "S-DEL" #'vertico-directory-delete-word)
+  (keymap-set vertico-map "M-DEL" #'vertico-directory-delete-word)
   (with-eval-after-load rfn-eshadow-overlay
     (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)))
 
