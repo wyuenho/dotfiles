@@ -12,7 +12,7 @@
  '(ag-reuse-buffers t)
  '(ag-reuse-window t)
  '(aggressive-indent-excluded-modes
-   '(elm-mode haskell-mode inf-ruby-mode makefile-mode makefile-gmake-mode python-mode python-ts-mode sql-interactive-mode text-mode yaml-mode yaml-ts-mode tcl-mode dockerfile-mode dockerfile-ts-mode go-mode go-ts-mode json-ts-mode jsonian-mode web-mode java-mode))
+   '(dockerfile-mode dockerfile-ts-mode elm-mode go-mode go-ts-mode haskell-mode inf-ruby-mode js-json-mode json-ts-mode jsonian-mode makefile-mode python-mode python-ts-mode sql-interactive-mode tcl-mode text-mode web-mode yaml-mode yaml-ts-mode))
  '(apib-drafter-executable "aglio")
  '(auth-source-protocols
    '((imap "imap" "imaps" "143" "993")
@@ -44,7 +44,7 @@
  '(company-box-icons-alist 'company-box-icons-all-the-icons)
  '(company-dabbrev-downcase nil)
  '(company-global-modes
-   '(c++-mode c-mode css-mode c++-ts-mode c-ts-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode inferior-emacs-lisp-mode js-ts-mode js-jsx-mode js-mode lisp-interaction-mode lisp-mode objc-mode python-mode python-ts-mode restclient-mode ruby-mode rust-ts-mode rust-mode rust-ts-mode scss-mode sh-mode sh-base-mode typescript-ts-mode tsx-ts-mode web-mode org-mode))
+   '(bash-ts-mode c++-mode c-mode css-mode c++-ts-mode c-ts-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode inferior-emacs-lisp-mode js-ts-mode js-jsx-mode js-mode lisp-interaction-mode lisp-mode objc-mode python-mode python-ts-mode restclient-mode ruby-mode rust-ts-mode rust-mode rust-ts-mode scss-mode sh-mode typescript-ts-mode tsx-ts-mode web-mode org-mode))
  '(company-tooltip-align-annotations t)
  '(company-tooltip-limit 20)
  '(compilation-always-kill t)
@@ -81,14 +81,6 @@
  '(dired-omit-verbose nil)
  '(display-line-numbers-widen t)
  '(display-line-numbers-width-start t)
- '(display-time-world-list
-   '(("America/Los_Angeles" "San Francisco")
-     ("America/New_York" "New York")
-     ("Europe/London" "London")
-     ("Europe/Paris" "Paris")
-     ("Asia/Calcutta" "Bangalore")
-     ("Asia/Hong_Kong" "Hong Kong")
-     ("Asia/Tokyo" "Tokyo")))
  '(edebug-eval-macro-args t)
  '(edebug-print-length 120)
  '(edebug-unwrap-results t)
@@ -127,7 +119,7 @@
  '(flycheck-emacs-lisp-initialize-packages t)
  '(flycheck-emacs-lisp-load-path 'inherit)
  '(flycheck-global-modes
-   '(bash-ts-mode c++-mode c++-ts-mode c-mode c-ts-mode css-mode css-ts-mode dockerfile-ts-mode enh-ruby-mode go-mode go-ts-mode js-jsx-mode js-mode js-ts-mode json-ts-mode jsonian-mode objc-mode python-mode python-ts-mode ruby-mode ruby-ts-mode rust-mode rust-ts-mode scala-mode scss-mode sh-base-mode sh-mode swift-mode tsx-ts-mode typescript-ts-mode))
+   '(bash-ts-mode c++-mode c++-ts-mode c-mode c-ts-mode css-mode css-ts-mode dockerfile-ts-mode enh-ruby-mode go-mode go-ts-mode js-jsx-mode js-mode js-ts-mode json-ts-mode jsonian-mode objc-mode python-mode python-ts-mode ruby-mode ruby-ts-mode rust-mode rust-ts-mode scala-mode scss-mode sh-mode swift-mode tsx-ts-mode typescript-ts-mode))
  '(flycheck-javascript-eslint-executable "eslint_d")
  '(flycheck-pos-tip-max-width 80)
  '(flymake-mode-line-format
@@ -236,11 +228,11 @@
    '((c-mode . c-ts-mode)
      (c++-mode . c++-ts-mode)
      (c-or-c++-mode . c-or-c++-ts-mode)
-     (python-mode . python-ts-mode)
+     (conf-toml-mode . toml-ts-mode)
+     (css-mode . css-ts-mode)
      (js-mode . js-ts-mode)
      (js-jsx-mode . js-ts-mode)
-     (css-mode . css-ts-mode)
-     (conf-toml-mode . toml-ts-mode)
+     (python-mode . python-ts-mode)
      (sh-mode . bash-ts-mode)))
  '(markdown-code-lang-modes
    '(("ocaml" . tuareg-mode)
@@ -277,8 +269,6 @@
  '(mouse-wheel-progressive-speed nil)
  '(mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))))
  '(mouse-wheel-tilt-scroll t)
- '(multi-term-program "/opt/local/bin/bash")
- '(multi-term-program-switches "--login")
  '(native-comp-always-compile t)
  '(native-comp-async-jobs-number 10)
  '(native-comp-async-report-warnings-errors nil)

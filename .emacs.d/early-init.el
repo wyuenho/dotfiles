@@ -6,16 +6,15 @@
 ;; Bury the noisy compile logs
 (defvar compile-log-buffer-names nil)
 
-(defun get-buffer-create-advice (fn &rest args)
+(defun get-buffer-create-advice (buffer)
   "Bury `compile-log-buffer-names' after creation and ensure `compilation-mode' is on."
-  (let ((buffer (apply fn args)))
-    (when (member (buffer-name buffer) compile-log-buffer-names)
-      (with-current-buffer buffer
-        (unless (derived-mode-p 'compilation-mode)
-          (compilation-mode)))
-      (bury-buffer-internal buffer))
-    buffer))
-(advice-add 'get-buffer-create :around 'get-buffer-create-advice)
+  (when (member (buffer-name buffer) compile-log-buffer-names)
+    (with-current-buffer buffer
+      (unless (derived-mode-p 'compilation-mode)
+        (compilation-mode)))
+    (bury-buffer-internal buffer))
+  buffer)
+(advice-add 'get-buffer-create :filter-return 'get-buffer-create-advice)
 
 (with-eval-after-load 'native-compile
   (add-to-list 'compile-log-buffer-names comp-log-buffer-name)
@@ -65,15 +64,14 @@
   (advice-add 'package-unpack :after 'package-unpack-advice)
 
   (with-eval-after-load 'quelpa
-    (defun package--removable-packages-advice (fn &rest args)
+    (defun package--removable-packages-advice (removable-packages)
       "Make sure `package-autoremove' does not consider quelpa-installed packages.
 
 FIXME: this currently does not take into account of package
 versions due to limitations in package.el."
-      (let ((removable-packages (apply fn args))
-            (quelpa-packages (mapcar #'car (quelpa-read-cache))))
+      (let ((quelpa-packages (mapcar #'car (quelpa-read-cache))))
         (cl-set-difference removable-packages quelpa-packages)))
-    (advice-add 'package--removable-packages :around 'package--removable-packages-advice))
+    (advice-add 'package--removable-packages :filter-return 'package--removable-packages-advice))
 
 
   ;; FIXME: `package-autoremove' can't remove obsolete package because

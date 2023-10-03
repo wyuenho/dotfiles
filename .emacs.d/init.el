@@ -102,15 +102,14 @@ under `user-emacs-directory'.  If it exists, load it."
   :if (display-graphic-p)
   :config
   (with-eval-after-load 'powerline
-    (defun powerline-major-mode-advice (fn &rest args)
-      (let* ((major-mode-segment (apply fn args))
-             (props (text-properties-at 0 major-mode-segment))
+    (defun powerline-major-mode-advice (major-mode-segment)
+      (let* ((props (text-properties-at 0 major-mode-segment))
              (icon (all-the-icons-icon-for-mode major-mode))
              (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
         (if face-prop
             (apply 'propertize icon 'face face-prop props)
           major-mode-segment)))
-    (advice-add 'powerline-major-mode :around 'powerline-major-mode-advice)))
+    (advice-add 'powerline-major-mode :filter-return 'powerline-major-mode-advice)))
 
 ;; Theme
 (use-package solarized-theme
@@ -585,7 +584,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; Turn on background color for HEX for specific modes
 (use-package rainbow-mode
   :delight
-  :hook (emacs-lisp-mode web-mode js-base-mode typescript-ts-base-mode sh-base-mode))
+  :hook (emacs-lisp-mode js-base-mode sh-base-mode typescript-ts-base-mode web-mode))
 
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
@@ -653,7 +652,6 @@ Optional argument ARG same as `comment-dwim''s."
     "Ignore `pdf-view-goto-page' error when scrolling."
     (ignore-errors (apply fn args)))
   (advice-add 'pdf-view-goto-page :around 'pdf-view-goto-page-advice)
-  (pdf-tools-install t)
   (pdf-loader-install t))
 
 ;; Static Analysis
@@ -1153,13 +1151,12 @@ optionally the window if possible."
          ("C-h o" . helpful-symbol)
          ("C-h p" . helpful-at-point)))
 
-(defun eieio-browse-advice (fn &rest args)
+(defun eieio-browse-advice (&rest args)
   "Put EIEIO object browser buffer in special mode."
-  (apply fn args)
   (with-current-buffer (get-buffer "*EIEIO OBJECT BROWSE*")
     (special-mode)
     (select-window (get-buffer-window (current-buffer)))))
-(advice-add 'eieio-browse :around 'eieio-browse-advice)
+(advice-add 'eieio-browse :after 'eieio-browse-advice)
 
 (use-package package-lint
   :quelpa (package-lint :fetcher github
@@ -1940,13 +1937,13 @@ ELEMENT is only added once."
 
 (with-eval-after-load 'frameset
   ;; Let the themes deal with these things
-  (dolist (param '(background-mode tty-color-mode screen-gamma
-                   alpha font foreground-color background-color
-                   mouse-color cursor-color border-color
-                   scroll-bar-foreground scroll-bar-background
-                   ;; make sure frame restoration is alway maximized
-                   left top height width fullscreen
-                   GUI:font GUI:height GUI:width GUI:fullscreen))
+  (dolist (param '( background-mode tty-color-mode screen-gamma
+                    alpha font foreground-color background-color
+                    mouse-color cursor-color border-color
+                    scroll-bar-foreground scroll-bar-background
+                    ;; make sure frame restoration is alway maximized
+                    left top height width fullscreen
+                    GUI:font GUI:height GUI:width GUI:fullscreen))
     (if (assq param frameset-filter-alist)
         (setf (alist-get param frameset-filter-alist) :never)
       (push `(,param . :never) frameset-filter-alist)))
@@ -2037,16 +2034,11 @@ ELEMENT is only added once."
             (rg-mode      . search)))
 
   (with-eval-after-load 'message
-    (defun message-send-and-exit-advice (fn &rest args)
+    (defun message-send-and-exit-advice (&rest _)
       "Quit the window after killing the message buffer after sending."
-      (apply fn args)
       (quit-window))
-    (advice-add 'message-send-and-exit :around 'message-send-and-exit-advice)
-    (defun message-kill-buffer-advice (fn &rest args)
-      "Quit the window after killing the message buffer."
-      (apply fn args)
-      (quit-window))
-    (advice-add 'message-kill-buffer :around 'message-kill-buffer-advice))
+    (advice-add 'message-send-and-exit :after 'message-send-and-exit-advice)
+    (advice-add 'message-kill-buffer :after 'quit-window))
 
   (with-eval-after-load 'window-purpose-x
     (add-to-list 'purpose-x-popwin-buffer-names "*Messages*")
