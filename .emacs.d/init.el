@@ -27,7 +27,40 @@ under `user-emacs-directory'.  If it exists, load it."
     (load custom-file)))
 (load-custom-file)
 
-;; FIXME: deal with quelpa installed packages not available on archives yet
+;; Install tree-sitter language grammars
+(setq treesit-extra-load-path nil)
+
+(setq treesit-language-source-alist
+      `((astro "https://github.com/virchau13/tree-sitter-astro")
+        (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+        (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
+        (graphql "https://github.com/bkegley/tree-sitter-graphql")
+        (jq "https://github.com/nverno/tree-sitter-jq")
+        (kotlin "https://github.com/fwcd/tree-sitter-kotlin")
+        (nix "https://github.com/nix-community/tree-sitter-nix")
+        (ocaml "https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src")
+        (proto "https://github.com/mitchellh/tree-sitter-proto")
+        (toml "https://github.com/ikatyang/tree-sitter-toml")
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+        (wat "https://github.com/wasm-lsp/tree-sitter-wasm" "main" "wat/src")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml")
+        ,@(mapcar
+           (lambda (lang) (list lang (format "https://github.com/tree-sitter/tree-sitter-%s" lang)))
+           '(bash c c-sharp cpp css go java javascript json python ruby rust))))
+
+(defun update-or-install-treesit-language-grammars (&optional force)
+  (interactive "P")
+  (dolist (lang (mapcar 'car treesit-language-source-alist))
+    (when (or (not (treesit-language-available-p lang))
+              force)
+      (let ((noninteractive t))
+        (cl-flet ((y-or-n-p (prompt) t))
+          (treesit-install-language-grammar lang))))))
+
+(update-or-install-treesit-language-grammars)
+
 ;; Install selected but missing packages
 (let ((missing (cl-set-difference
                 package-selected-packages
