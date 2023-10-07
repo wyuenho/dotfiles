@@ -16,9 +16,18 @@
   buffer)
 (advice-add 'get-buffer-create :filter-return 'get-buffer-create-advice)
 
+(with-eval-after-load 'compile
+  (defun compilation-buffer-name-advice (name)
+    (add-to-list 'compile-log-buffer-names name)
+    name)
+  (advice-add 'compilation-buffer-name :filter-return 'compilation-buffer-name-advice)
+
+  (set-keymap-parent compilation-shell-minor-mode-map special-mode-map))
+
 (with-eval-after-load 'native-compile
   (add-to-list 'compile-log-buffer-names comp-log-buffer-name)
-  (add-to-list 'compile-log-buffer-names comp-async-buffer-name))
+  (add-to-list 'compile-log-buffer-names comp-async-buffer-name)
+  (put 'native-comp-limple-mode 'derived-mode-parent 'special-mode))
 
 (with-eval-after-load 'bytecomp
   (add-to-list 'compile-log-buffer-names byte-compile-log-buffer))
