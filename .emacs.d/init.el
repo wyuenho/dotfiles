@@ -1115,6 +1115,16 @@ optionally the window if possible."
     (apply fn args)))
 (advice-add 'calculate-lisp-indent :around 'calculate-lisp-indent-advice)
 
+;; auto-indent built-in libs
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            (when (and (buffer-file-name)
+                       (string-prefix-p lisp-directory (buffer-file-name))
+                       buffer-read-only)
+              (with-silent-modifications
+                (indent-region (point-min) (point-max)))))
+          90)
+
 (defun elisp--local-variables-advice (fn &rest args)
   "Prevents errors in `elisp--local-variables' from causing completion functions to throw."
   (ignore-errors (apply fn nil args)))
