@@ -1195,7 +1195,7 @@ optionally the window if possible."
 
   (reformatter-define rustfmt-format
     :program "rustfmt"
-    :args `("--emit stdout"))
+    :args `("--emit" "stdout"))
 
   (reformatter-define yarn-eslint-format
     :program "yarn"
@@ -1522,9 +1522,16 @@ optionally the window if possible."
 (use-package rust-ts-mode
   :config
   (with-eval-after-load 'reformatter
-    (when (featurep 'rustfmt-format-on-save-mode)
+    (when (functionp 'rustfmt-format-on-save-mode)
       (setq-local rustfmt-format-on-save-mode-lighter nil)
-      (add-hook 'rust-ts-mode-hook 'rustfmt-format-on-save-mode))))
+      (add-hook 'rust-ts-mode-hook 'rustfmt-format-on-save-mode)))
+  (with-eval-after-load 'flycheck
+    (add-hook 'flycheck-mode-hook 'flycheck-rust-setup)))
+
+(use-package flycheck-rust
+  :after (rust-ts-mode flycheck)
+  :config
+  (add-hook 'flycheck-mode-hook 'flycheck-rust-setup))
 
 (use-package cargo
   :delight cargo-minor-mode
