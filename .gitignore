@@ -1,3 +1,4 @@
 .yas-compiled-snippets.el
 /.local/share/*
 !/.local/share/bash-completion
+.envrc
