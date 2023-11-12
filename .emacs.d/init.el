@@ -781,7 +781,11 @@ checker symbol."
                              ((derived-mode-p 'enh-ruby-mode)
                               '((warning . ruby-rubocop)))
                              ((derived-mode-p 'go-mode)
-                              '((warning . golangci-lint))))))
+                              '((warning . golangci-lint)))
+                             ((derived-mode-p 'rust-mode 'rust-ts-mode)
+                              '((warning . rust-cargo)
+                                (warning . rust)
+                                (warning . rust-clippy))))))
                   (when lsp-next-checkers
                     (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
                   (when web-mode-checkers
