@@ -96,13 +96,10 @@ if [ -d "$HOME/.rbenv/bin" ]; then
 fi
 
 # Go
-if [ -d "$HOME/.goenv" ]; then
-    GOENV_ROOT="$HOME/.goenv"
-    export GOENV_ROOT
-    PATH="$GOENV_ROOT/bin:$PATH"
-    if [ -x "$(type -P goenv)" ] && [ "${PATH#*$GOENV_ROOT/shims}" = "$PATH" ]; then
-        PATH="$PATH:$GOENV_ROOT/shims"
-    fi
+if [ -x "$(type -P go)" ]; then
+    GOBIN=$(go env GOBIN)
+    GOBIN="${GOBIN:-$(go env GOPATH)/bin}"
+    PATH="$GOBIN:$PATH"
 fi
 
 # Rust

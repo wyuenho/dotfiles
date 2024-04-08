@@ -138,11 +138,6 @@ if [ -z "$INSIDE_EMACS" ] ||
     [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/bash_completion"
 
     # Go
-    if [ -s "$GOENV_ROOT/completions/goenv.bash" ]; then
-        source "$GOENV_ROOT/completions/goenv.bash"
-    fi
-
-    # goenv
     if [ -x "$(type -P gocomplete)" ]; then
         complete -C gocomplete go
     fi
@@ -167,31 +162,6 @@ fi
 # Direnv
 if [ -x "$(type -P direnv)" ]; then
     eval "$(direnv hook bash)"
-fi
-
-# goenv
-if [ "$(type -t goenv)" ]; then
-    GOENV_SHELL=bash
-    export GOENV_SHELL
-    command goenv rehash 2> /dev/null
-    goenv() {
-        local command
-        command="$1"
-        if [ "$#" -gt 0 ]; then
-            shift
-        fi
-
-        case "$command" in
-            rehash | shell)
-                eval "$(goenv "sh-$command" "$@")"
-                ;;
-            *)
-                command goenv "$command" "$@"
-                ;;
-        esac
-    }
-
-    goenv rehash --only-manage-paths
 fi
 
 # Prompt
