@@ -148,7 +148,9 @@ if [ -z "$INSIDE_EMACS" ] ||
     fi
 
     # aws
-    [ -x "$(type -P aws_completer)" ] && complete -C "$(type -p aws_completer)" aws
+    if [ -x "$(type -P aws_completer)" ]; then
+        complete -C aws_completer aws
+    fi
 
     # git-subrepo
     if [ -s "$GIT_SUBREPO_ROOT/share/completion.bash" ]; then
