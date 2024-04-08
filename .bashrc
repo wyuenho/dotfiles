@@ -3,7 +3,7 @@
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
-    *) return;;
+    *) return ;;
 esac
 
 # check the window size after each command and, if necessary,
@@ -41,29 +41,54 @@ fi
 
 # Colorful man pages
 # blink
-LESS_TERMCAP_mb=$(tput blink; tput setaf 1)
+LESS_TERMCAP_mb=$(
+    tput blink
+    tput setaf 1
+)
 export LESS_TERMCAP_mb
 
 # standout
-LESS_TERMCAP_so=$(tput smso; tput setaf 3; tput setab 7)
+LESS_TERMCAP_so=$(
+    tput smso
+    tput setaf 3
+    tput setab 7
+)
 export LESS_TERMCAP_so
-LESS_TERMCAP_se=$(tput rmso; tput op)
+LESS_TERMCAP_se=$(
+    tput rmso
+    tput op
+)
 export LESS_TERMCAP_se
 
 # bold
-LESS_TERMCAP_md=$(tput bold; tput setaf 5)
+LESS_TERMCAP_md=$(
+    tput bold
+    tput setaf 5
+)
 export LESS_TERMCAP_md
 
 # italic
-LESS_TERMCAP_ZH=$(tput sitm; tput setaf 2)
+LESS_TERMCAP_ZH=$(
+    tput sitm
+    tput setaf 2
+)
 export LESS_TERMCAP_ZH
-LESS_TERMCAP_ZR=$(tput ritm; tput op)
+LESS_TERMCAP_ZR=$(
+    tput ritm
+    tput op
+)
 export LESS_TERMCAP_ZR
 
 # underline
-LESS_TERMCAP_us=$(tput smul; tput setaf 2)
+LESS_TERMCAP_us=$(
+    tput smul
+    tput setaf 2
+)
 export LESS_TERMCAP_us
-LESS_TERMCAP_ue=$(tput rmul; tput op)
+LESS_TERMCAP_ue=$(
+    tput rmul
+    tput op
+)
 export LESS_TERMCAP_ue
 
 # Saner ls colors on macOS
@@ -76,10 +101,10 @@ fi
 [ -s ~/.bash_aliases ] && source ~/.bash_aliases
 
 # Bash Completion
-if [ -z "$INSIDE_EMACS" ] \
-       || [ "$INSIDE_EMACS" = "vterm" ] \
-       || [ "$EMACS_BASH_COMPLETE" = "t" ] \
-       && ! shopt -oq posix; then
+if [ -z "$INSIDE_EMACS" ] ||
+       [ "$INSIDE_EMACS" = "vterm" ] ||
+       [ "$EMACS_BASH_COMPLETE" = "t" ] &&
+           ! shopt -oq posix; then
     if [ -s /usr/share/bash-completion/bash_completion ]; then # Debian
         source /usr/share/bash-completion/bash_completion
     elif [ -s /etc/bash_completion ]; then
@@ -124,7 +149,7 @@ if [ -z "$INSIDE_EMACS" ] \
 
     # gcloud
     if [ -s "$HOME/.google-cloud-sdk/completion.bash.inc" ]; then
-        source "$HOME/.google-cloud-sdk/completion.bash.inc";
+        source "$HOME/.google-cloud-sdk/completion.bash.inc"
     fi
 
     # aws
@@ -148,7 +173,7 @@ fi
 if [ "$(type -t goenv)" ]; then
     GOENV_SHELL=bash
     export GOENV_SHELL
-    command goenv rehash 2>/dev/null
+    command goenv rehash 2> /dev/null
     goenv() {
         local command
         command="$1"
@@ -157,10 +182,12 @@ if [ "$(type -t goenv)" ]; then
         fi
 
         case "$command" in
-            rehash|shell)
-                eval "$(goenv "sh-$command" "$@")";;
+            rehash | shell)
+                eval "$(goenv "sh-$command" "$@")"
+                ;;
             *)
-                command goenv "$command" "$@";;
+                command goenv "$command" "$@"
+                ;;
         esac
     }
 
@@ -202,7 +229,7 @@ else
     fi
 
     case "$TERM" in
-        xterm-color|*-256color) color_prompt=yes;;
+        xterm-color | *-256color) color_prompt=yes ;;
     esac
 
     if [ "$color_prompt" = yes ]; then
@@ -247,8 +274,7 @@ else
         Linux)
             FZF_PREFIX='/usr/share/doc/fzf/examples'
             ;;
-        *)
-            ;;
+        *) ;;
     esac
 fi
 
@@ -285,11 +311,11 @@ if [ -x "$(type -P fzf)" ]; then
         source "$FZF_PREFIX/key-bindings.bash"
     fi
 
-    if [ -z "$INSIDE_EMACS" ] \
-           || [ "$INSIDE_EMACS" = "vterm" ] \
-           || [ "$EMACS_BASH_COMPLETE" = "t" ] \
-           && ! shopt -oq posix \
-           && [ -r "$FZF_PREFIX/completion.bash" ]; then
+    if [ -z "$INSIDE_EMACS" ] ||
+           [ "$INSIDE_EMACS" = "vterm" ] ||
+           [ "$EMACS_BASH_COMPLETE" = "t" ] &&
+               ! shopt -oq posix &&
+               [ -r "$FZF_PREFIX/completion.bash" ]; then
         source "$FZF_PREFIX/completion.bash"
     fi
 fi
