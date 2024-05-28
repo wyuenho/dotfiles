@@ -135,7 +135,24 @@ if [ -z "$INSIDE_EMACS" ] ||
     fi
 
     # fnm
-    [ -x "$(type -P fnm)" ] && eval "$(fnm env --use-on-cd)"
+    if [ -x "$(type -P fnm)" ]; then
+        eval "$(fnm env --version-file-strategy=recursive)"
+
+        __fnm_use_if_file_found() {
+            if [[ -f .node-version || -f .nvmrc ]]; then
+                fnm use --silent-if-unchanged --install-if-missing
+            fi
+
+        }
+
+        __fnmcd() {
+            \cd "$@" || return $?
+            __fnm_use_if_file_found
+        }
+
+        alias cd=__fnmcd
+        __fnm_use_if_file_found
+    fi
 
     # Go
     if [ -x "$(type -P gocomplete)" ]; then
