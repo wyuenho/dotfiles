@@ -134,8 +134,8 @@ if [ -z "$INSIDE_EMACS" ] ||
         source "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh"
     fi
 
-    # nvm
-    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/bash_completion"
+    # fnm
+    [ -x "$(type -P fnm)" ] && eval "$(fnm env --use-on-cd)"
 
     # Go
     if [ -x "$(type -P gocomplete)" ]; then
