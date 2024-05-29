@@ -682,6 +682,7 @@ Optional argument ARG same as `comment-dwim''s."
               (or (and (functionp 'projectile-project-root)
                        (projectile-project-root))
                   (and (functionp 'project-current)
+                       (project-current)
                        (functionp 'project-root)
                        (expand-file-name (project-root (project-current)))))))
     (seq-some
