@@ -1449,6 +1449,13 @@ optionally the window if possible."
                                (when python-isort-command
                                  (python-isort-on-save-mode))))))
 
+(use-package ruff-format
+  :delight ruff-format-on-save-mode
+  (with-eval-after-load 'pet
+    (add-hook 'pet-mode-hook (lambda ()
+                               (when ruff-format-command
+                                 (ruff-format-on-save-mode))))))
+
 (use-package python-pytest)
 
 (use-package lsp-jedi
