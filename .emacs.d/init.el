@@ -1186,11 +1186,7 @@ optionally the window if possible."
     (select-window (get-buffer-window (current-buffer)))))
 (advice-add 'eieio-browse :after 'eieio-browse-advice)
 
-(use-package package-lint
-  :quelpa (package-lint :fetcher github
-                        :repo "wyuenho/package-lint"
-                        :branch "fix-installable-package-detection"
-                        :files (:defaults "data" (:exclude "*flymake.el"))))
+(use-package package-lint)
 
 (use-package flycheck-package
   :after (flycheck package-lint)
