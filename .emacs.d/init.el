@@ -658,6 +658,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;; (use-package eglot
 ;;   :hook (((c-mode-common
 ;;            c-ts-base-mode
+;;            cmake-ts-mode
 ;;            enh-ruby-mode
 ;;            go-mode
 ;;            go-ts-mode
@@ -693,6 +694,7 @@ Optional argument ARG same as `comment-dwim''s."
   :delight (lsp-mode) (lsp-lens-mode)
   :hook (((c-mode-common
            c-ts-base-mode
+           cmake-ts-mode
            enh-ruby-mode
            go-mode
            go-ts-mode
