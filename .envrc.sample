@@ -19,7 +19,6 @@ if [ -x "$(type -P pipx)" ]; then
     PATH_add "$PIPX_BIN_DIR"
 fi
 
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-    export NODE_VERSIONS="$NVM_DIR/versions/node"
-    export NODE_VERSION_PREFIX=""
+if [ -x "$(type -P fnm)" ]; then
+    PATH_add "$(fnm env  | head -n 1 | sed -E -n "s/.*PATH=\"(.*)\":.*/\1/p")"
 fi
