@@ -44,7 +44,7 @@
  '(company-box-icons-alist 'company-box-icons-all-the-icons)
  '(company-dabbrev-downcase nil)
  '(company-global-modes
-   '(bash-ts-mode c++-mode c-mode css-mode c++-ts-mode c-ts-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode inferior-emacs-lisp-mode js-ts-mode js-jsx-mode js-mode lisp-interaction-mode lisp-mode objc-mode python-mode python-ts-mode restclient-mode ruby-mode rust-ts-mode rust-mode rust-ts-mode scss-mode sh-mode typescript-ts-mode tsx-ts-mode web-mode org-mode))
+   '(bash-ts-mode c++-mode c-mode css-mode c++-ts-mode c-ts-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode inferior-emacs-lisp-mode js-ts-mode js-jsx-mode js-mode lisp-interaction-mode lisp-mode objc-mode python-mode python-ts-mode restclient-mode ruby-mode rust-ts-mode rust-mode rust-ts-mode scss-mode sh-mode shell-mode typescript-ts-mode tsx-ts-mode web-mode org-mode))
  '(company-tooltip-align-annotations t)
  '(company-tooltip-limit 20)
  '(compilation-always-kill t)
