@@ -1735,24 +1735,36 @@ optionally the window if possible."
   (defvar watched-git-heads nil
     "A list of .git/logs/HEAD file to watcher mappings.")
 
+  ;; FIXME: this makes the internal emacs git process exits with code 128 when
+  ;; switching branches in the term. This results in a stale index lock.
   (defun refresh-git-backed-buffer ()
     "Refresh the current buffer base on the current git state."
     (if (and (boundp 'magit-mode) (derived-mode-p 'magit-mode))
         (magit-refresh-buffer)
       (unless revert-buffer-in-progress-p
         (cond
-         ((bound-and-true-p diff-hl-dired-mode)
-          (diff-hl-dired-update))
+         ;; doesn't work, too slow
+         ;; ((bound-and-true-p diff-hl-dired-mode)
+         ;;  (diff-hl-dired-update))
+
+         ;; works
          ((or (bound-and-true-p diff-hl-flydiff-mode)
               (bound-and-true-p diff-hl-mode))
           (diff-hl-update))
+
+         ;; works
          ((bound-and-true-p vc-dir-mode)
           (vc-dir-refresh)
           (when (bound-and-true-p diff-hl-dir-mode)
             (diff-hl-dir-update)))
-         ((and (buffer-file-name)
-               (vc-backend (buffer-file-name)))
-          (vc-refresh-state))))))
+
+         ;; works but slow, so occasionally there will still be index lock
+         ;; contention
+         ;; ((and (buffer-file-name)
+         ;;       (vc-backend (buffer-file-name)))
+         ;;  (vc-refresh-state))
+         ))
+      ))
 
   (defun handle-git-state-change (event)
     "Callback to `file-notify-add-watch' to handle git state change.
