@@ -32,6 +32,7 @@ under `user-emacs-directory'.  If it exists, load it."
 
 (setq treesit-language-source-alist
       `((astro "https://github.com/virchau13/tree-sitter-astro")
+        (awk "https://github.com/Beaglefoot/tree-sitter-awk")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
         (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
         (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
@@ -50,7 +51,7 @@ under `user-emacs-directory'.  If it exists, load it."
            (lambda (lang) (list lang (format "https://github.com/tree-sitter/tree-sitter-%s" lang)))
            '(bash c c-sharp cpp css go java javascript json python ruby rust))))
 
-(defun update-or-install-treesit-language-grammars (&optional force)
+(defun install-treesit-language-grammars (&optional force)
   (interactive "P")
   (dolist (lang (mapcar 'car treesit-language-source-alist))
     (when (or (not (treesit-language-available-p lang))
@@ -59,7 +60,7 @@ under `user-emacs-directory'.  If it exists, load it."
         (cl-flet ((y-or-n-p (prompt) t))
           (treesit-install-language-grammar lang))))))
 
-(update-or-install-treesit-language-grammars)
+(install-treesit-language-grammars)
 
 ;; Install selected but missing packages
 (let ((missing (cl-set-difference
