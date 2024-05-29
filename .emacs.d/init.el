@@ -989,29 +989,29 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
                   (`running (spinner-start 'minibox))
                   (- (spinner-stop)))))))
 
-(use-package quick-peek)
+;; (use-package quick-peek)
 
-(use-package flycheck-inline
-  :quelpa (flycheck-inline :fetcher github :repo "wyuenho/flycheck-inline" :branch "flycheck-clear-displayed-errors-function")
-  :init
-  (defun flycheck-inline-quick-peek (msg pos err)
-    (when (or (not company-mode)
-              (not (company--active-p)))
-      (pcase-let* ((`(,_ ,body-top ,_ ,body-bottom) (window-body-edges))
-                   (line-offset (- (line-number-at-pos (point))
-                                   (line-number-at-pos (window-start))))
-                   (quick-peek-position
-                    (if (< (- body-bottom body-top line-offset) 10) 'above 'below))
-                   (ov (quick-peek-overlay-ensure-at pos))
-                   (contents (quick-peek-overlay-contents ov)))
-        (setf (quick-peek-overlay-contents ov)
-              (concat contents (when contents "\n") (string-trim msg)))
-        (quick-peek-update ov 1 4))))
-  :after (flycheck quick-peek company)
-  :hook (flycheck-mode . flycheck-inline-mode)
-  :custom
-  (flycheck-inline-display-function #'flycheck-inline-quick-peek)
-  (flycheck-inline-clear-function #'quick-peek-hide))
+;; (use-package flycheck-inline
+;;   :quelpa (flycheck-inline :fetcher github :repo "wyuenho/flycheck-inline" :branch "flycheck-clear-displayed-errors-function")
+;;   :init
+;;   (defun flycheck-inline-quick-peek (msg pos err)
+;;     (when (or (not company-mode)
+;;               (not (company--active-p)))
+;;       (pcase-let* ((`(,_ ,body-top ,_ ,body-bottom) (window-body-edges))
+;;                    (line-offset (- (line-number-at-pos (point))
+;;                                    (line-number-at-pos (window-start))))
+;;                    (quick-peek-position
+;;                     (if (< (- body-bottom body-top line-offset) 10) 'above 'below))
+;;                    (ov (quick-peek-overlay-ensure-at pos))
+;;                    (contents (quick-peek-overlay-contents ov)))
+;;         (setf (quick-peek-overlay-contents ov)
+;;               (concat contents (when contents "\n") (string-trim msg)))
+;;         (quick-peek-update ov 1 4))))
+;;   :after (flycheck quick-peek company)
+;;   :hook (flycheck-mode . flycheck-inline-mode)
+;;   :custom
+;;   (flycheck-inline-display-function #'flycheck-inline-quick-peek)
+;;   (flycheck-inline-clear-function #'quick-peek-hide))
 
 ;; REST API
 (use-package verb
