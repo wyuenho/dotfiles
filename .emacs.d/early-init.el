@@ -26,7 +26,9 @@
 
 (with-eval-after-load 'native-compile
   (add-to-list 'compile-log-buffer-names comp-log-buffer-name)
-  (add-to-list 'compile-log-buffer-names comp-async-buffer-name)
+  (add-to-list 'compile-log-buffer-names comp-async-buffer-name))
+
+(with-eval-after-load 'comp
   (put 'native-comp-limple-mode 'derived-mode-parent 'special-mode))
 
 (with-eval-after-load 'bytecomp
