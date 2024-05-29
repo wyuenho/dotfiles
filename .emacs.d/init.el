@@ -1024,15 +1024,15 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
   :mode "\\.apib\\'")
 
 ;; Term and shell
-(with-eval-after-load 'shell
-  (use-package native-complete
-    :config (native-complete-setup-bash)))
+(use-package shfmt
+  :delight shfmt-on-save-mode
+  :hook (sh-base-mode . shfmt-on-save-mode))
 
-(add-hook 'sh-base-mode-hook
-          (lambda ()
-            (use-package company-native-complete
-              :after (company)
-              :config
+(use-package company-native-complete
+  :after (company)
+  :config
+  (add-hook 'shell-mode-hook
+            (lambda ()
               (setq-local company-backends
                           '(company-native-complete company-files company-capf)))))
 
