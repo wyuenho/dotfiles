@@ -136,7 +136,7 @@ if [ -z "$INSIDE_EMACS" ] ||
 
     # fnm
     if [ -x "$(type -P fnm)" ]; then
-        eval "$(fnm env --version-file-strategy=recursive)"
+        eval "$(fnm env --version-file-strategy=recursive --corepack-enabled)"
 
         __fnm_use_if_file_found() {
             if [[ -f .node-version || -f .nvmrc ]]; then
