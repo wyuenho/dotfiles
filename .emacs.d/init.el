@@ -1079,6 +1079,8 @@ optionally the window if possible."
     (add-hook 'term-mode-hook 'eterm-256color-mode)))
 
 ;; Markup and config languages
+(add-to-list 'auto-mode-alist '("\\.nmconnection\\'" . conf-mode))
+
 (use-package yaml-mode
   :config
   (add-hook 'yaml-mode-hook
