@@ -340,6 +340,8 @@
  '(server-use-tcp t)
  '(set-mark-command-repeat-pop t)
  '(shell-file-name "/opt/local/bin/bash")
+ '(shfmt-arguments
+   '("--indent" "4" "--case-indent" "--space-redirects" "--keep-padding"))
  '(shift-select-mode nil)
  '(show-paren-mode t)
  '(show-smartparens-global-mode t)
