@@ -1090,6 +1090,15 @@ optionally the window if possible."
                   (prettier-mode)
                   (define-key yaml-mode-map (kbd "C-c f") 'prettier-prettify))))))
 
+(use-package yaml-ts-mode
+  :config
+  (add-hook 'yaml-ts-mode-hook
+            (lambda ()
+              (with-eval-after-load 'prettier
+                (when (executable-find "prettier")
+                  (prettier-mode)
+                  (define-key yaml-ts-mode-map (kbd "C-c f") 'prettier-prettify))))))
+
 (use-package toml-ts-mode
   :config
   (add-hook 'toml-ts-mode-hook
