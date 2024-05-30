@@ -26,6 +26,10 @@ export XDG_CACHE_HOME
 XDG_DATA_HOME="$HOME/.local/share"
 export XDG_DATA_HOME
 
+if [ -d "$HOME/.local/bin" ]; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
 # Homebrew
 if [ -x /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
