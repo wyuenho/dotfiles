@@ -1405,14 +1405,6 @@ optionally the window if possible."
 (add-to-list 'auto-mode-alist '("/poetry.lock\\'"  . conf-toml-mode))
 (add-to-list 'auto-mode-alist '("/Pipfile.lock\\'" . conf-toml-mode))
 
-(use-package highlight-indent-guides
-  :delight
-  :hook ((python-base-mode
-          yaml-mode
-          yaml-ts-mode
-          conf-toml-mode)
-         . highlight-indent-guides-mode))
-
 (use-package python-docstring
   :delight
   :hook (python-base-mode . python-docstring-mode))
