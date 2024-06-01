@@ -40,7 +40,7 @@ under `user-emacs-directory'.  If it exists, load it."
         (jq "https://github.com/nverno/tree-sitter-jq")
         (kotlin "https://github.com/fwcd/tree-sitter-kotlin")
         (nix "https://github.com/nix-community/tree-sitter-nix")
-        (ocaml "https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src")
+        (ocaml "https://github.com/tree-sitter/tree-sitter-ocaml" "master" "grammars/ocaml/src")
         (proto "https://github.com/mitchellh/tree-sitter-proto")
         (toml "https://github.com/ikatyang/tree-sitter-toml")
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
