@@ -1405,6 +1405,10 @@ optionally the window if possible."
 (add-to-list 'auto-mode-alist '("/poetry.lock\\'"  . conf-toml-mode))
 (add-to-list 'auto-mode-alist '("/Pipfile.lock\\'" . conf-toml-mode))
 
+;; compilation-shell-minor-mode-map clash with comint-mode-map due to early-init
+(add-hook 'inferior-python-mode-hook
+          (lambda () (compilation-shell-minor-mode -1)))
+
 (use-package python-docstring
   :delight
   :hook (python-base-mode . python-docstring-mode))
