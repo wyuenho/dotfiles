@@ -1533,8 +1533,6 @@ optionally the window if possible."
   :after (flycheck)
   :config (flycheck-golangci-lint-setup))
 
-(use-package protobuf-ts-mode)
-
 ;; Rust
 (use-package rust-ts-mode
   :config
