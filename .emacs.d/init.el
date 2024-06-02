@@ -1720,105 +1720,105 @@ optionally the window if possible."
     (define-key git-rebase-mode-map (kbd "M-z") 'git-rebase-undo)))
 
 ;; Refresh VC related states reliably across packages.
-(when file-notify--library
-  (defvar watched-git-heads nil
-    "A list of .git/logs/HEAD file to watcher mappings.")
+;; (when file-notify--library
+;;   (defvar watched-git-heads nil
+;;     "A list of .git/logs/HEAD file to watcher mappings.")
 
-  ;; FIXME: this makes the internal emacs git process exits with code 128 when
-  ;; switching branches in the term. This results in a stale index lock.
-  (defun refresh-git-backed-buffer ()
-    "Refresh the current buffer base on the current git state."
-    (if (and (boundp 'magit-mode) (derived-mode-p 'magit-mode))
-        (magit-refresh-buffer)
-      (unless revert-buffer-in-progress-p
-        (cond
-         ;; doesn't work, too slow
-         ;; ((bound-and-true-p diff-hl-dired-mode)
-         ;;  (diff-hl-dired-update))
+;;   ;; FIXME: this makes the internal emacs git process exits with code 128 when
+;;   ;; switching branches in the term. This results in a stale index lock.
+;;   (defun refresh-git-backed-buffer ()
+;;     "Refresh the current buffer base on the current git state."
+;;     (if (and (boundp 'magit-mode) (derived-mode-p 'magit-mode))
+;;         (magit-refresh-buffer)
+;;       (unless revert-buffer-in-progress-p
+;;         (cond
+;;          ;; doesn't work, too slow
+;;          ;; ((bound-and-true-p diff-hl-dired-mode)
+;;          ;;  (diff-hl-dired-update))
 
-         ;; works
-         ((or (bound-and-true-p diff-hl-flydiff-mode)
-              (bound-and-true-p diff-hl-mode))
-          (diff-hl-update))
+;;          ;; works
+;;          ((or (bound-and-true-p diff-hl-flydiff-mode)
+;;               (bound-and-true-p diff-hl-mode))
+;;           (diff-hl-update))
 
-         ;; works
-         ((bound-and-true-p vc-dir-mode)
-          (vc-dir-refresh)
-          (when (bound-and-true-p diff-hl-dir-mode)
-            (diff-hl-dir-update)))
+;;          ;; works
+;;          ((bound-and-true-p vc-dir-mode)
+;;           (vc-dir-refresh)
+;;           (when (bound-and-true-p diff-hl-dir-mode)
+;;             (diff-hl-dir-update)))
 
-         ;; works but slow, so occasionally there will still be index lock
-         ;; contention
-         ;; ((and (buffer-file-name)
-         ;;       (vc-backend (buffer-file-name)))
-         ;;  (vc-refresh-state))
-         ))
-      ))
+;;          ;; works but slow, so occasionally there will still be index lock
+;;          ;; contention
+;;          ;; ((and (buffer-file-name)
+;;          ;;       (vc-backend (buffer-file-name)))
+;;          ;;  (vc-refresh-state))
+;;          ))
+;;       ))
 
-  (defun handle-git-state-change (event)
-    "Callback to `file-notify-add-watch' to handle git state change.
+;;   (defun handle-git-state-change (event)
+;;     "Callback to `file-notify-add-watch' to handle git state change.
 
-EVENT is a file system notification event.  If EVENT is a change
-event, find all the visible buffers belonging to the same git
-repo and refresh all of the version control minor mode states.
-If EVENT is a deleted or renamed event, remove the file system
-notification watcher.
+;; EVENT is a file system notification event.  If EVENT is a change
+;; event, find all the visible buffers belonging to the same git
+;; repo and refresh all of the version control minor mode states.
+;; If EVENT is a deleted or renamed event, remove the file system
+;; notification watcher.
 
-See `file-notify-add-watch' for more details."
-    (pcase-let ((`(,desc ,action ,file ,@_) event))
-      (pcase action
-        ((or 'deleted 'renamed)
-         (file-notify-rm-watch desc))
-        ('changed
-         (let ((vc-root (apply 'file-name-concat "/" (seq-subseq (split-string file "/") 0 -3))))
-           (dolist (frame (frame-list))
-             (when (not (frame-parent frame))
-               (dolist (buf (buffer-list frame))
-                 (when (not (string-prefix-p " " (buffer-name buf)))
-                   (with-current-buffer buf
-                     (when (string-prefix-p vc-root (expand-file-name default-directory))
-                       (refresh-git-backed-buffer))))))))))))
+;; See `file-notify-add-watch' for more details."
+;;     (pcase-let ((`(,desc ,action ,file ,@_) event))
+;;       (pcase action
+;;         ((or 'deleted 'renamed)
+;;          (file-notify-rm-watch desc))
+;;         ('changed
+;;          (let ((vc-root (apply 'file-name-concat "/" (seq-subseq (split-string file "/") 0 -3))))
+;;            (dolist (frame (frame-list))
+;;              (when (not (frame-parent frame))
+;;                (dolist (buf (buffer-list frame))
+;;                  (when (not (string-prefix-p " " (buffer-name buf)))
+;;                    (with-current-buffer buf
+;;                      (when (string-prefix-p vc-root (expand-file-name default-directory))
+;;                        (refresh-git-backed-buffer))))))))))))
 
-  (defun watch-git-head ()
-    (let ((file (buffer-file-name)))
-      (when (eq 'Git (vc-backend file))
-        (let* ((root (expand-file-name (vc-git-root file)))
-               (head (file-name-concat root ".git" "logs" "HEAD")))
-          (unless (or (not (file-exists-p head))
-                      (assoc-default head watched-git-heads))
-            (ignore-errors
-              (setf (alist-get head watched-git-heads nil nil 'equal)
-                    (file-notify-add-watch head '(change) 'handle-git-state-change))))))))
+;;   (defun watch-git-head ()
+;;     (let ((file (buffer-file-name)))
+;;       (when (eq 'Git (vc-backend file))
+;;         (let* ((root (expand-file-name (vc-git-root file)))
+;;                (head (file-name-concat root ".git" "logs" "HEAD")))
+;;           (unless (or (not (file-exists-p head))
+;;                       (assoc-default head watched-git-heads))
+;;             (ignore-errors
+;;               (setf (alist-get head watched-git-heads nil nil 'equal)
+;;                     (file-notify-add-watch head '(change) 'handle-git-state-change))))))))
 
-  (defun reap-git-head-watchers ()
-    (when-let* ((buffer-default-dirs-sans-current
-                 (seq-uniq
-                  (mapcar
-                   (lambda (buf) (with-current-buffer buf (expand-file-name default-directory)))
-                   (seq-filter
-                    (lambda (buf)
-                      (not (or (string-prefix-p " " (buffer-name buf))
-                               (equal buf (current-buffer)))))
-                    (apply 'append
-                           (mapcar
-                            'buffer-list
-                            (seq-filter
-                             (lambda (frame) (not (frame-parent frame)))
-                             (frame-list))))))))
-                (git-heads-to-delete
-                 (seq-filter
-                  (lambda (git-head)
-                    (let ((vc-root (apply 'file-name-concat "/" (seq-subseq (split-string git-head "/") 0 -3))))
-                      (not (seq-some (apply-partially 'string-prefix-p vc-root) buffer-default-dirs-sans-current))))
-                  (mapcar 'car watched-git-heads))))
+;;   (defun reap-git-head-watchers ()
+;;     (when-let* ((buffer-default-dirs-sans-current
+;;                  (seq-uniq
+;;                   (mapcar
+;;                    (lambda (buf) (with-current-buffer buf (expand-file-name default-directory)))
+;;                    (seq-filter
+;;                     (lambda (buf)
+;;                       (not (or (string-prefix-p " " (buffer-name buf))
+;;                                (equal buf (current-buffer)))))
+;;                     (apply 'append
+;;                            (mapcar
+;;                             'buffer-list
+;;                             (seq-filter
+;;                              (lambda (frame) (not (frame-parent frame)))
+;;                              (frame-list))))))))
+;;                 (git-heads-to-delete
+;;                  (seq-filter
+;;                   (lambda (git-head)
+;;                     (let ((vc-root (apply 'file-name-concat "/" (seq-subseq (split-string git-head "/") 0 -3))))
+;;                       (not (seq-some (apply-partially 'string-prefix-p vc-root) buffer-default-dirs-sans-current))))
+;;                   (mapcar 'car watched-git-heads))))
 
-      (dolist (git-head git-heads-to-delete)
-        (let ((watcher (assoc-default git-head watched-git-heads)))
-          (file-notify-rm-watch watcher)
-          (setf (alist-get git-head watched-git-heads nil t 'equal) nil)))))
+;;       (dolist (git-head git-heads-to-delete)
+;;         (let ((watcher (assoc-default git-head watched-git-heads)))
+;;           (file-notify-rm-watch watcher)
+;;           (setf (alist-get git-head watched-git-heads nil t 'equal) nil)))))
 
-  (add-hook 'find-file-hook 'watch-git-head)
-  (add-hook 'kill-buffer-hook 'reap-git-head-watchers))
+;;   (add-hook 'find-file-hook 'watch-git-head)
+;;   (add-hook 'kill-buffer-hook 'reap-git-head-watchers))
 
 (use-package forge
   :after (magit)
