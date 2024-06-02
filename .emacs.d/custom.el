@@ -142,7 +142,6 @@
  '(global-origami-mode t)
  '(global-so-long-mode t)
  '(global-syntax-subword-mode t)
- '(global-tree-sitter-mode t)
  '(global-undo-tree-mode t)
  '(global-whitespace-cleanup-mode t)
  '(gnutls-algorithm-priority
