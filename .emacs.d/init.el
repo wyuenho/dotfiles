@@ -1443,6 +1443,7 @@ optionally the window if possible."
 
 (use-package ruff-format
   :delight ruff-format-on-save-mode
+  :config
   (with-eval-after-load 'pet
     (add-hook 'pet-mode-hook (lambda ()
                                (when ruff-format-command
