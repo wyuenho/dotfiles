@@ -149,6 +149,8 @@ under `user-emacs-directory'.  If it exists, load it."
   :if (memq (window-system) '(mac ns))
   :config (exec-path-from-shell-initialize))
 
+(use-package inheritenv)
+
 (use-package envrc
   :config
   (add-hook 'change-major-mode-after-body-hook 'envrc-mode))
@@ -1383,6 +1385,7 @@ optionally the window if possible."
 
 (use-package tide
   :config
+  (inheritenv-add-advice 'tide-command-to-string)
   (add-hook 'typescript-ts-base-mode-hook
             (lambda ()
               (when (find-file-from-project-root "[jt]sconfig.json")
