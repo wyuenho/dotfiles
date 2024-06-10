@@ -1,105 +1,165 @@
 command_timeout = 2000
 
-[aws]
-symbol = "🅰 "
-
 [battery]
+charging_symbol = "⇡ "
 disabled = true
+discharging_symbol = "⇣ "
+empty_symbol = "❗ "
+full_symbol = "• "
+unknown_symbol = "❓ "
 
-[conda]
-symbol = " "
+[buf]
+format = "(with [$symbol$version ]($style))"
+
+[bun]
+format = "(via [$symbol($version )]($style))"
+
+[c]
+format = "(via [$symbol($version(-$name) )]($style))"
+
+[cmake]
+format = "(via [$symbol($version )]($style))"
+
+[cobol]
+format = "(via [$symbol($version )]($style))"
 
 [crystal]
 disabled = true
+format = "(via [$symbol($version )]($style))"
+
+[daml]
+format = "(via [$symbol($version )]($style))"
 
 [dart]
-symbol = " "
 disabled = true
+format = "(via [$symbol($version )]($style))"
 
-[docker_context]
-symbol = " "
+[deno]
+format = "(via [$symbol($version )]($style))"
 
 [directory]
 truncate_to_repo = false
 truncation_length = 8
 truncation_symbol = "…/"
-read_only = " "
 
 [dotnet]
 disabled = true
+format = "(via [$symbol($version )(🎯 $tfm )]($style))"
 
 [elixir]
-symbol = " "
+format = "(via [$symbol($version \\(OTP $otp_version\\) )]($style))"
 
 [elm]
-symbol = " "
+format = "(via [$symbol($version )]($style))"
 
-[gcloud]
-symbol = "🅶 "
+[erlang]
+format = "(via [$symbol($version )]($style))"
+symbol = "ⓔ "
 
-[git_branch]
-symbol = " "
+[fennel]
+format = "(via [$symbol($version )]($style))"
+
+[gleam]
+format = "(via [$symbol($version )]($style))"
 
 [golang]
-symbol = " "
+format = "(via [$symbol($version )]($style))"
+
+[haskell]
+format = "(via [$symbol($version )]($style))"
+
+[helm]
+format = "(via [$symbol($version )]($style))"
 
 [hg_branch]
-symbol = " "
 disabled = false
 
 [java]
-symbol = " "
+format = "(via [$symbol($version )]($style))"
 
 [julia]
-symbol = " "
+format = "(via [$symbol($version )]($style))"
+
+[kotlin]
+format = "(via [$symbol($version )]($style))"
 
 [kubernetes]
 disabled = false
 
-[memory_usage]
-symbol = " "
+[lua]
+format = "(via [$symbol($version )]($style))"
 
 [nim]
-symbol = " "
+format = "(via [$symbol($version )]($style))"
 
-[nix_shell]
-symbol = " "
+[nodejs]
+format = "(via [$symbol($version )]($style))"
+symbol = "[⬢](bold green) "
 
-[package]
-symbol = " "
+[ocaml]
+format = "(via [$symbol($version )(\\($switch_indicator$switch_name\\) )]($style))"
 
-[perl]
-symbol = " "
-
-[php]
-symbol = " "
-
-[python]
-symbol = " "
+[opa]
+format = "(via [$symbo($version ]($style))\""
 
 [openstack]
 disabled = true
 
+[package]
+format = "(is [$symbol$version]($style) )"
+
+[perl]
+format = "(via [$symbol($version )]($style))"
+
+[php]
+format = "(via [$symbol($version )]($style))"
+
+[pulumi]
+symbol = "🧊 "
+
 [purescript]
 disabled = true
+format = "(via [$symbol($version )]($style))"
+
+[python]
+format = "(via [${symbol}${pyenv_prefix}(${version} )(\\($virtualenv\\) )]($style))"
+
+[quarto]
+format = "(via [$symbol($version )]($style))"
+
+[raku]
+format = "(via [$symbol($version-$vm_version )]($style))"
+
+[red]
+format = "(via [$symbol($version )]($style))"
+
+[rlang]
+format = "(via [$symbol($version )]($style))"
 
 [ruby]
-symbol = " "
+format = "(via [$symbol($version )]($style))"
 
 [rust]
-symbol = " "
+format = "(via [$symbol($version )]($style))"
 
 [scala]
-symbol = " "
-
-[shlvl]
-symbol = " "
+format = "(via [$symbol($version )]($style))"
 
 [singularity]
 disabled = true
 
 [swift]
-symbol = "ﯣ "
+format = "(via [$symbol($version )]($style))"
+
+[typst]
+format = "(via [$symbol($version )]($style))"
+symbol = "t "
+
+[vagrant]
+format = "(via [$symbol($version )]($style))"
+
+[vlang]
+format = "(via [$symbol($version )]($style))"
 
 [zig]
-disabled = true
+format = "(via [$symbol($version )]($style))"
