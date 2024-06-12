@@ -1384,6 +1384,7 @@ optionally the window if possible."
                 (denofmt-format-on-save-mode)))))
 
 (use-package tide
+  :after (inheritenv)
   :config
   (inheritenv-add-advice 'tide-command-to-string)
   (add-hook 'typescript-ts-base-mode-hook
