@@ -96,6 +96,9 @@ under `user-emacs-directory'.  If it exists, load it."
              (visual-line-mode       nil simple)
              (subword-mode           nil subword))))
 
+(use-package timeout
+  :quelpa (timeout :fetcher github :repo "karthink/timeout"))
+
 ;; Replace the major mode name with its icon
 (use-package all-the-icons
   :quelpa (all-the-icons :fetcher github :repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg"))
