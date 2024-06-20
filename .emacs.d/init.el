@@ -2075,9 +2075,12 @@ ELEMENT is only added once."
 (use-package window-purpose
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts")
                           :branch "improve-code1")
+  :after (timeout)
   :config
   (define-key purpose-mode-map (kbd "C-c ,") nil)
   (define-key purpose-mode-map (kbd "C-c w") purpose-mode-prefix-map)
+
+  (timeout-debounce! 'purpose-x-code1-update-changed 0.2)
 
   (with-eval-after-load 'which-key
     (which-key-add-key-based-replacements "C-c w" "window-purpose")
