@@ -1397,13 +1397,16 @@ optionally the window if possible."
                 (tide-hl-identifier-mode)))))
 
 (use-package ts-comint
+  :after (inheritenv)
   :bind (:map typescript-ts-base-mode-map
               ("C-x C-e" . ts-send-last-sexp)
               ("C-c e e" . ts-send-last-sexp-and-go)
               ("C-c e r" . ts-send-region-and-go)
               ("C-c e b" . ts-send-buffer-and-go)
               ("C-c e l" . ts-load-file-and-go)
-              ("C-c M-:" . switch-to-ts)))
+              ("C-c M-:" . switch-to-ts))
+  :config
+  (inheritenv-add-advice 'run-ts))
 
 ;; Python
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'"   . python-mode))
