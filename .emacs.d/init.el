@@ -97,7 +97,7 @@ under `user-emacs-directory'.  If it exists, load it."
              (subword-mode           nil subword))))
 
 (use-package timeout
-  :quelpa (timeout :fetcher github :repo "karthink/timeout"))
+  :quelpa (timeout :fetcher github :repo "wyuenho/timeout"))
 
 ;; Replace the major mode name with its icon
 (use-package all-the-icons
