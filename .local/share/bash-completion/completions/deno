@@ -12,6 +12,9 @@ _deno() {
             ",$1")
                 cmd="deno"
                 ;;
+            deno,add)
+                cmd="deno__add"
+                ;;
             deno,bench)
                 cmd="deno__bench"
                 ;;
@@ -54,17 +57,26 @@ _deno() {
             deno,install)
                 cmd="deno__install"
                 ;;
+            deno,jupyter)
+                cmd="deno__jupyter"
+                ;;
             deno,lint)
                 cmd="deno__lint"
                 ;;
             deno,lsp)
                 cmd="deno__lsp"
                 ;;
+            deno,publish)
+                cmd="deno__publish"
+                ;;
             deno,repl)
                 cmd="deno__repl"
                 ;;
             deno,run)
                 cmd="deno__run"
+                ;;
+            deno,serve)
+                cmd="deno__serve"
                 ;;
             deno,task)
                 cmd="deno__task"
@@ -91,18 +103,40 @@ _deno() {
 
     case "${cmd}" in
         deno)
-            opts="-L -q -h -V --unstable --log-level --quiet --help --version run bench bundle cache check compile completions coverage doc eval fmt init info install uninstall lsp lint repl task test types upgrade vendor help"
+            opts="-V -L -q -h --version --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --help run serve add bench bundle cache check compile completions coverage doc eval fmt init info install jupyter uninstall lsp lint publish repl task test types upgrade vendor help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        deno__add)
+            opts="-L -q -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --help <packages>..."
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --log-level)
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
+                    return 0
+                    ;;
+                -L)
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -113,18 +147,18 @@ _deno() {
             return 0
             ;;
         deno__bench)
-            opts="-L -q -c -r -A -h --unstable --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --allow-write --allow-net --unsafely-ignore-certificate-errors --allow-env --allow-sys --allow-run --allow-ffi --allow-hrtime --allow-all --prompt --no-prompt --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --check --json --ignore --filter --no-run --watch --no-clear-screen --help [files]... [SCRIPT_ARG]..."
+            opts="-L -q -c -r -A -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --deny-read --allow-write --deny-write --allow-net --deny-net --unsafely-ignore-certificate-errors --allow-env --deny-env --allow-sys --deny-sys --allow-run --deny-run --allow-ffi --deny-ffi --allow-hrtime --deny-hrtime --allow-all --no-prompt --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --strace-ops --check --json --ignore --filter --no-run --watch --watch-exclude --no-clear-screen --env --help [files]... [SCRIPT_ARG]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --no-check)
@@ -136,6 +170,10 @@ _deno() {
                     return 0
                     ;;
                 --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -167,11 +205,23 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-read)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-write)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-write)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-net)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-net)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -183,7 +233,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-sys)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-sys)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -191,7 +249,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-run)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-ffi)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-ffi)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -207,6 +273,10 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --strace-ops)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --check)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -219,6 +289,14 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --watch-exclude)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 *)
                     COMPREPLY=()
                     ;;
@@ -227,18 +305,18 @@ _deno() {
             return 0
             ;;
         deno__bundle)
-            opts="-L -q -c -r -h --unstable --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --config --no-config --reload --lock --lock-write --no-lock --cert --check --watch --no-clear-screen --ext --help <source_file> [out_file]"
+            opts="-L -q -c -r -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --check --watch --watch-exclude --no-clear-screen --ext --help <source_file> [out_file]"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --no-check)
@@ -250,6 +328,10 @@ _deno() {
                     return 0
                     ;;
                 --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -281,6 +363,10 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --watch-exclude)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --ext)
                     COMPREPLY=($(compgen -W "ts tsx js jsx" -- "${cur}"))
                     return 0
@@ -293,18 +379,18 @@ _deno() {
             return 0
             ;;
         deno__cache)
-            opts="-L -q -c -r -h --unstable --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --config --no-config --reload --lock --lock-write --no-lock --cert --check --help <file>..."
+            opts="-L -q -c -r -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --check --help <file>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --no-check)
@@ -316,6 +402,10 @@ _deno() {
                     return 0
                     ;;
                 --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -355,18 +445,18 @@ _deno() {
             return 0
             ;;
         deno__check)
-            opts="-L -q -c -r -h --unstable --log-level --quiet --import-map --no-remote --no-npm --node-modules-dir --config --no-config --reload --lock --lock-write --no-lock --cert --all --remote --help <file>..."
+            opts="-L -q -c -r -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --all --remote --help <file>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --import-map)
@@ -374,6 +464,10 @@ _deno() {
                     return 0
                     ;;
                 --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -409,18 +503,18 @@ _deno() {
             return 0
             ;;
         deno__compile)
-            opts="-L -q -c -r -A -o -h --unstable --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --allow-write --allow-net --unsafely-ignore-certificate-errors --allow-env --allow-sys --allow-run --allow-ffi --allow-hrtime --allow-all --prompt --no-prompt --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --check --include --output --target --ext --help [SCRIPT_ARG]..."
+            opts="-L -q -c -r -A -o -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --deny-read --allow-write --deny-write --allow-net --deny-net --unsafely-ignore-certificate-errors --allow-env --deny-env --allow-sys --deny-sys --allow-run --deny-run --allow-ffi --deny-ffi --allow-hrtime --deny-hrtime --allow-all --no-prompt --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --strace-ops --check --include --output --target --no-terminal --ext --env --help [SCRIPT_ARG]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --no-check)
@@ -432,6 +526,10 @@ _deno() {
                     return 0
                     ;;
                 --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -463,11 +561,23 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-read)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-write)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-write)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-net)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-net)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -479,7 +589,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-sys)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-sys)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -487,7 +605,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-run)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-ffi)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-ffi)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -500,6 +626,10 @@ _deno() {
                     return 0
                     ;;
                 --seed)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --strace-ops)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -520,11 +650,15 @@ _deno() {
                     return 0
                     ;;
                 --target)
-                    COMPREPLY=($(compgen -W "x86_64-unknown-linux-gnu x86_64-pc-windows-msvc x86_64-apple-darwin aarch64-apple-darwin" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu x86_64-pc-windows-msvc x86_64-apple-darwin aarch64-apple-darwin" -- "${cur}"))
                     return 0
                     ;;
                 --ext)
                     COMPREPLY=($(compgen -W "ts tsx js jsx" -- "${cur}"))
+                    return 0
+                    ;;
+                --env)
+                    COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                 *)
@@ -535,18 +669,18 @@ _deno() {
             return 0
             ;;
         deno__completions)
-            opts="-L -q -h --unstable --log-level --quiet --help bash fish powershell zsh fig"
+            opts="-L -q -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --help bash fish powershell zsh fig"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -557,18 +691,18 @@ _deno() {
             return 0
             ;;
         deno__coverage)
-            opts="-L -q -h --unstable --log-level --quiet --ignore --include --exclude --lcov --output --help <files>..."
+            opts="-L -q -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --ignore --include --exclude --lcov --output --html --detailed --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --ignore)
@@ -595,18 +729,18 @@ _deno() {
             return 0
             ;;
         deno__doc)
-            opts="-L -q -r -h --unstable --log-level --quiet --import-map --reload --lock --no-lock --no-npm --no-remote --json --private --help [source_file] [filter]"
+            opts="-L -q -r -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --import-map --reload --lock --no-lock --no-npm --no-remote --json --html --name --output --private --filter --lint --help [source_file]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --import-map)
@@ -625,6 +759,18 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --name)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --output)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --filter)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 *)
                     COMPREPLY=()
                     ;;
@@ -633,18 +779,18 @@ _deno() {
             return 0
             ;;
         deno__eval)
-            opts="-L -q -c -r -T -p -h --unstable --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --config --no-config --reload --lock --lock-write --no-lock --cert --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --check --ts --ext --print --help <CODE_ARG>..."
+            opts="-L -q -c -r -T -p -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --strace-ops --check --ts --ext --print --env --help <CODE_ARG>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --no-check)
@@ -656,6 +802,10 @@ _deno() {
                     return 0
                     ;;
                 --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -707,12 +857,20 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --strace-ops)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --check)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                 --ext)
                     COMPREPLY=($(compgen -W "ts tsx js jsx" -- "${cur}"))
+                    return 0
+                    ;;
+                --env)
+                    COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                 *)
@@ -723,18 +881,18 @@ _deno() {
             return 0
             ;;
         deno__fmt)
-            opts="-L -q -c -h --unstable --log-level --quiet --config --no-config --check --ext --ignore --watch --no-clear-screen --use-tabs --line-width --indent-width --single-quote --prose-wrap --no-semicolons --help [files]..."
+            opts="-L -q -c -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --config --no-config --check --ext --ignore --watch --watch-exclude --no-clear-screen --use-tabs --line-width --indent-width --single-quote --prose-wrap --no-semicolons --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -746,10 +904,14 @@ _deno() {
                     return 0
                     ;;
                 --ext)
-                    COMPREPLY=($(compgen -W "ts tsx js jsx md json jsonc" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "ts tsx js jsx md json jsonc ipynb" -- "${cur}"))
                     return 0
                     ;;
                 --ignore)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --watch-exclude)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -799,18 +961,18 @@ _deno() {
             return 0
             ;;
         deno__info)
-            opts="-L -q -r -c -h --unstable --log-level --quiet --reload --cert --location --no-check --no-config --no-remote --no-npm --no-lock --lock --config --import-map --node-modules-dir --json --help [file]"
+            opts="-L -q -r -c -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --reload --cert --location --no-check --no-config --no-remote --no-npm --lock --lock-write --no-lock --config --import-map --node-modules-dir --vendor --json --help [file]"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --reload)
@@ -853,6 +1015,10 @@ _deno() {
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
+                --vendor)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
                 *)
                     COMPREPLY=()
                     ;;
@@ -861,18 +1027,18 @@ _deno() {
             return 0
             ;;
         deno__init)
-            opts="-L -q -h --unstable --log-level --quiet --help [dir]"
+            opts="-L -q -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --help [dir]"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -883,18 +1049,18 @@ _deno() {
             return 0
             ;;
         deno__install)
-            opts="-L -q -c -r -A -n -f -h --unstable --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --allow-write --allow-net --unsafely-ignore-certificate-errors --allow-env --allow-sys --allow-run --allow-ffi --allow-hrtime --allow-all --prompt --no-prompt --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --check --name --root --force --help <cmd>..."
+            opts="-L -q -c -r -A -n -f -g -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --deny-read --allow-write --deny-write --allow-net --deny-net --unsafely-ignore-certificate-errors --allow-env --deny-env --allow-sys --deny-sys --allow-run --deny-run --allow-ffi --deny-ffi --allow-hrtime --deny-hrtime --allow-all --no-prompt --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --strace-ops --check --name --root --force --global --env --help <cmd>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --no-check)
@@ -906,6 +1072,10 @@ _deno() {
                     return 0
                     ;;
                 --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -937,11 +1107,23 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-read)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-write)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-write)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-net)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-net)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -953,7 +1135,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-sys)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-sys)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -961,7 +1151,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-run)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-ffi)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-ffi)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -989,6 +1187,10 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --strace-ops)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --check)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -1005,6 +1207,36 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        deno__jupyter)
+            opts="-L -q -h --install --kernel --conn --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --conn)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --log-level)
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
+                    return 0
+                    ;;
+                -L)
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
+                    return 0
+                    ;;
                 *)
                     COMPREPLY=()
                     ;;
@@ -1013,18 +1245,18 @@ _deno() {
             return 0
             ;;
         deno__lint)
-            opts="-L -q -c -h --unstable --log-level --quiet --rules --rules-tags --rules-include --rules-exclude --no-config --config --ignore --json --compact --watch --no-clear-screen --help [files]..."
+            opts="-L -q -c -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --fix --rules --rules-tags --rules-include --rules-exclude --no-config --config --ignore --json --compact --watch --watch-exclude --no-clear-screen --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --rules-tags)
@@ -1051,6 +1283,10 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --watch-exclude)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 *)
                     COMPREPLY=()
                     ;;
@@ -1059,18 +1295,60 @@ _deno() {
             return 0
             ;;
         deno__lsp)
-            opts="-L -q -h --unstable --log-level --quiet --help"
+            opts="-L -q -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        deno__publish)
+            opts="-L -q -c -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --token --config --no-config --dry-run --allow-slow-types --allow-dirty --no-provenance --check --no-check --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --log-level)
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
+                    return 0
+                    ;;
+                -L)
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
+                    return 0
+                    ;;
+                --token)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --check)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --no-check)
+                    COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                 *)
@@ -1081,18 +1359,22 @@ _deno() {
             return 0
             ;;
         deno__repl)
-            opts="-L -q -c -r -A -h --unstable --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --allow-write --allow-net --unsafely-ignore-certificate-errors --allow-env --allow-sys --allow-run --allow-ffi --allow-hrtime --allow-all --prompt --no-prompt --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --check --eval-file --eval --help"
+            opts="-L -q -c -r -A -h --env --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --deny-read --allow-write --deny-write --allow-net --deny-net --unsafely-ignore-certificate-errors --allow-env --deny-env --allow-sys --deny-sys --allow-run --deny-run --allow-ffi --deny-ffi --allow-hrtime --deny-hrtime --allow-all --no-prompt --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --strace-ops --check --eval-file --eval --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
+                --env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --no-check)
@@ -1104,6 +1386,10 @@ _deno() {
                     return 0
                     ;;
                 --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -1135,11 +1421,23 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-read)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-write)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-write)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-net)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-net)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1151,7 +1449,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-sys)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-sys)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1159,7 +1465,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-run)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-ffi)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-ffi)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1184,6 +1498,10 @@ _deno() {
                     return 0
                     ;;
                 --seed)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --strace-ops)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1207,7 +1525,7 @@ _deno() {
             return 0
             ;;
         deno__run)
-            opts="-c -r -A -L -q -h --no-check --import-map --no-remote --no-npm --node-modules-dir --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --allow-write --allow-net --unsafely-ignore-certificate-errors --allow-env --allow-sys --allow-run --allow-ffi --allow-hrtime --allow-all --prompt --no-prompt --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --check --watch --no-clear-screen --ext --unstable --log-level --quiet --help [SCRIPT_ARG]..."
+            opts="-c -r -A -L -q -h --no-check --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --deny-read --allow-write --deny-write --allow-net --deny-net --unsafely-ignore-certificate-errors --allow-env --deny-env --allow-sys --deny-sys --allow-run --deny-run --allow-ffi --deny-ffi --allow-hrtime --deny-hrtime --allow-all --no-prompt --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --strace-ops --check --watch --watch-exclude --unstable-hmr --no-clear-screen --ext --env --no-code-cache --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --help [SCRIPT_ARG]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1222,6 +1540,10 @@ _deno() {
                     return 0
                     ;;
                 --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -1253,11 +1575,23 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-read)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-write)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-write)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-net)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-net)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1269,7 +1603,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-sys)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-sys)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1277,7 +1619,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-run)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-ffi)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-ffi)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1305,6 +1655,10 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --strace-ops)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --check)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -1313,16 +1667,210 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --watch-exclude)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --unstable-hmr)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --ext)
                     COMPREPLY=($(compgen -W "ts tsx js jsx" -- "${cur}"))
                     return 0
                     ;;
+                --env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        deno__serve)
+            opts="-c -r -A -L -q -h --no-check --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --deny-read --allow-write --deny-write --allow-net --deny-net --unsafely-ignore-certificate-errors --allow-env --deny-env --allow-sys --deny-sys --allow-run --deny-run --allow-ffi --deny-ffi --allow-hrtime --deny-hrtime --allow-all --no-prompt --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --strace-ops --port --host --check --watch --watch-exclude --unstable-hmr --no-clear-screen --ext --env --no-code-cache --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --help [SCRIPT_ARG]..."
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --no-check)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --import-map)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --config)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --reload)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -r)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --lock)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --cert)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --allow-read)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-read)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --allow-write)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-write)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --allow-net)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-net)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --unsafely-ignore-certificate-errors)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --allow-env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --allow-sys)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-sys)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --allow-run)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-run)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --allow-ffi)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-ffi)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --inspect)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --inspect-brk)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --inspect-wait)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --location)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --v8-flags)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --seed)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --strace-ops)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --port)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --host)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --check)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --watch)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --watch-exclude)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --unstable-hmr)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --ext)
+                    COMPREPLY=($(compgen -W "ts tsx js jsx" -- "${cur}"))
+                    return 0
+                    ;;
+                --env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --log-level)
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
+                    return 0
+                    ;;
+                -L)
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -1333,18 +1881,18 @@ _deno() {
             return 0
             ;;
         deno__task)
-            opts="-L -q -c -h --unstable --log-level --quiet --config --cwd --help"
+            opts="-L -q -c -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --config --cwd --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1367,18 +1915,18 @@ _deno() {
             return 0
             ;;
         deno__test)
-            opts="-L -q -c -r -A -j -h --unstable --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --allow-write --allow-net --unsafely-ignore-certificate-errors --allow-env --allow-sys --allow-run --allow-ffi --allow-hrtime --allow-all --prompt --no-prompt --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --check --ignore --no-run --trace-ops --doc --fail-fast --allow-none --filter --shuffle --coverage --parallel --jobs --watch --no-clear-screen --help [files]... [SCRIPT_ARG]..."
+            opts="-L -q -c -r -A -j -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --no-check --import-map --no-remote --no-npm --node-modules-dir --vendor --config --no-config --reload --lock --lock-write --no-lock --cert --allow-read --deny-read --allow-write --deny-write --allow-net --deny-net --unsafely-ignore-certificate-errors --allow-env --deny-env --allow-sys --deny-sys --allow-run --deny-run --allow-ffi --deny-ffi --allow-hrtime --deny-hrtime --allow-all --no-prompt --inspect --inspect-brk --inspect-wait --cached-only --location --v8-flags --seed --enable-testing-features-do-not-use --strace-ops --check --ignore --no-run --trace-ops --trace-leaks --doc --fail-fast --allow-none --filter --shuffle --coverage --clean --parallel --jobs --watch --watch-exclude --no-clear-screen --junit-path --reporter --env --help [files]... [SCRIPT_ARG]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --no-check)
@@ -1390,6 +1938,10 @@ _deno() {
                     return 0
                     ;;
                 --node-modules-dir)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --vendor)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -1421,11 +1973,23 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-read)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-write)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-write)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-net)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-net)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1437,7 +2001,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-sys)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-sys)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1445,7 +2017,15 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --deny-run)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --allow-ffi)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --deny-ffi)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1470,6 +2050,10 @@ _deno() {
                     return 0
                     ;;
                 --seed)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --strace-ops)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1505,6 +2089,22 @@ _deno() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --watch-exclude)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --junit-path)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --reporter)
+                    COMPREPLY=($(compgen -W "pretty dot junit tap" -- "${cur}"))
+                    return 0
+                    ;;
+                --env)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 *)
                     COMPREPLY=()
                     ;;
@@ -1513,18 +2113,18 @@ _deno() {
             return 0
             ;;
         deno__types)
-            opts="-L -q -h --unstable --log-level --quiet --help"
+            opts="-L -q -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -1535,18 +2135,18 @@ _deno() {
             return 0
             ;;
         deno__uninstall)
-            opts="-L -q -h --unstable --log-level --quiet --root --help <name>"
+            opts="-L -q -g -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --root --global --help <name>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --root)
@@ -1561,18 +2161,18 @@ _deno() {
             return 0
             ;;
         deno__upgrade)
-            opts="-L -q -f -h --unstable --log-level --quiet --version --output --dry-run --force --canary --cert --help"
+            opts="-L -q -f -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --version --output --dry-run --force --canary --cert --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --version)
@@ -1595,18 +2195,18 @@ _deno() {
             return 0
             ;;
         deno__vendor)
-            opts="-L -q -f -c -r -h --unstable --log-level --quiet --output --force --no-config --config --import-map --lock --node-modules-dir --reload --cert --help <specifiers>..."
+            opts="-L -q -f -c -r -h --unstable --unstable-bare-node-builtins --unstable-byonm --unstable-sloppy-imports --unstable-broadcast-channel --unstable-cron --unstable-ffi --unstable-fs --unstable-http --unstable-kv --unstable-net --unstable-process --unstable-temporal --unstable-unsafe-proto --unstable-webgpu --unstable-worker-options --log-level --quiet --output --force --no-config --config --import-map --lock --node-modules-dir --vendor --reload --cert --help <specifiers>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
                 --log-level)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 -L)
-                    COMPREPLY=($(compgen -W "debug info" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "trace debug info" -- "${cur}"))
                     return 0
                     ;;
                 --output)
@@ -1633,6 +2233,10 @@ _deno() {
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
+                --vendor)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
                 --reload)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -1655,4 +2259,8 @@ _deno() {
     esac
 }
 
-complete -F _deno -o bashdefault -o default deno
+if [[ "${BASH_VERSINFO[0]}" -eq 4 && "${BASH_VERSINFO[1]}" -ge 4 || "${BASH_VERSINFO[0]}" -gt 4 ]]; then
+    complete -F _deno -o nosort -o bashdefault -o default deno
+else
+    complete -F _deno -o bashdefault -o default deno
+fi
