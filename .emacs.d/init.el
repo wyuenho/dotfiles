@@ -935,7 +935,6 @@ checker symbol."
 (use-package spinner)
 
 (use-package flycheck
-  :quelpa (flycheck :fetcher github :repo "wyuenho/flycheck" :branch "my-fixes")
   :init
   ;; With `flycheck' and `purpose-x-code-1' turned on, under `emacs-lisp-mode',
   ;; `diff-hl-dired-mode' on the dired `*Files*' will create git index lock
