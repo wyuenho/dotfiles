@@ -118,9 +118,9 @@ under `user-emacs-directory'.  If it exists, load it."
   (load-theme 'solarized-dark t)
 
   (pcase-dolist (`(,face . ,alias)
-                 '((company-tooltip-selection    . company-tooltip-mouse)
-                   (tooltip                      . company-tooltip)
-                   (lsp-ui-doc-background        . company-tooltip)))
+                 '((company-tooltip-selection . company-tooltip-mouse)
+                   (tooltip                   . company-tooltip)
+                   (lsp-ui-doc-background     . company-tooltip)))
     (put face 'theme-face nil)
     (put face 'face-alias alias))
 
