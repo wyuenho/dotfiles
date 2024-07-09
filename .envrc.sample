@@ -20,7 +20,3 @@ if [ -x "$(type -P pipx)" ]; then
     export PIPX_MAN_DIR="$HOME/.local/pipx/$py_ver/share/man"
     PATH_add "$PIPX_BIN_DIR"
 fi
-
-if [ -x "$(type -P fnm)" ]; then
-    PATH_add "$(fnm env  | head -n 1 | sed -E -n "s/.*PATH=\"(.*)\":.*/\1/p")"
-fi
