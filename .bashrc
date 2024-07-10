@@ -134,10 +134,8 @@ if [ -z "$INSIDE_EMACS" ] ||
         source "$EMACS_VTERM_PATH/etc/emacs-vterm-bash.sh"
     fi
 
-    # fnm
+    # Node
     if [ -x "$(type -P fnm)" ]; then
-        eval "$(fnm env --version-file-strategy=recursive --corepack-enabled)"
-
         __fnm_use_if_file_found() {
             if [[ -f .node-version || -f .nvmrc ]]; then
                 fnm use --silent-if-unchanged --install-if-missing

@@ -71,6 +71,11 @@ if [ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
     unset KEYTOOL
 fi
 
+# Node
+if [ -x "$(type -P fnm)" ]; then
+    eval "$(fnm env --version-file-strategy=recursive --corepack-enabled)"
+fi
+
 # Python
 if [ -s "$HOME/.pythonrc" ]; then
     PYTHONSTARTUP="$HOME/.pythonrc"
