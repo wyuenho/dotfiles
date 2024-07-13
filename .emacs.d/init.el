@@ -988,14 +988,6 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
   :delight shfmt-on-save-mode
   :hook (sh-base-mode . shfmt-on-save-mode))
 
-(use-package company-native-complete
-  :after (company)
-  :config
-  (add-hook 'shell-mode-hook
-            (lambda ()
-              (setq-local company-backends
-                          '(company-native-complete company-files company-capf)))))
-
 (setf eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
 (use-package vterm
