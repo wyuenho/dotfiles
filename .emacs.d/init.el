@@ -553,9 +553,9 @@ Optional argument ARG same as `comment-dwim''s."
   :preface
   (defun inflect-string ()
     (interactive)
-    (cond ((derived-mode-p 'scala-mode 'java-mode 'java-ts-mode 'js-base-mode 'typescript-ts-base-mode 'go-mode 'go-ts-mode)
+    (cond ((derived-mode-p 'scala-mode 'java-mode 'java-ts-mode 'js-base-mode 'js-jsx-mode 'typescript-ts-base-mode 'go-mode 'go-ts-mode)
            (string-inflection-java-style-cycle))
-          ((derived-mode-p 'python-base-mode 'ruby-base-mode 'enh-ruby-mode 'c-mode 'c++-mode 'c-ts-base-mode 'rust-mode 'rust-ts-mode)
+          ((derived-mode-p 'python-base-mode 'ruby-base-mode 'enh-ruby-mode 'c-mode 'c++-mode 'c-ts-mode 'c++-ts-mode 'rust-mode 'rust-ts-mode)
            (string-inflection-python-style-cycle))
           ((derived-mode-p 'prog-mode)
            (string-inflection-all-cycle))))
