@@ -514,45 +514,6 @@ Optional argument ARG same as `comment-dwim''s."
                           ("M-]" . sp-backward-unwrap-sexp))
               :config
               (require 'smartparens-config)
-
-              (with-eval-after-load 'c-ts-mode
-                (add-to-list 'sp-c-modes 'c-ts-mode)
-                (add-to-list 'sp-c-modes 'c++-ts-mode)
-                (require 'smartparens-c))
-
-              (with-eval-after-load 'js
-                (require 'smartparens-javascript)
-                (add-to-list 'sp--html-modes 'js-mode)
-                (add-to-list 'sp--html-modes 'js-jsx-mode)
-                (add-to-list 'sp--html-modes 'js-ts-mode)
-                (add-to-list 'sp-sexp-suffix '(js-ts-mode regexp "")))
-
-              (with-eval-after-load 'typescript-ts-mode
-                (add-to-list 'sp-sexp-suffix '(typescript-ts-mode regexp ""))
-                (add-to-list 'sp--html-modes 'tsx-ts-mode))
-
-              (with-eval-after-load 'rust-ts-mode
-                (require 'smartparens-rust)
-                (sp-with-modes '(rust-ts-mode)
-                  (sp-local-pair "'" "'"
-                                 :unless '(sp-in-comment-p sp-in-string-quotes-p sp-in-rust-lifetime-context)
-                                 :post-handlers'(:rem sp-escape-quotes-after-insert))
-                  (sp-local-pair "<" ">"
-                                 :when '(sp-rust-filter-angle-brackets)
-                                 :skip-match 'sp-rust-skip-match-angle-bracket))
-
-                (add-to-list 'sp-sexp-suffix (list #'rust-ts-mode 'regexp "")))
-
-              (with-eval-after-load 'python-ts-mode
-                (require 'smartparens-python)
-                (sp-with-modes 'python-ts-mode
-                  (sp-local-pair "'" "'" :unless '(sp-in-comment-p sp-in-string-quotes-p) :post-handlers '(:add sp-python-fix-tripple-quotes))
-                  (sp-local-pair "\"" "\"" :post-handlers '(:add sp-python-fix-tripple-quotes))
-                  (sp-local-pair "'''" "'''")
-                  (sp-local-pair "\\'" "\\'")
-                  (sp-local-pair "\"\"\"" "\"\"\"")
-                  (sp-local-pair "(" ")" :post-handlers '(:add sp-python-maybe-add-colon-python))))
-
               (add-hook 'eval-expression-minibuffer-setup-hook 'smartparens-mode))))
 
 ;; Cross-machine fomatting
