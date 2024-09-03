@@ -626,7 +626,6 @@ Optional argument ARG same as `comment-dwim''s."
 ;;            go-ts-mode
 ;;            groovy-mode
 ;;            python-base-mode
-;;            reason-mode
 ;;            rust-mode
 ;;            rust-ts-mode
 ;;            scala-mode
@@ -664,7 +663,6 @@ Optional argument ARG same as `comment-dwim''s."
            groovy-mode
            js-base-mode
            python-base-mode
-           reason-mode
            rust-mode
            rust-ts-mode
            scala-mode
