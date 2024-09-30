@@ -684,7 +684,7 @@ Optional argument ARG same as `comment-dwim''s."
       (setf (lsp--client-priority client) -1)
       (setf (lsp--client-activation-fn client)
             (lambda (file-name &optional _)
-              (and (or (string-match-p "\\.mjs\\|\\.[jt]sx?\\'" file-name)
+              (and (or (string-match-p "\\.[cm]js\\|\\.[jt]sx?\\'" file-name)
                        (and (derived-mode-p 'js-base-mode 'typescript-mode 'typescript-ts-base-mode)
                             (not (derived-mode-p 'json-mode))))
                    (find-file-from-project-root "deno.jsonc?"))))))

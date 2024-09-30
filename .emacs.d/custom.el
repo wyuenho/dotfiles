@@ -186,7 +186,7 @@
  '(lsp-completion-default-behaviour :insert)
  '(lsp-debounce-full-sync-notifications-interval 0.25)
  '(lsp-disabled-clients
-   '(pyls pylsp ruff-lsp eslint ocaml-ls bash-ls html-ls css-ls flow-ls))
+   '(pyls pylsp ruff eslint ocaml-ls bash-ls html-ls css-ls flow-ls))
  '(lsp-eldoc-enable-hover nil)
  '(lsp-enable-indentation nil)
  '(lsp-enable-on-type-formatting nil)
