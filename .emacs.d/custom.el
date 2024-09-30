@@ -329,6 +329,7 @@
  '(rxt-global-mode t)
  '(save-place-mode t)
  '(save-place-save-skipped nil)
+ '(savehist-ignored-variables '(dape-history))
  '(savehist-mode t nil (savehist))
  '(scroll-bar-mode nil)
  '(select-enable-clipboard t)
