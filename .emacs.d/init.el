@@ -1466,7 +1466,9 @@ optionally the window if possible."
   :config
   (defun lsp-go-format-buffer ()
     (condition-case err
-        (lsp-format-buffer)
+        (progn
+          (lsp-format-buffer)
+          (lsp-organize-imports))
       (error (minibuffer-message (error-message-string err)))))
   (add-hook 'go-mode-hook
             (lambda ()
@@ -1480,11 +1482,13 @@ optionally the window if possible."
                                   (setq-local lsp-enable-indentation t
                                               lsp-enable-on-type-formatting t)
                                   (remove-hook 'before-save-hook 'gofmt-before-save t)
+                                  (remove-hook 'goimports-format-buffer t)
                                   (add-hook 'before-save-hook 'lsp-go-format-buffer nil t))
                               (kill-local-variable 'lsp-enable-indentation)
                               (kill-local-variable 'lsp-enable-on-type-formatting)
                               (remove-hook 'before-save-hook 'lsp-go-format-buffer t)
-                              (add-hook 'before-save-hook 'gofmt-before-save nil t)))
+                              (add-hook 'before-save-hook 'gofmt-before-save nil t)
+                              (add-hook 'before-save-hook 'goimports-format-buffer -100 t)))
                           nil t)))))
 
 (use-package flycheck-golangci-lint
