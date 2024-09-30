@@ -77,10 +77,6 @@ if [ -x "$(type -P fnm)" ]; then
 fi
 
 # Python
-if [ -s "$HOME/.pythonrc" ]; then
-    PYTHONSTARTUP="$HOME/.pythonrc"
-    export PYTHONSTARTUP
-fi
 
 # Ruby
 if [ -d "$HOME/.rbenv/bin" ]; then

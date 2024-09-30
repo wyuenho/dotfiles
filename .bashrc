@@ -307,6 +307,12 @@ if [ -x "$(type -P fzf)" ]; then
     fi
 fi
 
+# Python
+if [ -s "$HOME/.pythonrc" ]; then
+    PYTHONSTARTUP="$HOME/.pythonrc"
+    export PYTHONSTARTUP
+fi
+
 # 1password
 if [ -r "$XDG_CONFIG_HOME/op/plugins.sh" ]; then
     source "$XDG_CONFIG_HOME/op/plugins.sh"
