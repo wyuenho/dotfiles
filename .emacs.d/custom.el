@@ -296,7 +296,7 @@
    '(angular babel babel-flow babel-ts css espree flow graphql json json5 json-stringify less html markdown mdx meriyah scss sh typescript vue yaml))
  '(prettier-inline-errors-flag t)
  '(prettier-pre-warm 'some)
- '(projectile-project-search-path '("~/Documents/workspace"))
+ '(projectile-project-search-path '(("~/Documents/workspace" . 0)))
  '(purpose-x-code1-dired-goto-file t)
  '(purpose-x-code1-update-idle-delay 0.5)
  '(purpose-x-popwin-major-modes
