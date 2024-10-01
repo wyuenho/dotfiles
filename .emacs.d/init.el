@@ -64,7 +64,8 @@ under `user-emacs-directory'.  If it exists, load it."
 ;; Install selected but missing packages
 (let ((missing (cl-set-difference
                 package-selected-packages
-                package-activated-list)))
+                package-activated-list))
+      (debug-on-error nil))
   (when missing
     (with-demoted-errors "%s"
       (package-refresh-contents))
