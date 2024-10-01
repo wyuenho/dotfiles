@@ -1325,11 +1325,16 @@ optionally the window if possible."
 (use-package lsp-jedi
   :after (lsp-mode))
 
+(use-package pet
+  :delight
+  :config
+  (add-hook 'python-base-mode-hook 'pet-mode -10))
+
 (use-package lsp-pyright
   :after (lsp-mode pet)
   :config
   (pet-def-config-accessor pyrightconfig
-                           :file-name "\\`pyrightconfig.json\\'"
+                           :file-name "pyrightconfig.json"
                            :parser pet-parse-config-file)
   (let ((client (gethash 'pyright lsp-clients)))
     (setf (lsp--client-major-modes client) nil)
@@ -1339,11 +1344,6 @@ optionally the window if possible."
                  (or (pet-pyrightconfig)
                      (let-alist (pet-pyproject)
                        .tool.pyright)))))))
-
-(use-package pet
-  :delight
-  :config
-  (add-hook 'python-base-mode-hook 'pet-mode -10))
 
 ;; Ruby
 (use-package yard-mode)
