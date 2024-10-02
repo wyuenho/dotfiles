@@ -517,6 +517,10 @@ Optional argument ARG same as `comment-dwim''s."
               (require 'smartparens-config)
               (add-hook 'eval-expression-minibuffer-setup-hook 'smartparens-mode))))
 
+;; Guide bars for indentation-based languages
+(use-package indent-bars
+  :hook ((python-base-mode yaml-mode) . indent-bars-mode))
+
 ;; Cross-machine fomatting
 (use-package editorconfig
   :delight)
