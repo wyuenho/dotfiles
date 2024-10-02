@@ -68,7 +68,7 @@ under `user-emacs-directory'.  If it exists, load it."
       (debug-on-error nil))
   (when missing
     (with-demoted-errors "%s"
-      (package-refresh-contents))
+      (package-refresh-contents t))
     (let ((noninteractive t))
       (dolist (package missing)
         (with-demoted-errors "%s"
