@@ -149,7 +149,8 @@
  '(global-origami-mode t)
  '(global-so-long-mode t)
  '(global-syntax-subword-mode t)
- '(global-undo-tree-mode t)
+ '(global-treesit-fold-indicators-mode t)
+ '(global-treesit-fold-mode t)
  '(global-whitespace-cleanup-mode t)
  '(gnutls-algorithm-priority
    "PFS:-VERS-ALL:+VERS-TLS1.2:%PROFILE_MEDIUM:%SAFE_RENEGOTIATION")

@@ -615,22 +615,14 @@ Optional argument ARG same as `comment-dwim''s."
   :bind (("C-x =" . shift-number-up)
          ("C-x -" . shift-number-down)))
 
-;; Modern code folding
-(use-package origami
+;; Modern code foldinq
+(use-package treesit-fold
+  :quelpa (treesit-fold :fetcher github :repo "emacs-tree-sitter/treesit-fold")
+  :delight
   :config
-  (with-eval-after-load 'hideshow
-    ;; Unloading is unsafe, so this the best I can do to pretend `hideshow'
-    ;; never existed.
-    (setf minor-mode-map-alist
-          (assq-delete-all 'hs-minor-mode minor-mode-map-alist)
-          minor-mode-alist
-          (assq-delete-all 'hs-minor-mode minor-mode-alist)
-          minor-mode-list
-          (delq 'hs-minor-mode minor-mode-list)))
-  :bind (:map origami-mode-map
-              ("M-0"   . origami-open-all-nodes)
-              ("M-9"   . origami-close-all-nodes)
-              ("C-M-/" . origami-recursively-toggle-node)))
+  (keymap-set treesit-fold-mode-map "M-0" 'treesit-fold-open-all)
+  (keymap-set treesit-fold-mode-map "M-9" 'treesit-fold-close-all)
+  (keymap-set treesit-fold-mode-map "C-M-/" 'treesit-fold-toggle))
 
 ;; Minimum Distraction
 (use-package olivetti
@@ -796,15 +788,11 @@ checker symbol."
   :config
   (setf lsp-ui-doc-border (face-foreground 'window-divider))
   (add-hook 'lsp-ui-doc-frame-hook
-            (lambda (_ window)
-              (let* ((frame (window-frame window)))
-                (set-frame-font
-                 (font-spec :family "Menlo" :size 11)
-                 nil
-                 (list frame))))))
-
-(use-package lsp-origami
-  :hook (lsp-after-open . lsp-origami-try-enable))
+            (lambda (frame _)
+              (set-frame-font
+               (font-spec :family "Menlo" :size 11)
+               nil
+               (list frame)))))
 
 ;; Auto-completion
 (use-package corfu
