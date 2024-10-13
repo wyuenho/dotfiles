@@ -51,6 +51,7 @@
  '(confirm-kill-processes nil)
  '(corfu-auto t)
  '(corfu-cycle t)
+ '(corfu-min-width 30)
  '(corfu-popupinfo-delay '(0.5 . 0.2))
  '(corfu-popupinfo-max-height 20)
  '(corfu-popupinfo-mode t)
