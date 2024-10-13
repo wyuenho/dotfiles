@@ -110,35 +110,54 @@ under `user-emacs-directory'.  If it exists, load it."
         (if face-prop
             (apply 'propertize icon 'face face-prop props)
           major-mode-segment)))
-    (advice-add 'powerline-major-mode :filter-return 'powerline-major-mode-advice)))
+    (advice-add 'powerline-major-mode :filter-return 'powerline-major-mode-advice))
+
+  (setq kind-icons
+        `((text           . ,(all-the-icons-vscode-codicons "symbol-key"))
+          (method         . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple))
+          (function       . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple))
+          (constructor    . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple))
+          (field          . ,(all-the-icons-vscode-codicons "symbol-field" :face 'all-the-icons-blue))
+          (variable       . ,(all-the-icons-vscode-codicons "symbol-variable" :face 'all-the-icons-blue))
+          (class          . ,(all-the-icons-vscode-codicons "symbol-class" :face 'all-the-icons-yellow))
+          (interface      . ,(all-the-icons-vscode-codicons "symbol-interface" :face 'all-the-icons-blue))
+          (module         . ,(all-the-icons-vscode-codicons "symbol-namespace"))
+          (property       . ,(all-the-icons-vscode-codicons "symbol-property"))
+          (unit           . ,(all-the-icons-vscode-codicons "symbol-ruler"))
+          (value          . ,(all-the-icons-vscode-codicons "symbol-enum-member" :face 'all-the-icons-yellow))
+          (enum           . ,(all-the-icons-vscode-codicons "symbol-enum" :face 'all-the-icons-yellow))
+          (keyword        . ,(all-the-icons-vscode-codicons "symbol-keyword"))
+          (snippet        . ,(all-the-icons-vscode-codicons "symbol-snippet"))
+          (color          . ,(all-the-icons-vscode-codicons "symbol-color"))
+          (file           . ,(all-the-icons-vscode-codicons "symbol-file"))
+          (reference      . ,(all-the-icons-vscode-codicons "references"))
+          (folder         . ,(all-the-icons-vscode-codicons "folder"))
+          (enum-member    . ,(all-the-icons-vscode-codicons "symbol-enum-member" :face 'all-the-icons-yellow))
+          (constant       . ,(all-the-icons-vscode-codicons "symbol-constant"))
+          (struct         . ,(all-the-icons-vscode-codicons "symbol-structure"))
+          (event          . ,(all-the-icons-vscode-codicons "symbol-event" :face 'all-the-icons-yellow))
+          (operator       . ,(all-the-icons-vscode-codicons "symbol-operator"))
+          (type-parameter . ,(all-the-icons-vscode-codicons "symbol-parameter")))))
 
 ;; Theme
+(use-package solarized-palettes)
 (use-package solarized-theme
   :if (display-graphic-p)
   :config
   (load-theme 'solarized-dark t)
 
-  (pcase-dolist (`(,face . ,alias)
-                 '((company-tooltip-selection . company-tooltip-mouse)
-                   (tooltip                   . company-tooltip)
-                   (lsp-ui-doc-background     . company-tooltip)))
-    (put face 'theme-face nil)
-    (put face 'face-alias alias))
-
   (let ((line (face-attribute 'mode-line :underline)))
     (if window-divider-mode
         (progn
           (set-face-attribute 'window-divider nil :foreground line)
-          (set-face-attribute 'mode-line nil :overline line :underline nil :box nil)
-          (set-face-attribute 'mode-line-inactive nil :overline line :underline nil :box nil))
-      (set-face-attribute 'mode-line nil :overline line :box nil)
-      (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
-
-  (with-eval-after-load 'dired
-    (set-face-attribute 'dired-header nil :underline t :foreground 'unspecified :background 'unspecified)))
+          (set-face-attribute 'mode-line nil :overline line :underline 'unspecified :box 'unspecified)
+          (set-face-attribute 'mode-line-inactive nil :overline line :underline 'unspecified :box 'unspecified))
+      (set-face-attribute 'mode-line nil :overline line :box 'unspecified)
+      (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box 'unspecified))))
 
 ;; Fancy mode line
 (use-package spaceline
+  :after (all-the-icons)
   :config
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
@@ -688,6 +707,11 @@ Optional argument ARG same as `comment-dwim''s."
               (with-eval-after-load 'which-key
                 (lsp-enable-which-key-integration))))
 
+  (add-hook 'lsp-completion-mode-hook
+            (lambda ()
+              (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+                    '(flex))))
+
   (setf read-process-output-max (* 1024 1024 10))
 
   (with-eval-after-load 'lsp-javascript
@@ -783,45 +807,71 @@ checker symbol."
   :hook (lsp-after-open . lsp-origami-try-enable))
 
 ;; Auto-completion
-(use-package company
-  :delight
-  :preface
-  (defun company-complete-common-or-cycle-next ()
-    (interactive)
-    (company-complete-common-or-cycle 1))
-  (defun company-complete-common-or-cycle-previous ()
-    (interactive)
-    (company-complete-common-or-cycle -1))
-  :bind (:map company-mode-map
-              ("M-/" . company-manual-begin)
-              :map company-active-map
-              ("M-n" . company-complete-common-or-cycle-next)
-              ("M-p" . company-complete-common-or-cycle-previous)
-              ("C-n" . company-select-next)
-              ("C-p" . company-select-previous))
-  :config
-  (setf company-backends
-        `(company-bbdb
-          (company-semantic company-clang)
-          company-cmake
-          company-files
-          (company-capf :with company-yasnippet)
-          (company-dabbrev-code
-           company-gtags
-           company-etags
-           company-keywords))))
+(use-package corfu
+  :after (solarized-palettes)
+  :quelpa (corfu :fetcher github :repo "wyuenho/corfu" :branch "my-fixes" :files (:defaults "extensions/corfu-*.el"))
+  :init
+  (defun kind-icons-corfu-margin-formatter (_)
+    (when-let ((company-kind-func (plist-get completion-extra-properties :company-kind))
+               (_ (display-graphic-p)))
+      (lambda (item)
+        (let* ((kind (funcall company-kind-func item))
+               (icon (alist-get kind kind-icons (all-the-icons-vscode-codicons "symbol-misc"))))
+          icon))))
 
-(use-package company-quickhelp
-  :hook (company-mode . company-quickhelp-mode))
-
-(use-package company-prescient
-  :hook (company-mode . company-prescient-mode)
   :config
-  (add-hook 'company-prescient-mode-hook
+  (set-face-attribute 'corfu-border nil :background (face-foreground 'window-divider))
+  (set-face-attribute 'corfu-current nil
+                      :inverse-video 'unspecified
+                      :background (alist-get 'cyan-2bg solarized-dark-color-palette-alist))
+
+  (setq read-extended-command-predicate 'command-completion-default-include-p)
+
+  (add-hook 'corfu-margin-formatters 'kind-icons-corfu-margin-formatter)
+
+  (with-eval-after-load 'transient
+    (setq read-extended-command-predicate
+          (lambda (sym buf)
+            (and
+             (transient-command-completion-not-suffix-only-p sym buf)
+             (command-completion-default-include-p sym buf)))))
+  (global-corfu-mode))
+
+(use-package corfu-popupinfo
+  :after (corfu))
+
+(use-package corfu-terminal
+  :quelpa (corfu-terminal :fetcher codeberg :repo "wyuenho/emacs-corfu-terminal" :branch "remove-gui-mode")
+  :config
+  (corfu-terminal-mode 1))
+
+(use-package cape
+  :config
+  (dolist (capf (nreverse `(cape-file ,(cape-capf-inside-code 'cape-keyword))))
+    (add-hook 'completion-at-point-functions capf))
+
+  (let ((elisp-capf (cape-capf-super
+                     (cape-capf-nonexclusive
+                      (cape-capf-inside-code 'cape-elisp-symbol))
+                     (cape-capf-nonexclusive
+                      (cape-capf-inside-code 'cape-elisp-block)))))
+
+    (add-hook 'emacs-lisp-mode-hook
+              (lambda ()
+                (kill-local-variable 'completion-at-point-functions)
+                (add-hook 'completion-at-point-functions elisp-capf nil t))))
+
+  (dolist (mode '(web nxml sgml js-ts js-jsx tsx-ts))
+    (add-hook (intern (format "%s-mode-hook" mode))
+              (lambda ()
+                (add-hook 'completion-at-point-functions 'cape-sgml 90 t))))
+
+  (add-hook 'tex-mode-hook
             (lambda ()
-              ;; Make sure `company-sort-prefer-same-case-prefix' is always at the back
-              (delq 'company-sort-prefer-same-case-prefix company-transformers)
-              (add-to-list 'company-transformers 'company-sort-prefer-same-case-prefix t))))
+              (add-hook 'completion-at-point-functions 'cape-tex 90 t))))
+
+(use-package corfu-prescient
+  :hook (corfu-mode . corfu-prescient-mode))
 
 ;; Linting
 (use-package spinner)
@@ -886,8 +936,10 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
 (use-package flycheck-inline
   :init
   (defun flycheck-inline-quick-peek (msg pos err)
-    (when (or (not company-mode)
-              (not (company--active-p)))
+    (unless (or (and (featurep 'company)
+                     company-mode
+                     (company--active-p))
+                completion-in-region-mode)
       (pcase-let* ((`(,_ ,body-top ,_ ,body-bottom) (window-body-edges))
                    (line-offset (- (line-number-at-pos (point))
                                    (line-number-at-pos (window-start))))
@@ -898,7 +950,7 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
         (setf (quick-peek-overlay-contents ov)
               (concat contents (when contents "\n") (string-trim msg)))
         (quick-peek-update ov 1 4))))
-  :after (flycheck quick-peek company)
+  :after (flycheck quick-peek)
   :hook (flycheck-mode . flycheck-inline-mode)
   :custom
   (flycheck-inline-display-function #'flycheck-inline-quick-peek)
