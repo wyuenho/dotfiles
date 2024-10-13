@@ -763,9 +763,7 @@ checker symbol."
                                        '((warning . scss-stylelint)))
                                       ((>= (string-match-p "htm" ext) 0)
                                        '((warning . html-tidy))))))
-                             ((derived-mode-p 'js-base-mode)
-                              '((warning . javascript-eslint)))
-                             ((derived-mode-p 'typescript-ts-base-mode)
+                             ((derived-mode-p 'js-base-mode 'typescript-ts-base-mode)
                               '((warning . javascript-eslint)))
                              ((derived-mode-p 'python-base-mode)
                               '((warning . python-ruff)
@@ -774,7 +772,7 @@ checker symbol."
                                 (warning . python-pylint)))
                              ((derived-mode-p 'enh-ruby-mode)
                               '((warning . ruby-rubocop)))
-                             ((derived-mode-p 'go-mode)
+                             ((derived-mode-p 'go-mode 'go-ts-mode)
                               '((warning . golangci-lint)))
                              ((derived-mode-p 'rust-mode 'rust-ts-mode)
                               '((warning . rust-cargo)
@@ -1007,8 +1005,7 @@ optionally the window if possible."
             (lambda ()
               (with-eval-after-load 'prettier
                 (when (executable-find "prettier")
-                  (prettier-mode)
-                  (define-key yaml-mode-map (kbd "C-c f") 'prettier-prettify))))))
+                  (prettier-mode))))))
 
 (use-package yaml-ts-mode
   :defer
@@ -1017,8 +1014,7 @@ optionally the window if possible."
             (lambda ()
               (with-eval-after-load 'prettier
                 (when (executable-find "prettier")
-                  (prettier-mode)
-                  (define-key yaml-ts-mode-map (kbd "C-c f") 'prettier-prettify))))))
+                  (prettier-mode))))))
 
 (use-package toml-ts-mode
   :config
@@ -1026,10 +1022,7 @@ optionally the window if possible."
             (lambda ()
               (with-eval-after-load 'prettier
                 (when (executable-find "prettier")
-                  (prettier-mode)
-                  (define-key toml-ts-mode-map (kbd "C-c f") 'prettier-prettify))))))
-
-(use-package dockerfile-ts-mode)
+                  (prettier-mode))))))
 
 (use-package markdown-mode
   :mode (("README\\.md\\'" . gfm-mode)))
@@ -1127,13 +1120,6 @@ optionally the window if possible."
 (use-package reformatter
   :quelpa (reformatter :fetcher github :repo "wyuenho/reformatter.el" :branch "post-processor")
   :config
-  (reformatter-define goimports-format
-    :program "goimports")
-
-  (reformatter-define rustfmt-format
-    :program "rustfmt"
-    :args `("--emit" "stdout"))
-
   (reformatter-define yarn-eslint-format
     :program "yarn"
     :args `("--silent"
@@ -1211,16 +1197,12 @@ optionally the window if possible."
                                                 (lsp-foreach-workspace
                                                  (lsp--workspace-server-id lsp--cur-workspace))))))))
                     (if (or yarn-pnp-p (executable-find "yarn"))
-                        (progn
-                          (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'yarn-eslint-format-buffer)
-                          (yarn-eslint-format-on-save-mode))
-                      (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'eslint-format-buffer)
+                        (yarn-eslint-format-on-save-mode)
                       (eslint-format-on-save-mode)))
                    ((and (eq formatter 'prettier)
                          (featurep 'prettier)
                          (executable-find "prettier"))
-                    (prettier-mode)
-                    (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c f") 'prettier-prettify))))))))
+                    (prettier-mode))))))))
 
 ;; Java
 (use-package lsp-java
@@ -1248,7 +1230,7 @@ optionally the window if possible."
   (dolist (mode '(js-mode js-ts-mode js-jsx-mode typescript-ts-mode tsx-ts-mode))
     (add-hook (intern (concat (symbol-name mode) "-hook"))
               (lambda ()
-                (define-key (symbol-value (derived-mode-map-name mode)) (kbd "C-c d") 'jsdoc)))))
+                (keymap-set (symbol-value (derived-mode-map-name mode)) "C-c d" 'jsdoc)))))
 
 (use-package prettier
   :delight
@@ -1293,19 +1275,7 @@ optionally the window if possible."
   (add-hook 'typescript-ts-base-mode-hook
             (lambda ()
               (when (find-file-from-project-root "deno.jsonc?")
-                (lsp-deferred)
-                (define-key typescript-ts-base-mode-map (kbd "C-c f") 'denofmt-format-buffer)
                 (denofmt-format-on-save-mode)))))
-
-(use-package tide
-  :after (inheritenv)
-  :config
-  (inheritenv-add-advice 'tide-command-to-string)
-  (add-hook 'typescript-ts-base-mode-hook
-            (lambda ()
-              (when (find-file-from-project-root "[jt]sconfig.json")
-                (tide-setup)
-                (tide-hl-identifier-mode)))))
 
 (use-package ts-comint
   :after (inheritenv)
@@ -1330,21 +1300,12 @@ optionally the window if possible."
 (add-hook 'inferior-python-mode-hook
           (lambda () (compilation-shell-minor-mode -1)))
 
-(use-package python-docstring
-  :delight
-  :hook (python-base-mode . python-docstring-mode))
-
-(use-package python-insert-docstring
-  :config
-  (add-hook 'python-base-mode-hook
-            (lambda ()
-              (local-set-key
-               (kbd "C-c I")
-               'python-insert-docstring-with-google-style-at-point))))
-
 (use-package sphinx-doc
   :delight
-  :hook (python-base-mode . sphinx-doc-mode))
+  :hook (python-base-mode . sphinx-doc-mode)
+  :config
+  (keymap-unset sphinx-doc-mode-map "C-c M-d")
+  (keymap-set sphinx-doc-mode-map "C-c d" 'sphinx-doc))
 
 (use-package python-black
   :delight python-black-on-save-mode
@@ -1426,49 +1387,84 @@ optionally the window if possible."
 (use-package cmake-ts-mode)
 
 ;; Go
-(use-package go-mode
-  :mode "\\.go\\'"
-  :config
+(use-package go-ts-mode
+  :after (reformatter lsp)
+  :init
+  (reformatter-define goimports-format
+    :program "goimports")
+
+  (reformatter-define gofmt-format
+    :program "gofmt"
+    :args `("-s"))
+
+  (reformatter-define gofumpt-format
+    :program "gofumpt")
+
   (defun lsp-go-format-buffer ()
     (condition-case err
         (progn
           (lsp-format-buffer)
           (lsp-organize-imports))
       (error (minibuffer-message (error-message-string err)))))
-  (add-hook 'go-mode-hook
+
+  (defun go-setup-format-buffer-on-save ()
+    (if (executable-find "gofumpt")
+        (gofumpt-format-on-save-mode 1)
+      (gofmt-format-on-save-mode 1))
+
+    (when (executable-find "goimports")
+      (goimports-format-on-save-mode 1)))
+
+  (defun go-teardown-format-buffer-on-save ()
+    (if (executable-find "gofumpt")
+        (gofumpt-format-on-save-mode 0)
+      (gofmt-format-on-save-mode 0))
+
+    (when (executable-find "goimports")
+      (goimports-format-on-save-mode 0)))
+
+  :config
+  (add-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
+
+  (add-hook 'go-ts-mode-hook
             (lambda ()
-              (add-hook 'before-save-hook 'goimports-format-buffer -100 t)
-              (add-hook 'before-save-hook 'gofmt-before-save nil t)
               (with-eval-after-load 'lsp-mode
                 (add-hook 'lsp-managed-mode-hook
                           (lambda ()
                             (if lsp-managed-mode
                                 (progn
+                                  (remove-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
+                                  (go-teardown-format-buffer-on-save)
+
                                   (setq-local lsp-enable-indentation t
                                               lsp-enable-on-type-formatting t)
-                                  (remove-hook 'before-save-hook 'gofmt-before-save t)
-                                  (remove-hook 'goimports-format-buffer t)
+
                                   (add-hook 'before-save-hook 'lsp-go-format-buffer nil t))
+
                               (kill-local-variable 'lsp-enable-indentation)
                               (kill-local-variable 'lsp-enable-on-type-formatting)
+
                               (remove-hook 'before-save-hook 'lsp-go-format-buffer t)
-                              (add-hook 'before-save-hook 'gofmt-before-save nil t)
-                              (add-hook 'before-save-hook 'goimports-format-buffer -100 t)))
+
+                              (add-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
+                              (go-setup-format-buffer-on-save)))
                           nil t)))))
 
 (use-package flycheck-golangci-lint
   :after (flycheck)
-  :config (flycheck-golangci-lint-setup))
+  :config
+  (flycheck-golangci-lint-setup)
+  (cl-pushnew 'go-ts-mode (flycheck-checker-get 'golangci-lint 'modes)))
 
 ;; Rust
 (use-package rust-ts-mode
+  :after (reformatter)
+  :init
+  (reformatter-define rustfmt-format
+    :program "rustfmt"
+    :args `("--emit" "stdout"))
   :config
-  (with-eval-after-load 'reformatter
-    (when (functionp 'rustfmt-format-on-save-mode)
-      (setq-local rustfmt-format-on-save-mode-lighter nil)
-      (add-hook 'rust-ts-mode-hook 'rustfmt-format-on-save-mode)))
-  (with-eval-after-load 'flycheck
-    (add-hook 'flycheck-mode-hook 'flycheck-rust-setup)))
+  (add-hook 'rust-ts-mode-hook 'rustfmt-format-on-save-mode))
 
 (use-package flycheck-rust
   :after (rust-ts-mode flycheck)

@@ -166,6 +166,7 @@
    '("/opt/local/etc/grid-security/certificates/*.crl.pem" "/etc/grid-security/certificates/*.crl.pem"))
  '(gnutls-trustfiles
    '("/opt/local/etc/openssl/cert.pem" "/etc/ssl/cert.pem" "/etc/ssl/certs/ca-certificates.crt" "/etc/pki/tls/certs/ca-bundle.crt" "/etc/ssl/ca-bundle.pem" "/usr/ssl/certs/ca-bundle.crt" "/usr/local/share/certs/ca-root-nss.crt" "/etc/certs/ca-certificates.crt"))
+ '(go-ts-mode-indent-offset 2)
  '(gofmt-command "gofumpt")
  '(help-at-pt-display-when-idle
    '(keymap local-map button kbd-help help-echo flymake-diagnostic) nil (help-at-pt))
