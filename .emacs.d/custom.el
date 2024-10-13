@@ -393,6 +393,7 @@
  '(standard-indent 2)
  '(switch-to-buffer-obey-display-actions t)
  '(tab-always-indent 'complete)
+ '(tab-line-switch-cycling t)
  '(tab-stop-list '(2 4 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
  '(tab-width 2)
  '(tabulated-list-gui-sort-indicator-asc 9650)
