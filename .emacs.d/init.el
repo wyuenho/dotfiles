@@ -996,11 +996,6 @@ optionally the window if possible."
   :config
   (advice-add 'vterm--sentinel :override 'vterm--sentinel-advice))
 
-(use-package eterm-256color
-  :config
-  (with-eval-after-load 'term
-    (add-hook 'term-mode-hook 'eterm-256color-mode)))
-
 ;; Markup and config languages
 (add-to-list 'auto-mode-alist '("\\.nmconnection\\'" . conf-mode))
 
