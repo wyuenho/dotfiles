@@ -1620,11 +1620,7 @@ optionally the window if possible."
 
 (use-package diff-hl
   :config
-  (if (display-graphic-p)
-      (diff-hl-flydiff-mode)
-    (diff-hl-margin-mode))
-  (with-eval-after-load 'dired
-    (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
   (with-eval-after-load 'magit
     (add-hook 'magit-pre-call-git-hook 'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
