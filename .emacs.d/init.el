@@ -481,8 +481,8 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package visual-regexp-steroids
   :bind (("M-%"   . vr/replace)
          ("C-M-%" . vr/query-replace)
-         ("C-s"   . vr/isearch-forward)
-         ("C-r"   . vr/isearch-backward)
+         ("C-M-s" . vr/isearch-forward)
+         ("C-M-r" . vr/isearch-backward)
          ("M-s m" . vr/mc-mark)))
 
 ;; More convenient region selection
