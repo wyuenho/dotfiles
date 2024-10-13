@@ -244,6 +244,12 @@ Optional argument ARG same as `comment-dwim''s."
 (global-unset-key (kbd "C-_"))
 (global-unset-key (kbd "C-/"))
 (global-unset-key (kbd "s-z"))
+;; Unbind useless help keys
+(keymap-unset help-map "RET" t)
+(keymap-unset help-map "F" t)
+(keymap-unset help-map "K" t)
+(keymap-unset help-map "g" t)
+(keymap-set help-map "F" 'describe-face)
 
 ;; Bind useful things to keys
 (pcase-dolist (`(,key . ,command)
