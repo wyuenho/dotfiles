@@ -697,6 +697,7 @@ Optional argument ARG same as `comment-dwim''s."
   :config
   (add-hook 'lsp-mode-hook
             (lambda ()
+              (keymap-set lsp-mode-map "C-;" 'lsp-rename)
               (with-eval-after-load 'which-key
                 (lsp-enable-which-key-integration))))
 
