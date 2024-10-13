@@ -593,6 +593,7 @@ Optional argument ARG same as `comment-dwim''s."
   (setf string-inflection-skip-backward-when-done t)
   :bind (("C-x C-y" . inflect-string)))
 
+;; Insert semicolons smartly
 (use-package smart-semicolon
   :delight
   :hook ((c-mode-common
