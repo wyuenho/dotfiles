@@ -384,7 +384,7 @@ Optional argument ARG same as `comment-dwim''s."
   (vertico-mode))
 
 (use-package vertico-directory
-  :after vertico
+  :after (vertico)
   :config
   (keymap-set vertico-map "RET" #'vertico-directory-enter)
   (keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
@@ -393,20 +393,20 @@ Optional argument ARG same as `comment-dwim''s."
     (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)))
 
 (use-package vertico-mouse
-  :after vertico
+  :after (vertico)
   :config (vertico-mouse-mode))
 
 (use-package vertico-prescient
-  :after vertico
+  :after (vertico)
   :config (vertico-prescient-mode))
 
 (use-package marginalia
-  :after vertico
+  :after (vertico)
   :config
   (marginalia-mode))
 
 (use-package embark
-  :after vertico
+  :after (vertico)
   :config
   (keymap-set vertico-map "C-," #'embark-dwim)
   (keymap-set vertico-map "C-." #'embark-act))
@@ -536,7 +536,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Prettier form feeds
 (use-package page-break-lines-mode
-  :hook (((prog-mode text-mode) . page-break-lines-mode)))
+  :hook ((prog-mode text-mode) . page-break-lines-mode))
 
 ;; Quick Snippets
 (use-package yasnippet
@@ -665,21 +665,22 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package lsp-mode
   :after (projectile)
   :delight (lsp-mode) (lsp-lens-mode)
-  :hook (((c-mode-common
-           c-ts-base-mode
-           cmake-ts-mode
-           enh-ruby-mode
-           go-mode
-           go-ts-mode
-           groovy-mode
-           js-base-mode
-           python-base-mode
-           rust-mode
-           rust-ts-mode
-           scala-mode
-           swift-mode
-           tuareg-mode)
-          . lsp-deferred))
+  :hook ((c-mode-common
+          c-ts-base-mode
+          cmake-ts-mode
+          enh-ruby-mode
+          go-mode
+          go-ts-mode
+          groovy-mode
+          js-base-mode
+          python-base-mode
+          rust-mode
+          rust-ts-mode
+          scala-mode
+          swift-mode
+          typescript-ts-base-mode
+          tuareg-mode)
+         . lsp-deferred)
   :demand
   :config
   (add-hook 'lsp-mode-hook
@@ -1053,9 +1054,10 @@ optionally the window if possible."
 
 (use-package elisp-def
   :delight
-  :hook (emacs-lisp-mode . elisp-def-mode))
+  :hook ((emacs-lisp-mode ielm-mode) . elisp-def-mode))
 
 (use-package helpful
+  :quelpa (helpful :fetcher github :repo "wyuenho/helpful" :branch "search-after-navigate")
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
          ("C-h k" . helpful-key)
@@ -1185,7 +1187,7 @@ optionally the window if possible."
 
 ;; Java
 (use-package lsp-java
-  :after (lsp)
+  :after (lsp-mode)
   :custom
   (lsp-java-server-install-dir (car (file-expand-wildcards "~/.vscode/extensions/redhat.java-*/server"))))
 
