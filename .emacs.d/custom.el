@@ -91,6 +91,7 @@
  '(dimmer-fraction 0.3)
  '(dired-auto-revert-buffer 'dired-directory-changed-p)
  '(dired-dwim-target t)
+ '(dired-kill-when-opening-new-dired-buffer t)
  '(dired-omit-verbose nil)
  '(display-line-numbers-widen t)
  '(display-line-numbers-width-start t)

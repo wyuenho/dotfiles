@@ -1672,24 +1672,76 @@ optionally the window if possible."
 
 ;; File management
 (defun add-to-invisibility-spec-override-advice (element)
-  "Add ELEMENT to `buffer-invisibility-spec'.
-See documentation for `buffer-invisibility-spec' for the kind of elements
-that can be added.
-
-If `buffer-invisibility-spec' isn't a list before calling this
-function, `buffer-invisibility-spec' will afterwards be a list
-with the value `(t ELEMENT)'.  This means that if text exists
-that invisibility values that aren't either `t' or ELEMENT, that
-text will become visible.
-
-ELEMENT is only added once."
+  "Dedup `buffer-invisibility-spec'."
   (if (eq buffer-invisibility-spec t)
       (setf buffer-invisibility-spec (list t)))
   (setq buffer-invisibility-spec
         (delete-dups (cons element buffer-invisibility-spec))))
 (advice-add 'add-to-invisibility-spec :override 'add-to-invisibility-spec-override-advice)
 
+(defun keymap-commands (keymap)
+  "Return all commands from KEYMAP."
+  (let (result)
+    (map-keymap
+     (lambda (event type)
+       (cond ((keymapp type)
+              (setq result (nconc result (keymap-commands type))))
+             ((commandp type)
+              (setq result (cons type result)))))
+     keymap)
+    (delete-dups result)))
+
+(defun error-to-user-error-advice (fn &rest args)
+  (condition-case err
+      (apply fn args)
+    (error (user-error (error-message-string err)))))
+
 (with-eval-after-load 'dired
+  (set-face-attribute 'dired-header nil :underline t :foreground 'unspecified :background 'unspecified)
+
+  (put 'dired-find-alternate-file 'disabled nil)
+
+  ;; Make sure dired-hide-details-mode is preserved when reusing the dired
+  ;; window
+  (defun find-alternate-file-advice (fn &rest args)
+    "Preserve inherited parent dired buffer state if invoked from a dired buffer."
+    (let ((is-dired (derived-mode-p 'dired-mode))
+          (hide-dotfiles (and (boundp 'dired-hide-dotfiles-mode) dired-hide-dotfiles-mode))
+          (hide-details dired-hide-details-mode)
+          (hide-information-lines dired-hide-details-hide-information-lines)
+          (hide-symlink-targets dired-hide-details-hide-symlink-targets)
+          (tl truncate-lines)
+          (ww word-wrap)
+          (vlm visual-line-mode)
+          (mlf mode-line-format)
+          (arv auto-revert-verbose)
+          (oname (buffer-name))
+          (newbuf (apply fn args)))
+      (when is-dired
+        (when hide-dotfiles (dired-hide-dotfiles-mode))
+        (setf truncate-lines tl
+              word-wrap ww
+              visual-line-mode vlm
+              mode-line-format mlf
+              auto-revert-verbose arv)
+        (setq-local dired-hide-details-hide-information-lines hide-information-lines)
+        (setq-local dired-hide-details-hide-symlink-targets hide-symlink-targets)
+        (when hide-details (dired-hide-details-mode))
+        (when (and (boundp 'purpose-x-code1-dired-buffer-name)
+                   (equal oname purpose-x-code1-dired-buffer-name)
+                   (not (equal oname (buffer-name))))
+          (rename-buffer oname)))
+      newbuf))
+  (advice-add 'find-alternate-file :around 'find-alternate-file-advice)
+
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              (mapc (lambda (cmd)
+                      (when (not (null (string-search "dired-" (symbol-name cmd))))
+                        (advice-add cmd :around 'error-to-user-error-advice)))
+                    (keymap-commands dired-mode-map)))
+            90)
+
   (defface dired-executable
     '((t (:inherit font-lock-warning-face :weight normal)))
     "Face used for executables."
@@ -1755,43 +1807,6 @@ ELEMENT is only added once."
   :demand
   :bind (:map dired-mode-map
               ("." . dired-hide-dotfiles-mode)))
-
-(use-package dired-single
-  :after (dired-hide-dotfiles)
-  :bind (:map dired-mode-map
-              ("^"         . dired-single-up-directory)
-              ("<mouse-1>" . dired-single-buffer-mouse)
-              ("\C-m"      . dired-single-buffer))
-  :config
-  (with-eval-after-load 'window-purpose-x
-    (setf dired-single-magic-buffer-name purpose-x-code1-dired-buffer-name))
-  ;; Make sure dired-hide-details-mode is preserved when reusing the dired
-  ;; window
-  (defun find-alternate-file-advice (fn &rest args)
-    "Preserve inherited parent dired buffer state if invoked from a dired buffer."
-    (let ((is-dired (derived-mode-p 'dired-mode))
-          (hide-dotfiles (and (boundp 'dired-hide-dotfiles-mode) dired-hide-dotfiles-mode))
-          (hide-details dired-hide-details-mode)
-          (hide-information-lines dired-hide-details-hide-information-lines)
-          (hide-symlink-targets dired-hide-details-hide-symlink-targets)
-          (tl truncate-lines)
-          (ww word-wrap)
-          (vlm visual-line-mode)
-          (mlf mode-line-format)
-          (arv auto-revert-verbose)
-          (result (apply fn args)))
-      (when is-dired
-        (when hide-dotfiles (dired-hide-dotfiles-mode))
-        (setf truncate-lines tl
-              word-wrap ww
-              visual-line-mode vlm
-              mode-line-format mlf
-              auto-revert-verbose arv)
-        (setq-local dired-hide-details-hide-information-lines hide-information-lines)
-        (setq-local dired-hide-details-hide-symlink-targets hide-symlink-targets)
-        (when hide-details (dired-hide-details-mode)))
-      result))
-  (advice-add 'find-alternate-file :around 'find-alternate-file-advice))
 
 (use-package dired-collapse
   :hook (dired-mode . dired-collapse-mode))
