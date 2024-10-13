@@ -1025,7 +1025,24 @@ optionally the window if possible."
                   (prettier-mode))))))
 
 (use-package markdown-mode
-  :mode (("README\\.md\\'" . gfm-mode)))
+  :init
+  (defun markdown-fontify-code-block-natively-advice (fn &rest args)
+    (cl-letf (((symbol-function 'run-mode-hooks) (symbol-function 'ignore)))
+      (apply fn args)))
+  :mode (("README\\.md\\'" . gfm-mode))
+  :config
+  (advice-add 'markdown-fontify-code-block-natively :around 'markdown-fontify-code-block-natively-advice))
+
+(use-package org-src
+  :after (org)
+  :init
+  (defun org-src-font-lock-fontify-block-advice (fn &rest args)
+    (cl-letf (((symbol-function 'run-mode-hooks) (symbol-function 'ignore)))
+      (apply fn args)))
+  :config
+  (advice-add 'org-src-font-lock-fontify-block :around 'org-src-font-lock-fontify-block-advice))
+
+(use-package dockerfile-ts-mode)
 
 (use-package dotenv-mode
   :mode "\\.env\\..*\\'")
