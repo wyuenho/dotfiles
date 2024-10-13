@@ -812,7 +812,7 @@ checker symbol."
   (set-face-attribute 'corfu-current nil
                       :inverse-video 'unspecified
                       :background (alist-get 'cyan-2bg solarized-dark-color-palette-alist))
-
+  (set-face-attribute 'completions-annotations nil :family "Noto Sans Mono" :height 0.9 :width 'semi-condensed)
   (setq read-extended-command-predicate 'command-completion-default-include-p)
 
   (add-hook 'corfu-margin-formatters 'kind-icons-corfu-margin-formatter)
@@ -826,7 +826,9 @@ checker symbol."
   (global-corfu-mode))
 
 (use-package corfu-popupinfo
-  :after (corfu))
+  :after (corfu)
+  :config
+  (set-face-attribute 'corfu-popupinfo nil :inherit '(variable-pitch corfu-default)))
 
 (use-package corfu-terminal
   :quelpa (corfu-terminal :fetcher codeberg :repo "wyuenho/emacs-corfu-terminal" :branch "remove-gui-mode")
