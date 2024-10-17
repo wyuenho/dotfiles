@@ -51,7 +51,7 @@
  '(confirm-kill-processes nil)
  '(corfu-auto t)
  '(corfu-cycle t)
- '(corfu-min-width 30)
+ '(corfu-min-width 50)
  '(corfu-popupinfo-delay '(0.5 . 0.2))
  '(corfu-popupinfo-max-height 20)
  '(corfu-popupinfo-mode t)
@@ -211,6 +211,7 @@
  '(lsp-auto-guess-root t)
  '(lsp-clients-typescript-prefer-use-project-ts-server t)
  '(lsp-completion-provider :none)
+ '(lsp-completion-show-kind nil)
  '(lsp-debounce-full-sync-notifications-interval 0.25)
  '(lsp-disabled-clients
    '(pyls pylsp ruff eslint ocaml-ls bash-ls html-ls css-ls flow-ls))

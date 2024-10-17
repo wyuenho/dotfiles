@@ -811,8 +811,12 @@ checker symbol."
   (set-face-attribute 'corfu-border nil :background (face-foreground 'window-divider))
   (set-face-attribute 'corfu-current nil
                       :inverse-video 'unspecified
+                      :weight 'unspecified
                       :background (alist-get 'cyan-2bg solarized-dark-color-palette-alist))
-  (set-face-attribute 'completions-annotations nil :family "Noto Sans Mono" :height 0.9 :width 'semi-condensed)
+  (set-face-attribute 'completions-annotations nil
+                      :family "Noto Sans"
+                      :height 0.9
+                      :distant-foreground (face-attribute 'powerline-active1 :foreground))
   (setq read-extended-command-predicate 'command-completion-default-include-p)
 
   (add-hook 'corfu-margin-formatters 'kind-icons-corfu-margin-formatter)
