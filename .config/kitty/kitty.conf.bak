@@ -246,7 +246,8 @@ modify_font cell_height 100%
 #: }}}
 
 #: Text cursor customization {{{
-# cursor #f34b00
+
+cursor #f34b00
 
 #: Default text cursor color. If set to the special value none the
 #: cursor will be rendered with a "reverse video" effect. Its color
@@ -1178,8 +1179,9 @@ tab_bar_style slant
 #: }}}
 
 #: Color scheme {{{
-# foreground #9cc2c3
-# background #001e27
+
+foreground #9cc2c3
+background #001e27
 
 #: The foreground and background colors.
 
@@ -1282,8 +1284,9 @@ background_blur 20
 
 #: How much to dim text that has the DIM/FAINT attribute set. One
 #: means no dimming and zero means fully dimmed (i.e. invisible).
-# selection_foreground #ffffff
-# selection_background #3f638b
+
+selection_foreground #ffffff
+selection_background #3f638b
 
 #: The foreground and background colors for text selected with the
 #: mouse. Setting both of these to none will cause a "reverse video"
@@ -1298,36 +1301,44 @@ background_blur 20
 #: The 256 terminal colors. There are 8 basic colors, each color has a
 #: dull and bright version, for the first 16 colors. You can set the
 #: remaining 240 colors as color16 to color255.
-# color0 #002831
-# color8 #006488
+
+color0 #002831
+color8 #006488
 
 #: black
-# color1 #d11c24
-# color9 #f5163b
+
+color1 #d11c24
+color9 #f5163b
 
 #: red
-# color2  #6cbe6c
-# color10 #51ef84
+
+color2  #6cbe6c
+color10 #51ef84
 
 #: green
-# color3  #a57706
-# color11 #b27e28
+
+color3  #a57706
+color11 #b27e28
 
 #: yellow
-# color4  #2176c7
-# color12 #178ec8
+
+color4  #2176c7
+color12 #178ec8
 
 #: blue
-# color5  #c61c6f
-# color13 #e24d8e
+
+color5  #c61c6f
+color13 #e24d8e
 
 #: magenta
-# color6  #259286
-# color14 #00b39e
+
+color6  #259286
+color14 #00b39e
 
 #: cyan
-# color7  #eae3cb
-# color15 #fcf4dc
+
+color7  #eae3cb
+color15 #fcf4dc
 
 #: white
 
@@ -2595,9 +2606,3 @@ map cmd+t       launch --cwd=current --type=tab
 #: }}}
 
 #: }}}
-
-
-# BEGIN_KITTY_THEME
-# Modus Vivendi Tinted
-include current-theme.conf
-# END_KITTY_THEME
