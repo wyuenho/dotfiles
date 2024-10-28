@@ -583,7 +583,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Cycle through most common programming identifier styles
 (use-package string-inflection
-  :preface
+  :init
   (defun inflect-string ()
     (interactive)
     (cond ((derived-mode-p 'scala-mode 'java-mode 'java-ts-mode 'js-base-mode 'js-jsx-mode 'typescript-ts-base-mode 'go-mode 'go-ts-mode)
@@ -971,7 +971,7 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
 (setf eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
 (use-package vterm
-  :preface
+  :init
   (defun vterm--sentinel-advice (process event)
     "Sentinel of vterm PROCESS.
 Argument EVENT process event.
