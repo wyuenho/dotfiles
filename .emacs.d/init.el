@@ -929,7 +929,13 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
                   (`running (spinner-start 'minibox))
                   (- (spinner-stop)))))))
 
-(use-package quick-peek)
+(use-package quick-peek
+  :config
+  (defun quick-peek--insert-spacer-advice (pos str-before str-after)
+    (save-excursion
+      (goto-char pos)
+      (insert (propertize "\n" 'face 'quick-peek-border-face))))
+  (advice-add 'quick-peek--insert-spacer :override 'quick-peek--insert-spacer-advice))
 
 (use-package flycheck-inline
   :init
