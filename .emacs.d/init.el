@@ -159,6 +159,7 @@ under `user-emacs-directory'.  If it exists, load it."
                                        :foreground ,bg-hl-line
                                        :weight unspecified
                                        :slant unspecified)))
+                 `(corfu-bar ((,c :background ,fg-dim :foreground ,fg-dim)))
                  `(corfu-current ((,c :distant-foreground ,docstring)))
                  `(corfu-popupinfo ((((type ns)) :family "SF Pro Text")))
                  `(lsp-headerline-breadcrumb-separator-face ((t :inherit shadow)))
