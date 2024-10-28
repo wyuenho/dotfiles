@@ -1905,9 +1905,6 @@ optionally the window if possible."
   :config
   (windmove-default-keybindings))
 
-(use-package buffer-move
-  :bind (("C-c b" . buf-move)))
-
 (use-package ibuffer-projectile
   :config
   (add-hook 'ibuffer-hook
