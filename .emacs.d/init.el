@@ -678,6 +678,7 @@ Optional argument ARG same as `comment-dwim''s."
      file-names)))
 
 (use-package lsp-mode
+  :quelpa (lsp-mode :repo "wyuenho/lsp-mode" :fetcher github :files (:defaults "clients/*.el") :branch "fix-all-the-icons")
   :after (projectile)
   :delight (lsp-mode) (lsp-lens-mode)
   :hook ((c-mode-common
