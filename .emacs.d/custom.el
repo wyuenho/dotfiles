@@ -92,7 +92,6 @@
      (unknown . " ")
      (ignored . " ")))
  '(diff-refine 'navigation)
- '(dimmer-fraction 0.3)
  '(dired-auto-revert-buffer 'dired-directory-changed-p)
  '(dired-dwim-target t)
  '(dired-kill-when-opening-new-dired-buffer t)
@@ -143,7 +142,6 @@
  '(flymake-mode-line-format
    '(" " flymake-mode-line-exception flymake-mode-line-counters))
  '(frame-resize-pixelwise t)
- '(garbage-collection-messages t)
  '(gcmh-high-cons-threshold 80000000)
  '(gcmh-idle-delay 'auto)
  '(gcmh-mode t)
