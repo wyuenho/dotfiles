@@ -1134,7 +1134,10 @@ optionally the window if possible."
     (select-window (get-buffer-window (current-buffer)))))
 (advice-add 'eieio-browse :after 'eieio-browse-advice)
 
-(use-package package-lint)
+(use-package package-lint
+  :bind (:map emacs-lisp-mode-map
+              ("C-c e p" . package-lint-current-buffer)
+              ("C-c e s" . package-lint-describe-symbol-history)))
 
 (use-package flycheck-package
   :after (flycheck package-lint)
