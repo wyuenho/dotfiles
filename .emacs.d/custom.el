@@ -188,10 +188,7 @@
  '(imenu-list-size 0.2)
  '(imenu-max-items 100)
  '(importmagic-be-quiet t)
- '(indent-bars-color '(diff-hl-change :blend 0.325))
- '(indent-bars-color-by-depth '(:palette (diff-hl-change) :blend 0.325))
  '(indent-bars-depth-update-delay 0.0)
- '(indent-bars-highlight-current-depth '(:face diff-hl-change :blend 0.325 :pattern "."))
  '(indent-bars-prefer-character t)
  '(indent-bars-treesit-scope
    '((python function_definition class_definition for_statement if_statement with_statement while_statement match_statement try_statement)))
@@ -292,6 +289,12 @@
  '(menu-bar-mode t)
  '(message-kill-buffer-on-exit t)
  '(minibuffer-depth-indicate-mode t)
+ '(modus-themes-common-palette-overrides
+   '((fringe unspecified)
+     (string green-warmer)
+     (bg-line-number-inactive bg-main)))
+ '(modus-themes-completions '((selection regular)))
+ '(modus-themes-mixed-fonts t)
  '(mouse-wheel-flip-direction t)
  '(mouse-wheel-mode t)
  '(mouse-wheel-progressive-speed nil)
@@ -468,24 +471,3 @@
      ("Asia/Hong_Kong" "Hong Kong")
      ("Asia/Tokyo" "Tokyo")))
  '(x-underline-at-descent-line t))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(bold ((t (:weight semi-bold))))
- '(bold-italic ((t (:slant italic :weight semi-bold))))
- '(dired-broken-symlink ((t (:inherit error :underline (:color foreground-color :style wave)))))
- '(flycheck-posframe-error-face ((t (:inherit error))))
- '(flycheck-posframe-info-face ((t (:inherit font-lock-function-name-face))))
- '(flycheck-posframe-warning-face ((t (:inherit warning))))
- '(lsp-headerline-breadcrumb-separator-face ((t (:inherit shadow))))
- '(lsp-ui-doc-background ((t (:inherit tooltip))))
- '(prescient-primary-highlight ((t (:weight bold :inherit completions-common-part))))
- '(quick-peek-border-face ((t (:height 1 :strike-through t :extend t :inherit default))))
- '(region ((((type ns)) (:background "selectedTextBackgroundColor" :foreground "selectedTextColor"))))
- '(term-bold ((t (:inherit bold))))
- '(tooltip ((t (:inherit (highlight match)))))
- '(tree-sitter-hl-face:function.call ((t nil)))
- '(tree-sitter-hl-face:method.call ((t nil)))
- '(tree-sitter-hl-face:property ((t nil))))

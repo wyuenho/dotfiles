@@ -95,10 +95,11 @@ versions due to limitations in package.el."
 (custom-set-variables
  '(face-font-family-alternatives
    '(("JetBrains Mono NL" "Noto Sans Mono" "DejaVu Sans Mono" "Menlo")
-     ("Noto Sans" "Helvetica Neue" "Helvetica"))))
+     ("SF Pro" "Helvetica Neue" "Helvetica" "Noto Sans"))))
 (set-face-attribute 'fixed-pitch nil :family "JetBrains Mono NL" :weight 'regular :width 'normal)
 (set-face-attribute 'fixed-pitch-serif nil :family "Courier New" :weight 'regular :width 'normal)
-(set-face-attribute 'variable-pitch nil :family "Noto Sans" :weight 'regular :width 'normal)
+;; Used for UI elements. Customize individual faces for text related uses.
+(set-face-attribute 'variable-pitch nil :family "SF Pro" :weight 'regular :width 'normal)
 (set-face-attribute 'default nil :family "JetBrains Mono NL" :weight 'regular :width 'normal)
 
 (load-theme 'bootstrap t)

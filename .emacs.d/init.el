@@ -139,20 +139,64 @@ under `user-emacs-directory'.  If it exists, load it."
       (type-parameter . ,(all-the-icons-vscode-codicons "symbol-parameter" :padding '(2 . 1))))))
 
 ;; Theme
-(use-package solarized-palettes)
-(use-package solarized-theme
-  :if (display-graphic-p)
+(use-package modus-themes
+  :init
+  (defun custom-save-all-advice (fn &rest args)
+    "Skip saving faces."
+    (cl-letf (((symbol-function 'custom-save-faces) (symbol-function 'ignore)))
+      (apply fn args)))
   :config
-  (load-theme 'solarized-dark t)
+  (add-hook 'modus-themes-after-load-theme-hook
+            (lambda ()
+              (advice-add 'custom-save-all :around 'custom-save-all-advice)
 
-  (let ((line (face-attribute 'mode-line :underline)))
-    (if window-divider-mode
-        (progn
-          (set-face-attribute 'window-divider nil :foreground line)
-          (set-face-attribute 'mode-line nil :overline line :underline 'unspecified :box 'unspecified)
-          (set-face-attribute 'mode-line-inactive nil :overline line :underline 'unspecified :box 'unspecified))
-      (set-face-attribute 'mode-line nil :overline line :box 'unspecified)
-      (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box 'unspecified))))
+              (modus-themes-with-colors
+                (custom-set-faces
+                 `(bold ((,c :weight semibold)))
+                 `(corfu-annotations ((((type ns))
+                                       :family "SF Pro Text"
+                                       :height 0.9
+                                       :foreground ,bg-hl-line
+                                       :weight unspecified
+                                       :slant unspecified)))
+                 `(corfu-current ((,c :distant-foreground ,docstring)))
+                 `(corfu-popupinfo ((((type ns)) :family "SF Pro Text")))
+                 `(lsp-headerline-breadcrumb-separator-face ((t :inherit shadow)))
+                 `(lsp-ui-doc-background ((t :background ,bg-dim)))
+                 `(quick-peek-background-face ((,c :background ,bg-main)))
+                 `(quick-peek-border-face ((,c :strike-through t
+                                               :foreground ,fg-main
+                                               :background ,bg-main)))
+                 `(quick-peek-padding-face ((,c :foreground ,border
+                                                :background ,bg-main)))
+
+                 `(line-number ((,c :inherit ,(if modus-themes-mixed-fonts
+                                                  '(fixed-pitch default)
+                                                'default)
+                                    :background ,bg-line-number-inactive
+                                    :foreground ,fg-line-number-inactive)))
+                 `(line-number-current-line ((,c :inherit line-number
+                                                 :background ,bg-line-number-active
+                                                 :foreground ,fg-line-number-active)))
+                 `(mode-line ((,c :inherit modus-themes-ui-variable-pitch
+                                  :box unspecified
+                                  :overline ,border-mode-line-active
+                                  :background ,bg-mode-line-active
+                                  :foreground ,fg-mode-line-active)))
+                 `(mode-line-highlight ((,c :background ,bg-hover
+                                            :foreground ,fg-main
+                                            :box unspecified
+                                            :overline ,border-mode-line-active)))
+                 `(mode-line-inactive ((,c :inherit modus-themes-ui-variable-pitch
+                                           :box unspecified
+                                           :overline ,border-mode-line-inactive
+                                           :background ,bg-mode-line-inactive
+                                           :foreground ,fg-mode-line-inactive)))
+                 `(tooltip ((,c :background ,bg-active
+                                :foreground ,fg-main
+                                :inherit modus-themes-ui-variable-pitch)))))))
+
+  (modus-themes-load-theme 'modus-vivendi-tinted))
 
 ;; Fancy mode line
 (use-package spaceline
@@ -789,19 +833,20 @@ checker symbol."
 
 (use-package lsp-ui
   :after (lsp-mode)
+  :init
+  (defun lsp-ui-doc-frame-set-font (frame _)
+    (when (eq (window-system) 'ns)
+      (set-frame-font
+       (font-spec :family "SF Pro Text" :size 11)
+       nil
+       (list frame))))
   :config
-  (setf lsp-ui-doc-border (face-foreground 'window-divider))
-  (add-hook 'lsp-ui-doc-frame-hook
-            (lambda (frame _)
-              (set-frame-font
-               (font-spec :family "Menlo" :size 11)
-               nil
-               (list frame)))))
+  (setf lsp-ui-doc-border (face-foreground 'window-divider nil t))
+  (add-hook 'lsp-ui-doc-frame-hook 'lsp-ui-doc-frame-set-font))
 
 ;; Auto-completion
 (use-package corfu
-  :after (solarized-palettes)
-  :quelpa (corfu :fetcher github :repo "wyuenho/corfu" :branch "my-fixes" :files (:defaults "extensions/corfu-*.el"))
+  :quelpa (corfu :fetcher github :repo "wyuenho/corfu" :branch "margin-formatters-pixel-padding" :files (:defaults "extensions/corfu-*.el"))
   :init
   (defun kind-icons-corfu-margin-formatter (_)
     (when-let ((company-kind-func (plist-get completion-extra-properties :company-kind))
@@ -812,15 +857,6 @@ checker symbol."
           icon))))
 
   :config
-  (set-face-attribute 'corfu-border nil :background (face-foreground 'window-divider))
-  (set-face-attribute 'corfu-current nil
-                      :inverse-video 'unspecified
-                      :weight 'unspecified
-                      :background (alist-get 'cyan-2bg solarized-dark-color-palette-alist))
-  (set-face-attribute 'completions-annotations nil
-                      :family "Noto Sans"
-                      :height 0.9
-                      :distant-foreground (face-attribute 'powerline-active1 :foreground))
   (setq read-extended-command-predicate 'command-completion-default-include-p)
 
   (add-hook 'corfu-margin-formatters 'kind-icons-corfu-margin-formatter)
@@ -834,14 +870,11 @@ checker symbol."
   (global-corfu-mode))
 
 (use-package corfu-popupinfo
-  :after (corfu)
-  :config
-  (set-face-attribute 'corfu-popupinfo nil :inherit '(variable-pitch corfu-default)))
+  :after (corfu))
 
 (use-package corfu-terminal
   :quelpa (corfu-terminal :fetcher codeberg :repo "wyuenho/emacs-corfu-terminal" :branch "remove-gui-mode")
-  :config
-  (corfu-terminal-mode 1))
+  :hook (corfu-mode . corfu-terminal-mode))
 
 (use-package cape
   :config
@@ -869,6 +902,7 @@ checker symbol."
               (add-hook 'completion-at-point-functions 'cape-tex 90 t))))
 
 (use-package corfu-prescient
+  :after (corfu)
   :hook (corfu-mode . corfu-prescient-mode))
 
 ;; Linting
@@ -1716,8 +1750,6 @@ optionally the window if possible."
     (error (user-error (error-message-string err)))))
 
 (with-eval-after-load 'dired
-  (set-face-attribute 'dired-header nil :underline t :foreground 'unspecified :background 'unspecified)
-
   (put 'dired-find-alternate-file 'disabled nil)
 
   ;; Make sure dired-hide-details-mode is preserved when reusing the dired
