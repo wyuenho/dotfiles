@@ -189,9 +189,9 @@ under `user-emacs-directory'.  If it exists, load it."
 
   (when (boundp 'xwidget-webkit-mode-map)
     (define-key xwidget-webkit-mode-map (kbd "q")
-      (lambda ()
-        (interactive)
-        (quit-window t))))
+                (lambda ()
+                  (interactive)
+                  (quit-window t))))
 
   (defun xwidget-kill-buffer-query-function-advice ()
     "Kill xwidget buffer without asking."
