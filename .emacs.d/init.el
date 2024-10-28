@@ -552,8 +552,13 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package so-long)
 
 ;; Prettier form feeds
-(use-package page-break-lines-mode
-  :hook ((prog-mode text-mode) . page-break-lines-mode))
+(use-package page-break-lines
+  :hook ((prog-mode
+          text-mode
+          compilation-mode
+          special-mode
+          comint-mode)
+         . page-break-lines-mode))
 
 ;; Quick Snippets
 (use-package yasnippet
