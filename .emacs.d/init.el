@@ -2,7 +2,6 @@
 (toggle-debug-on-error)
 
 (require 'cl-lib)
-(require 'filenotify)
 (require 'let-alist)
 (require 'map)
 (require 'pcase)
