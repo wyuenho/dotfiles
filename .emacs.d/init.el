@@ -1967,11 +1967,11 @@ optionally the window if possible."
             (rg-mode      . search)))
 
   (with-eval-after-load 'message
-    (defun message-send-and-exit-advice (&rest _)
-      "Quit the window after killing the message buffer after sending."
+    (defun message-quit-window-advice (&rest _)
+      "Quit the window after killing the message buffer."
       (quit-window))
-    (advice-add 'message-send-and-exit :after 'message-send-and-exit-advice)
-    (advice-add 'message-kill-buffer :after 'quit-window))
+    (advice-add 'message-send-and-exit :after 'message-quit-window-advice)
+    (advice-add 'message-kill-buffer :after 'message-quit-window-advice))
 
   (with-eval-after-load 'window-purpose-x
     (add-to-list 'purpose-x-popwin-buffer-names "*Messages*")
