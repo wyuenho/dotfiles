@@ -139,17 +139,16 @@ under `user-emacs-directory'.  If it exists, load it."
       (type-parameter . ,(all-the-icons-vscode-codicons "symbol-parameter" :padding '(2 . 1))))))
 
 ;; Theme
+(defun custom-save-all-advice (fn &rest args)
+  "Skip saving faces."
+  (cl-letf (((symbol-function 'custom-save-faces) (symbol-function 'ignore)))
+    (apply fn args)))
+(advice-add 'custom-save-all :around 'custom-save-all-advice)
+
 (use-package modus-themes
-  :init
-  (defun custom-save-all-advice (fn &rest args)
-    "Skip saving faces."
-    (cl-letf (((symbol-function 'custom-save-faces) (symbol-function 'ignore)))
-      (apply fn args)))
   :config
   (add-hook 'modus-themes-after-load-theme-hook
             (lambda ()
-              (advice-add 'custom-save-all :around 'custom-save-all-advice)
-
               (modus-themes-with-colors
                 (custom-set-faces
                  `(bold ((,c :weight semibold)))
