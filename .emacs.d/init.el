@@ -940,7 +940,7 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
           (flycheck-clear-displayed-errors)
         (pcase-let* ((`(,frame ,x . ,y) (mouse-position))
                      (win (window-at x y frame))
-                     (`(,body-left ,body-top ,@_) (window-body-edges win))
+                     (`(,body-left ,body-top ,_) (window-body-edges win))
                      (col (max 1 (- x body-left (or display-line-numbers-width 0))))
                      (row (- y body-top)))
           (with-current-buffer (window-buffer win)
@@ -980,7 +980,7 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
                      company-mode
                      (company--active-p))
                 completion-in-region-mode)
-      (pcase-let* ((`(,_ ,body-top ,_ ,body-bottom) (window-body-edges))
+      (pcase-let* ((`(,_ ,body-top ,__ ,body-bottom) (window-body-edges))
                    (line-offset (- (line-number-at-pos (point))
                                    (line-number-at-pos (window-start))))
                    (quick-peek-position
