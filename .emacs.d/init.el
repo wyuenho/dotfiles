@@ -1460,7 +1460,7 @@ optionally the window if possible."
 
 ;; Go
 (use-package go-ts-mode
-  :after (reformatter lsp)
+  :after (reformatter lsp-mode)
   :init
   (reformatter-define goimports-format
     :program "goimports")
