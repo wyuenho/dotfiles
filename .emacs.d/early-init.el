@@ -25,11 +25,19 @@
   (set-keymap-parent compilation-shell-minor-mode-map special-mode-map))
 
 (with-eval-after-load 'native-compile
-  (add-to-list 'compile-log-buffer-names comp-log-buffer-name)
-  (add-to-list 'compile-log-buffer-names comp-async-buffer-name))
+  (when (boundp 'comp-log-buffer-name)
+    (add-to-list 'compile-log-buffer-names comp-log-buffer-name))
+  (when (boundp 'comp-async-buffer-name)
+    (add-to-list 'compile-log-buffer-names comp-async-buffer-name)))
 
 (with-eval-after-load 'comp
-  (put 'native-comp-limple-mode 'derived-mode-parent 'special-mode))
+  (put 'native-comp-limple-mode 'derived-mode-parent 'special-mode)
+  (when (boundp 'comp-log-buffer-name)
+    (add-to-list 'compile-log-buffer-names comp-log-buffer-name)))
+
+(with-eval-after-load 'comp-run
+  (when (boundp 'comp-async-buffer-name)
+    (add-to-list 'compile-log-buffer-names comp-async-buffer-name)))
 
 (with-eval-after-load 'bytecomp
   (add-to-list 'compile-log-buffer-names byte-compile-log-buffer))
