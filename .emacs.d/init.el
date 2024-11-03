@@ -1362,7 +1362,7 @@ optionally the window if possible."
   (inheritenv-add-advice 'run-ts))
 
 ;; Python
-(add-to-list 'auto-mode-alist '("\\.pythonrc\\'"   . python-mode))
+(add-to-list 'auto-mode-alist '("\\.pythonrc\\'"   . python-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.pylintrc\\'"   . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.flake8\\'"     . conf-mode))
 (add-to-list 'auto-mode-alist '("/poetry.lock\\'"  . conf-toml-mode))
