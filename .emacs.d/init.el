@@ -1277,10 +1277,10 @@ optionally the window if possible."
                     (prettier-mode))))))))
 
 ;; Java
-(use-package lsp-java
-  :after (lsp-mode)
-  :custom
-  (lsp-java-server-install-dir (car (file-expand-wildcards "~/.vscode/extensions/redhat.java-*/server"))))
+;; (use-package lsp-java
+;;   :after (lsp-mode)
+;;   :custom
+;;   (lsp-java-server-install-dir (car (file-expand-wildcards "~/.vscode/extensions/redhat.java-*/server"))))
 
 ;; Javascript
 (add-to-list 'auto-mode-alist '("\\(?:\\.\\(?:[cm]?js\\)\\)" . js-ts-mode))
@@ -1572,8 +1572,8 @@ optionally the window if possible."
    'self-insert-command
    minibuffer-local-completion-map))
 
-(use-package lsp-metals
-  :after (lsp-mode))
+;; (use-package lsp-metals
+;;   :after (lsp-mode))
 
 ;; Web
 (use-package sass-mode
