@@ -111,7 +111,7 @@ under `user-emacs-directory'.  If it exists, load it."
           major-mode-segment)))
     (advice-add 'powerline-major-mode :filter-return 'powerline-major-mode-advice))
 
-  (defvar kind-icons
+  (defvar vscode-kind-icons
     `((text           . ,(all-the-icons-vscode-codicons "symbol-key" :padding '(2 . 1)))
       (method         . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple :padding '(2 . 1)))
       (function       . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple :padding '(2 . 1)))
@@ -847,20 +847,19 @@ checker symbol."
 
 ;; Auto-completion
 (use-package corfu
-  :quelpa (corfu :fetcher github :repo "wyuenho/corfu" :branch "margin-formatters-pixel-padding" :files (:defaults "extensions/corfu-*.el"))
   :init
-  (defun kind-icons-corfu-margin-formatter (_)
+  (defun vscode-kind-icons-corfu-margin-formatter (_)
     (when-let ((company-kind-func (plist-get completion-extra-properties :company-kind))
                (_ (display-graphic-p)))
       (lambda (item)
         (let* ((kind (funcall company-kind-func item))
-               (icon (alist-get kind kind-icons (all-the-icons-vscode-codicons "symbol-misc" :padding '(2 . 1)))))
+               (icon (alist-get kind vscode-kind-icons (all-the-icons-vscode-codicons "symbol-misc" :padding '(2 . 1)))))
           icon))))
 
   :config
   (setq read-extended-command-predicate 'command-completion-default-include-p)
 
-  (add-hook 'corfu-margin-formatters 'kind-icons-corfu-margin-formatter)
+  (add-hook 'corfu-margin-formatters 'vscode-kind-icons-corfu-margin-formatter)
 
   (with-eval-after-load 'transient
     (setq read-extended-command-predicate
@@ -868,14 +867,18 @@ checker symbol."
             (and
              (transient-command-completion-not-suffix-only-p sym buf)
              (command-completion-default-include-p sym buf)))))
-  (global-corfu-mode))
+  (global-corfu-mode 1))
 
 (use-package corfu-popupinfo
   :after (corfu))
 
-(use-package corfu-terminal
-  :quelpa (corfu-terminal :fetcher codeberg :repo "wyuenho/emacs-corfu-terminal" :branch "remove-gui-mode")
-  :hook (corfu-mode . corfu-terminal-mode))
+(use-package corfu-pixel-perfect
+  :quelpa (corfu-pixel-perfect :fetcher github :repo "wyuenho/corfu-pixel-perfect")
+  :after (corfu))
+
+;; (use-package corfu-terminal
+;;   ;; :quelpa (corfu-terminal :fetcher codeberg :repo "wyuenho/emacs-corfu-terminal" :branch "remove-gui-mode")
+;;   :hook (corfu-mode . corfu-terminal-mode))
 
 (use-package cape
   :config
