@@ -212,6 +212,7 @@
  '(lsp-disabled-clients
    '(pyls pylsp ruff eslint ocaml-ls bash-ls html-ls css-ls flow-ls))
  '(lsp-eldoc-enable-hover nil)
+ '(lsp-enable-dap-auto-configure nil)
  '(lsp-enable-indentation nil)
  '(lsp-enable-on-type-formatting nil)
  '(lsp-go-library-directories nil)
