@@ -721,7 +721,7 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package posframe)
 (use-package lsp-mode
   :quelpa (lsp-mode :repo "wyuenho/lsp-mode" :fetcher github :files (:defaults "clients/*.el") :branch "fix-all-the-icons")
-  :after (projectile posframe)
+  :after (posframe)
   :delight (lsp-mode) (lsp-lens-mode)
   :hook ((c-mode-common
           c-ts-base-mode
@@ -1384,6 +1384,17 @@ optionally the window if possible."
   :config
   (inheritenv-add-advice 'run-ts))
 
+(use-package lsp-javascript
+  :after (lsp-mode)
+  :config
+  (let ((client (gethash 'deno-ls lsp-clients)))
+    (setf (lsp--client-activation-fn client)
+          (lambda (file-name &optional _)
+            (and (or (string-match-p "\\.[cm]js\\|\\.[jt]sx?\\'" file-name)
+                     (and (derived-mode-p 'js-base-mode 'typescript-mode 'typescript-ts-base-mode)
+                          (not (derived-mode-p 'json-mode))))
+                 (find-file-from-project-root "deno.jsonc?"))))))
+
 ;; Python
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'"   . python-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.pylintrc\\'"   . conf-mode))
@@ -1426,7 +1437,8 @@ optionally the window if possible."
                                (when ruff-format-command
                                  (ruff-format-on-save-mode))))))
 
-(use-package python-pytest)
+(use-package python-pytest
+  :after (projectile))
 
 (use-package lsp-jedi
   :after (lsp-mode))
