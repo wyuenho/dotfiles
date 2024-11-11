@@ -720,9 +720,10 @@ Optional argument ARG same as `comment-dwim''s."
        (car (file-expand-wildcards (concat (file-name-as-directory root) file-name) t)))
      file-names)))
 
+(use-package posframe)
 (use-package lsp-mode
   :quelpa (lsp-mode :repo "wyuenho/lsp-mode" :fetcher github :files (:defaults "clients/*.el") :branch "fix-all-the-icons")
-  :after (projectile)
+  :after (projectile posframe)
   :delight (lsp-mode) (lsp-lens-mode)
   :hook ((c-mode-common
           c-ts-base-mode
