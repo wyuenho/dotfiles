@@ -227,6 +227,7 @@
  '(lsp-keep-workspace-alive nil)
  '(lsp-metals-server-args '("\"-J-Dmetals.allow-multiline-string-formatting=off\""))
  '(lsp-pyright-multi-root nil)
+ '(lsp-references-exclude-definition t)
  '(lsp-response-timeout 60)
  '(lsp-signature-function 'lsp-signature-posframe)
  '(lsp-sourcekit-executable
@@ -237,8 +238,9 @@
  '(lsp-ui-imenu-auto-refresh t)
  '(lsp-ui-imenu-enable nil)
  '(lsp-ui-sideline-ignore-duplicate t)
- '(lsp-ui-sideline-show-code-actions t)
+ '(lsp-ui-sideline-show-code-actions nil)
  '(lsp-ui-sideline-show-diagnostics nil)
+ '(lsp-update-inlay-hints-on-scroll nil)
  '(mac-emulate-three-button-mouse t)
  '(mac-input-method-mode t)
  '(mac-mouse-wheel-mode t)
