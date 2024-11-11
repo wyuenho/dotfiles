@@ -996,6 +996,7 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
   (advice-add 'quick-peek--insert-spacer :override 'quick-peek--insert-spacer-advice))
 
 (use-package flycheck-inline
+  :quelpa (flycheck-inline :repo "wyuenho/flycheck-inline" :fetcher github)
   :init
   (defun flycheck-inline-quick-peek (msg pos err)
     (unless (or (and (featurep 'company)
