@@ -1543,7 +1543,12 @@ optionally the window if possible."
 
                               (add-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
                               (go-setup-format-buffer-on-save)))
-                          nil t)))))
+                          nil t))))
+
+  (add-hook 'go-ts-mode-hook
+            (lambda ()
+              (when (boundp 'corfu-pixel-perfect-ellipsis)
+                (setq-local corfu-pixel-perfect-ellipsis 'proportional)))))
 
 (use-package flycheck-golangci-lint
   :after (flycheck)
