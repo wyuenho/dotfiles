@@ -367,7 +367,6 @@
  '(select-enable-clipboard t)
  '(send-mail-function 'smtpmail-send-it)
  '(server-mode t)
- '(server-use-tcp t)
  '(set-mark-command-repeat-pop t)
  '(shell-file-name "/opt/local/bin/bash")
  '(shfmt-arguments
