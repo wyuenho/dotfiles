@@ -2,25 +2,25 @@
 (setenv "LSP_USE_PLISTS" "true")
 
 (require 'cl-lib)
+(require 'nadvice)
 
 ;; Bury the noisy compile logs
 (defvar compile-log-buffer-names nil)
 
-(defun get-buffer-create-advice (buffer)
-  "Bury `compile-log-buffer-names' after creation and ensure `compilation-mode' is on."
+(define-advice get-buffer-create
+    (:filter-return (buffer) "bury-compilation-mode")
   (when (member (buffer-name buffer) compile-log-buffer-names)
     (with-current-buffer buffer
       (unless (derived-mode-p 'compilation-mode)
         (compilation-mode)))
     (bury-buffer-internal buffer))
   buffer)
-(advice-add 'get-buffer-create :filter-return 'get-buffer-create-advice)
 
 (with-eval-after-load 'compile
-  (defun compilation-buffer-name-advice (name)
+  (define-advice compilation-buffer-name
+      (:filter-return (name) "record-compile-log-buffer-name")
     (add-to-list 'compile-log-buffer-names name)
     name)
-  (advice-add 'compilation-buffer-name :filter-return 'compilation-buffer-name-advice)
 
   (set-keymap-parent compilation-shell-minor-mode-map special-mode-map))
 
@@ -44,7 +44,7 @@
 
 ;; Patch package.el so it's slightly less insane
 (with-eval-after-load 'package
-  (defun package-delete-advice (fn &rest args)
+  (define-advice package-delete (:around (fn &rest args) "queue-deletion")
     "Queue package deletion during native compilation."
     (if (and (native-comp-available-p)
              (or comp-files-queue
@@ -63,10 +63,8 @@
                            (unintern func-sym nil)))
           (add-hook 'native-comp-async-all-done-hook func-sym))
       (apply fn args)))
-  (advice-add 'package-delete :around 'package-delete-advice)
 
-  (defun package-unpack-advice (pkg-desc)
-    "Recompile dependents after installation."
+  (define-advice package-unpack (:after (pkg-desc) "recompile-dependants")
     (cl-loop for (_ pkg) in (package--alist)
              if (member (package-desc-name pkg-desc)
                         (cl-loop for (req-name _) in (package-desc-reqs pkg)
@@ -80,17 +78,15 @@
                   (if (functionp 'package--reload-previously-loaded)
                       (package--reload-previously-loaded pkg)
                     (package--load-files-for-activation pkg :reload)))))
-  (advice-add 'package-unpack :after 'package-unpack-advice)
 
   (with-eval-after-load 'quelpa
-    (defun package--removable-packages-advice (removable-packages)
+    (define-advice package--removable-packages (:filter-return (removable-packages) "skip-quelpa")
       "Make sure `package-autoremove' does not consider quelpa-installed packages.
 
 FIXME: this currently does not take into account of package
 versions due to limitations in package.el."
       (let ((quelpa-packages (mapcar #'car (quelpa-read-cache))))
-        (cl-set-difference removable-packages quelpa-packages)))
-    (advice-add 'package--removable-packages :filter-return 'package--removable-packages-advice))
+        (cl-set-difference removable-packages quelpa-packages))))
 
 
   ;; FIXME: `package-autoremove' can't remove obsolete package because
