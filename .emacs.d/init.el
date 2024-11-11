@@ -1713,10 +1713,7 @@ optionally the window if possible."
 
 (use-package diff-hl
   :config
-  (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
-  (with-eval-after-load 'magit
-    (add-hook 'magit-pre-call-git-hook 'diff-hl-magit-pre-refresh)
-    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote))
 
 (use-package magit
   :config
