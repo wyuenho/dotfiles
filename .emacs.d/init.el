@@ -810,6 +810,11 @@ Optional argument ARG same as `comment-dwim''s."
 
   (add-hook 'lsp-completion-mode-hook
             (lambda ()
+              (when (and (bound-and-true-p corfu-mode)
+                         (boundp 'corfu-continue-commands))
+                (make-local-variable 'corfu-continue-commands)
+                (add-to-list 'corfu-continue-commands 'lsp-ui-doc--handle-mouse-movement)
+                (add-to-list 'corfu-continue-commands 'ignore-preserving-kill-region))
               (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
                     '(flex))))
 
