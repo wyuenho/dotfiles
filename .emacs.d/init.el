@@ -152,14 +152,75 @@ under `user-emacs-directory'.  If it exists, load it."
               (modus-themes-with-colors
                 (custom-set-faces
                  `(bold ((,c :weight semibold)))
+
                  `(corfu-annotations ((((type ns))
                                        :family "SF Pro Text"
-                                       :height 0.9
                                        :foreground ,bg-hl-line)))
                  `(corfu-current ((,c :distant-foreground ,docstring)))
                  `(corfu-popupinfo ((((type ns)) :family "SF Pro Text")))
+
+                 `(lsp-details-face ((t :height 0.9 :inherit shadow)))
+                 `(lsp-face-rename ((,c :inherit iedit-occurrence)))
                  `(lsp-headerline-breadcrumb-separator-face ((t :inherit shadow)))
-                 `(lsp-ui-doc-background ((t :background ,bg-dim)))
+                 `(lsp-headerline-breadcrumb-path-face ((t :inherit font-lock-string-face)))
+                 `(lsp-headerline-breadcrumb-path-error-face
+                   ((t :underline (:style wave :color ,err)
+                       :inherit lsp-headerline-breadcrumb-path-face)))
+                 `(lsp-headerline-breadcrumb-path-warning-face
+                   ((t :underline (:style wave :color ,warning)
+                       :inherit lsp-headerline-breadcrumb-path-face)))
+                 `(lsp-headerline-breadcrumb-path-info-face
+                   ((t :underline (:style wave :color ,info)
+                       :inherit lsp-headerline-breadcrumb-path-face)))
+                 `(lsp-headerline-breadcrumb-path-hint-face
+                   ((t :underline (:style wave :color ,info)
+                       :inherit lsp-headerline-breadcrumb-path-face)))
+                 `(lsp-headerline-breadcrumb-project-prefix-face
+                   ((t :inherit font-lock-string-face :weight semibold)))
+                 `(lsp-headerline-breadcrumb-unknown-project-prefix-face
+                   ((t :inherit shadow :weight semibold)))
+                 `(lsp-headerline-breadcrumb-symbols-face
+                   ((t :inherit font-lock-doc-face :weight semibold)))
+                 `(lsp-headerline-breadcrumb-symbols-error-face
+                   ((t :inherit lsp-headerline-breadcrumb-symbols-face
+                       :underline (:style wave :color ,err))))
+                 `(lsp-headerline-breadcrumb-symbols-warning-face
+                   ((t :inherit lsp-headerline-breadcrumb-symbols-face
+                       :underline (:style wave :color ,warning))))
+                 `(lsp-headerline-breadcrumb-symbols-info-face
+                   ((t :inherit lsp-headerline-breadcrumb-symbols-face
+                       :underline (:style wave :color ,info))))
+                 `(lsp-headerline-breadcrumb-symbols-hint-face
+                   ((t :inherit lsp-headerline-breadcrumb-symbols-face
+                       :underline (:style wave :color ,info))))
+                 `(lsp-installation-buffer-face ((,c :foreground ,info)))
+                 `(lsp-installation-finished-buffer-face ((,c :foreground ,info)))
+                 `(lsp-lens-mouse-face ((t :height 0.9 :inherit link)))
+                 `(lsp-modeline-code-actions-face ((,c :foreground ,yellow)))
+                 `(lsp-modeline-code-actions-preferred-face ((,c :inherit lsp-modeline-code-actions-face)))
+                 `(lsp-signature-posframe ((,c :background ,bg-dim :foreground ,fg-main)))
+                 `(lsp-signature-highlight-function-argument ((,c :inherit modus-themes-completion-match-0)))
+
+                 `(lsp-ui-doc-background ((,c :background ,bg-dim)))
+                 `(lsp-ui-doc-header ((,c :inherit bold)))
+
+                 `(lsp-ui-peek-peek ((,c :background ,bg-dim)))
+                 `(lsp-ui-peek-list ((,c :background ,bg-dim)))
+                 `(lsp-ui-peek-filename ((,c :inherit bold :foreground ,name)))
+                 `(lsp-ui-peek-line-number ((t :inherit line-number)))
+                 `(lsp-ui-peek-highlight ((,c :background ,bg-dim
+                                              :box (:line-width -1 :color ,border))))
+                 `(lsp-ui-peek-header ((,c :inherit bold)))
+                 `(lsp-ui-peek-selection ((,c :inherit region)))
+
+                 `(lsp-ui-sideline-symbol ((t :foreground ,fg-dim
+                                              :box (:line-width -1 :color ,border))))
+                 `(lsp-ui-sideline-current-symbol ((,c :inherit bold
+                                                       :foreground ,fg-main
+                                                       :box (:line-width -1 :color ,border))))
+                 `(lsp-ui-sideline-code-action ((,c :inherit lsp-modeline-code-actions-face)))
+                 `(lsp-ui-sideline-symbol-info ((,c :inherit modus-themes-slant)))
+
                  `(quick-peek-background-face ((,c :background ,bg-main)))
                  `(quick-peek-border-face ((,c :strike-through t
                                                :foreground ,fg-main
