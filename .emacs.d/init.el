@@ -781,7 +781,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package posframe)
 (use-package lsp-mode
-  :quelpa (lsp-mode :repo "wyuenho/lsp-mode" :fetcher github :files (:defaults "clients/*.el") :branch "fix-all-the-icons")
+  :quelpa (lsp-mode :repo "wyuenho/lsp-mode" :fetcher github :files (:defaults "clients/*.el") :branch "my-fixes")
   :after (posframe)
   :delight (lsp-mode) (lsp-lens-mode)
   :hook ((c-mode-common
