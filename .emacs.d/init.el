@@ -1068,7 +1068,8 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
     (unless (or (and (featurep 'company)
                      company-mode
                      (company--active-p))
-                completion-in-region-mode)
+                completion-in-region-mode
+                (bound-and-true-p lsp-signature-mode))
       (pcase-let* ((`(,_ ,body-top ,__ ,body-bottom) (window-body-edges))
                    (line-offset (- (line-number-at-pos (point))
                                    (line-number-at-pos (window-start))))
