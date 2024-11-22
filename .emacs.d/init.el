@@ -948,8 +948,7 @@ checker symbol."
           (lambda (sym buf)
             (and
              (transient-command-completion-not-suffix-only-p sym buf)
-             (command-completion-default-include-p sym buf)))))
-  (global-corfu-mode 1))
+             (command-completion-default-include-p sym buf))))))
 
 (use-package corfu-popupinfo
   :after (corfu))
