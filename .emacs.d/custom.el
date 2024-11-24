@@ -52,7 +52,7 @@
  '(corfu-auto t)
  '(corfu-count 15)
  '(corfu-cycle t)
- '(corfu-min-width 50)
+ '(corfu-pixel-perfect-ellipsis 'proportional)
  '(corfu-pixel-perfect-mode t)
  '(corfu-popupinfo-delay '(0.5 . 0.2))
  '(corfu-popupinfo-max-height 20)
@@ -148,7 +148,7 @@
  '(global-auto-revert-non-file-buffers t)
  '(global-corfu-mode t)
  '(global-corfu-modes
-   '(bash-ts-mode c++-mode c-mode css-mode c++-ts-mode c-ts-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode js-ts-mode js-jsx-mode js-mode lisp-mode objc-mode python-mode python-ts-mode ruby-mode rust-ts-mode rust-mode rust-ts-mode scss-mode sh-mode shell-mode typescript-ts-mode tsx-ts-mode web-mode org-mode))
+   '(bash-ts-mode c++-mode c-mode css-mode c++-ts-mode c-ts-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode java-mode java-ts-mode js-ts-mode js-jsx-mode js-mode lisp-mode objc-mode python-mode python-ts-mode ruby-mode rust-ts-mode rust-mode rust-ts-mode scss-mode sh-mode shell-mode typescript-ts-mode tsx-ts-mode web-mode org-mode))
  '(global-diff-hl-mode t)
  '(global-diff-hl-show-hunk-mouse-mode t)
  '(global-flycheck-mode t)
