@@ -256,7 +256,8 @@
      (js-mode . js-ts-mode)
      (js-jsx-mode . js-ts-mode)
      (python-mode . python-ts-mode)
-     (sh-mode . bash-ts-mode)))
+     (sh-mode . bash-ts-mode)
+     (java-mode . java-ts-mode)))
  '(markdown-code-lang-modes
    '(("C" . c-ts-mode)
      ("C++" . c++-ts-mode)
