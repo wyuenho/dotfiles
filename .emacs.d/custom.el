@@ -59,6 +59,7 @@
  '(corfu-popupinfo-mode t)
  '(create-lockfiles nil)
  '(css-indent-offset 2)
+ '(cursor-in-non-selected-windows nil)
  '(custom-buffer-done-kill t)
  '(dabbrev-case-fold-search nil)
  '(dap-python-debugger 'debugpy)
