@@ -155,8 +155,7 @@ under `user-emacs-directory'.  If it exists, load it."
 
                  `(corfu-annotations ((((type ns))
                                        :family "SF Pro Text"
-                                       :foreground ,bg-hl-line)))
-                 `(corfu-current ((,c :distant-foreground ,docstring)))
+                                       :foreground ,docstring)))
                  `(corfu-popupinfo ((((type ns)) :family "SF Pro Text")))
 
                  `(lsp-details-face ((t :height 0.9 :inherit shadow)))
