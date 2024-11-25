@@ -1233,6 +1233,8 @@ optionally the window if possible."
 
 (use-package macrostep
   :bind (:map emacs-lisp-mode-map
+              ("C-c e x" . macrostep-expand))
+  :bind (:map lisp-interaction-mode-map
               ("C-c e x" . macrostep-expand)))
 
 (use-package elisp-def
