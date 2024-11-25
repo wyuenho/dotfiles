@@ -1362,12 +1362,6 @@ optionally the window if possible."
                          (executable-find "prettier"))
                     (prettier-mode))))))))
 
-;; Java
-;; (use-package lsp-java
-;;   :after (lsp-mode)
-;;   :custom
-;;   (lsp-java-server-install-dir (car (file-expand-wildcards "~/.vscode/extensions/redhat.java-*/server"))))
-
 ;; Javascript
 (add-to-list 'auto-mode-alist '("\\(?:\\.\\(?:[cm]?js\\)\\)" . js-ts-mode))
 (add-to-list 'auto-mode-alist '("\\(?:\\.jsx\\)" . js-jsx-mode))
@@ -1699,23 +1693,6 @@ optionally the window if possible."
 
 (use-package lsp-sourcekit
   :after (lsp-mode))
-
-;; Scala
-(use-package scala-mode
-  :interpreter ("scala" . scala-mode))
-
-(use-package sbt-mode
-  :commands sbt-start sbt-command
-  :config
-  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
-  ;; allows using SPACE when in the minibuffer
-  (substitute-key-definition
-   'minibuffer-complete-word
-   'self-insert-command
-   minibuffer-local-completion-map))
-
-;; (use-package lsp-metals
-;;   :after (lsp-mode))
 
 ;; Web
 (use-package sass-mode
