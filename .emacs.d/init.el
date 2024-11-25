@@ -2055,6 +2055,12 @@ optionally the window if possible."
              (cddr args))))
   (advice-add 'frameset--restore-frame :around 'frameset--restore-frame-advice))
 
+(with-eval-after-load 'winner
+  (define-advice winner-insert-if-new (:around (fn &rest args) "and-live")
+    (if-let* ((frame (car args))
+              ((frame-live-p frame)))
+        (apply fn args))))
+
 ;; Move around windows with shifted arrow keys
 (use-package windmove
   :config
