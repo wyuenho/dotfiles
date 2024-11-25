@@ -1594,6 +1594,45 @@ optionally the window if possible."
   :config
   (add-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
 
+  (when-let* (((treesit-available-p))
+              ((treesit-ready-p 'go))
+              (q (treesit-query-compile 'go '([(function_type
+                                                parameters: (_) @params
+                                                result: (_) @result)
+                                               (parameter_list) @params])))
+              (f (lambda (triple _)
+                   (when-let* (((or (and (boundp 'lsp--buffer-workspaces)
+                                         lsp--buffer-workspaces
+                                         (eq 'gopls (lsp--workspace-server-id (car lsp--buffer-workspaces))))
+                                    (and (fboundp 'eglot-current-server)
+                                         (eglot-current-server)
+                                         (equal
+                                          (car
+                                           (process-command
+                                            (jsonrpc--process (eglot-current-server))))
+                                          "gopls"))))
+                               (company-kind-func (plist-get completion-extra-properties :company-kind))
+                               (cand (car triple))
+                               (suffix (caddr triple))
+                               (kind (funcall company-kind-func cand))
+                               ((memq kind '(constructor function method))))
+                     (with-current-buffer (get-buffer-create " *coruf-pixel-perfect-go*")
+                       (delete-region (point-min) (point-max))
+                       (insert suffix)
+                       (let-alist (treesit-query-capture (treesit-buffer-root-node 'go) q)
+                         (let* ((params (treesit-node-text .params suffix))
+                                (result (treesit-node-text .result suffix))
+                                (suffix-faces (get-text-property 0 'face suffix)))
+                           (setf (car triple) (concat cand params))
+                           (setf (caddr triple)
+                                 (if result
+                                     (propertize (concat " " result) 'face suffix-faces)
+                                   ""))))))
+                   triple)))
+    (add-hook 'go-ts-mode-hook
+              (lambda ()
+                (add-hook 'corfu-pixel-perfect-format-functions f nil t))))
+
   (add-hook 'go-ts-mode-hook
             (lambda ()
               (with-eval-after-load 'lsp-mode
