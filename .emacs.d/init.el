@@ -1803,49 +1803,13 @@ optionally the window if possible."
             'append))
 
 (use-package diff-hl
+  :quelpa (diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "fix-171")
   :config
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
-
-  (let ((diff-hl--magit-staged-files))
-    (add-hook 'git-commit-setup-hook
-              (lambda ()
-                (unless (and diff-hl-disable-on-remote
-                             (file-remote-p default-directory))
-                  (setq diff-hl--magit-staged-files
-                        (magit-staged-files)))))
-
-    (add-hook 'magit-post-refresh-hook
-              (lambda ()
-                (unless (and diff-hl-disable-on-remote
-                             (file-remote-p default-directory))
-                  (let* ((topdir (magit-toplevel))
-                         (modified-files
-                          (mapcar (lambda (file) (expand-file-name file topdir))
-                                  diff-hl--magit-staged-files))
-                         (unmodified-states '(up-to-date ignored unregistered)))
-                    (setq diff-hl--magit-staged-files nil)
-                    (dolist (buf (buffer-list))
-                      (when (and (buffer-local-value 'diff-hl-mode buf)
-                                 (not (buffer-modified-p buf))
-                                 ;; Solve the "cloned indirect buffer" problem
-                                 ;; (diff-hl-mode could be non-nil there, even if
-                                 ;; buffer-file-name is nil):
-                                 (buffer-file-name buf)
-                                 (file-in-directory-p (buffer-file-name buf) topdir)
-                                 (file-exists-p (buffer-file-name buf)))
-                        (with-current-buffer buf
-                          (let* ((file buffer-file-name)
-                                 (backend (vc-backend file)))
-                            (when backend
-                              (cond
-                               ((member file modified-files)
-                                (when (memq (vc-state file) unmodified-states)
-                                  (vc-state-refresh file backend))
-                                (diff-hl-update))
-                               ((not (memq (vc-state file backend) unmodified-states))
-                                (vc-state-refresh file backend)
-                                (diff-hl-update)))))))))))
-              100)))
+  (add-hook 'git-commit-setup-hook 'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh 100)
+  (define-advice diff-hl-dired-status-files (:around (fn &rest args) "catch-errors")
+    (ignore-errors (apply fn args))))
 
 (use-package magit
   :config
