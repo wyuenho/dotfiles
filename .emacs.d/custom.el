@@ -36,7 +36,6 @@
  '(bidi-paragraph-direction 'left-to-right)
  '(blink-cursor-mode t)
  '(browse-url-chrome-program "chrome")
- '(byte-compile-warnings '(not docstrings docstrings-non-ascii-quotes))
  '(c-basic-offset 2)
  '(case-fold-search t)
  '(column-number-indicator-zero-based nil)
@@ -229,7 +228,6 @@
  '(lsp-metals-server-args '("\"-J-Dmetals.allow-multiline-string-formatting=off\""))
  '(lsp-pyright-multi-root nil)
  '(lsp-references-exclude-declaration t)
- '(lsp-response-timeout 5)
  '(lsp-signature-function 'lsp-signature-posframe)
  '(lsp-sourcekit-executable
    "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp")
@@ -256,8 +254,7 @@
      (js-mode . js-ts-mode)
      (js-jsx-mode . js-ts-mode)
      (python-mode . python-ts-mode)
-     (sh-mode . bash-ts-mode)
-     (java-mode . java-ts-mode)))
+     (sh-mode . bash-ts-mode)))
  '(markdown-code-lang-modes
    '(("C" . c-ts-mode)
      ("C++" . c++-ts-mode)
@@ -320,7 +317,7 @@
  '(package-menu-use-current-if-no-marks nil)
  '(package-native-compile t)
  '(package-selected-packages
-   '(add-node-modules-path ag aggressive-indent all-the-icons-dired apib-mode arduino-mode auto-compile auto-yasnippet bazel beginend bind-key browse-kill-ring bug-hunter buttercup cape cargo cask-mode corfu corfu-pixel-perfect corfu-prescient corfu-terminal coverage crux csv-mode cycle-quotes dape delight diff-ansi diff-hl dired-collapse dired-hacks-utils dired-hide-dotfiles docker-compose-mode dotenv-mode editorconfig ef-themes eglot elisp-def elisp-refs embark emmet-mode enh-ruby-mode envrc exec-path-from-shell expreg faceup flycheck flycheck-cask flycheck-golangci-lint flycheck-inline flycheck-package flycheck-rust flymake focus fontify-face forge gcmh git-modes git-timemachine gnu-elpa-keyring-update go-mode gptel graphql-mode graphviz-dot-mode groovy-mode helpful hl-todo ialign ibuffer-projectile iedit imenu-anywhere imenu-list impostman indent-bars inheritenv inputrc-mode jq-mode jsdoc jsonian jsonrpc jupyter just-mode kurecolor lorem-ipsum lsp-jedi lsp-mode lsp-pyright lsp-sourcekit lsp-ui macrostep magit magit-lfs magit-todos marginalia markdown-mode mermaid-mode modus-themes monky move-dup multiple-cursors nodejs-repl olivetti opencl-c-mode package-build page-break-lines pager-default-keybindings pcre2el pdf-tools pet plantuml-mode po-mode posframe powerline prettier projectile projectile-rails protobuf-mode python-black python-isort python-pytest quelpa quelpa-use-package quick-peek rainbow-mode reformatter repeat-help request rg ron-mode ruff-format sass-mode sbt-mode scala-mode scroll-on-jump shfmt shift-number shrink-path shut-up smart-semicolon smartparens smooth-scrolling soap-client spaceline sphinx-doc spinner ssh-config-mode string-inflection swagg swift-mode terraform-mode timeout treesit-fold ts-comint tuareg udev-mode use-package use-package-ensure-system-package verb verilog-mode vertico vertico-prescient visual-regexp-steroids vterm vundo web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose yaml-mode yaml-pro yard-mode yarn-mode yasnippet yasnippet-snippets zig-mode))
+   '(add-node-modules-path ag aggressive-indent all-the-icons-dired apheleia apib-mode arduino-mode auto-compile auto-yasnippet bazel beginend bind-key browse-kill-ring bug-hunter buttercup cape cargo cask-mode corfu corfu-pixel-perfect corfu-prescient coverage crux csv-mode cycle-quotes dape delight diff-ansi diff-hl dired-collapse dired-hacks-utils dired-hide-dotfiles docker-compose-mode dotenv-mode editorconfig ef-themes eglot eldoc elisp-def elisp-refs embark emmet-mode enh-ruby-mode envrc exec-path-from-shell expreg faceup flycheck flycheck-cask flycheck-eglot flycheck-golangci-lint flycheck-inline flycheck-package flycheck-posframe flycheck-rust flymake focus fontify-face forge gcmh git-modes git-timemachine gnu-elpa-keyring-update go-mode gptel graphql-mode graphviz-dot-mode groovy-mode helpful hl-todo ialign ibuffer-projectile iedit imenu-anywhere imenu-list impostman indent-bars inheritenv inputrc-mode jq-mode jsdoc jsonian jsonrpc jupyter just-mode kurecolor lorem-ipsum lsp-jedi lsp-mode lsp-pyright lsp-sourcekit lsp-ui macrostep magit magit-lfs magit-todos marginalia markdown-mode mermaid-mode modus-themes monky move-dup multiple-cursors nodejs-repl olivetti opencl-c-mode package-build page-break-lines pager-default-keybindings pcre2el pdf-tools pet plantuml-mode po-mode posframe powerline prettier projectile projectile-rails protobuf-mode python-black python-isort python-pytest quelpa quelpa-use-package quick-peek rainbow-mode reformatter repeat-help request rg ron-mode ruff-format sass-mode scroll-on-jump shfmt shift-number shrink-path shut-up smart-semicolon smartparens smooth-scrolling soap-client spaceline sphinx-doc spinner ssh-config-mode string-inflection swagg swift-mode terraform-mode timeout treesit-fold ts-comint tuareg udev-mode use-package verb verilog-mode vertico vertico-prescient visual-regexp-steroids vterm vundo web-mode wgrep-ag which-key whitespace-cleanup-mode window-purpose yaml-mode yaml-pro yard-mode yarn-mode yasnippet yasnippet-snippets zig-mode))
  '(page-break-lines-lighter "")
  '(parens-require-spaces nil)
  '(prescient-persist-mode t)
