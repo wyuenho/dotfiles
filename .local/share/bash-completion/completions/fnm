@@ -33,6 +33,9 @@ _fnm() {
             fnm,help)
                 cmd="fnm__help"
                 ;;
+            fnm,i)
+                cmd="fnm__install"
+                ;;
             fnm,install)
                 cmd="fnm__install"
                 ;;
@@ -50,6 +53,9 @@ _fnm() {
                 ;;
             fnm,unalias)
                 cmd="fnm__unalias"
+                ;;
+            fnm,uni)
+                cmd="fnm__uninstall"
                 ;;
             fnm,uninstall)
                 cmd="fnm__uninstall"
@@ -103,7 +109,7 @@ _fnm() {
 
     case "${cmd}" in
         fnm)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -131,6 +137,10 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -141,7 +151,7 @@ _fnm() {
             return 0
             ;;
         alias)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -169,6 +179,10 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -179,7 +193,7 @@ _fnm() {
             return 0
             ;;
         completions)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -207,6 +221,10 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -217,7 +235,7 @@ _fnm() {
             return 0
             ;;
         current)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -245,6 +263,10 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -255,7 +277,7 @@ _fnm() {
             return 0
             ;;
         default)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -283,6 +305,10 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -293,7 +319,7 @@ _fnm() {
             return 0
             ;;
         env)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -321,6 +347,10 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -331,7 +361,7 @@ _fnm() {
             return 0
             ;;
         exec)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -359,6 +389,10 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -565,7 +599,7 @@ _fnm() {
             return 0
             ;;
         install)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -593,6 +627,52 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        install)
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --node-dist-mirror)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --fnm-dir)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --multishell-path)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --log-level)
+                    COMPREPLY=($(compgen -W "quiet error info" -- "${cur}"))
+                    return 0
+                    ;;
+                --arch)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --version-file-strategy)
+                    COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -603,7 +683,7 @@ _fnm() {
             return 0
             ;;
         list)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -631,6 +711,52 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        list)
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --node-dist-mirror)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --fnm-dir)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --multishell-path)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --log-level)
+                    COMPREPLY=($(compgen -W "quiet error info" -- "${cur}"))
+                    return 0
+                    ;;
+                --arch)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --version-file-strategy)
+                    COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -641,7 +767,7 @@ _fnm() {
             return 0
             ;;
         list__remote)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -669,6 +795,52 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        list__remote)
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --node-dist-mirror)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --fnm-dir)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --multishell-path)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --log-level)
+                    COMPREPLY=($(compgen -W "quiet error info" -- "${cur}"))
+                    return 0
+                    ;;
+                --arch)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --version-file-strategy)
+                    COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -679,7 +851,7 @@ _fnm() {
             return 0
             ;;
         unalias)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -707,6 +879,10 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -717,7 +893,7 @@ _fnm() {
             return 0
             ;;
         uninstall)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -745,6 +921,52 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        uninstall)
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --node-dist-mirror)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --fnm-dir)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --multishell-path)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --log-level)
+                    COMPREPLY=($(compgen -W "quiet error info" -- "${cur}"))
+                    return 0
+                    ;;
+                --arch)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --version-file-strategy)
+                    COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -755,7 +977,7 @@ _fnm() {
             return 0
             ;;
         use)
-            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote list install use env completions alias unalias default current exec uninstall help"
+            opts="-h -V --node-dist-mirror --fnm-dir --multishell-path --log-level --arch --version-file-strategy --corepack-enabled --resolve-engines --help --version list-remote ls-remote list ls install i use env completions alias unalias default current exec uninstall uni help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -783,6 +1005,10 @@ _fnm() {
                     ;;
                 --version-file-strategy)
                     COMPREPLY=($(compgen -W "local recursive" -- "${cur}"))
+                    return 0
+                    ;;
+                --resolve-engines)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -795,4 +1021,8 @@ _fnm() {
     esac
 }
 
-complete -F _fnm -o bashdefault -o default fnm
+if [[ "${BASH_VERSINFO[0]}" -eq 4 && "${BASH_VERSINFO[1]}" -ge 4 || "${BASH_VERSINFO[0]}" -gt 4 ]]; then
+    complete -F _fnm -o nosort -o bashdefault -o default fnm
+else
+    complete -F _fnm -o bashdefault -o default fnm
+fi
