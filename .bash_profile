@@ -48,14 +48,6 @@ if [ -d /Volumes/toolchains ]; then
     done
 fi
 
-# git-subrepo
-if [ -d "$HOME/.local/git-subrepo" ]; then
-    GIT_SUBREPO_ROOT="$HOME/.local/git-subrepo"
-    export GIT_SUBREPO_ROOT
-    PATH="$GIT_SUBREPO_ROOT/lib:$PATH"
-    MANPATH="$GIT_SUBREPO_ROOT/man:$MANPATH"
-fi
-
 # Java
 if /usr/libexec/java_home -v 11 > /dev/null 2>&1; then
     JAVA_HOME=$(/usr/libexec/java_home -v 11)
@@ -77,6 +69,10 @@ if [ -x "$(type -P fnm)" ]; then
 fi
 
 # Python
+
+# PATH="$HOME/.pixi/bin:$PATH"
+
+# PATH="$PATH:$HOME/Library/Application Support/hatch/pythons/3.12/python/bin"
 
 # Ruby
 if [ -d "$HOME/.rbenv/bin" ]; then

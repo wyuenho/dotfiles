@@ -21,7 +21,7 @@ MBOX="$HOME/.mail/mbox"
 
 if [ -x "$(type -P emacs)" ]; then
     export EDITOR
-    EDITOR="emacsclient"
+    EDITOR="emacsclient --alternate-editor=vi"
 
     export VISUAL
     VISUAL="$EDITOR"
@@ -165,11 +165,6 @@ if [ -z "$INSIDE_EMACS" ] ||
     # aws
     if [ -x "$(type -P aws_completer)" ]; then
         complete -C aws_completer aws
-    fi
-
-    # git-subrepo
-    if [ -s "$GIT_SUBREPO_ROOT/share/completion.bash" ]; then
-        source "$GIT_SUBREPO_ROOT/share/completion.bash"
     fi
 
     # CircleCI
