@@ -11,8 +11,6 @@
  '(ag-ignore-list '("*.min.js"))
  '(ag-reuse-buffers t)
  '(ag-reuse-window t)
- '(aggressive-indent-excluded-modes
-   '(dockerfile-mode dockerfile-ts-mode elm-mode go-mode go-ts-mode haskell-mode inf-ruby-mode js-json-mode json-ts-mode jsonian-mode makefile-mode python-mode python-ts-mode sql-interactive-mode tcl-mode text-mode web-mode yaml-mode yaml-ts-mode))
  '(apib-drafter-executable "aglio")
  '(auth-source-protocols
    '((imap "imap" "imaps" "143" "993")
@@ -143,7 +141,6 @@
  '(gcmh-high-cons-threshold 80000000)
  '(gcmh-idle-delay 'auto)
  '(gcmh-mode t)
- '(global-aggressive-indent-mode t)
  '(global-auto-revert-mode t)
  '(global-auto-revert-non-file-buffers t)
  '(global-corfu-mode t)

@@ -642,6 +642,10 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package indent-bars
   :hook ((python-base-mode yaml-mode) . indent-bars-mode))
 
+;; Aggressively indent the rest of the file as you type
+(use-package aggressive-indent
+  :hook ((lisp-data-mode . aggressive-indent-mode)))
+
 ;; Cross-machine fomatting
 (use-package editorconfig
   :delight)
