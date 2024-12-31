@@ -105,3 +105,6 @@
 
 [index]
 	version = 4
+
+[rerere]
+	enabled = true
