@@ -12,5 +12,4 @@ macos-option-as-alt = true
 macos-non-native-fullscreen = visible-menu
 window-height = 100
 window-width = 400
-adjust-cell-height = 2
 minimum-contrast = 5
