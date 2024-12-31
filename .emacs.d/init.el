@@ -1816,11 +1816,13 @@ optionally the window if possible."
             'append))
 
 (use-package diff-hl
-  :quelpa (diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "fix-171")
+  :quelpa (diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "customizable-ignorable-commands")
   :config
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
-  (add-hook 'git-commit-setup-hook 'diff-hl-magit-pre-refresh)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh 100)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  (add-to-list 'diff-hl-show-hunk-ignorable-commands 'ignore-preserving-kill-region)
+  (add-to-list 'diff-hl-show-hunk-ignorable-commands 'lsp-ui-doc--handle-mouse-movement)
+  (add-to-list 'diff-hl-show-hunk-ignorable-commands 'dap-tooltip-mouse-motion)
   (define-advice diff-hl-dired-status-files (:around (fn &rest args) "catch-errors")
     (ignore-errors (apply fn args))))
 
