@@ -60,14 +60,28 @@ under `user-emacs-directory'.  If it exists, load it."
           (cl-flet ((y-or-n-p (prompt) t))
             (treesit-install-language-grammar lang)))))))
 
+;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
+;; should be done ASAP on init.
+(use-package exec-path-from-shell
+  :ensure
+  :if (memq (window-system) '(mac ns))
+  :config (exec-path-from-shell-initialize))
+
 ;; Install selected but missing packages
 (let ((missing (cl-set-difference
                 package-selected-packages
                 package-activated-list))
       (debug-on-error nil))
+
+  ;; Update ELPA GPG keys first
+  (when (memq 'gnu-elpa-keyring-update missing)
+    (let ((package-check-signature nil))
+      (package-install 'gnu-elpa-keyring-update)
+      (package-activate 'gnu-elpa-keyring-update)))
+
+  (gnu-elpa-keyring-update)
+  
   (when missing
-    (with-demoted-errors "%s"
-      (package-refresh-contents t))
     (let ((noninteractive t))
       (dolist (package missing)
         (with-demoted-errors "%s"
@@ -259,14 +273,10 @@ under `user-emacs-directory'.  If it exists, load it."
   (spaceline-spacemacs-theme)
   (spaceline-toggle-buffer-encoding-abbrev-off))
 
-;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
-;; should be done ASAP on init.
-(use-package exec-path-from-shell
-  :if (memq (window-system) '(mac ns))
-  :config (exec-path-from-shell-initialize))
-
+;; Helper to propagate environment vars
 (use-package inheritenv)
 
+;; Direnv
 (use-package envrc
   :config
   (add-hook 'change-major-mode-after-body-hook 'envrc-mode))
