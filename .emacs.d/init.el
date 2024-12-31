@@ -1301,23 +1301,19 @@ optionally the window if possible."
             "json"
             "--stdin"
             "--stdin-filename"
-            ,buffer-file-name
-            "--ext"
-            ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx")
+            ,buffer-file-name)
     :output-processor (lambda (output-file result-callback)
-                        (let* ((data (ignore-error 'json-end-of-file (json-read-file output-file)))
-                               (output (and data (arrayp data) (alist-get 'output (aref data 0)))))
-                          (funcall result-callback output)))
-    :exit-code-success-p integerp)
+                        (let-alist (with-temp-buffer
+                                     (insert-file-contents output-file)
+                                     (aref (json-parse-buffer :object-type 'alist) 0))
+                          (funcall result-callback (if (= .fatalErrorCount 0) .output)))))
 
   (reformatter-define eslint-format
     :program "eslint_d"
     :args `("--fix-to-stdout"
             "--stdin"
             "--stdin-filename"
-            ,buffer-file-name
-            "--ext"
-            ".json,.js,.jsx,.mjs,.cjs,.ts,.tsx"))
+            ,buffer-file-name))
 
   (reformatter-define denofmt-format
     :program "deno"
@@ -1343,7 +1339,9 @@ optionally the window if possible."
                                          (find-file-from-project-root "package.json"))
                                         (package-json
                                          (and package-json-file
-                                              (json-read-file package-json-file)))
+                                              (with-temp-buffer
+                                                (insert-file-contents package-json-file)
+                                                (json-parse-buffer :object-type 'alist))))
                                         (devDependencies
                                          (and package-json
                                               (alist-get 'devDependencies package-json))))
@@ -1361,13 +1359,10 @@ optionally the window if possible."
                     (add-node-modules-path))
                   (cond
                    ((and (eq formatter 'eslint)
-                         (or (not (featurep 'lsp-mode))
-                             (with-eval-after-load 'lsp-mode
-                               (or (not lsp-mode)
-                                   (and lsp-mode
-                                        (member 'eslint
-                                                (lsp-foreach-workspace
-                                                 (lsp--workspace-server-id lsp--cur-workspace))))))))
+                         (or (not (bound-and-true-p lsp-managed-mode))
+                             (member 'eslint
+                                     (lsp-foreach-workspace
+                                      (lsp--workspace-server-id lsp--cur-workspace)))))
                     (if (or yarn-pnp-p (executable-find "yarn"))
                         (yarn-eslint-format-on-save-mode)
                       (eslint-format-on-save-mode)))
