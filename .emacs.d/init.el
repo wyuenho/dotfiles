@@ -1290,7 +1290,7 @@ optionally the window if possible."
 
 ;; Formatting
 (use-package reformatter
-  :quelpa (reformatter :fetcher github :repo "wyuenho/reformatter.el" :branch "post-processor")
+  :quelpa (reformatter :fetcher github :repo "wyuenho/reformatter.el" :branch "output-processor")
   :config
   (reformatter-define yarn-eslint-format
     :program "yarn"
