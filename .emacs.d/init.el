@@ -1759,6 +1759,10 @@ optionally the window if possible."
   (projectile-mode)
   (with-eval-after-load 'which-key
     (which-key-add-key-based-replacements "C-x p" "projectile")
+    (which-key-add-key-based-replacements "C-x 8 e" "emoji")
+    (which-key-add-key-based-replacements "C-x X" "edebug")
+    (which-key-add-key-based-replacements "C-x C-a" "edebug")
+    (which-key-add-key-based-replacements "C-x w" "window")
     (which-key-add-keymap-based-replacements projectile-command-map
       "4" "projectile-other-window"
       "5" "projectile-other-frame"
