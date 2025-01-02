@@ -26,6 +26,13 @@ under `user-emacs-directory'.  If it exists, load it."
     (load custom-file)))
 (load-custom-file)
 
+;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
+;; should be done ASAP on init.
+(use-package exec-path-from-shell
+  :ensure
+  :if (memq (window-system) '(mac ns))
+  :config (exec-path-from-shell-initialize))
+
 ;; Install tree-sitter language grammars
 (when (treesit-available-p)
   (setq treesit-language-source-alist
@@ -59,13 +66,6 @@ under `user-emacs-directory'.  If it exists, load it."
         (let ((noninteractive t))
           (cl-flet ((y-or-n-p (prompt) t))
             (treesit-install-language-grammar lang)))))))
-
-;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
-;; should be done ASAP on init.
-(use-package exec-path-from-shell
-  :ensure
-  :if (memq (window-system) '(mac ns))
-  :config (exec-path-from-shell-initialize))
 
 ;; Install selected but missing packages
 (let ((missing (cl-set-difference
