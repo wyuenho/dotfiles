@@ -10,6 +10,7 @@ font-family-bold-italic = "Monaspace Neon Var Regular Bold Italic"
 font-feature = "'calt', 'ss06', 'ss07', 'ss08'"
 macos-option-as-alt = true
 macos-non-native-fullscreen = visible-menu
+macos-titlebar-style = tabs
 window-height = 100
 window-width = 400
 minimum-contrast = 5
