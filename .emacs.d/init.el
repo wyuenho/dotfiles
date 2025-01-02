@@ -2062,8 +2062,6 @@ optionally the window if possible."
   (define-key purpose-mode-map (kbd "C-c ,") nil)
   (define-key purpose-mode-map (kbd "C-c w") purpose-mode-prefix-map)
 
-  (timeout-debounce! 'purpose-x-code1-update-changed 0.0416)
-
   (with-eval-after-load 'which-key
     (which-key-add-key-based-replacements "C-c w" "window-purpose")
     (which-key-add-keymap-based-replacements purpose-mode-prefix-map
