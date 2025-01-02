@@ -2050,10 +2050,10 @@ optionally the window if possible."
   :config
   (add-hook 'ibuffer-hook
             (lambda ()
-              (dolist (buf (buffer-list))
-                (with-current-buffer buf
-                  (when (derived-mode-p 'ibuffer-mode)
-                    (setq ibuffer-filter-groups (ibuffer-projectile-generate-filter-groups))))))))
+              (setq ibuffer-filter-groups (ibuffer-projectile-generate-filter-groups))
+              (when-let ((ibuf (get-buffer "*Ibuffer*")))
+                (with-current-buffer ibuf
+                  (ibuffer-update nil t))))))
 
 (use-package window-purpose
   :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts")
