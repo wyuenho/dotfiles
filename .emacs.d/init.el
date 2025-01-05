@@ -10,8 +10,6 @@
 (require 'subr-x)
 
 (set-locale-environment "UTF-8")
-(custom-autoload 'package-selected-packages "package")
-(custom-autoload 'package-activated-list "package")
 
 ;; Tell Custom to write and find the custom settings elsewhere
 (defun load-custom-file ()
@@ -26,10 +24,37 @@ under `user-emacs-directory'.  If it exists, load it."
     (load custom-file)))
 (load-custom-file)
 
+;; Init Straight
+(setf straight-recipe-overrides nil)
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-override-recipe '(all-the-icons :fetcher github :repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg")))
+(straight-override-recipe '(pdf-tools :fetcher github :repo "wyuenho/pdf-tools" :files (:defaults "README" ("build" "Makefile") ("build" "server")) :branch "replace-tempnam"))
+(straight-override-recipe '(lsp-mode :repo "wyuenho/lsp-mode" :branch "do-not-resolve-during-annotate" :fetcher github :files (:defaults "clients/*.el")))
+(straight-override-recipe '(helpful :fetcher github :repo "wyuenho/helpful" :branch "search-after-navigate"))
+(straight-override-recipe '(reformatter :type git :host github :repo "wyuenho/emacs-reformatter" :branch "output-processor"))
+(straight-override-recipe '(diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "customizable-ignorable-commands"))
+(straight-override-recipe '(window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1"))
+
+(add-hook 'after-init-hook 'load-custom-file)
+
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
 ;; should be done ASAP on init.
 (use-package exec-path-from-shell
-  :ensure
   :if (memq (window-system) '(mac ns))
   :config (exec-path-from-shell-initialize))
 
@@ -67,31 +92,6 @@ under `user-emacs-directory'.  If it exists, load it."
           (cl-flet ((y-or-n-p (prompt) t))
             (treesit-install-language-grammar lang)))))))
 
-;; Install selected but missing packages
-(let ((missing (cl-set-difference
-                package-selected-packages
-                package-activated-list))
-      (debug-on-error nil))
-
-  ;; Update ELPA GPG keys first
-  (when (memq 'gnu-elpa-keyring-update missing)
-    (let ((package-check-signature nil))
-      (package-install 'gnu-elpa-keyring-update)
-      (package-activate 'gnu-elpa-keyring-update)))
-
-  (gnu-elpa-keyring-update)
-  
-  (when missing
-    (let ((noninteractive t))
-      (dolist (package missing)
-        (with-demoted-errors "%s"
-          (package-install package t)
-          (package-activate package))))
-    (add-hook 'window-setup-hook 'load-custom-file))
-  (require 'quelpa-use-package)
-  (setf use-package-compute-statistics t)
-  (quelpa-use-package-activate-advice))
-
 ;; Turn off useless mode lighters
 (use-package delight
   :config
@@ -112,7 +112,6 @@ under `user-emacs-directory'.  If it exists, load it."
 
 ;; Replace the major mode name with its icon
 (use-package all-the-icons
-  :quelpa (all-the-icons :fetcher github :repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg"))
   :if (display-graphic-p)
   :config
   (with-eval-after-load 'powerline
@@ -509,6 +508,7 @@ Optional argument ARG same as `comment-dwim''s."
   (vertico-mode))
 
 (use-package vertico-directory
+  :straight nil
   :after (vertico)
   :config
   (keymap-set vertico-map "RET" #'vertico-directory-enter)
@@ -518,6 +518,7 @@ Optional argument ARG same as `comment-dwim''s."
     (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)))
 
 (use-package vertico-mouse
+  :straight nil
   :after (vertico)
   :config (vertico-mouse-mode))
 
@@ -733,7 +734,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Modern code foldinq
 (use-package treesit-fold
-  :quelpa (treesit-fold :fetcher github :repo "emacs-tree-sitter/treesit-fold")
+  :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold")
   :delight
   :config
   (keymap-set treesit-fold-mode-map "M-0" 'treesit-fold-open-all)
@@ -930,10 +931,11 @@ checker symbol."
              (command-completion-default-include-p sym buf))))))
 
 (use-package corfu-popupinfo
+  :straight nil
   :after (corfu))
 
 (use-package corfu-pixel-perfect
-  :quelpa (corfu-pixel-perfect :fetcher github :repo "wyuenho/corfu-pixel-perfect")
+  :straight (corfu-pixel-perfect :type git :host github :repo "wyuenho/corfu-pixel-perfect")
   :after (corfu))
 
 ;; (use-package corfu-terminal
@@ -1071,6 +1073,7 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
 
 ;; Term and shell
 (use-package shfmt
+  :after (reformatter)
   :delight shfmt-on-save-mode
   :hook (sh-base-mode . shfmt-on-save-mode))
 
@@ -1149,6 +1152,7 @@ optionally the window if possible."
   (advice-add 'markdown-fontify-code-block-natively :around 'markdown-fontify-code-block-natively-advice))
 
 (use-package org-src
+  :straight nil
   :after (org)
   :init
   (defun org-src-font-lock-fontify-block-advice (fn &rest args)
@@ -1221,7 +1225,6 @@ optionally the window if possible."
   :hook ((emacs-lisp-mode ielm-mode) . elisp-def-mode))
 
 (use-package helpful
-  :quelpa (helpful :fetcher github :repo "wyuenho/helpful" :branch "search-after-navigate")
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
          ("C-h k" . helpful-key)
@@ -1255,7 +1258,6 @@ optionally the window if possible."
 
 ;; Formatting
 (use-package reformatter
-  :quelpa (reformatter :fetcher github :repo "wyuenho/reformatter.el" :branch "output-processor")
   :config
   (reformatter-define yarn-eslint-format
     :program "yarn"
@@ -1416,6 +1418,7 @@ optionally the window if possible."
   (inheritenv-add-advice 'run-ts))
 
 (use-package lsp-javascript
+  :straight nil
   :after (lsp-mode)
   :config
   (let ((client (gethash 'deno-ls lsp-clients)))
@@ -1445,6 +1448,7 @@ optionally the window if possible."
   (keymap-set sphinx-doc-mode-map "C-c d" 'sphinx-doc))
 
 (use-package python-black
+  :after (reformatter)
   :delight python-black-on-save-mode
   :config
   (with-eval-after-load 'pet
@@ -1453,6 +1457,7 @@ optionally the window if possible."
                                  (python-black-on-save-mode))))))
 
 (use-package python-isort
+  :after (reformatter)
   :delight python-isort-on-save-mode
   :config
   (with-eval-after-load 'pet
@@ -1461,6 +1466,7 @@ optionally the window if possible."
                                  (python-isort-on-save-mode))))))
 
 (use-package ruff-format
+  :after (reformatter)
   :delight ruff-format-on-save-mode
   :config
   (with-eval-after-load 'pet
@@ -1781,7 +1787,6 @@ optionally the window if possible."
             'append))
 
 (use-package diff-hl
-  :quelpa (diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "customizable-ignorable-commands")
   :config
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
@@ -2056,8 +2061,6 @@ optionally the window if possible."
                   (ibuffer-update nil t))))))
 
 (use-package window-purpose
-  :quelpa (window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts")
-                          :branch "improve-code1")
   :config
   (define-key purpose-mode-map (kbd "C-c ,") nil)
   (define-key purpose-mode-map (kbd "C-c w") purpose-mode-prefix-map)
