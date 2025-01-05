@@ -1,46 +1,11 @@
 ;; -*- lexical-binding: t -*-
 (setenv "LSP_USE_PLISTS" "true")
 
-(require 'cl-lib)
-(require 'nadvice)
-
-;; Bury the noisy compile logs
-(defvar compile-log-buffer-names nil)
-
-(define-advice get-buffer-create
-    (:filter-return (buffer) "bury-compilation-mode")
-  (when (member (buffer-name buffer) compile-log-buffer-names)
-    (with-current-buffer buffer
-      (unless (derived-mode-p 'compilation-mode)
-        (compilation-mode)))
-    (bury-buffer-internal buffer))
-  buffer)
-
 (with-eval-after-load 'compile
-  (define-advice compilation-buffer-name
-      (:filter-return (name) "record-compile-log-buffer-name")
-    (add-to-list 'compile-log-buffer-names name)
-    name)
-
   (set-keymap-parent compilation-shell-minor-mode-map special-mode-map))
 
-(with-eval-after-load 'native-compile
-  (when (boundp 'comp-log-buffer-name)
-    (add-to-list 'compile-log-buffer-names comp-log-buffer-name))
-  (when (boundp 'comp-async-buffer-name)
-    (add-to-list 'compile-log-buffer-names comp-async-buffer-name)))
-
 (with-eval-after-load 'comp
-  (put 'native-comp-limple-mode 'derived-mode-parent 'special-mode)
-  (when (boundp 'comp-log-buffer-name)
-    (add-to-list 'compile-log-buffer-names comp-log-buffer-name)))
-
-(with-eval-after-load 'comp-run
-  (when (boundp 'comp-async-buffer-name)
-    (add-to-list 'compile-log-buffer-names comp-async-buffer-name)))
-
-(with-eval-after-load 'bytecomp
-  (add-to-list 'compile-log-buffer-names byte-compile-log-buffer))
+  (derived-mode-add-parents 'native-comp-limple-mode '(special-mode)))
 
 ;; Patch package.el so it's slightly less insane
 (with-eval-after-load 'package
