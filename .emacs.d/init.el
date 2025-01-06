@@ -1173,7 +1173,7 @@ optionally the window if possible."
     (apply fn args)))
 (advice-add 'calculate-lisp-indent :around 'calculate-lisp-indent-advice)
 
-;; auto-indent built-in libs
+;; Auto-indent built-in libs
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
             (when (and (buffer-file-name)
