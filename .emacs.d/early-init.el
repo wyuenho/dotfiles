@@ -54,6 +54,3 @@
                  (setq ns-use-thin-smoothing t
                        ns-use-mwheel-momentum t
                        ns-use-mwheel-acceleration t))))))
-
-;; No more yes and no and y and n inconsistencies
-(fset 'yes-or-no-p 'y-or-n-p)
