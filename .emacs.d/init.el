@@ -1781,9 +1781,10 @@ optionally the window if possible."
   :config
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  (add-to-list 'diff-hl-show-hunk-ignorable-commands 'ignore-preserving-kill-region)
-  (add-to-list 'diff-hl-show-hunk-ignorable-commands 'lsp-ui-doc--handle-mouse-movement)
-  (add-to-list 'diff-hl-show-hunk-ignorable-commands 'dap-tooltip-mouse-motion)
+  (with-eval-after-load 'diff-hl-show-hunk
+    (add-to-list 'diff-hl-show-hunk-ignorable-commands 'ignore-preserving-kill-region)
+    (add-to-list 'diff-hl-show-hunk-ignorable-commands 'lsp-ui-doc--handle-mouse-movement)
+    (add-to-list 'diff-hl-show-hunk-ignorable-commands 'dap-tooltip-mouse-motion))
   (define-advice diff-hl-dired-status-files (:around (fn &rest args) "catch-errors")
     (ignore-errors (apply fn args))))
 
