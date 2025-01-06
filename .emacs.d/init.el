@@ -1567,9 +1567,10 @@ optionally the window if possible."
                                                 result: (_) @result)
                                                (parameter_list) @params])))
               (f (lambda (triple _)
-                   (when-let* (((or (and (boundp 'lsp--buffer-workspaces)
-                                         lsp--buffer-workspaces
-                                         (eq 'gopls (lsp--workspace-server-id (car lsp--buffer-workspaces))))
+                   (when-let* (((or (and (bound-and-true-p lsp-managed-mode)
+                                         (memq 'gopls
+                                               (lsp-foreach-workspace
+                                                (lsp--workspace-server-id lsp--cur-workspace))))
                                     (and (fboundp 'eglot-current-server)
                                          (eglot-current-server)
                                          (equal
