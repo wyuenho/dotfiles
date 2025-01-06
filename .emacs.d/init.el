@@ -915,10 +915,9 @@ checker symbol."
           icon))))
 
   :config
-  (setq read-extended-command-predicate 'command-completion-default-include-p)
-
   (add-hook 'corfu-margin-formatters 'vscode-kind-icons-corfu-margin-formatter)
 
+  (setq read-extended-command-predicate 'command-completion-default-include-p)
   (with-eval-after-load 'transient
     (setq read-extended-command-predicate
           (lambda (sym buf)
@@ -932,10 +931,6 @@ checker symbol."
 (use-package corfu-pixel-perfect
   :straight (corfu-pixel-perfect :type git :host github :repo "wyuenho/corfu-pixel-perfect")
   :after (corfu))
-
-;; (use-package corfu-terminal
-;;   ;; :quelpa (corfu-terminal :fetcher codeberg :repo "wyuenho/emacs-corfu-terminal" :branch "remove-gui-mode")
-;;   :hook (corfu-mode . corfu-terminal-mode))
 
 (use-package cape
   :config
