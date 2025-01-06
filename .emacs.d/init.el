@@ -504,11 +504,11 @@ Optional argument ARG same as `comment-dwim''s."
     (scroll-on-jump-advice-add diff-hl-next-hunk)))
 
 (use-package vertico
+  :straight (vertico :includes (vertico-directory vertico-mouse))
   :config
   (vertico-mode))
 
 (use-package vertico-directory
-  :straight nil
   :after (vertico)
   :config
   (keymap-set vertico-map "RET" #'vertico-directory-enter)
@@ -518,7 +518,6 @@ Optional argument ARG same as `comment-dwim''s."
     (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)))
 
 (use-package vertico-mouse
-  :straight nil
   :after (vertico)
   :config (vertico-mouse-mode))
 
@@ -909,6 +908,7 @@ checker symbol."
 
 ;; Auto-completion
 (use-package corfu
+  :straight (corfu :includes (corfu-popupinfo))
   :init
   (defun vscode-kind-icons-corfu-margin-formatter (_)
     (when-let ((company-kind-func (plist-get completion-extra-properties :company-kind))
@@ -931,7 +931,6 @@ checker symbol."
              (command-completion-default-include-p sym buf))))))
 
 (use-package corfu-popupinfo
-  :straight nil
   :after (corfu))
 
 (use-package corfu-pixel-perfect
