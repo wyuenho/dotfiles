@@ -51,7 +51,7 @@
             (when (display-graphic-p)
               (pcase (window-system)
                 ('ns
-                 (setf ns-use-thin-smoothing t
+                 (setq ns-use-thin-smoothing t
                        ns-use-mwheel-momentum t
                        ns-use-mwheel-acceleration t))))))
 
