@@ -1345,6 +1345,8 @@ optionally the window if possible."
                                ("<menu-bar>" . nil)))
                 (define-key (symbol-value (derived-mode-map-name mode)) (kbd key) command)))))
 
+(use-package add-node-modules-path)
+
 (use-package jsdoc
   :config
   (dolist (mode '(js-mode js-ts-mode js-jsx-mode typescript-ts-mode tsx-ts-mode))
