@@ -393,6 +393,8 @@ Optional argument ARG same as `comment-dwim''s."
 (autoload 'zap-up-to-char "misc")
 (fset 'zap-to-char 'zap-up-to-char)
 
+(use-package move-dup)
+
 ;; Not that I use occur very often, but when I do, I'd like its keybindings the
 ;; same as grep mode's
 (with-eval-after-load 'replace
