@@ -458,6 +458,9 @@ Optional argument ARG same as `comment-dwim''s."
   (with-eval-after-load 'vc
     (which-key-add-key-based-replacements "C-x v M" "vc-merge")))
 
+(use-package repeat-help
+  :hook (repeat-mode . repeat-help-mode))
+
 ;; Visual alignment
 (use-package ialign
   :bind ("<A-tab>" . ialign))
