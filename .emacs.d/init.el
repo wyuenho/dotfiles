@@ -1214,10 +1214,6 @@ optionally the window if possible."
   :bind (:map lisp-interaction-mode-map
               ("C-c e x" . macrostep-expand)))
 
-(use-package elisp-def
-  :delight
-  :hook ((emacs-lisp-mode ielm-mode) . elisp-def-mode))
-
 (use-package helpful
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
