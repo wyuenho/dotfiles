@@ -44,7 +44,6 @@ under `user-emacs-directory'.  If it exists, load it."
 
 (straight-override-recipe '(all-the-icons :fetcher github :repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg")))
 (straight-override-recipe '(pdf-tools :fetcher github :repo "wyuenho/pdf-tools" :files (:defaults "README" ("build" "Makefile") ("build" "server")) :branch "replace-tempnam"))
-(straight-override-recipe '(lsp-mode :repo "wyuenho/lsp-mode" :branch "do-not-resolve-during-annotate" :fetcher github :files (:defaults "clients/*.el")))
 (straight-override-recipe '(helpful :fetcher github :repo "wyuenho/helpful" :branch "search-after-navigate"))
 (straight-override-recipe '(reformatter :type git :host github :repo "wyuenho/emacs-reformatter" :branch "output-processor"))
 (straight-override-recipe '(diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "customizable-ignorable-commands"))
