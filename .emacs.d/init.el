@@ -1632,11 +1632,15 @@ optionally the window if possible."
   :after (ag))
 
 (use-package rg
+  :straight (rg :includes (wgrep-rg))
   :config
   (rg-enable-default-bindings)
   (with-eval-after-load 'projectile
-    (define-key projectile-command-map (kbd "s r") 'rg-project))
-  (add-hook 'rg-mode-hook 'wgrep-rg-setup))
+    (define-key projectile-command-map (kbd "s r") 'rg-project)))
+
+(use-package wgrep-rg
+  :after (rg)
+  :hook (rg-mode . wgrep-rg-setup))
 
 ;; Version Control
 

@@ -345,7 +345,7 @@
  '(require-final-newline 'ask)
  '(rg-command-line-flags '("--no-ignore-global" "--threads 8"))
  '(rg-hide-command nil)
- '(rg-keymap-prefix [134217843 114])
+ '(rg-keymap-prefix [134217843 114] t)
  '(ring-bell-function 'ignore)
  '(rst-adjust-hook 'rst-toc-update)
  '(rst-indent-comment 2)
