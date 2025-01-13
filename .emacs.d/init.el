@@ -1974,6 +1974,10 @@ optionally the window if possible."
     (add-to-list 'purpose-x-popwin-buffer-names "*Warnings*")
     (purpose-x-popwin-update-conf)
 
+    (with-eval-after-load 'straight
+      (add-to-list 'purpose-x-popwin-buffer-names straight-byte-compilation-buffer)
+      (purpose-x-popwin-update-conf))
+    
     (with-eval-after-load 'bytecomp
       (add-to-list 'purpose-x-popwin-buffer-names byte-compile-log-buffer)
       (purpose-x-popwin-update-conf))
