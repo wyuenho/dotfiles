@@ -5,7 +5,7 @@
   (set-keymap-parent compilation-shell-minor-mode-map special-mode-map))
 
 (with-eval-after-load 'comp
-  (derived-mode-add-parents 'native-comp-limple-mode '(special-mode)))
+  (set-keymap-parent native-comp-limple-mode-map special-mode-map))
 
 (setq package-enable-at-startup nil)
 
