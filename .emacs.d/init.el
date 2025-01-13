@@ -45,7 +45,6 @@ under `user-emacs-directory'.  If it exists, load it."
 (straight-override-recipe '(all-the-icons :fetcher github :repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg")))
 (straight-override-recipe '(pdf-tools :fetcher github :repo "wyuenho/pdf-tools" :files (:defaults "README" ("build" "Makefile") ("build" "server")) :branch "replace-tempnam"))
 (straight-override-recipe '(helpful :fetcher github :repo "wyuenho/helpful" :branch "search-after-navigate"))
-(straight-override-recipe '(reformatter :type git :host github :repo "wyuenho/emacs-reformatter" :branch "output-processor"))
 (straight-override-recipe '(diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "customizable-ignorable-commands"))
 (straight-override-recipe '(window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1"))
 
@@ -1111,31 +1110,6 @@ optionally the window if possible."
 ;; Markup and config languages
 (add-to-list 'auto-mode-alist '("\\.nmconnection\\'" . conf-mode))
 
-(use-package yaml-mode
-  :config
-  (add-hook 'yaml-mode-hook
-            (lambda ()
-              (with-eval-after-load 'prettier
-                (when (executable-find "prettier")
-                  (prettier-mode))))))
-
-(use-package yaml-ts-mode
-  :defer
-  :config
-  (add-hook 'yaml-ts-mode-hook
-            (lambda ()
-              (with-eval-after-load 'prettier
-                (when (executable-find "prettier")
-                  (prettier-mode))))))
-
-(use-package toml-ts-mode
-  :config
-  (add-hook 'toml-ts-mode-hook
-            (lambda ()
-              (with-eval-after-load 'prettier
-                (when (executable-find "prettier")
-                  (prettier-mode))))))
-
 (use-package markdown-mode
   :init
   (defun markdown-fontify-code-block-natively-advice (fn &rest args)
@@ -1247,86 +1221,20 @@ optionally the window if possible."
   :hook (flycheck-mode . flycheck-cask-setup))
 
 ;; Formatting
-(use-package reformatter
-  :config
-  (reformatter-define yarn-eslint-format
-    :program "yarn"
-    :args `("--silent"
-            "eslint"
-            "--fix-dry-run"
-            "--format"
-            "json"
-            "--stdin"
-            "--stdin-filename"
-            ,buffer-file-name)
-    :output-processor (lambda (output-file result-callback)
-                        (let-alist (with-temp-buffer
-                                     (insert-file-contents output-file)
-                                     (aref (json-parse-buffer :object-type 'alist) 0))
-                          (funcall result-callback (if (= .fatalErrorCount 0) .output)))))
+(use-package apheleia
+  :hook ((c-mode-common
+          c-ts-base-mode
+          conf-toml-mode
+          css-base-mode
+          js-base-mode
+          jsonian-mode
+          ;; toml-ts-mode
+          typescript-ts-base-mode
+          web-mode
+          yaml-mode
+          yaml-ts-mode)
+         . apheleia-mode))
 
-  (reformatter-define eslint-format
-    :program "eslint_d"
-    :args `("--fix-to-stdout"
-            "--stdin"
-            "--stdin-filename"
-            ,buffer-file-name))
-
-  (reformatter-define denofmt-format
-    :program "deno"
-    :args `("fmt" "-"))
-
-  (reformatter-define clang-format
-    :program "clang-format"
-    :args `("--style" "GNU")))
-
-(dolist (mode '(css-base-mode
-                js-base-mode
-                jsonian-mode
-                typescript-ts-base-mode
-                web-mode))
-  (let ((mode-hook (intern (concat (symbol-name mode) "-hook"))))
-    (add-hook mode-hook
-              (lambda ()
-                (let* ((formatter-styles
-                        '((prettier prettier-eslint prettier)
-                          (eslint eslint-plugin-prettier eslint)))
-                       (formatter
-                        (or (when-let* ((package-json-file
-                                         (find-file-from-project-root "package.json"))
-                                        (package-json
-                                         (and package-json-file
-                                              (with-temp-buffer
-                                                (insert-file-contents package-json-file)
-                                                (json-parse-buffer :object-type 'alist))))
-                                        (devDependencies
-                                         (and package-json
-                                              (alist-get 'devDependencies package-json))))
-                              (car (seq-filter 'identity
-                                               (map-apply
-                                                (lambda (command packages)
-                                                  (and (seq-some
-                                                        (lambda (package)
-                                                          (map-contains-key devDependencies package))
-                                                        packages)
-                                                       command))
-                                                formatter-styles))))))
-                       (yarn-pnp-p (find-file-from-project-root ".pnp.js")))
-                  (unless (and yarn-pnp-p (functionp 'add-node-modules-path))
-                    (add-node-modules-path))
-                  (cond
-                   ((and (eq formatter 'eslint)
-                         (or (not (bound-and-true-p lsp-managed-mode))
-                             (member 'eslint
-                                     (lsp-foreach-workspace
-                                      (lsp--workspace-server-id lsp--cur-workspace)))))
-                    (if (or yarn-pnp-p (executable-find "yarn"))
-                        (yarn-eslint-format-on-save-mode)
-                      (eslint-format-on-save-mode)))
-                   ((and (eq formatter 'prettier)
-                         (featurep 'prettier)
-                         (executable-find "prettier"))
-                    (prettier-mode))))))))
 
 ;; Javascript
 (add-to-list 'auto-mode-alist '("\\(?:\\.\\(?:[cm]?js\\)\\)" . js-ts-mode))
@@ -1343,34 +1251,12 @@ optionally the window if possible."
                                ("<menu-bar>" . nil)))
                 (define-key (symbol-value (derived-mode-map-name mode)) (kbd key) command)))))
 
-(use-package add-node-modules-path)
-
 (use-package jsdoc
   :config
   (dolist (mode '(js-mode js-ts-mode js-jsx-mode typescript-ts-mode tsx-ts-mode))
     (add-hook (intern (concat (symbol-name mode) "-hook"))
               (lambda ()
                 (keymap-set (symbol-value (derived-mode-map-name mode)) "C-c d" 'jsdoc)))))
-
-(use-package prettier
-  :delight
-  :config
-  (let ((css-parser (alist-get 'css-mode prettier-major-mode-parsers))
-        (json-parser (alist-get 'json-mode prettier-major-mode-parsers))
-        (js-parser (alist-get 'js-mode prettier-major-mode-parsers))
-        (typescript-parser (alist-get 'typescript-mode prettier-major-mode-parsers))
-        (toml-parser (alist-get 'toml-mode prettier-major-mode-parsers))
-        (yaml-parser (alist-get 'yaml-mode prettier-major-mode-parsers)))
-    (add-to-list 'prettier-major-mode-parsers (cons 'css-ts-mode css-parser))
-    (add-to-list 'prettier-major-mode-parsers (cons 'js-jsx-mode js-parser))
-    (add-to-list 'prettier-major-mode-parsers (cons 'js-json-mode js-parser))
-    (add-to-list 'prettier-major-mode-parsers (cons 'js-ts-mode js-parser))
-    (add-to-list 'prettier-major-mode-parsers (cons 'json-ts-mode json-parser))
-    (add-to-list 'prettier-major-mode-parsers (cons 'jsonian-mode json-parser))
-    (add-to-list 'prettier-major-mode-parsers (cons 'toml-ts-mode toml-parser))
-    (add-to-list 'prettier-major-mode-parsers (cons 'tsx-ts-mode typescript-parser))
-    (add-to-list 'prettier-major-mode-parsers (cons 'typescript-ts-mode typescript-parser))
-    (add-to-list 'prettier-major-mode-parsers (cons 'yaml-ts-mode yaml-parser))))
 
 (use-package nodejs-repl
   :bind(:map js-base-mode-map
@@ -1395,7 +1281,7 @@ optionally the window if possible."
   (add-hook 'typescript-ts-base-mode-hook
             (lambda ()
               (when (find-file-from-project-root "deno.jsonc?")
-                (denofmt-format-on-save-mode)))))
+                (setq-local apheleia-formatter '(denofmt))))))
 
 (use-package ts-comint
   :after (inheritenv)
