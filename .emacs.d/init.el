@@ -2063,3 +2063,50 @@ optionally the window if possible."
                                 (string-match-p "^ \\|\\*" (buffer-name buf)))
                               (buffer-list)))
                   (bury-buffer buf))))))
+
+(dolist (pkg '(auto-compile
+               auto-yasnippet
+               bazel
+               bug-hunter
+               buttercup
+               cask-mode
+               coverage
+               csv-mode
+               dape
+               docker-compose-mode
+               ef-themes
+               ;; flycheck-eglot
+               ;; flycheck-posframe
+               focus
+               fontify-face
+               ;; format-all
+               gcmh
+               git-modes
+               go-mode
+               gptel
+               graphql-mode
+               graphviz-dot-mode
+               impostman
+               inputrc-mode
+               ;; jq-mode
+               jupyter
+               just-mode
+               kurecolor
+               lorem-ipsum
+               mermaid-mode
+               ;; opencl-c-mode
+               package-build
+               plantuml-mode
+               po-mode
+               protobuf-mode
+               sisyphus
+               smooth-scrolling
+               ssh-config-mode
+               swagg
+               terraform-mode
+               udev-mode
+               whitespace-cleanup-mode
+               yaml-pro
+               yarn-mode
+               zig-mode))
+  (straight-use-package pkg))
