@@ -24,6 +24,8 @@ under `user-emacs-directory'.  If it exists, load it."
     (load custom-file)))
 (load-custom-file)
 
+(add-hook 'after-init-hook 'load-custom-file)
+
 ;; Init Straight
 (setf straight-recipe-overrides nil)
 (defvar bootstrap-version)
@@ -48,7 +50,6 @@ under `user-emacs-directory'.  If it exists, load it."
 (straight-override-recipe '(diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "customizable-ignorable-commands"))
 (straight-override-recipe '(window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1"))
 
-(add-hook 'after-init-hook 'load-custom-file)
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
 ;; should be done ASAP on init.
