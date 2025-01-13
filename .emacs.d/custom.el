@@ -392,7 +392,11 @@
  '(spaceline-all-the-icons-clock-always-visible nil)
  '(spaceline-all-the-icons-separator-type 'arrow)
  '(standard-indent 2)
+ '(straight-host-usernames
+   '((github . "wyuenho") (codeberg . "wyuenho") (gitlab . "wyuenho")
+     (bitbucket . "wyuenho")))
  '(straight-use-package-by-default t)
+ '(straight-use-symlinks nil)
  '(switch-to-buffer-obey-display-actions t)
  '(tab-always-indent 'complete)
  '(tab-line-switch-cycling t)
