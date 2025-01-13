@@ -48,9 +48,10 @@ under `user-emacs-directory'.  If it exists, load it."
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
 ;; should be done ASAP on init.
-(use-package exec-path-from-shell
-  :if (memq (window-system) '(mac ns))
-  :config (exec-path-from-shell-initialize))
+(when (memq (window-system) '(mac ns))
+  (use-package exec-path-from-shell
+    ;; :if (memq (window-system) '(mac ns))
+    :config (exec-path-from-shell-initialize)))
 
 ;; Install tree-sitter language grammars
 (when (treesit-available-p)
@@ -105,45 +106,46 @@ under `user-emacs-directory'.  If it exists, load it."
              (subword-mode           nil subword))))
 
 ;; Replace the major mode name with its icon
-(use-package all-the-icons
-  :if (display-graphic-p)
-  :config
-  (with-eval-after-load 'powerline
-    (defun powerline-major-mode-advice (major-mode-segment)
-      (let* ((props (text-properties-at 0 major-mode-segment))
-             (icon (all-the-icons-icon-for-mode major-mode))
-             (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
-        (if face-prop
-            (apply 'propertize icon 'face face-prop props)
-          major-mode-segment)))
-    (advice-add 'powerline-major-mode :filter-return 'powerline-major-mode-advice))
+(when (display-graphic-p)
+  (use-package all-the-icons
+    ;; :if (display-graphic-p)
+    :config
+    (with-eval-after-load 'powerline
+      (defun powerline-major-mode-advice (major-mode-segment)
+        (let* ((props (text-properties-at 0 major-mode-segment))
+               (icon (all-the-icons-icon-for-mode major-mode))
+               (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
+          (if face-prop
+              (apply 'propertize icon 'face face-prop props)
+            major-mode-segment)))
+      (advice-add 'powerline-major-mode :filter-return 'powerline-major-mode-advice))
 
-  (defvar vscode-kind-icons
-    `((text           . ,(all-the-icons-vscode-codicons "symbol-key" :padding '(2 . 1)))
-      (method         . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple :padding '(2 . 1)))
-      (function       . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple :padding '(2 . 1)))
-      (constructor    . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple :padding '(2 . 1)))
-      (field          . ,(all-the-icons-vscode-codicons "symbol-field" :face 'all-the-icons-blue :padding '(2 . 1)))
-      (variable       . ,(all-the-icons-vscode-codicons "symbol-variable" :face 'all-the-icons-blue :padding '(2 . 1)))
-      (class          . ,(all-the-icons-vscode-codicons "symbol-class" :face 'all-the-icons-yellow :padding '(2 . 1)))
-      (interface      . ,(all-the-icons-vscode-codicons "symbol-interface" :face 'all-the-icons-blue :padding '(2 . 1)))
-      (module         . ,(all-the-icons-vscode-codicons "symbol-namespace" :padding '(2 . 1)))
-      (property       . ,(all-the-icons-vscode-codicons "symbol-property" :padding '(2 . 1)))
-      (unit           . ,(all-the-icons-vscode-codicons "symbol-ruler" :padding '(2 . 1)))
-      (value          . ,(all-the-icons-vscode-codicons "symbol-enum-member" :face 'all-the-icons-yellow :padding '(2 . 1)))
-      (enum           . ,(all-the-icons-vscode-codicons "symbol-enum" :face 'all-the-icons-yellow :padding '(2 . 1)))
-      (keyword        . ,(all-the-icons-vscode-codicons "symbol-keyword" :padding '(2 . 1)))
-      (snippet        . ,(all-the-icons-vscode-codicons "symbol-snippet" :padding '(2 . 1)))
-      (color          . ,(all-the-icons-vscode-codicons "symbol-color" :padding '(2 . 1)))
-      (file           . ,(all-the-icons-vscode-codicons "symbol-file" :padding '(2 . 1)))
-      (reference      . ,(all-the-icons-vscode-codicons "references" :padding '(2 . 1)))
-      (folder         . ,(all-the-icons-vscode-codicons "folder" :padding '(2 . 1)))
-      (enum-member    . ,(all-the-icons-vscode-codicons "symbol-enum-member" :face 'all-the-icons-yellow :padding '(2 . 1)))
-      (constant       . ,(all-the-icons-vscode-codicons "symbol-constant" :padding '(2 . 1)))
-      (struct         . ,(all-the-icons-vscode-codicons "symbol-structure" :padding '(2 . 1)))
-      (event          . ,(all-the-icons-vscode-codicons "symbol-event" :face 'all-the-icons-yellow :padding '(2 . 1)))
-      (operator       . ,(all-the-icons-vscode-codicons "symbol-operator" :padding '(2 . 1)))
-      (type-parameter . ,(all-the-icons-vscode-codicons "symbol-parameter" :padding '(2 . 1))))))
+    (defvar vscode-kind-icons
+      `((text           . ,(all-the-icons-vscode-codicons "symbol-key" :padding '(2 . 1)))
+        (method         . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple :padding '(2 . 1)))
+        (function       . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple :padding '(2 . 1)))
+        (constructor    . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple :padding '(2 . 1)))
+        (field          . ,(all-the-icons-vscode-codicons "symbol-field" :face 'all-the-icons-blue :padding '(2 . 1)))
+        (variable       . ,(all-the-icons-vscode-codicons "symbol-variable" :face 'all-the-icons-blue :padding '(2 . 1)))
+        (class          . ,(all-the-icons-vscode-codicons "symbol-class" :face 'all-the-icons-yellow :padding '(2 . 1)))
+        (interface      . ,(all-the-icons-vscode-codicons "symbol-interface" :face 'all-the-icons-blue :padding '(2 . 1)))
+        (module         . ,(all-the-icons-vscode-codicons "symbol-namespace" :padding '(2 . 1)))
+        (property       . ,(all-the-icons-vscode-codicons "symbol-property" :padding '(2 . 1)))
+        (unit           . ,(all-the-icons-vscode-codicons "symbol-ruler" :padding '(2 . 1)))
+        (value          . ,(all-the-icons-vscode-codicons "symbol-enum-member" :face 'all-the-icons-yellow :padding '(2 . 1)))
+        (enum           . ,(all-the-icons-vscode-codicons "symbol-enum" :face 'all-the-icons-yellow :padding '(2 . 1)))
+        (keyword        . ,(all-the-icons-vscode-codicons "symbol-keyword" :padding '(2 . 1)))
+        (snippet        . ,(all-the-icons-vscode-codicons "symbol-snippet" :padding '(2 . 1)))
+        (color          . ,(all-the-icons-vscode-codicons "symbol-color" :padding '(2 . 1)))
+        (file           . ,(all-the-icons-vscode-codicons "symbol-file" :padding '(2 . 1)))
+        (reference      . ,(all-the-icons-vscode-codicons "references" :padding '(2 . 1)))
+        (folder         . ,(all-the-icons-vscode-codicons "folder" :padding '(2 . 1)))
+        (enum-member    . ,(all-the-icons-vscode-codicons "symbol-enum-member" :face 'all-the-icons-yellow :padding '(2 . 1)))
+        (constant       . ,(all-the-icons-vscode-codicons "symbol-constant" :padding '(2 . 1)))
+        (struct         . ,(all-the-icons-vscode-codicons "symbol-structure" :padding '(2 . 1)))
+        (event          . ,(all-the-icons-vscode-codicons "symbol-event" :face 'all-the-icons-yellow :padding '(2 . 1)))
+        (operator       . ,(all-the-icons-vscode-codicons "symbol-operator" :padding '(2 . 1)))
+        (type-parameter . ,(all-the-icons-vscode-codicons "symbol-parameter" :padding '(2 . 1)))))))
 
 ;; Theme
 (defun custom-save-all-advice (fn &rest args)
@@ -596,56 +598,54 @@ Optional argument ARG same as `comment-dwim''s."
          ("M--" . expreg-contract)))
 
 ;; Navigate source code by syntax
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (use-package smartparens
-              :bind (:map smartparens-mode-map
-                          ("C-M-a"                      . sp-beginning-of-sexp)
-                          ([remap sp-beginning-of-sexp] . beginning-of-defun)
-                          ("C-M-e"                      . sp-end-of-sexp)
-                          ([remap sp-end-of-sexp]       . end-of-defun)
+(use-package smartparens
+  :bind (:map smartparens-mode-map
+              ("C-M-a"                      . sp-beginning-of-sexp)
+              ([remap sp-beginning-of-sexp] . beginning-of-defun)
+              ("C-M-e"                      . sp-end-of-sexp)
+              ([remap sp-end-of-sexp]       . end-of-defun)
 
-                          ("C-M-f" . sp-forward-sexp)
-                          ("C-M-b" . sp-backward-sexp)
+              ("C-M-f" . sp-forward-sexp)
+              ("C-M-b" . sp-backward-sexp)
 
-                          ("C-M-n" . sp-next-sexp)
-                          ("C-M-p" . sp-previous-sexp)
+              ("C-M-n" . sp-next-sexp)
+              ("C-M-p" . sp-previous-sexp)
 
-                          ("C-M-d" . sp-down-sexp)
-                          ("C-M-u" . sp-backward-up-sexp)
-                          ("M-D"   . sp-backward-down-sexp)
-                          ("M-U"   . sp-up-sexp)
+              ("C-M-d" . sp-down-sexp)
+              ("C-M-u" . sp-backward-up-sexp)
+              ("M-D"   . sp-backward-down-sexp)
+              ("M-U"   . sp-up-sexp)
 
-                          ("C-S-f" . sp-forward-symbol)
-                          ("C-S-b" . sp-backward-symbol)
+              ("C-S-f" . sp-forward-symbol)
+              ("C-S-b" . sp-backward-symbol)
 
-                          ("A-<right>" . sp-slurp-hybrid-sexp)
-                          ("M-<right>" . sp-forward-barf-sexp)
-                          ("A-<left>"  . sp-backward-slurp-sexp)
-                          ("M-<left>"  . sp-backward-barf-sexp)
+              ("A-<right>" . sp-slurp-hybrid-sexp)
+              ("M-<right>" . sp-forward-barf-sexp)
+              ("A-<left>"  . sp-backward-slurp-sexp)
+              ("M-<left>"  . sp-backward-barf-sexp)
 
-                          ("C-M-w"   . sp-copy-sexp)
-                          ("C-M-S-t" . sp-push-hybrid-sexp)
-                          ("C-t"     . sp-transpose-sexp)
-                          ("C-M-t"   . sp-transpose-hybrid-sexp)
+              ("C-M-w"   . sp-copy-sexp)
+              ("C-M-S-t" . sp-push-hybrid-sexp)
+              ("C-t"     . sp-transpose-sexp)
+              ("C-M-t"   . sp-transpose-hybrid-sexp)
 
-                          ("C-S-d" . sp-kill-symbol)
-                          ("C-M-k" . sp-kill-sexp)
-                          ("C-k"   . sp-kill-hybrid-sexp)
-                          ("M-k"   . sp-backward-kill-sexp)
+              ("C-S-d" . sp-kill-symbol)
+              ("C-M-k" . sp-kill-sexp)
+              ("C-k"   . sp-kill-hybrid-sexp)
+              ("M-k"   . sp-backward-kill-sexp)
 
-                          ("M-<backspace>"               . backward-kill-word)
-                          ("C-<backspace>"               . sp-backward-kill-word)
-                          ([remap sp-backward-kill-word] . backward-kill-word)
+              ("M-<backspace>"               . backward-kill-word)
+              ("C-<backspace>"               . sp-backward-kill-word)
+              ([remap sp-backward-kill-word] . backward-kill-word)
 
-                          ("M-(" . sp-wrap-round)
-                          ("M-[" . sp-wrap-square)
-                          ("M-{" . sp-wrap-curly)
-                          ("M-}" . sp-unwrap-sexp)
-                          ("M-]" . sp-backward-unwrap-sexp))
-              :config
-              (require 'smartparens-config)
-              (add-hook 'eval-expression-minibuffer-setup-hook 'smartparens-mode))))
+              ("M-(" . sp-wrap-round)
+              ("M-[" . sp-wrap-square)
+              ("M-{" . sp-wrap-curly)
+              ("M-}" . sp-unwrap-sexp)
+              ("M-]" . sp-backward-unwrap-sexp))
+  :config
+  (require 'smartparens-config)
+  (add-hook 'eval-expression-minibuffer-setup-hook 'smartparens-mode))
 
 ;; Guide bars for indentation-based languages
 (use-package indent-bars
@@ -1835,12 +1835,13 @@ optionally the window if possible."
                          (shrunken-subdir (shrink-path-dirs subdir)))
                     (make-button beg end 'display shrunken-subdir 'help-echo subdir)))))))
 
-(use-package all-the-icons-dired
-  :after (all-the-icons dired-collapse)
-  :if (display-graphic-p)
-  :config
-  ;; do not use :hook as it does not respect :if
-  (add-hook 'dired-collapse-mode-hook 'all-the-icons-dired-mode))
+(when (display-graphic-p)
+  (use-package all-the-icons-dired
+    :after (all-the-icons dired-collapse)
+    ;; :if (display-graphic-p)
+    :config
+    ;; do not use :hook as it does not respect :if
+    (add-hook 'dired-collapse-mode-hook 'all-the-icons-dired-mode)))
 
 (use-package dired-hide-dotfiles
   :demand
