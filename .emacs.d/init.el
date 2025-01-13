@@ -791,7 +791,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package posframe)
 (use-package lsp-mode
-  :straight (:fork (:branch "ensure-non-nil-candidates-in-exit-fn"))
   :after (posframe)
   :delight (lsp-mode) (lsp-lens-mode)
   :hook ((c-mode-common
