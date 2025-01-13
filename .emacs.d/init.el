@@ -1328,28 +1328,25 @@ optionally the window if possible."
   :after (reformatter)
   :delight python-black-on-save-mode
   :config
-  (with-eval-after-load 'pet
-    (add-hook 'pet-mode-hook (lambda ()
-                               (when python-black-command
-                                 (python-black-on-save-mode))))))
+  (add-hook 'pet-mode-hook (lambda ()
+                             (when python-black-command
+                               (python-black-on-save-mode)))))
 
 (use-package python-isort
   :after (reformatter)
   :delight python-isort-on-save-mode
   :config
-  (with-eval-after-load 'pet
-    (add-hook 'pet-mode-hook (lambda ()
-                               (when python-isort-command
-                                 (python-isort-on-save-mode))))))
+  (add-hook 'pet-mode-hook (lambda ()
+                             (when python-isort-command
+                               (python-isort-on-save-mode)))))
 
 (use-package ruff-format
   :after (reformatter)
   :delight ruff-format-on-save-mode
   :config
-  (with-eval-after-load 'pet
-    (add-hook 'pet-mode-hook (lambda ()
-                               (when ruff-format-command
-                                 (ruff-format-on-save-mode))))))
+  (add-hook 'pet-mode-hook (lambda ()
+                             (when ruff-format-command
+                               (ruff-format-on-save-mode)))))
 
 (use-package python-pytest
   :after (projectile))
@@ -1489,27 +1486,26 @@ optionally the window if possible."
 
   (add-hook 'go-ts-mode-hook
             (lambda ()
-              (with-eval-after-load 'lsp-mode
-                (add-hook 'lsp-managed-mode-hook
-                          (lambda ()
-                            (if lsp-managed-mode
-                                (progn
-                                  (remove-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
-                                  (go-teardown-format-buffer-on-save)
+              (add-hook 'lsp-managed-mode-hook
+                        (lambda ()
+                          (if lsp-managed-mode
+                              (progn
+                                (remove-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
+                                (go-teardown-format-buffer-on-save)
 
-                                  (setq-local lsp-enable-indentation t
-                                              lsp-enable-on-type-formatting t)
+                                (setq-local lsp-enable-indentation t
+                                            lsp-enable-on-type-formatting t)
 
-                                  (add-hook 'before-save-hook 'lsp-go-format-buffer nil t))
+                                (add-hook 'before-save-hook 'lsp-go-format-buffer nil t))
 
-                              (kill-local-variable 'lsp-enable-indentation)
-                              (kill-local-variable 'lsp-enable-on-type-formatting)
+                            (kill-local-variable 'lsp-enable-indentation)
+                            (kill-local-variable 'lsp-enable-on-type-formatting)
 
-                              (remove-hook 'before-save-hook 'lsp-go-format-buffer t)
+                            (remove-hook 'before-save-hook 'lsp-go-format-buffer t)
 
-                              (add-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
-                              (go-setup-format-buffer-on-save)))
-                          nil t))))
+                            (add-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
+                            (go-setup-format-buffer-on-save)))
+                        nil t)))
 
   (add-hook 'go-ts-mode-hook
             (lambda ()
