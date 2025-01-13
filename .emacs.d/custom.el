@@ -341,6 +341,7 @@
  '(recentf-auto-cleanup 'never)
  '(recentf-mode t)
  '(recentf-save-file "~/.emacs.d/.recentf")
+ '(repeat-mode t)
  '(report-emacs-bug-no-confirmation t)
  '(report-emacs-bug-no-explanations t)
  '(require-final-newline 'ask)
