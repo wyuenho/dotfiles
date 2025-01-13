@@ -102,6 +102,7 @@
  '(editorconfig-exclude-regexps '("\\`\\*" "\\` "))
  '(editorconfig-mode t)
  '(eglot-autoreconnect 300)
+ '(eglot-autoshutdown t)
  '(eglot-connect-timeout 300)
  '(eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
  '(eldoc-eval-preferred-function 'eval-expression)
