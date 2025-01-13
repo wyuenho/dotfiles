@@ -649,7 +649,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Guide bars for indentation-based languages
 (use-package indent-bars
-  :hook ((python-base-mode yaml-mode) . indent-bars-mode))
+  :hook ((python-base-mode yaml-mode yaml-ts-mode) . indent-bars-mode))
 
 ;; Aggressively indent the rest of the file as you type
 (use-package aggressive-indent
