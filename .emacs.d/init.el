@@ -45,11 +45,6 @@ under `user-emacs-directory'.  If it exists, load it."
   (load bootstrap-file nil 'nomessage))
 
 (straight-override-recipe '(all-the-icons :fetcher github :repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg")))
-(straight-override-recipe '(pdf-tools :fetcher github :repo "wyuenho/pdf-tools" :files (:defaults "README" ("build" "Makefile") ("build" "server")) :branch "replace-tempnam"))
-(straight-override-recipe '(helpful :fetcher github :repo "wyuenho/helpful" :branch "search-after-navigate"))
-(straight-override-recipe '(diff-hl :fetcher github :repo "wyuenho/diff-hl" :branch "customizable-ignorable-commands"))
-(straight-override-recipe '(window-purpose :fetcher github :repo "wyuenho/emacs-purpose" :files (:defaults "layouts") :branch "improve-code1"))
-
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
 ;; should be done ASAP on init.
@@ -751,6 +746,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Much faster PDF viewing
 (use-package pdf-tools
+  :straight (:fork (:branch "replace-tempnam"))
   :config
   (defun pdf-view-goto-page-advice (fn &rest args)
     "Ignore `pdf-view-goto-page' error when scrolling."
@@ -795,6 +791,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package posframe)
 (use-package lsp-mode
+  :straight (:fork (:branch "ensure-non-nil-candidates-in-exit-fn"))
   :after (posframe)
   :delight (lsp-mode) (lsp-lens-mode)
   :hook ((c-mode-common
@@ -1190,6 +1187,7 @@ optionally the window if possible."
               ("C-c e x" . macrostep-expand)))
 
 (use-package helpful
+  :straight (:fork (:branch "search-after-navigate"))
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
          ("C-h k" . helpful-key)
@@ -1667,6 +1665,7 @@ optionally the window if possible."
             'append))
 
 (use-package diff-hl
+  :straight (:fork (:branch "customizable-ignorable-commands"))
   :config
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
@@ -1942,6 +1941,7 @@ optionally the window if possible."
                   (ibuffer-update nil t))))))
 
 (use-package window-purpose
+  :straight (:fork (:branch "improve-code1"))
   :config
   (define-key purpose-mode-map (kbd "C-c ,") nil)
   (define-key purpose-mode-map (kbd "C-c w") purpose-mode-prefix-map)
