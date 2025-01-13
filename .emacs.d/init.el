@@ -1684,6 +1684,10 @@ optionally the window if possible."
     ;; `git-rebase-mode'
     (define-key git-rebase-mode-map (kbd "M-z") 'git-rebase-undo)))
 
+(use-package diff-ansi
+  :after (magit)
+  :hook (magit-revision-hook . diff-ansi-mode))
+
 (use-package forge
   :after (magit)
   :config
