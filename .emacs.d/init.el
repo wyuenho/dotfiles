@@ -1982,8 +1982,11 @@ optionally the window if possible."
       (add-to-list 'purpose-x-popwin-buffer-names byte-compile-log-buffer)
       (purpose-x-popwin-update-conf))
 
-    (with-eval-after-load 'native-compile
+    (with-eval-after-load 'comp-common
       (add-to-list 'purpose-x-popwin-buffer-names comp-log-buffer-name)
+      (purpose-x-popwin-update-conf))
+
+    (with-eval-after-load 'comp-run
       (add-to-list 'purpose-x-popwin-buffer-names comp-async-buffer-name)
       (purpose-x-popwin-update-conf))
 
