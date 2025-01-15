@@ -1220,6 +1220,7 @@ optionally the window if possible."
 
 ;; Formatting
 (use-package apheleia
+  :delight
   :hook ((c-mode-common
           c-ts-base-mode
           conf-toml-mode
