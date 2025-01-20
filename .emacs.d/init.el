@@ -1840,10 +1840,7 @@ optionally the window if possible."
 (when (display-graphic-p)
   (use-package all-the-icons-dired
     :after (all-the-icons dired-collapse)
-    ;; :if (display-graphic-p)
-    :config
-    ;; do not use :hook as it does not respect :if
-    (add-hook 'dired-collapse-mode-hook 'all-the-icons-dired-mode)))
+    :hook (dired-collapse-mode . all-the-icons-dired-mode)))
 
 (use-package dired-hide-dotfiles
   :demand
