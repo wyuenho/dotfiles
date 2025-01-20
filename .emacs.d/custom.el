@@ -395,6 +395,7 @@
  '(straight-host-usernames
    '((github . "wyuenho") (codeberg . "wyuenho") (gitlab . "wyuenho")
      (bitbucket . "wyuenho")))
+ '(straight-repository-branch "rr-autoloads-fool")
  '(straight-use-package-by-default t)
  '(straight-use-symlinks nil)
  '(switch-to-buffer-obey-display-actions t)
