@@ -50,7 +50,6 @@ under `user-emacs-directory'.  If it exists, load it."
 ;; should be done ASAP on init.
 (when (memq (window-system) '(mac ns))
   (use-package exec-path-from-shell
-    ;; :if (memq (window-system) '(mac ns))
     :config (exec-path-from-shell-initialize)))
 
 ;; Install tree-sitter language grammars
@@ -108,7 +107,6 @@ under `user-emacs-directory'.  If it exists, load it."
 ;; Replace the major mode name with its icon
 (when (display-graphic-p)
   (use-package all-the-icons
-    ;; :if (display-graphic-p)
     :config
     (with-eval-after-load 'powerline
       (defun powerline-major-mode-advice (major-mode-segment)
