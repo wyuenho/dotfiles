@@ -252,7 +252,8 @@
      (js-mode . js-ts-mode)
      (js-jsx-mode . js-ts-mode)
      (python-mode . python-ts-mode)
-     (sh-mode . bash-ts-mode)))
+     (sh-mode . bash-ts-mode)
+     (yaml-mode . yaml-ts-mode)))
  '(markdown-code-lang-modes
    '(("C" . c-ts-mode)
      ("C++" . c++-ts-mode)
@@ -273,6 +274,7 @@
      ("screen" . sh-mode)
      ("shell" . sh-mode)
      ("sqlite" . sql-mode)
+     ("toml" . toml-ts-mode)
      ("ts" . typescript-ts-mode)
      ("tsx" . tsx-ts-mode)
      ("typescript" . typescript-ts-mode)
