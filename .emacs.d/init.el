@@ -790,7 +790,9 @@ Optional argument ARG same as `comment-dwim''s."
 (use-package posframe)
 (use-package lsp-mode
   :after (posframe)
-  :delight (lsp-mode) (lsp-lens-mode)
+  :delight
+  (lsp-mode)
+  (lsp-lens-mode nil lsp-lens)
   :hook ((c-mode-common
           c-ts-base-mode
           cmake-ts-mode
