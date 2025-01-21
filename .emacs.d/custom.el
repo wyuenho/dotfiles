@@ -371,7 +371,6 @@
    '("--indent" "4" "--case-indent" "--space-redirects" "--keep-padding"))
  '(shift-select-mode nil)
  '(show-paren-mode t)
- '(show-smartparens-global-mode t)
  '(size-indication-mode t)
  '(smart-semicolon-backspace-commands
    '(backward-delete-char backward-delete-char-untabify delete-backward-char c-electric-backspace sp-backward-delete-char))
