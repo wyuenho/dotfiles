@@ -902,6 +902,20 @@ checker symbol."
   (setf lsp-ui-doc-border (face-foreground 'window-divider nil t))
   (add-hook 'lsp-ui-doc-frame-hook 'lsp-ui-doc-frame-set-font))
 
+(use-package gptel
+  :config
+  (setq
+   gptel-model
+   'deepseek-r1
+   gptel-backend
+   (gptel-make-ollama "Ollama"
+     :host "localhost:11434"
+     :stream t
+     :models
+     '(deepseek-r1
+       :description
+       "Reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen."))))
+
 ;; Auto-completion
 (use-package corfu
   :straight (corfu :includes (corfu-popupinfo))
@@ -1669,6 +1683,21 @@ optionally the window if possible."
     ;; `git-rebase-mode'
     (define-key git-rebase-mode-map (kbd "M-z") 'git-rebase-undo)))
 
+(use-package magit-gptcommit
+  :after (magit)
+  :bind (:map
+         git-commit-mode-map
+         ("C-c C-g" . magit-gptcommit-commit-accept))
+  :custom
+  (magit-gptcommit-llm-provider
+   (make-llm-ollama
+    :scheme "http"
+    :host "localhost"
+    :port "11434"
+    :chat-mode "deepseek-r1"))
+  :config
+  (magit-gptcommit-status-buffer-setup))
+
 (use-package diff-ansi
   :after (magit)
   :hook (magit-revision-hook . diff-ansi-mode))
@@ -1959,7 +1988,7 @@ optionally the window if possible."
     (with-eval-after-load 'straight
       (add-to-list 'purpose-x-popwin-buffer-names straight-byte-compilation-buffer)
       (purpose-x-popwin-update-conf))
-    
+
     (with-eval-after-load 'bytecomp
       (add-to-list 'purpose-x-popwin-buffer-names byte-compile-log-buffer)
       (purpose-x-popwin-update-conf))
@@ -2065,7 +2094,6 @@ optionally the window if possible."
                gcmh
                git-modes
                go-mode
-               gptel
                graphql-mode
                graphviz-dot-mode
                impostman
