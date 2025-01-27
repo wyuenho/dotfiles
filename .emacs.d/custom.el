@@ -396,7 +396,7 @@
  '(straight-host-usernames
    '((github . "wyuenho") (codeberg . "wyuenho") (gitlab . "wyuenho")
      (bitbucket . "wyuenho")))
- '(straight-repository-branch "develop")
+ '(straight-repository-branch "develop" t)
  '(straight-use-package-by-default t)
  '(straight-use-symlinks nil)
  '(switch-to-buffer-obey-display-actions t)
