@@ -907,14 +907,12 @@ checker symbol."
   (setopt
    gptel-model 'deepseek-r1
    gptel-backend
-   (gptel-make-ollama
-    "Ollama"
-    :host "localhost:11434"
-    :stream t
-    :models
-    '(deepseek-r1
-      :description
-      "Reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen."))))
+   (gptel-make-ollama "Ollama"
+     :stream t
+     :models
+     '(deepseek-r1
+       :description
+       "Reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen."))))
 
 (use-package llm
   :straight (llm :includes (llm-ollama)))
