@@ -904,17 +904,52 @@ checker symbol."
 
 (use-package gptel
   :config
-  (setq
-   gptel-model
-   'deepseek-r1
+  (setopt
+   gptel-model 'deepseek-r1
    gptel-backend
-   (gptel-make-ollama "Ollama"
-     :host "localhost:11434"
-     :stream t
-     :models
-     '(deepseek-r1
-       :description
-       "Reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen."))))
+   (gptel-make-ollama
+    "Ollama"
+    :host "localhost:11434"
+    :stream t
+    :models
+    '(deepseek-r1
+      :description
+      "Reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen."))))
+
+(use-package llm
+  :straight (llm :includes (llm-ollama)))
+
+(use-package llm-ollama)
+
+(use-package ellama
+  :after (llm-ollama)
+  :bind ("C-c a" . ellama-transient-main-menu)
+  :init
+  (setopt ellama-major-mode 'markdown-mode)
+  (setopt ellama-provider
+          (make-llm-ollama
+           :chat-model "llama3.1:8b-instruct-q8_0"
+           :embedding-model "nomic-embed-text"))
+  (setopt ellama-summarization-provider
+          (make-llm-ollama
+           :chat-model "llama3.1:8b-text-q8_0"
+           :embedding-model "nomic-embed-text"))
+  (setopt ellama-translation-provider
+          (make-llm-ollama
+           :chat-model "llama3.1:8b-text-q8_0"
+           :embedding-model "nomic-embed-text"))
+  (setopt ellama-naming-provider
+          (make-llm-ollama
+           :chat-model "llama3.1:8b-instruct-q8_0"
+           :embedding-model "nomic-embed-text"
+           :default-chat-non-standard-params '(("stop" . ("\n")))))
+  (setopt ellama-coding-provider
+          (make-llm-ollama
+           :chat-model "deepseek-r1"
+           :embedding-model "nomic-embed-text"))
+  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
+  (setopt ellama-chat-display-action-function #'display-buffer-full-frame)
+  (setopt ellama-instant-display-action-function #'display-buffer-at-bottom))
 
 ;; Auto-completion
 (use-package corfu
@@ -1691,10 +1726,8 @@ optionally the window if possible."
   :custom
   (magit-gptcommit-llm-provider
    (make-llm-ollama
-    :scheme "http"
-    :host "localhost"
-    :port "11434"
-    :chat-mode "deepseek-r1"))
+    :chat-model "deepseek-r1"
+    :embedding-model "nomic-embed-text"))
   :config
   (magit-gptcommit-status-buffer-setup))
 
