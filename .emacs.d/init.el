@@ -905,14 +905,12 @@ checker symbol."
 (use-package gptel
   :config
   (setopt
-   gptel-model 'deepseek-r1
+   gptel-model 'mistral-small
    gptel-backend
-   (gptel-make-ollama "Ollama"
+   (gptel-make-ollama "ollama-mistral-small-3"
      :stream t
      :models
-     '(deepseek-r1
-       :description
-       "Reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen."))))
+     '(mistral-small))))
 
 (use-package llm
   :straight (llm :includes (llm-ollama)))
@@ -926,24 +924,24 @@ checker symbol."
   (setopt ellama-major-mode 'markdown-mode)
   (setopt ellama-provider
           (make-llm-ollama
-           :chat-model "llama3.1:8b-instruct-q8_0"
+           :chat-model "phi4"
            :embedding-model "nomic-embed-text"))
   (setopt ellama-summarization-provider
           (make-llm-ollama
-           :chat-model "llama3.1:8b-text-q8_0"
+           :chat-model "phi4"
            :embedding-model "nomic-embed-text"))
   (setopt ellama-translation-provider
           (make-llm-ollama
-           :chat-model "llama3.1:8b-text-q8_0"
+           :chat-model "phi4"
            :embedding-model "nomic-embed-text"))
   (setopt ellama-naming-provider
           (make-llm-ollama
-           :chat-model "llama3.1:8b-instruct-q8_0"
+           :chat-model "phi4"
            :embedding-model "nomic-embed-text"
            :default-chat-non-standard-params '(("stop" . ("\n")))))
   (setopt ellama-coding-provider
           (make-llm-ollama
-           :chat-model "deepseek-r1"
+           :chat-model "mistral-small"
            :embedding-model "nomic-embed-text"))
   (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
   (setopt ellama-chat-display-action-function #'display-buffer-full-frame)
