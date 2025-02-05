@@ -206,6 +206,8 @@
  '(lsp-clients-typescript-prefer-use-project-ts-server t)
  '(lsp-completion-provider :none)
  '(lsp-completion-show-kind nil)
+ '(lsp-copilot-enabled t)
+ '(lsp-copilot-executable "copilot-node-server")
  '(lsp-debounce-full-sync-notifications-interval 0.25)
  '(lsp-disabled-clients
    '(pyls pylsp ruff eslint ocaml-ls bash-ls html-ls css-ls flow-ls))
