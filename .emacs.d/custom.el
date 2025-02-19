@@ -178,7 +178,7 @@
  '(imagemagick-render-type 1)
  '(imenu-auto-rescan t)
  '(imenu-auto-rescan-maxout 524288)
- '(imenu-list-idle-update-delay 0.1)
+ '(imenu-list-idle-update-delay 1)
  '(imenu-list-size 0.2)
  '(imenu-max-items 100)
  '(importmagic-be-quiet t)
