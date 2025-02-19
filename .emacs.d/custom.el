@@ -397,7 +397,9 @@
  '(spaceline-all-the-icons-separator-type 'arrow)
  '(standard-indent 2)
  '(straight-host-usernames
-   '((github . "wyuenho") (codeberg . "wyuenho") (gitlab . "wyuenho")
+   '((github . "wyuenho")
+     (codeberg . "wyuenho")
+     (gitlab . "wyuenho")
      (bitbucket . "wyuenho")))
  '(straight-repository-branch "develop" t)
  '(straight-use-package-by-default t)
