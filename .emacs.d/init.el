@@ -789,6 +789,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 (use-package posframe)
 (use-package lsp-mode
+  :straight (:fork (:branch "remove-empty-items"))
   :after (posframe)
   :delight
   (lsp-mode)
