@@ -5,6 +5,7 @@
   (set-keymap-parent compilation-shell-minor-mode-map special-mode-map))
 
 (with-eval-after-load 'comp
+  (setq native-comp-enable-subr-trampolines nil)
   (set-keymap-parent native-comp-limple-mode-map special-mode-map))
 
 (setq package-enable-at-startup nil)
