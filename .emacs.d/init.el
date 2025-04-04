@@ -906,39 +906,42 @@ checker symbol."
 (use-package gptel
   :config
   (setopt
-   gptel-model 'mistral-small
+   gptel-model 'gemma-3-12b-it
    gptel-backend
-   (gptel-make-ollama "ollama-mistral-small-3"
+   (gptel-make-privategpt "lmstudio"
+     :protocol "http"
+     :host "localhost:1234"
      :stream t
-     :models
-     '(mistral-small))))
+     :context t
+     :sources t
+     :models '(gemma-3-12b-it))))
 
 (use-package llm
-  :straight (llm :includes (llm-ollama)))
+  :straight (llm :includes (llm-openai)))
 
-(use-package llm-ollama)
+(use-package llm-openai)
 
 (use-package ellama
-  :after (llm-ollama)
+  :after (llm-openai)
   :bind ("C-c a" . ellama-transient-main-menu)
   :init
   (setopt ellama-major-mode 'markdown-mode)
   (setopt ellama-provider
-          (make-llm-ollama
-           :chat-model "phi4"
-           :embedding-model "nomic-embed-text"))
+          (make-llm-openai-compatible
+           :chat-model "gemma-3-12b-it"
+           :embedding-model "text-embedding-mxbai-embed-large-v1"))
   (setopt ellama-summarization-provider
-          (make-llm-ollama
-           :chat-model "phi4"
-           :embedding-model "nomic-embed-text"))
+          (make-llm-openai-compatible
+           :chat-model "gemma-3-12b-it"
+           :embedding-model "text-embedding-mxbai-embed-large-v1"))
   (setopt ellama-translation-provider
-          (make-llm-ollama
-           :chat-model "phi4"
-           :embedding-model "nomic-embed-text"))
+          (make-llm-openai-compatible
+           :chat-model "gemma-3-12b-it"
+           :embedding-model "text-embedding-mxbai-embed-large-v1"))
   (setopt ellama-naming-provider
-          (make-llm-ollama
-           :chat-model "phi4"
-           :embedding-model "nomic-embed-text"
+          (make-llm-openai-compatible
+           :chat-model "gemma-3-12b-it"
+           :embedding-model "text-embedding-mxbai-embed-large-v1"
            :default-chat-non-standard-params '(("stop" . ("\n")))))
   (setopt ellama-coding-provider
           (make-llm-ollama
@@ -1723,9 +1726,9 @@ optionally the window if possible."
          ("C-c C-g" . magit-gptcommit-commit-accept))
   :custom
   (magit-gptcommit-llm-provider
-   (make-llm-ollama
-    :chat-model "deepseek-r1"
-    :embedding-model "nomic-embed-text"))
+   (make-llm-openai-compatible
+    :chat-model "gemma-3-12b-it"
+    :embedding-model "text-embedding-mxbai-embed-large-v1"))
   :config
   (magit-gptcommit-status-buffer-setup))
 
