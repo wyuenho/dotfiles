@@ -211,7 +211,7 @@
  '(lsp-copilot-enabled t)
  '(lsp-debounce-full-sync-notifications-interval 0.25)
  '(lsp-disabled-clients
-   '(pyls pylsp ruff eslint ocaml-ls bash-ls html-ls css-ls flow-ls))
+   '(pyls pylsp ruff eslint ocaml-ls bash-ls html-ls css-ls flow-ls rls))
  '(lsp-eldoc-enable-hover nil)
  '(lsp-enable-dap-auto-configure nil)
  '(lsp-enable-indentation nil)
