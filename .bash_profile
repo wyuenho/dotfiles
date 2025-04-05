@@ -120,6 +120,11 @@ if [ -d "$HOME"/.krew/bin ]; then
     PATH="$HOME/.krew/bin:$PATH"
 fi
 
+# LM Studio CLI
+if [ -d "$HOME/.lmstudio/bin" ]; then
+    PATH="$HOME/.lmstudio/bin:$PATH"
+fi
+
 # PWD
 PATH=":$PATH"
 
