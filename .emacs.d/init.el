@@ -154,6 +154,10 @@ under `user-emacs-directory'.  If it exists, load it."
 
 (use-package modus-themes
   :config
+  (setopt modus-vivendi-tinted-palette-overrides
+          '((bg-paren-match bg-cyan-intense)
+            (bg-paren-expression bg-yellow-intense)))
+
   (add-hook 'modus-themes-after-load-theme-hook
             (lambda ()
               (modus-themes-with-colors
@@ -231,11 +235,6 @@ under `user-emacs-directory'.  If it exists, load it."
                  `(quick-peek-padding-face ((,c :foreground ,border
                                                 :background ,bg-main)))
 
-                 `(line-number ((,c :inherit ,(if modus-themes-mixed-fonts
-                                                  '(fixed-pitch default)
-                                                'default)
-                                    :background ,bg-line-number-inactive
-                                    :foreground ,fg-line-number-inactive)))
                  `(line-number-current-line ((,c :inherit line-number
                                                  :background ,bg-line-number-active
                                                  :foreground ,fg-line-number-active)))
