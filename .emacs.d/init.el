@@ -62,6 +62,7 @@ under `user-emacs-directory'.  If it exists, load it."
           (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
           (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml")
+          (devicetree "https://github.com/joelspadin/tree-sitter-devicetree")
           ,@(mapcar
              (lambda (lang) (list lang (format "https://github.com/tree-sitter/tree-sitter-%s" lang)))
              '(bash c c-sharp cpp css go java javascript json python ruby rust))))
@@ -2117,6 +2118,7 @@ optionally the window if possible."
                coverage
                csv-mode
                dape
+               devicetree-ts-mode
                docker-compose-mode
                ef-themes
                ;; flycheck-eglot
@@ -2134,6 +2136,7 @@ optionally the window if possible."
                ;; jq-mode
                jupyter
                just-mode
+               kconfig-mode
                kurecolor
                lorem-ipsum
                mermaid-mode
