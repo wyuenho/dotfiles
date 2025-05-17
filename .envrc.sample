@@ -14,7 +14,7 @@ export GIT_CONFIG_VALUE_2=''
 [ -x "$(type -P delta)" ] && export GIT_PAGER=delta
 
 if [ -x "$(type -P pipx)" ]; then
-    local py_ver=$(python3 -c 'import platform as p; print(".".join(p.python_version_tuple()[:2]))')
+    local py_ver=$($(pipx environment --value PIPX_DEFAULT_PYTHON) -c 'import platform as p; print(".".join(p.python_version_tuple()[:2]))')
     export PIPX_HOME="$HOME/.local/pipx/$py_ver"
     export PIPX_BIN_DIR="$HOME/.local/pipx/$py_ver/bin"
     export PIPX_MAN_DIR="$HOME/.local/pipx/$py_ver/share/man"
