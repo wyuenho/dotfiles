@@ -3,6 +3,9 @@ command_timeout = 2000
 [aws]
 symbol = "  "
 
+[battery]
+disabled = true
+
 [buf]
 symbol = " "
 
@@ -22,15 +25,20 @@ symbol = " "
 symbol = " "
 
 [crystal]
+disabled = true
 symbol = " "
 
 [dart]
+disabled = true
 symbol = " "
 
 [deno]
 symbol = " "
 
 [directory]
+truncate_to_repo = false
+truncation_length = 8
+truncation_symbol = "…/"
 read_only = " 󰌾"
 
 [docker_context]
@@ -70,6 +78,7 @@ symbol = " "
 symbol = " "
 
 [hg_branch]
+disabled = false
 symbol = " "
 
 [hostname]
