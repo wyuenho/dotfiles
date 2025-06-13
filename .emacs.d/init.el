@@ -788,6 +788,17 @@ Optional argument ARG same as `comment-dwim''s."
      file-names)))
 
 (use-package posframe)
+
+(use-package reformatter
+  :config
+  (define-advice reformatter-replace-buffer-contents-from-file (:override (file) "with-replace-buffer-contents")
+    (let ((dst (current-buffer)))
+      (with-temp-buffer
+        (insert-file-contents file nil nil nil t)
+        (let ((src (current-buffer)))
+          (with-current-buffer dst
+            (replace-buffer-contents src)))))))
+
 (use-package lsp-mode
   :straight (:fork (:branch "remove-empty-items"))
   :after (posframe)
@@ -1113,7 +1124,6 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
 
 ;; Term and shell
 (use-package shfmt
-  :after (reformatter)
   :delight shfmt-on-save-mode
   :hook (sh-base-mode . shfmt-on-save-mode))
 
@@ -1360,28 +1370,13 @@ optionally the window if possible."
   (keymap-set sphinx-doc-mode-map "C-c d" 'sphinx-doc))
 
 (use-package python-black
-  :after (reformatter)
-  :delight python-black-on-save-mode
-  :config
-  (add-hook 'pet-mode-hook (lambda ()
-                             (when python-black-command
-                               (python-black-on-save-mode)))))
+  :delight python-black-on-save-mode)
 
 (use-package python-isort
-  :after (reformatter)
-  :delight python-isort-on-save-mode
-  :config
-  (add-hook 'pet-mode-hook (lambda ()
-                             (when python-isort-command
-                               (python-isort-on-save-mode)))))
+  :delight python-isort-on-save-mode)
 
 (use-package ruff-format
-  :after (reformatter)
-  :delight ruff-format-on-save-mode
-  :config
-  (add-hook 'pet-mode-hook (lambda ()
-                             (when ruff-format-command
-                               (ruff-format-on-save-mode)))))
+  :delight ruff-format-on-save-mode)
 
 (use-package python-pytest
   :after (projectile))
@@ -1392,7 +1387,17 @@ optionally the window if possible."
 (use-package pet
   :delight
   :config
-  (add-hook 'python-base-mode-hook 'pet-mode -10))
+  (add-hook 'python-base-mode-hook
+            (lambda ()
+              (pet-mode)
+
+              (if (and ruff-format-command (executable-find ruff-format-command))
+                  (ruff-format-on-save-mode)
+                (when (and python-black-command (executable-find python-black-command))
+                  (python-black-on-save-mode))
+                (when (and python-isort-command (executable-find python-isort-command))
+                  (python-isort-on-save-mode))))
+            -10))
 
 (use-package lsp-pyright
   :after (lsp-mode pet)
