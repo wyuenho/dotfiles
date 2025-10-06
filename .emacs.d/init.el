@@ -1077,6 +1077,25 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
   (flycheck-inline-display-function #'flycheck-inline-quick-peek)
   (flycheck-inline-clear-function #'quick-peek-hide))
 
+;; AI Coding Agent
+(use-package websocket
+  :config
+  (setq websocket-debug t))
+
+(use-package claude-code
+  :after (websocket vterm)
+  :straight (claude-code :includes (claude-code-mcp))
+  :demand
+  :bind (("C-c a" . claude-code-transient))
+  :config
+  (keymap-unset claude-code-vterm-mode-map "C-c C-t" t)
+  (keymap-unset claude-code-prompt-mode-map "C-c C-t" t)
+  (keymap-set claude-code-vterm-mode-map "C-c t" 'claude-code-transient)
+  (keymap-set claude-code-prompt-mode-map "C-c t" 'claude-code-prompt-transient))
+
+(use-package claude-code-mcp
+  :after (claude-code))
+
 ;; REST API
 (use-package verb
   :config
