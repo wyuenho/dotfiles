@@ -124,6 +124,7 @@
    '("PATH" "MANPATH" "GOPATH" "PYTHONSTARTUP" "PYENV_ROOT" "SDKMAN_DIR" "NVM_DIR" "MAVEN_HOME" "SBT_HOME" "LEININGEN_HOME" "ANT_HOME" "GRADLE_HOME" "KEYTOOL" "JAVA_HOME" "KOTLIN_HOME" "GROOVY_HOME" "XDG_CONFIG_HOME" "XDG_DATA_HOME" "XDG_CACHE_HOME" "XDG_CONFIG_DIRS" "XDG_DATA_DIRS"))
  '(executable-prefix-env t)
  '(expand-region-fast-keys-enabled nil)
+ '(explicit-bash-args '("-i"))
  '(explicit-shell-file-name "/opt/local/bin/bash")
  '(face-font-family-alternatives
    '(("JetBrains Mono NL" "Noto Sans Mono" "DejaVu Sans Mono" "Menlo")
