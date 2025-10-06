@@ -1383,15 +1383,6 @@ optionally the window if possible."
   (keymap-unset sphinx-doc-mode-map "C-c M-d")
   (keymap-set sphinx-doc-mode-map "C-c d" 'sphinx-doc))
 
-(use-package python-black
-  :delight python-black-on-save-mode)
-
-(use-package python-isort
-  :delight python-isort-on-save-mode)
-
-(use-package ruff-format
-  :delight ruff-format-on-save-mode)
-
 (use-package python-pytest
   :after (projectile))
 
@@ -1401,24 +1392,14 @@ optionally the window if possible."
 (use-package pet
   :delight
   :config
-  (add-hook 'python-base-mode-hook
-            (lambda ()
-              (pet-mode)
-
-              (if (and ruff-format-command (executable-find ruff-format-command))
-                  (ruff-format-on-save-mode)
-                (when (and python-black-command (executable-find python-black-command))
-                  (python-black-on-save-mode))
-                (when (and python-isort-command (executable-find python-isort-command))
-                  (python-isort-on-save-mode))))
-            -10))
+  (add-hook 'python-base-mode-hook 'pet-mode -10))
 
 (use-package lsp-pyright
   :after (lsp-mode pet)
   :config
   (pet-def-config-accessor pyrightconfig
-                           :file-name "pyrightconfig.json"
-                           :parser pet-parse-config-file)
+    :file-name "pyrightconfig.json"
+    :parser pet-parse-config-file)
   (let ((client (gethash 'pyright lsp-clients)))
     (setf (lsp--client-major-modes client) nil)
     (setf (lsp--client-activation-fn client)
