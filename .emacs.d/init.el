@@ -105,6 +105,10 @@ under `user-emacs-directory'.  If it exists, load it."
              (visual-line-mode       nil simple)
              (subword-mode           nil subword))))
 
+;; Auto compile elisp
+(use-package compile-angel
+  :delight compile-angel-on-save-mode)
+
 ;; Replace the major mode name with its icon
 (when (display-graphic-p)
   (use-package all-the-icons
