@@ -1156,6 +1156,13 @@ optionally the window if possible."
 ;; Markup and config languages
 (add-to-list 'auto-mode-alist '("\\.nmconnection\\'" . conf-mode))
 
+(use-package yaml-ts-mode
+  :mode (("\\.ya?ml\\'" . yaml-ts-mode)))
+
+(use-package yaml-pro
+  :after (yaml-ts-mode)
+  :hook (yaml-ts-mode . yaml-pro-ts-mode))
+
 (use-package markdown-mode
   :init
   (defun markdown-fontify-code-block-natively-advice (fn &rest args)
