@@ -979,6 +979,14 @@ checker symbol."
   :after (corfu)
   :hook (corfu-mode . corfu-prescient-mode))
 
+;; (use-package orderless
+;;   :custom
+;;   ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
+;;   ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+;;   (completion-styles '(orderless basic))
+;;   (completion-category-defaults nil)
+;;   (completion-category-overrides '((file (styles partial-completion)))))
+
 ;; Linting
 (use-package spinner)
 
