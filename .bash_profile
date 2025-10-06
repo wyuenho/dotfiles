@@ -69,10 +69,9 @@ if [ -x "$(type -P fnm)" ]; then
 fi
 
 # Python
-
-# PATH="$HOME/.pixi/bin:$PATH"
-
-# PATH="$PATH:$HOME/Library/Application Support/hatch/pythons/3.12/python/bin"
+if [ -d "$HOME/.pixi/bin" ]; then
+    PATH="$HOME/.pixi/bin:$PATH"
+fi
 
 # Ruby
 if [ -d "$HOME/.rbenv/bin" ]; then
