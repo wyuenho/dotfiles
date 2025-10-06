@@ -22,8 +22,8 @@ if [ -x "$(type -P pipx)" ]; then
 fi
 
 export ANTHROPIC_API_KEY=''
+export CLAUDE_CODE_OAUTH_TOKEN=''
 export OPENAI_API_KEY=''
 export GEMINI_API_KEY=''
 export LM_STUDIO_API_KEY='dummy-api-key'
 export LM_STUDIO_API_BASE='http://localhost:1234/v1'
-export FORGE_KEY=''
