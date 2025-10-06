@@ -1369,8 +1369,8 @@ optionally the window if possible."
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'"   . python-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.pylintrc\\'"   . conf-mode))
 (add-to-list 'auto-mode-alist '("\\.flake8\\'"     . conf-mode))
-(add-to-list 'auto-mode-alist '("/poetry.lock\\'"  . conf-toml-mode))
-(add-to-list 'auto-mode-alist '("/Pipfile.lock\\'" . conf-toml-mode))
+(add-to-list 'auto-mode-alist '("/poetry.lock\\'"  . toml-ts-mode))
+(add-to-list 'auto-mode-alist '("/Pipfile.lock\\'" . toml-ts-mode))
 
 ;; compilation-shell-minor-mode-map clash with comint-mode-map due to early-init
 (add-hook 'inferior-python-mode-hook
