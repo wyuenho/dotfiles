@@ -117,7 +117,7 @@ if [ -d "$HOME/.rd/bin" ]; then
     PATH="$HOME/.rd/bin:$PATH"
 fi
 
-if [ -d "$HOME"/.krew/bin ]; then
+if [ -d "$HOME/.krew/bin" ]; then
     PATH="$HOME/.krew/bin:$PATH"
 fi
 
