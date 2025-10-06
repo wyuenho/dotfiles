@@ -701,7 +701,11 @@ Optional argument ARG same as `comment-dwim''s."
   (pdf-loader-install t))
 
 ;; Static Analysis
+;; (use-package jsonrpc
+;;   :straight (:type built-in))
+
 ;; (use-package eglot
+;;   :straight (:type built-in)
 ;;   :hook (((c-mode-common
 ;;            c-ts-base-mode
 ;;            cmake-ts-mode
@@ -709,18 +713,30 @@ Optional argument ARG same as `comment-dwim''s."
 ;;            go-mode
 ;;            go-ts-mode
 ;;            groovy-mode
+;;            js-mode
+;;            js-jsx-mode
+;;            js-ts-mode
 ;;            python-base-mode
 ;;            rust-mode
 ;;            rust-ts-mode
 ;;            scala-mode
 ;;            swift-mode
+;;            typescript-ts-mode
 ;;            tuareg-mode)
-;;           . eglot-ensure))
+;;           . eglot-ensure)))
+
+;; (use-package eglot-booster
+;;   :straight (eglot-booster :type git :host github :repo "jdtsmith/eglot-booster")
+;;   :after (eglot)
+;;   :config (eglot-booster-mode))
+
+;; (use-package flycheck-eglot
+;;   :after (flycheck eglot)
+;;   :custom
+;;   (flycheck-eglot-exclusive nil)
+;;   (flycheck-eglot-enable-diagnostic-tags t)
 ;;   :config
-;;   (add-hook 'eglot-managed-mode-hook
-;;             (lambda ()
-;;               (when (eglot-managed-p)
-;;                 (flycheck-mode -1)))))
+;;   (global-flycheck-eglot-mode 1))
 
 (defun find-file-from-project-root (&rest file-names)
   (when-let ((root
