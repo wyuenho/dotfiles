@@ -1441,44 +1441,8 @@ optionally the window if possible."
 
 ;; Go
 (use-package go-ts-mode
-  :after (reformatter lsp-mode)
-  :init
-  (reformatter-define goimports-format
-    :program "goimports")
-
-  (reformatter-define gofmt-format
-    :program "gofmt"
-    :args `("-s"))
-
-  (reformatter-define gofumpt-format
-    :program "gofumpt")
-
-  (defun lsp-go-format-buffer ()
-    (condition-case err
-        (progn
-          (lsp-format-buffer)
-          (lsp-organize-imports))
-      (error (minibuffer-message (error-message-string err)))))
-
-  (defun go-setup-format-buffer-on-save ()
-    (if (executable-find "gofumpt")
-        (gofumpt-format-on-save-mode 1)
-      (gofmt-format-on-save-mode 1))
-
-    (when (executable-find "goimports")
-      (goimports-format-on-save-mode 1)))
-
-  (defun go-teardown-format-buffer-on-save ()
-    (if (executable-find "gofumpt")
-        (gofumpt-format-on-save-mode 0)
-      (gofmt-format-on-save-mode 0))
-
-    (when (executable-find "goimports")
-      (goimports-format-on-save-mode 0)))
-
+  :after (lsp-mode)
   :config
-  (add-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
-
   (when-let* (((treesit-available-p))
               ((treesit-ready-p 'go))
               (q (treesit-query-compile 'go '([(function_type
