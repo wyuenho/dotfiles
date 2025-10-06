@@ -1172,8 +1172,11 @@ optionally the window if possible."
   :config
   (advice-add 'markdown-fontify-code-block-natively :around 'markdown-fontify-code-block-natively-advice))
 
+(use-package org
+  :straight (:type built-in))
+
 (use-package org-src
-  :straight nil
+  :straight (:type built-in)
   :after (org)
   :init
   (defun org-src-font-lock-fontify-block-advice (fn &rest args)
