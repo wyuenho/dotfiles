@@ -679,7 +679,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Modern code foldinq
 (use-package treesit-fold
-  :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold")
   :delight
   :config
   (keymap-set treesit-fold-mode-map "M-0" 'treesit-fold-open-all)
