@@ -1489,21 +1489,14 @@ optionally the window if possible."
                         (lambda ()
                           (if lsp-managed-mode
                               (progn
-                                (remove-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
-                                (go-teardown-format-buffer-on-save)
-
                                 (setq-local lsp-enable-indentation t
-                                            lsp-enable-on-type-formatting t)
-
-                                (add-hook 'before-save-hook 'lsp-go-format-buffer nil t))
-
+                                            lsp-enable-on-type-formatting t
+                                            lsp-format-buffer-on-save t)
+                                (add-hook 'before-save-hook 'lsp-organize-imports nil t))
                             (kill-local-variable 'lsp-enable-indentation)
                             (kill-local-variable 'lsp-enable-on-type-formatting)
-
-                            (remove-hook 'before-save-hook 'lsp-go-format-buffer t)
-
-                            (add-hook 'go-ts-mode-hook 'go-setup-format-buffer-on-save)
-                            (go-setup-format-buffer-on-save)))
+                            (kill-local-variable 'lsp-format-buffer-on-save)
+                            (remove-hook 'before-save-hook 'lsp-organize-imports t)))
                         nil t)))
 
   (add-hook 'go-ts-mode-hook
