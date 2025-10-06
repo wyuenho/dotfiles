@@ -1669,19 +1669,6 @@ optionally the window if possible."
     ;; `git-rebase-mode'
     (define-key git-rebase-mode-map (kbd "M-z") 'git-rebase-undo)))
 
-(use-package magit-gptcommit
-  :after (magit)
-  :bind (:map
-         git-commit-mode-map
-         ("C-c C-g" . magit-gptcommit-commit-accept))
-  :custom
-  (magit-gptcommit-llm-provider
-   (make-llm-openai-compatible
-    :chat-model "gemma-3-12b-it"
-    :embedding-model "text-embedding-mxbai-embed-large-v1"))
-  :config
-  (magit-gptcommit-status-buffer-setup))
-
 (use-package diff-ansi
   :after (magit)
   :hook (magit-revision-hook . diff-ansi-mode))
