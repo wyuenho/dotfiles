@@ -1985,6 +1985,10 @@ optionally the window if possible."
       (add-to-list 'purpose-x-popwin-buffer-names vterm-buffer-name)
       (purpose-x-popwin-update-conf))
 
+    (with-eval-after-load 'claude-code
+      (add-to-list 'purpose-x-popwin-buffer-name-regexps "^*claude:")
+      (purpose-x-popwin-update-conf))
+
     (with-eval-after-load 'ido
       (add-to-list 'purpose-x-popwin-buffer-names ido-completion-buffer)
       (add-to-list 'purpose-x-popwin-buffer-names " *IDO Trace*")
