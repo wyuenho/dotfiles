@@ -233,7 +233,7 @@ under `user-emacs-directory'.  If it exists, load it."
 
 ;; Make sure xwidget buffers are killed when quitting window
 (with-eval-after-load 'xwidget
-  (when (functionp 'xwidget-webkit-browse-url)
+  (when (featurep 'xwidget-internal)
     (setf browse-url-browser-function 'xwidget-webkit-browse-url)
     (function-put 'xwidget-webkit-browse-url 'browse-url-browser-kind 'internal))
 
