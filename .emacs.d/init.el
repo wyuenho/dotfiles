@@ -1141,12 +1141,17 @@ optionally the window if possible."
               (if (not next-vterm-buffer)
                   (ignore-errors (delete-window window))
                 (switch-to-buffer next-vterm-buffer))))))))
+  :demand
   :bind (("M-T" . vterm)
          :map vterm-mode-map
          ([remap backward-kill-word]  . vterm--self-insert)
          ([remap sp-kill-hybrid-sexp] . vterm--self-insert))
   :config
-  (advice-add 'vterm--sentinel :override 'vterm--sentinel-advice))
+  (advice-add 'vterm--sentinel :override 'vterm--sentinel-advice)
+  (setopt vterm-disable-bold t)
+  (add-hook 'vterm-mode-hook
+            (lambda ()
+              (buffer-face-set '(:family "Monaspace Neon" :height 120 :weight regular :width normal)))))
 
 ;; Markup and config languages
 (add-to-list 'auto-mode-alist '("\\.nmconnection\\'" . conf-mode))
