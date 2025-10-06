@@ -2050,8 +2050,7 @@ optionally the window if possible."
                               (buffer-list)))
                   (bury-buffer buf))))))
 
-(dolist (pkg '(auto-compile
-               auto-yasnippet
+(dolist (pkg '(auto-yasnippet
                bazel
                bug-hunter
                buttercup
@@ -2060,28 +2059,22 @@ optionally the window if possible."
                csv-mode
                dape
                devicetree-ts-mode
-               docker-compose-mode
                ef-themes
-               ;; flycheck-eglot
-               ;; flycheck-posframe
                focus
                fontify-face
-               ;; format-all
                gcmh
                git-modes
-               go-mode
                graphql-mode
                graphviz-dot-mode
                impostman
                inputrc-mode
-               ;; jq-mode
                jupyter
                just-mode
                kconfig-mode
                kurecolor
                lorem-ipsum
                mermaid-mode
-               ;; opencl-c-mode
+               opencl-c-mode
                package-build
                plantuml-mode
                po-mode
@@ -2093,7 +2086,6 @@ optionally the window if possible."
                terraform-mode
                udev-mode
                whitespace-cleanup-mode
-               yaml-pro
                yarn-mode
                zig-mode))
   (straight-use-package pkg))
