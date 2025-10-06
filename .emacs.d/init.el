@@ -1192,14 +1192,20 @@ optionally the window if possible."
 
 ;; Emacs Lisp
 
-;; Auto-indent built-in libs
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
+            ;; Auto-indent built-in libs
             (when (and (buffer-file-name)
                        (string-prefix-p lisp-directory (buffer-file-name))
                        buffer-read-only)
               (with-silent-modifications
-                (indent-region (point-min) (point-max)))))
+                (indent-region (point-min) (point-max))))
+
+            ;; Let imenu know about compat defs
+            (add-to-list 'imenu-generic-expression
+                         '(nil
+                           "^\\s-*(\\(\\(?:compat-def\\(?:macro\\|un\\)\\)\\)\\s-+\\(\\(?:\\w\\|\\s_\\|\\\\.\\)+\\)"
+                           2)))
           90)
 
 (defun elisp--local-variables-advice (fn &rest args)
