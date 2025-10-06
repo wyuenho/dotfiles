@@ -766,7 +766,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (replace-buffer-contents src)))))))))
 
 (use-package lsp-mode
-  :straight (:fork (:branch "remove-empty-items"))
+  ;; :straight (:fork (:branch "remove-empty-items"))
   :after (posframe)
   :delight
   (lsp-mode)
