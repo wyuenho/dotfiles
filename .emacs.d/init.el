@@ -1511,14 +1511,7 @@ optionally the window if possible."
   (cl-pushnew 'go-ts-mode (flycheck-checker-get 'golangci-lint 'modes)))
 
 ;; Rust
-(use-package rust-ts-mode
-  :after (reformatter)
-  :init
-  (reformatter-define rustfmt-format
-    :program "rustfmt"
-    :args `("--emit" "stdout"))
-  :config
-  (add-hook 'rust-ts-mode-hook 'rustfmt-format-on-save-mode))
+(use-package rust-ts-mode)
 
 (use-package flycheck-rust
   :after (rust-ts-mode flycheck)
