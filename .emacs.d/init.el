@@ -761,7 +761,9 @@ Optional argument ARG same as `comment-dwim''s."
         (insert-file-contents file nil nil nil t)
         (let ((src (current-buffer)))
           (with-current-buffer dst
-            (replace-buffer-contents src)))))))
+            (save-restriction
+              (save-mark-and-excursion
+                (replace-buffer-contents src)))))))))
 
 (use-package lsp-mode
   :straight (:fork (:branch "remove-empty-items"))
