@@ -1054,7 +1054,6 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
   (advice-add 'quick-peek--insert-spacer :override 'quick-peek--insert-spacer-advice))
 
 (use-package flycheck-inline
-  :straight (:fork (:branch "fix-nil-column"))
   :init
   (defun flycheck-inline-quick-peek (msg pos err)
     (unless (or (and (featurep 'company)
