@@ -1466,7 +1466,7 @@ optionally the window if possible."
                                (suffix (caddr triple))
                                (kind (funcall company-kind-func cand))
                                ((memq kind '(constructor function method))))
-                     (with-current-buffer (get-buffer-create " *coruf-pixel-perfect-go*")
+                     (with-current-buffer (get-buffer-create " *corfu-pixel-perfect-go*")
                        (delete-region (point-min) (point-max))
                        (insert suffix)
                        (let-alist (treesit-query-capture (treesit-buffer-root-node 'go) q)
