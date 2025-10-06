@@ -1271,19 +1271,28 @@ optionally the window if possible."
 ;; Formatting
 (use-package apheleia
   :delight
+  :demand
   :hook ((c-mode-common
           c-ts-base-mode
           conf-toml-mode
           css-base-mode
+          go-ts-mode
           js-base-mode
           jsonian-mode
-          ;; toml-ts-mode
+          python-base-mode
+          rust-mode
+          rust-ts-mode
+          toml-ts-mode
           typescript-ts-base-mode
           web-mode
           yaml-mode
           yaml-ts-mode)
-         . apheleia-mode))
-
+         . apheleia-mode)
+  :config
+  (setf (alist-get 'tombi apheleia-formatters) '("tombi" "format" "-")
+        (alist-get 'toml-ts-mode apheleia-mode-alist) 'tombi
+        (alist-get 'conf-toml-mode apheleia-mode-alist) 'tombi
+        (alist-get 'go-ts-mode apheleia-mode-alist) 'gofumpt))
 
 ;; Javascript
 (add-to-list 'auto-mode-alist '("\\(?:\\.\\(?:[cm]?js\\)\\)" . js-ts-mode))
