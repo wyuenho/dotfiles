@@ -881,6 +881,46 @@ checker symbol."
   (add-hook 'lsp-ui-doc-frame-hook 'lsp-ui-doc-frame-set-font))
 
 ;; Auto-completion
+;; (use-package company
+;;   :delight
+;;   :preface
+;;   (defun company-complete-common-or-cycle-next ()
+;;     (interactive)
+;;     (company-complete-common-or-cycle 1))
+;;   (defun company-complete-common-or-cycle-previous ()
+;;     (interactive)
+;;     (company-complete-common-or-cycle -1))
+;;   :bind (:map company-mode-map
+;;               ("M-/" . company-manual-begin)
+;;               :map company-active-map
+;;               ("M-n" . company-complete-common-or-cycle-next)
+;;               ("M-p" . company-complete-common-or-cycle-previous)
+;;               ("C-n" . company-select-next)
+;;               ("C-p" . company-select-previous))
+;;   :config
+;;   (setf company-backends
+;;         `(company-bbdb
+;;           (company-semantic company-clang)
+;;           company-cmake
+;;           company-files
+;;           (company-capf :with company-yasnippet)
+;;           (company-dabbrev-code
+;;            company-gtags
+;;            company-etags
+;;            company-keywords))))
+
+;; (use-package company-quickhelp
+;;   :hook (company-mode . company-quickhelp-mode))
+
+;; (use-package company-prescient
+;;   :hook (company-mode . company-prescient-mode)
+;;   :config
+;;   (add-hook 'company-prescient-mode-hook
+;;             (lambda ()
+;;               ;; Make sure `company-sort-prefer-same-case-prefix' is always at the back
+;;               (delq 'company-sort-prefer-same-case-prefix company-transformers)
+;;               (add-to-list 'company-transformers 'company-sort-prefer-same-case-prefix t))))
+
 (use-package corfu
   :straight (corfu :includes (corfu-popupinfo))
   :init
