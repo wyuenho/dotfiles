@@ -86,6 +86,8 @@ if [ -x "$(type -P go)" ]; then
     GOBIN=$(go env GOBIN)
     GOBIN="${GOBIN:-$(go env GOPATH)/bin}"
     PATH="$GOBIN:$PATH"
+
+    complete -C "$GOBIN/gocomplete" go
 fi
 
 # Rust
