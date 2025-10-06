@@ -17,5 +17,3 @@ macos-titlebar-style = tabs
 window-height = 100
 window-width = 400
 minimum-contrast = 5
-scrollback-limit = 10000000
-keybind = shift+enter=text:\n
