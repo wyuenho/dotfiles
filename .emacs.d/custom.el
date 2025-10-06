@@ -206,8 +206,6 @@
  '(linum-delay t)
  '(linum-format "%4d ")
  '(load-prefer-newer t t)
- '(llm-log t)
- '(llm-warn-on-nonfree nil)
  '(lsp-auto-guess-root t)
  '(lsp-clients-typescript-prefer-use-project-ts-server t)
  '(lsp-completion-provider :none)

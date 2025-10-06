@@ -880,54 +880,6 @@ checker symbol."
   (setf lsp-ui-doc-border (face-foreground 'window-divider nil t))
   (add-hook 'lsp-ui-doc-frame-hook 'lsp-ui-doc-frame-set-font))
 
-(use-package gptel
-  :config
-  (setopt
-   gptel-model 'gemma-3-12b-it
-   gptel-backend
-   (gptel-make-privategpt "lmstudio"
-     :protocol "http"
-     :host "localhost:1234"
-     :stream t
-     :context t
-     :sources t
-     :models '(gemma-3-12b-it mistral-small-3.1-24b-instruct-2503 meta-llama-3.1-8b-instruct))))
-
-(use-package llm
-  :straight (llm :includes (llm-openai)))
-
-(use-package llm-openai)
-
-(use-package ellama
-  :after (llm-openai)
-  :bind ("C-c a" . ellama-transient-main-menu)
-  :init
-  (setopt ellama-major-mode 'markdown-mode)
-  (setopt ellama-provider
-          (make-llm-openai-compatible
-           :chat-model "gemma-3-12b-it"
-           :embedding-model "text-embedding-mxbai-embed-large-v1"))
-  (setopt ellama-summarization-provider
-          (make-llm-openai-compatible
-           :chat-model "gemma-3-12b-it"
-           :embedding-model "text-embedding-mxbai-embed-large-v1"))
-  (setopt ellama-translation-provider
-          (make-llm-openai-compatible
-           :chat-model "gemma-3-12b-it"
-           :embedding-model "text-embedding-mxbai-embed-large-v1"))
-  (setopt ellama-naming-provider
-          (make-llm-openai-compatible
-           :chat-model "gemma-3-12b-it"
-           :embedding-model "text-embedding-mxbai-embed-large-v1"
-           :default-chat-non-standard-params '(("stop" . ("\n")))))
-  (setopt ellama-coding-provider
-          (make-llm-openai-compatible
-           :chat-model "gemma-3-12b-it"
-           :embedding-model "text-embedding-mxbai-embed-large-v1"))
-  (setopt ellama-naming-scheme 'ellama-generate-name-by-llm)
-  (setopt ellama-chat-display-action-function #'display-buffer-full-frame)
-  (setopt ellama-instant-display-action-function #'display-buffer-at-bottom))
-
 ;; Auto-completion
 (use-package corfu
   :straight (corfu :includes (corfu-popupinfo))
