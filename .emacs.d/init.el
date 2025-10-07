@@ -46,9 +46,9 @@ under `user-emacs-directory'.  If it exists, load it."
 
 (straight-override-recipe '(all-the-icons :fetcher github :repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg")))
 
-;; Sets $MANPATH, $PATH and exec-path from your shell, but only on OS X. This
-;; should be done ASAP on init.
-(when (memq (window-system) '(mac ns))
+;; Sets $MANPATH, $PATH and exec-path from your shell, this should be done ASAP
+;; on init.
+(when (memq (window-system) '(mac ns x pgtk))
   (use-package exec-path-from-shell
     :config (exec-path-from-shell-initialize)))
 
