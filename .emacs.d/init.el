@@ -1620,7 +1620,8 @@ optionally the window if possible."
 (use-package rg
   :straight (rg :includes (wgrep-rg))
   :config
-  (rg-enable-default-bindings)
+  ;; For some reason rg-keymap-prefix isn't applied until after init, leave this alone
+  (global-set-key (car (plist-get (symbol-plist 'rg-keymap-prefix) 'saved-value)) 'rg-menu)
   (with-eval-after-load 'projectile
     (define-key projectile-command-map (kbd "s r") 'rg-project)))
 
