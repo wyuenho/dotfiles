@@ -329,6 +329,7 @@
  '(package-native-compile t)
  '(page-break-lines-lighter "")
  '(parens-require-spaces nil)
+ '(pp-default-function 'pp-29)
  '(prescient-persist-mode t)
  '(prescient-sort-full-matches-first t)
  '(prettier-enabled-parsers
