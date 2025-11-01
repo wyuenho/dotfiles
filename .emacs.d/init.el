@@ -158,7 +158,6 @@ under `user-emacs-directory'.  If it exists, load it."
 (advice-add 'custom-save-all :around 'custom-save-all-advice)
 
 (use-package modus-themes
-  :straight (:fork (:branch "patch-1"))
   :config
   (setopt modus-vivendi-tinted-palette-overrides
           '((bg-paren-match bg-cyan-intense)
