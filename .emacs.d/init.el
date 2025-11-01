@@ -1619,8 +1619,9 @@ optionally the window if possible."
 (use-package rg
   :straight (rg :includes (wgrep-rg))
   :config
-  ;; For some reason rg-keymap-prefix isn't applied until after init, leave this alone
-  (global-set-key (car (plist-get (symbol-plist 'rg-keymap-prefix) 'saved-value)) 'rg-menu)
+  ;; NOTE: rg-keymap-prefix in the custom-set-variables list needs to have a
+  ;; third parameter NOW set to t for this to take the intended effect.
+  (rg-enable-default-bindings)
   (with-eval-after-load 'projectile
     (define-key projectile-command-map (kbd "s r") 'rg-project)))
 
