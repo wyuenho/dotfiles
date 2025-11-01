@@ -24,27 +24,50 @@ under `user-emacs-directory'.  If it exists, load it."
     (load custom-file)))
 (load-custom-file)
 
-(add-hook 'after-init-hook 'load-custom-file)
+(add-hook 'elpaca-after-init-hook 'load-custom-file)
 
-;; Init Straight
-(setf straight-recipe-overrides nil)
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-(straight-override-recipe '(all-the-icons :fetcher github :repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg")))
+;; Init Elpaca
+(defvar elpaca-installer-version 0.11)
+(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil :depth 1 :inherit ignore
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (<= emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+        (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                  ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                  ,@(when-let* ((depth (plist-get order :depth)))
+                                                      (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                  ,(plist-get order :repo) ,repo))))
+                  ((zerop (call-process "git" nil buffer t "checkout"
+                                        (or (plist-get order :ref) "--"))))
+                  (emacs (concat invocation-directory invocation-name))
+                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                  ((require 'elpaca))
+                  ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
+(elpaca elpaca-use-package
+  ;; Enable use-package :ensure support for Elpaca.
+  (elpaca-use-package-mode))
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, this should be done ASAP
 ;; on init.
@@ -112,17 +135,9 @@ under `user-emacs-directory'.  If it exists, load it."
 ;; Replace the major mode name with its icon
 (when (display-graphic-p)
   (use-package all-the-icons
+    ;; :ensure (:wait t)
+    :ensure (:repo "domtronn/all-the-icons.el" :branch "svg" :files (:defaults "svg") :wait t)
     :config
-    (with-eval-after-load 'powerline
-      (defun powerline-major-mode-advice (major-mode-segment)
-        (let* ((props (text-properties-at 0 major-mode-segment))
-               (icon (all-the-icons-icon-for-mode major-mode))
-               (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
-          (if face-prop
-              (apply 'propertize icon 'face face-prop props)
-            major-mode-segment)))
-      (advice-add 'powerline-major-mode :filter-return 'powerline-major-mode-advice))
-
     (defvar vscode-kind-icons
       `((text           . ,(all-the-icons-vscode-codicons "symbol-key" :padding '(2 . 1)))
         (method         . ,(all-the-icons-vscode-codicons "symbol-method" :face 'all-the-icons-purple :padding '(2 . 1)))
@@ -209,6 +224,18 @@ under `user-emacs-directory'.  If it exists, load it."
   (modus-themes-load-theme 'modus-vivendi-tinted))
 
 ;; Fancy mode line
+(use-package powerline
+  :after (all-the-icons)
+  :config
+  (defun powerline-major-mode-advice (major-mode-segment)
+    (let* ((props (text-properties-at 0 major-mode-segment))
+           (icon (all-the-icons-icon-for-mode major-mode))
+           (face-prop (and (stringp icon) (get-text-property 0 'face icon))))
+      (if face-prop
+          (apply 'propertize icon 'face face-prop props)
+        major-mode-segment)))
+  (advice-add 'powerline-major-mode :filter-return 'powerline-major-mode-advice))
+
 (use-package spaceline
   :config
   (require 'spaceline-config)
@@ -383,6 +410,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Turn on keyboard shortcut remainder
 (use-package which-key
+  :ensure nil
   :delight
   :bind (("C-h b" . which-key-show-top-level)
          ("C-h m" . which-key-show-major-mode))
@@ -437,11 +465,13 @@ Optional argument ARG same as `comment-dwim''s."
                 (when flycheck-mode
                   (flycheck-buffer))))))
 
-;; So I can see past kills that I can gyank
+;; So I can see past kills that I can yank
 (use-package browse-kill-ring
   :config (browse-kill-ring-default-keybindings))
 
 ;; Sane keyboard scrolling
+(use-package pager
+  :ensure (:version (lambda (_) "2.0.0")))
 (use-package pager-default-keybindings)
 
 ;; Scroll when jumping medium distances
@@ -452,22 +482,16 @@ Optional argument ARG same as `comment-dwim''s."
     (scroll-on-jump-advice-add diff-hl-next-hunk)))
 
 (use-package vertico
-  :straight (vertico :includes (vertico-directory vertico-mouse))
   :config
-  (vertico-mode))
+  (vertico-mode)
 
-(use-package vertico-directory
-  :after (vertico)
-  :config
   (keymap-set vertico-map "RET" #'vertico-directory-enter)
   (keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
   (keymap-set vertico-map "M-DEL" #'vertico-directory-delete-word)
   (with-eval-after-load rfn-eshadow-overlay
-    (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)))
+    (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
-(use-package vertico-mouse
-  :after (vertico)
-  :config (vertico-mouse-mode))
+  (vertico-mouse-mode))
 
 (use-package vertico-prescient
   :after (vertico)
@@ -604,10 +628,8 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Cross-machine fomatting
 (use-package editorconfig
+  :ensure nil
   :delight)
-
-;; Performance enhancement for files with really long lines
-(use-package so-long)
 
 ;; Prettier form feeds
 (use-package page-break-lines
@@ -692,7 +714,7 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Much faster PDF viewing
 (use-package pdf-tools
-  :straight (:fork (:branch "replace-tempnam"))
+  :ensure (:repo "wyuenho/pdf-tools" :branch "replace-tempnam")
   :config
   (defun pdf-view-goto-page-advice (fn &rest args)
     "Ignore `pdf-view-goto-page' error when scrolling."
@@ -702,10 +724,10 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Static Analysis
 ;; (use-package jsonrpc
-;;   :straight (:type built-in))
+;;   :ensure nil)
 
 ;; (use-package eglot
-;;   :straight (:type built-in)
+;;   :ensure nil
 ;;   :hook (((c-mode-common
 ;;            c-ts-base-mode
 ;;            cmake-ts-mode
@@ -726,7 +748,7 @@ Optional argument ARG same as `comment-dwim''s."
 ;;           . eglot-ensure)))
 
 ;; (use-package eglot-booster
-;;   :straight (eglot-booster :type git :host github :repo "jdtsmith/eglot-booster")
+;;   :ensure (eglot-booster :repo "jdtsmith/eglot-booster")
 ;;   :after (eglot)
 ;;   :config (eglot-booster-mode))
 
@@ -766,7 +788,7 @@ Optional argument ARG same as `comment-dwim''s."
                 (replace-buffer-contents src)))))))))
 
 (use-package lsp-mode
-  ;; :straight (:fork (:branch "remove-empty-items"))
+  ;; :ensure (:repo "wyuenho/lsp-mode" :branch "remove-empty-items")
   :after (posframe)
   :delight
   (lsp-mode)
@@ -787,7 +809,6 @@ Optional argument ARG same as `comment-dwim''s."
           typescript-ts-base-mode
           tuareg-mode)
          . lsp-deferred)
-  :demand
   :config
   (add-hook 'lsp-mode-hook
             (lambda ()
@@ -865,20 +886,29 @@ checker symbol."
                   (when lsp-next-checkers
                     (push `(lsp . ((next-checkers . ,lsp-next-checkers))) lsp-flycheck-checkers))
                   (when web-mode-checkers
-                    (push web-mode-checkers lsp-flycheck-checkers)))))))
+                    (push web-mode-checkers lsp-flycheck-checkers))))))
 
-(use-package lsp-ui
-  :after (lsp-mode)
-  :init
-  (defun lsp-ui-doc-frame-set-font (frame _)
-    (when (eq (window-system) 'ns)
-      (set-frame-font
-       (font-spec :family "SF Pro Text" :size 11)
-       nil
-       (list frame))))
-  :config
-  (setf lsp-ui-doc-border (face-foreground 'window-divider nil t))
-  (add-hook 'lsp-ui-doc-frame-hook 'lsp-ui-doc-frame-set-font))
+  (with-eval-after-load 'lsp-javascript
+    (let ((client (gethash 'deno-ls lsp-clients)))
+      (setf (lsp--client-activation-fn client)
+            (lambda (file-name &optional _)
+              (and (or (string-match-p "\\.[cm]js\\|\\.[jt]sx?\\'" file-name)
+                       (and (derived-mode-p 'js-base-mode 'typescript-mode 'typescript-ts-base-mode)
+                            (not (derived-mode-p '(json-mode jsonian-mode js-json-mode json-ts-mode)))))
+                   (find-file-from-project-root "deno.jsonc?")))))))
+
+  (use-package lsp-ui
+    :after (lsp-mode)
+    :init
+    (defun lsp-ui-doc-frame-set-font (frame _)
+      (when (eq (window-system) 'ns)
+        (set-frame-font
+         (font-spec :family "SF Pro Text" :size 11)
+         nil
+         (list frame))))
+    :config
+    (setf lsp-ui-doc-border (face-foreground 'window-divider nil t))
+    (add-hook 'lsp-ui-doc-frame-hook 'lsp-ui-doc-frame-set-font))
 
 ;; Auto-completion
 ;; (use-package company
@@ -922,7 +952,6 @@ checker symbol."
 ;;               (add-to-list 'company-transformers 'company-sort-prefer-same-case-prefix t))))
 
 (use-package corfu
-  :straight (corfu :includes (corfu-popupinfo))
   :init
   (defun vscode-kind-icons-corfu-margin-formatter (_)
     (when-let ((company-kind-func (plist-get completion-extra-properties :company-kind))
@@ -943,11 +972,8 @@ checker symbol."
              (transient-command-completion-not-suffix-only-p sym buf)
              (command-completion-default-include-p sym buf))))))
 
-(use-package corfu-popupinfo
-  :after (corfu))
-
 (use-package corfu-pixel-perfect
-  :straight (corfu-pixel-perfect :type git :host github :repo "wyuenho/corfu-pixel-perfect")
+  :ensure (:host github :repo "wyuenho/emacs-corfu-pixel-perfect")
   :after (corfu))
 
 (use-package cape
@@ -1078,23 +1104,13 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
   (flycheck-inline-clear-function #'quick-peek-hide))
 
 ;; AI Coding Agent
-(use-package websocket
-  :config
-  (setq websocket-debug t))
-
 (use-package claude-code
-  :after (websocket vterm)
-  :straight (claude-code :includes (claude-code-mcp))
-  :demand
   :bind (("C-c a" . claude-code-transient))
   :config
   (keymap-unset claude-code-vterm-mode-map "C-c C-t" t)
   (keymap-unset claude-code-prompt-mode-map "C-c C-t" t)
   (keymap-set claude-code-vterm-mode-map "C-c t" 'claude-code-transient)
   (keymap-set claude-code-prompt-mode-map "C-c t" 'claude-code-prompt-transient))
-
-(use-package claude-code-mcp
-  :after (claude-code))
 
 ;; REST API
 (use-package verb
@@ -1114,6 +1130,24 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
 (setf eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
 (use-package vterm
+  :ensure (vterm :post-build
+                 (progn
+                   (setq vterm-always-compile-module t)
+                   (require 'vterm)
+                   ;;print compilation info for elpaca
+                   (with-current-buffer (get-buffer-create vterm-install-buffer-name)
+                     (goto-char (point-min))
+                     (while (not (eobp))
+                       (message "%S"
+                                (buffer-substring (line-beginning-position)
+                                                  (line-end-position)))
+                       (forward-line)))
+                   (when-let* ((so (expand-file-name "./vterm-module.so"))
+                               ((file-exists-p so)))
+                     (make-symbolic-link
+                      so (expand-file-name (file-name-nondirectory so)
+                                           "../../builds/vterm")
+                      'ok-if-already-exists))))
   :init
   (defun vterm--sentinel-advice (process event)
     "Sentinel of vterm PROCESS.
@@ -1141,7 +1175,6 @@ optionally the window if possible."
               (if (not next-vterm-buffer)
                   (ignore-errors (delete-window window))
                 (switch-to-buffer next-vterm-buffer))))))))
-  :demand
   :bind (("M-T" . vterm)
          :map vterm-mode-map
          ([remap backward-kill-word]  . vterm--self-insert)
@@ -1157,6 +1190,7 @@ optionally the window if possible."
 (add-to-list 'auto-mode-alist '("\\.nmconnection\\'" . conf-mode))
 
 (use-package yaml-ts-mode
+  :ensure nil
   :mode (("\\.ya?ml\\'" . yaml-ts-mode)))
 
 (use-package yaml-pro
@@ -1172,11 +1206,8 @@ optionally the window if possible."
   :config
   (advice-add 'markdown-fontify-code-block-natively :around 'markdown-fontify-code-block-natively-advice))
 
-(use-package org
-  :straight (:type built-in))
-
 (use-package org-src
-  :straight (:type built-in)
+  :ensure nil
   :after (org)
   :init
   (defun org-src-font-lock-fontify-block-advice (fn &rest args)
@@ -1185,7 +1216,8 @@ optionally the window if possible."
   :config
   (advice-add 'org-src-font-lock-fontify-block :around 'org-src-font-lock-fontify-block-advice))
 
-(use-package dockerfile-ts-mode)
+(use-package dockerfile-ts-mode
+  :ensure nil)
 
 (use-package dotenv-mode
   :mode "\\.env\\..*\\'")
@@ -1236,7 +1268,7 @@ optionally the window if possible."
               ("C-c e x" . macrostep-expand)))
 
 (use-package helpful
-  :straight (:fork (:branch "search-after-navigate"))
+  :ensure (:repo "wyuenho/helpful" :branch "search-after-navigate")
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
          ("C-h k" . helpful-key)
@@ -1271,7 +1303,6 @@ optionally the window if possible."
 ;; Formatting
 (use-package apheleia
   :delight
-  :demand
   :hook ((c-mode-common
           c-ts-base-mode
           conf-toml-mode
@@ -1334,6 +1365,7 @@ optionally the window if possible."
 
 ;; TypeScript
 (use-package typescript-ts-mode
+  :ensure nil
   :config
   (add-to-list 'typescript-ts-mode--keywords "satisfies")
   (add-hook 'typescript-ts-base-mode-hook
@@ -1352,18 +1384,6 @@ optionally the window if possible."
               ("C-c M-:" . switch-to-ts))
   :config
   (inheritenv-add-advice 'run-ts))
-
-(use-package lsp-javascript
-  :straight nil
-  :after (lsp-mode)
-  :config
-  (let ((client (gethash 'deno-ls lsp-clients)))
-    (setf (lsp--client-activation-fn client)
-          (lambda (file-name &optional _)
-            (and (or (string-match-p "\\.[cm]js\\|\\.[jt]sx?\\'" file-name)
-                     (and (derived-mode-p 'js-base-mode 'typescript-mode 'typescript-ts-base-mode)
-                          (not (derived-mode-p 'json-mode))))
-                 (find-file-from-project-root "deno.jsonc?"))))))
 
 ;; Python
 (add-to-list 'auto-mode-alist '("\\.pythonrc\\'"   . python-ts-mode))
@@ -1437,10 +1457,12 @@ optionally the window if possible."
   :hook yard-mode)
 
 ;; C/C++/Objective-C
-(use-package cmake-ts-mode)
+(use-package cmake-ts-mode
+  :ensure nil)
 
 ;; Go
 (use-package go-ts-mode
+  :ensure nil
   :after (lsp-mode)
   :config
   (when-let* (((treesit-available-p))
@@ -1511,7 +1533,8 @@ optionally the window if possible."
   (cl-pushnew 'go-ts-mode (flycheck-checker-get 'golangci-lint 'modes)))
 
 ;; Rust
-(use-package rust-ts-mode)
+(use-package rust-ts-mode
+  :ensure nil)
 
 (use-package flycheck-rust
   :after (rust-ts-mode flycheck)
@@ -1617,17 +1640,12 @@ optionally the window if possible."
   :after (ag))
 
 (use-package rg
-  :straight (rg :includes (wgrep-rg))
   :config
   ;; NOTE: rg-keymap-prefix in the custom-set-variables list needs to have a
   ;; third parameter NOW set to t for this to take the intended effect.
   (rg-enable-default-bindings)
   (with-eval-after-load 'projectile
     (define-key projectile-command-map (kbd "s r") 'rg-project)))
-
-(use-package wgrep-rg
-  :after (rg)
-  :hook (rg-mode . wgrep-rg-setup))
 
 ;; Version Control
 
@@ -1652,7 +1670,7 @@ optionally the window if possible."
             'append))
 
 (use-package diff-hl
-  :straight (:fork (:branch "customizable-ignorable-commands"))
+  :ensure (:repo "wyuenho/diff-hl" :branch "customizable-ignorable-commands")
   :config
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
@@ -1663,6 +1681,7 @@ optionally the window if possible."
   (define-advice diff-hl-dired-status-files (:around (fn &rest args) "catch-errors")
     (ignore-errors (apply fn args))))
 
+(use-package transient)
 (use-package magit
   :config
   (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
@@ -1917,6 +1936,7 @@ optionally the window if possible."
 
 ;; Move around windows with shifted arrow keys
 (use-package windmove
+  :ensure nil
   :config
   (windmove-default-keybindings))
 
@@ -1930,7 +1950,7 @@ optionally the window if possible."
                   (ibuffer-update nil t))))))
 
 (use-package window-purpose
-  :straight (:fork (:branch "improve-code1"))
+  :ensure (:repo "wyuenho/emacs-purpose" :branch "improve-code1")
   :config
   (define-key purpose-mode-map (kbd "C-c ,") nil)
   (define-key purpose-mode-map (kbd "C-c w") purpose-mode-prefix-map)
@@ -1957,10 +1977,6 @@ optionally the window if possible."
     (add-to-list 'purpose-x-popwin-buffer-names "*Messages*")
     (add-to-list 'purpose-x-popwin-buffer-names "*Warnings*")
     (purpose-x-popwin-update-conf)
-
-    (with-eval-after-load 'straight
-      (add-to-list 'purpose-x-popwin-buffer-names straight-byte-compilation-buffer)
-      (purpose-x-popwin-update-conf))
 
     (with-eval-after-load 'bytecomp
       (add-to-list 'purpose-x-popwin-buffer-names byte-compile-log-buffer)
@@ -2040,54 +2056,61 @@ optionally the window if possible."
   ;;       (advice-add 'purpose-pop-to-buffer-advice :around 'pop-to-buffer)))
 
   ;;   (advice-add 'debug :around 'purpose--debug))
+  )
 
-  (with-eval-after-load 'desktop
-    (add-hook 'desktop-after-read-hook
-              (lambda ()
-                ;; Bury all special buffers after setting up dummy buffers and
-                ;; restoring session buffers
-                (dolist (buf (seq-filter
-                              (lambda (buf)
-                                (string-match-p "^ \\|\\*" (buffer-name buf)))
-                              (buffer-list)))
-                  (bury-buffer buf))))))
+(use-package persist-text-scale
+  :delight)
 
-(dolist (pkg '(auto-yasnippet
-               bazel
-               bug-hunter
-               buttercup
-               cask-mode
-               coverage
-               csv-mode
-               dape
-               devicetree-ts-mode
-               ef-themes
-               focus
-               fontify-face
-               gcmh
-               git-modes
-               graphql-mode
-               graphviz-dot-mode
-               impostman
-               inputrc-mode
-               jupyter
-               just-mode
-               kconfig-mode
-               kurecolor
-               lorem-ipsum
-               mermaid-mode
-               opencl-c-mode
-               package-build
-               plantuml-mode
-               po-mode
-               protobuf-mode
-               sisyphus
-               smooth-scrolling
-               ssh-config-mode
-               swagg
-               terraform-mode
-               udev-mode
-               whitespace-cleanup-mode
-               yarn-mode
-               zig-mode))
-  (straight-use-package pkg))
+(use-package easysession
+  :delight easysession-save-mode
+  :init
+  (add-hook 'easysession-after-load-hook
+            (lambda ()
+              ;; Bury all special buffers after setting up dummy buffers and
+              ;; restoring session buffers
+              (dolist (buf (seq-filter
+                            (lambda (buf)
+                              (string-match-p "^ \\|\\*" (buffer-name buf)))
+                            (buffer-list)))
+                (bury-buffer buf))))
+  (add-hook 'elpaca-after-init-hook #'easysession-load-including-geometry 102)
+  (add-hook 'elpaca-after-init-hook #'easysession-save-mode 103))
+
+(use-package auto-yasnippet)
+(use-package bazel)
+(use-package bug-hunter)
+(use-package buttercup)
+(use-package cask-mode)
+(use-package coverage)
+(use-package csv-mode)
+(use-package dape)
+(use-package devicetree-ts-mode)
+(use-package ef-themes)
+(use-package focus)
+(use-package fontify-face)
+(use-package gcmh)
+(use-package git-modes)
+(use-package graphql-mode)
+(use-package graphviz-dot-mode)
+(use-package impostman)
+(use-package inputrc-mode)
+(use-package jupyter)
+(use-package just-mode)
+(use-package kconfig-mode)
+(use-package kurecolor)
+(use-package lorem-ipsum)
+(use-package mermaid-mode)
+(use-package opencl-c-mode)
+(use-package package-build)
+(use-package plantuml-mode)
+(use-package po-mode)
+(use-package protobuf-mode)
+(use-package sisyphus)
+(use-package smooth-scrolling)
+(use-package ssh-config-mode)
+(use-package swagg)
+(use-package terraform-mode)
+(use-package udev-mode)
+(use-package whitespace-cleanup-mode)
+(use-package yarn-mode)
+(use-package zig-mode)
