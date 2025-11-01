@@ -42,11 +42,12 @@
  '(company-box-icons-alist 'company-box-icons-all-the-icons)
  '(company-dabbrev-downcase nil)
  '(company-global-modes
-   '(bash-ts-mode c++-mode c-mode css-mode c++-ts-mode c-ts-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode inferior-emacs-lisp-mode js-ts-mode js-jsx-mode js-mode lisp-interaction-mode lisp-mode objc-mode python-mode python-ts-mode restclient-mode ruby-mode rust-ts-mode rust-mode rust-ts-mode scss-mode sh-mode shell-mode typescript-ts-mode tsx-ts-mode web-mode org-mode))
+   '(bash-ts-mode c++-mode c++-ts-mode c-mode c-ts-mode css-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode inferior-emacs-lisp-mode js-jsx-mode js-mode js-ts-mode lisp-interaction-mode lisp-mode objc-mode org-mode python-mode python-ts-mode restclient-mode ruby-mode rust-mode rust-ts-mode rust-ts-mode scss-mode sh-mode shell-mode tsx-ts-mode typescript-ts-mode web-mode))
  '(company-tooltip-align-annotations t)
  '(company-tooltip-limit 20)
  '(compilation-always-kill t)
- '(compile-angel-excluded-files '("test.el" "init.el" "custom.el" "loaddefs.el" "autoloads.el" "lisp/subdirs.el" "/lisp/leim/leim-list.el" "/lisp/org/org-version.el" "/lisp/cus-load.el" "/lisp/finder-inf.el"))
+ '(compile-angel-excluded-files
+   '("/.yas-setup.el" "/lisp/cus-load.el" "/lisp/finder-inf.el" "/lisp/leim/leim-list.el" "/lisp/org/org-version.el" "autoloads.el" "custom.el" "early-init.el" "init.el" "lisp/subdirs.el" "loaddefs.el"))
  '(compile-angel-on-save-mode t)
  '(compile-angel-verbose t)
  '(confirm-kill-processes nil)
@@ -134,6 +135,7 @@
  '(fill-column 80)
  '(find-file-existing-other-name nil)
  '(find-file-suppress-same-file-warnings t)
+ '(flycheck-checker-error-threshold 1000)
  '(flycheck-disabled-checkers '(json-jsonlint json-python-json))
  '(flycheck-emacs-lisp-initialize-packages t)
  '(flycheck-emacs-lisp-load-path 'inherit)
@@ -151,7 +153,7 @@
  '(global-auto-revert-non-file-buffers t)
  '(global-corfu-mode t)
  '(global-corfu-modes
-   '(bash-ts-mode c++-mode c-mode css-mode c++-ts-mode c-ts-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode java-mode java-ts-mode js-ts-mode js-jsx-mode js-mode lisp-mode objc-mode python-mode python-ts-mode ruby-mode rust-ts-mode rust-mode rust-ts-mode scss-mode sh-mode shell-mode typescript-ts-mode tsx-ts-mode web-mode org-mode))
+   '(bash-ts-mode c++-mode c++-ts-mode c-mode c-ts-mode css-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode java-mode java-ts-mode js-jsx-mode js-mode js-ts-mode lisp-mode objc-mode org-mode python-mode python-ts-mode ruby-mode rust-mode rust-ts-mode rust-ts-mode scss-mode sh-mode shell-mode tsx-ts-mode typescript-ts-mode web-mode))
  '(global-diff-hl-mode t)
  '(global-diff-hl-show-hunk-mouse-mode t)
  '(global-flycheck-mode t)
@@ -214,7 +216,7 @@
  '(lsp-copilot-enabled t)
  '(lsp-debounce-full-sync-notifications-interval 0.25)
  '(lsp-disabled-clients
-   '(bash-ls copilot-ls css-ls eslint flow-ls html-ls ocaml-ls pyls pylsp rls ruff ty-ls))
+   '(bash-ls copilot-ls css-ls eslint flow-ls html-ls ocaml-ls pyls pylsp rls ruff semgrep-ls ty-ls))
  '(lsp-eldoc-enable-hover nil)
  '(lsp-enable-dap-auto-configure nil)
  '(lsp-enable-indentation nil)
@@ -269,7 +271,7 @@
      ("cpp" . c++-ts-mode)
      ("css" . css-ts-mode)
      ("ditaa" . artist-mode)
-     ("dot" . fundamental-mode)
+     ("dot" . graphviz-dot-mode)
      ("elisp" . emacs-lisp-mode)
      ("go" . go-ts-mode)
      ("html" . web-mode)
@@ -330,20 +332,20 @@
  '(prescient-persist-mode t)
  '(prescient-sort-full-matches-first t)
  '(prettier-enabled-parsers
-   '(angular babel babel-flow babel-ts css espree flow graphql json json5 json-stringify less html markdown mdx meriyah scss sh typescript vue yaml))
+   '(angular babel babel-flow babel-ts css espree flow graphql html json json-stringify json5 less markdown mdx meriyah scss sh typescript vue yaml))
  '(prettier-inline-errors-flag t)
  '(prettier-pre-warm 'some)
  '(projectile-project-search-path '(("~/Documents/workspace" . 0)))
  '(purpose-x-code1-dired-goto-file t)
  '(purpose-x-code1-update-idle-delay 0.5)
  '(purpose-x-popwin-major-modes
-   '(help-mode compilation-mode occur-mode helpful-mode comint-mode recentf-dialog-mode))
+   '(comint-mode compilation-mode help-mode helpful-mode occur-mode recentf-dialog-mode))
  '(py-isort-options '("--profile" "black"))
  '(python-indent-guess-indent-offset nil)
  '(python-indent-guess-indent-offset-verbose nil)
  '(python-shell-completion-native-enable nil)
  '(rainbow-html-colors-major-mode-list
-   '(html-mode php-mode nxml-mode xml-mode web-mode mhtml-mode js-ts-mode js-jsx-mode tsx-ts-mode))
+   '(html-mode js-jsx-mode js-ts-mode mhtml-mode nxml-mode php-mode tsx-ts-mode web-mode xml-mode))
  '(read-mail-command 'gnus)
  '(reb-re-syntax 'string)
  '(recentf-auto-cleanup 'never)
@@ -379,7 +381,7 @@
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(smart-semicolon-backspace-commands
-   '(backward-delete-char backward-delete-char-untabify delete-backward-char c-electric-backspace sp-backward-delete-char))
+   '(backward-delete-char backward-delete-char-untabify c-electric-backspace delete-backward-char sp-backward-delete-char))
  '(smart-semicolon-block-chars '(59 125 44))
  '(smartparens-global-mode t)
  '(smooth-scrolling-mode t)
@@ -388,7 +390,7 @@
  '(smtpmail-smtp-service 465)
  '(smtpmail-stream-type 'ssl)
  '(so-long-minor-modes
-   '(font-lock-mode display-line-numbers-mode flymake-mode flyspell-mode goto-address-mode goto-address-prog-mode hi-lock-mode highlight-changes-mode hl-line-mode linum-mode nlinum-mode prettify-symbols-mode visual-line-mode whitespace-mode diff-hl-amend-mode diff-hl-flydiff-mode diff-hl-mode dtrt-indent-mode flycheck-mode hl-sexp-mode idle-highlight-mode rainbow-delimiters-mode lsp-mode))
+   '(diff-hl-amend-mode diff-hl-flydiff-mode diff-hl-mode display-line-numbers-mode dtrt-indent-mode flycheck-mode flymake-mode flyspell-mode font-lock-mode goto-address-mode goto-address-prog-mode hi-lock-mode highlight-changes-mode hl-line-mode hl-sexp-mode idle-highlight-mode linum-mode lsp-mode nlinum-mode prettify-symbols-mode rainbow-delimiters-mode visual-line-mode whitespace-mode))
  '(so-long-target-modes
    '(css-mode css-ts-mode js-mode js-ts-mode json-mode json-ts-mode))
  '(solarized-use-variable-pitch nil)
