@@ -358,7 +358,7 @@
  '(report-emacs-bug-no-confirmation t)
  '(report-emacs-bug-no-explanations t)
  '(require-final-newline 'ask)
- '(rg-command-line-flags '("--no-ignore-global" "--threads 8"))
+ '(rg-command-line-flags '("--no-ignore-global" "--follow"))
  '(rg-hide-command nil)
  '(rg-keymap-prefix [134217843 114] t)
  '(ring-bell-function 'ignore)
