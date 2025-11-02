@@ -1268,7 +1268,7 @@ optionally the window if possible."
               ("C-c e x" . macrostep-expand)))
 
 (use-package helpful
-  :ensure (:repo "wyuenho/helpful" :branch "search-after-navigate")
+  :ensure (:repo "wyuenho/helpful" :branch "my-fixes")
   :bind (("C-h f" . helpful-callable)
          ("C-h v" . helpful-variable)
          ("C-h k" . helpful-key)
