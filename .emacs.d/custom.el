@@ -211,6 +211,7 @@
  '(linum-format "%4d ")
  '(load-prefer-newer t t)
  '(lsp-auto-guess-root t)
+ '(lsp-clients-typescript-max-ts-server-memory 8192)
  '(lsp-clients-typescript-prefer-use-project-ts-server t)
  '(lsp-completion-provider :none)
  '(lsp-completion-show-kind nil)
