@@ -116,3 +116,7 @@
 
 [rerere]
 	enabled = true
+
+[stash]
+	showPatch = true
+	showIncludeUntracked = true
