@@ -457,6 +457,7 @@ Optional argument ARG same as `comment-dwim''s."
   (setf crux-shell shell-file-name))
 
 ;; Saner undo/redo
+(use-package undo-fu-session)
 (use-package vundo
   :bind (("M-z" . vundo))
   :config
