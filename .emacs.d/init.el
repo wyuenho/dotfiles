@@ -1046,18 +1046,19 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
     (when flycheck-mode
       (if (null msg)
           (flycheck-clear-displayed-errors)
-        (pcase-let* ((`(,frame ,x . ,y) (mouse-position))
-                     (win (window-at x y frame))
-                     (`(,body-left ,body-top) (window-body-edges win))
-                     (col (max 1 (- x body-left (or display-line-numbers-width 0))))
-                     (row (- y body-top)))
-          (with-current-buffer (window-buffer win)
-            (save-excursion
-              (goto-char (point-min))
-              (forward-line (1- (+ (line-number-at-pos (window-start win)) row)))
-              (move-to-column (1- col))
-              (when-let (errors (flycheck-overlay-errors-at (point)))
-                (flycheck-display-errors errors))))))))
+        (pcase-let* ((`(,frame ,x . ,y) (mouse-position)))
+          (unless (and (frame-live-p frame) x y)
+            (pcase-let* ((win (window-at x y frame))
+                         (`(,body-left ,body-top) (window-body-edges win))
+                         (col (max 1 (- x body-left (or display-line-numbers-width 0))))
+                         (row (- y body-top)))
+              (with-current-buffer (window-buffer win)
+                (save-excursion
+                  (goto-char (point-min))
+                  (forward-line (1- (+ (line-number-at-pos (window-start win)) row)))
+                  (move-to-column (1- col))
+                  (when-let (errors (flycheck-overlay-errors-at (point)))
+                    (flycheck-display-errors errors))))))))))
 
   (add-hook 'flycheck-mode-hook
             (lambda ()
