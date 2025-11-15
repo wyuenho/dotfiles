@@ -155,6 +155,7 @@
  '(global-corfu-mode t)
  '(global-corfu-modes
    '(bash-ts-mode c++-mode c++-ts-mode c-mode c-ts-mode css-mode css-ts-mode emacs-lisp-mode enh-ruby-mode go-mode go-ts-mode java-mode java-ts-mode js-jsx-mode js-mode js-ts-mode lisp-mode objc-mode org-mode python-mode python-ts-mode ruby-mode rust-mode rust-ts-mode rust-ts-mode scss-mode sh-mode shell-mode tsx-ts-mode typescript-ts-mode web-mode))
+ '(global-dash-fontify-mode t)
  '(global-diff-hl-mode t)
  '(global-diff-hl-show-hunk-mouse-mode t)
  '(global-flycheck-mode t)
