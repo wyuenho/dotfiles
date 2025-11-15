@@ -1465,63 +1465,64 @@ optionally the window if possible."
 ;; Go
 (use-package go-ts-mode
   :ensure nil
-  :after (lsp-mode)
   :config
-  (when-let* (((treesit-available-p))
-              ((treesit-ready-p 'go))
-              (q (treesit-query-compile 'go '([(function_type
-                                                parameters: (_) @params
-                                                result: (_) @result)
-                                               (parameter_list) @params])))
-              (f (lambda (triple _)
-                   (when-let* (((or (and (bound-and-true-p lsp-managed-mode)
-                                         (memq 'gopls
-                                               (lsp-foreach-workspace
-                                                (lsp--workspace-server-id lsp--cur-workspace))))
-                                    (and (fboundp 'eglot-current-server)
-                                         (eglot-current-server)
-                                         (equal
-                                          (car
-                                           (process-command
-                                            (jsonrpc--process (eglot-current-server))))
-                                          "gopls"))))
-                               (company-kind-func (plist-get completion-extra-properties :company-kind))
-                               (cand (car triple))
-                               (suffix (caddr triple))
-                               (kind (funcall company-kind-func cand))
-                               ((memq kind '(constructor function method))))
-                     (with-current-buffer (get-buffer-create " *corfu-pixel-perfect-go*")
-                       (delete-region (point-min) (point-max))
-                       (insert suffix)
-                       (let-alist (treesit-query-capture (treesit-buffer-root-node 'go) q)
-                         (let* ((params (treesit-node-text .params suffix))
-                                (result (treesit-node-text .result suffix))
-                                (suffix-faces (get-text-property 0 'face suffix)))
-                           (setf (car triple) (concat cand params))
-                           (setf (caddr triple)
-                                 (if result
-                                     (propertize (concat " " result) 'face suffix-faces)
-                                   ""))))))
-                   triple)))
-    (add-hook 'go-ts-mode-hook
-              (lambda ()
-                (add-hook 'corfu-pixel-perfect-format-functions f nil t))))
+  (with-eval-after-load 'lsp-mode
+    (when-let* (((treesit-available-p))
+                ((treesit-ready-p 'go))
+                (q (treesit-query-compile 'go '([(function_type
+                                                  parameters: (_) @params
+                                                  result: (_) @result)
+                                                 (parameter_list) @params])))
+                (f (lambda (triple _)
+                     (when-let* (((or (and (bound-and-true-p lsp-managed-mode)
+                                           (memq 'gopls
+                                                 (lsp-foreach-workspace
+                                                  (lsp--workspace-server-id lsp--cur-workspace))))
+                                      (and (fboundp 'eglot-current-server)
+                                           (eglot-current-server)
+                                           (equal
+                                            (car
+                                             (process-command
+                                              (jsonrpc--process (eglot-current-server))))
+                                            "gopls"))))
+                                 (company-kind-func (plist-get completion-extra-properties :company-kind))
+                                 (cand (car triple))
+                                 (suffix (caddr triple))
+                                 (kind (funcall company-kind-func cand))
+                                 ((memq kind '(constructor function method))))
+                       (with-current-buffer (get-buffer-create " *corfu-pixel-perfect-go*")
+                         (delete-region (point-min) (point-max))
+                         (insert suffix)
+                         (let-alist (treesit-query-capture (treesit-buffer-root-node 'go) q)
+                           (let* ((params (treesit-node-text .params suffix))
+                                  (result (treesit-node-text .result suffix))
+                                  (suffix-faces (get-text-property 0 'face suffix)))
+                             (setf (car triple) (concat cand params))
+                             (setf (caddr triple)
+                                   (if result
+                                       (propertize (concat " " result) 'face suffix-faces)
+                                     ""))))))
+                     triple)))
+      (add-hook 'go-ts-mode-hook
+                (lambda ()
+                  (add-hook 'corfu-pixel-perfect-format-functions f nil t)))))
 
   (add-hook 'go-ts-mode-hook
             (lambda ()
-              (add-hook 'lsp-managed-mode-hook
-                        (lambda ()
-                          (if lsp-managed-mode
-                              (progn
-                                (setq-local lsp-enable-indentation t
-                                            lsp-enable-on-type-formatting t
-                                            lsp-format-buffer-on-save t)
-                                (add-hook 'before-save-hook 'lsp-organize-imports nil t))
-                            (kill-local-variable 'lsp-enable-indentation)
-                            (kill-local-variable 'lsp-enable-on-type-formatting)
-                            (kill-local-variable 'lsp-format-buffer-on-save)
-                            (remove-hook 'before-save-hook 'lsp-organize-imports t)))
-                        nil t)))
+              (with-eval-after-load 'lsp-mode
+                (add-hook 'lsp-managed-mode-hook
+                          (lambda ()
+                            (if lsp-managed-mode
+                                (progn
+                                  (setq-local lsp-enable-indentation t
+                                              lsp-enable-on-type-formatting t
+                                              lsp-format-buffer-on-save t)
+                                  (add-hook 'before-save-hook 'lsp-organize-imports nil t))
+                              (kill-local-variable 'lsp-enable-indentation)
+                              (kill-local-variable 'lsp-enable-on-type-formatting)
+                              (kill-local-variable 'lsp-format-buffer-on-save)
+                              (remove-hook 'before-save-hook 'lsp-organize-imports t)))
+                          nil t))))
 
   (add-hook 'go-ts-mode-hook
             (lambda ()
