@@ -11,7 +11,12 @@ export GIT_CONFIG_VALUE_1=''
 export GIT_CONFIG_KEY_2='merge.conflictStyle'
 export GIT_CONFIG_VALUE_2=''
 
-[ -x "$(type -P delta)" ] && export GIT_PAGER=delta
+if [ -x "$(type -P delta)" ]; then
+    export GIT_PAGER=delta
+    export GIT_CONFIG_COUNT=$((GIT_CONFIG_COUNT + 1))
+    export GIT_CONFIG_KEY_3='interactive.diffFilter'
+    export GIT_CONFIG_VALUE_3='delta --color-only'
+fi
 
 if [ -x "$(type -P pipx)" ]; then
     local py_ver=$($(pipx environment --value PIPX_DEFAULT_PYTHON) -c 'import platform as p; print(".".join(p.python_version_tuple()[:2]))')
