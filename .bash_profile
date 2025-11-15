@@ -64,6 +64,20 @@ if [ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
 fi
 
 # Node
+if [ -d "$HOME/.fnm" ]; then
+    FNM_PATH="$HOME/.fnm"
+elif [ -n "$XDG_DATA_HOME" ] && [ -d "$XDG_DATA_HOME/fnm" ]; then
+    FNM_PATH="$XDG_DATA_HOME/fnm"
+elif [ "$(uname -s)" = "Darwin" ]; then
+    FNM_PATH="$HOME/Library/Application Support/fnm"
+elif [ -d "$HOME/.local/share/fnm" ]; then
+    FNM_PATH="$HOME/.local/share/fnm"
+fi
+
+if [ -d "$FNM_PATH" ]; then
+    PATH="$FNM_PATH:$PATH"
+fi
+
 if [ -x "$(type -P fnm)" ]; then
     eval "$(fnm env --version-file-strategy=recursive --corepack-enabled)"
 fi
@@ -87,7 +101,9 @@ if [ -x "$(type -P go)" ]; then
     GOBIN="${GOBIN:-$(go env GOPATH)/bin}"
     PATH="$GOBIN:$PATH"
 
-    complete -C "$GOBIN/gocomplete" go
+    if [ -x "$(type -P gocomplete)" ]; then
+        complete -C "$GOBIN/gocomplete" go
+    fi
 fi
 
 # Rust
