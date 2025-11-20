@@ -1432,6 +1432,20 @@ optionally the window if possible."
                      (let-alist (pet-pyproject)
                        .tool.pyright)))))))
 
+(use-package zmq
+  :ensure `(zmq :pre-build
+                ,(let ((emacs (elpaca--emacs-path)))
+                   (list "make" "-e" (when emacs (concat "EMACS=" emacs))))
+                :post-build
+                ,(let* ((recipe (elpaca<-recipe (elpaca<-create 'zmq)))
+                        (repo-dir (elpaca-repo-dir recipe))
+                        (build-dir (elpaca-build-dir recipe))
+                        (module-file-name (format "emacs-zmq%s" module-file-suffix))
+                        (src (file-name-concat repo-dir module-file-name))
+                        (dest (file-name-concat build-dir module-file-name)))
+                   `(make-symbolic-link ,src ,dest))))
+(use-package jupyter)
+
 ;; Ruby
 (use-package yard-mode)
 (use-package enh-ruby-mode
@@ -2099,7 +2113,6 @@ optionally the window if possible."
 (use-package graphviz-dot-mode)
 (use-package impostman)
 (use-package inputrc-mode)
-(use-package jupyter)
 (use-package just-mode)
 (use-package kconfig-mode)
 (use-package kurecolor)
