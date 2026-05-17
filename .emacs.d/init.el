@@ -27,16 +27,15 @@ under `user-emacs-directory'.  If it exists, load it."
 (add-hook 'elpaca-after-init-hook 'load-custom-file)
 
 ;; Init Elpaca
-(defvar elpaca-installer-version 0.11)
+(defvar elpaca-installer-version 0.12)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-sources-directory (expand-file-name "sources/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
                               :ref nil :depth 1 :inherit ignore
                               :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                              :build (:not elpaca--activate-package)))
-(defvar elpaca-queue-limit 10)
-(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+                              :build (:not elpaca-activate)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-sources-directory))
        (build (expand-file-name "elpaca/" elpaca-builds-directory))
        (order (cdr elpaca-order))
        (default-directory repo))
@@ -69,6 +68,8 @@ under `user-emacs-directory'.  If it exists, load it."
 (elpaca elpaca-use-package
   ;; Enable use-package :ensure support for Elpaca.
   (elpaca-use-package-mode))
+
+(use-package compat :ensure (:wait t))
 
 ;; Sets $MANPATH, $PATH and exec-path from your shell, this should be done ASAP
 ;; on init.
@@ -1133,24 +1134,6 @@ FN is `flycheck-checker-arguments', ARGS is its arguments."
 (setf eshell-directory-name (expand-file-name ".eshell/" user-emacs-directory))
 
 (use-package vterm
-  :ensure (vterm :post-build
-                 (progn
-                   (setq vterm-always-compile-module t)
-                   (require 'vterm)
-                   ;;print compilation info for elpaca
-                   (with-current-buffer (get-buffer-create vterm-install-buffer-name)
-                     (goto-char (point-min))
-                     (while (not (eobp))
-                       (message "%S"
-                                (buffer-substring (line-beginning-position)
-                                                  (line-end-position)))
-                       (forward-line)))
-                   (when-let* ((so (expand-file-name "./vterm-module.so"))
-                               ((file-exists-p so)))
-                     (make-symbolic-link
-                      so (expand-file-name (file-name-nondirectory so)
-                                           "../../builds/vterm")
-                      'ok-if-already-exists))))
   :init
   (defun vterm--sentinel-advice (process event)
     "Sentinel of vterm PROCESS.
@@ -1182,6 +1165,7 @@ optionally the window if possible."
          :map vterm-mode-map
          ([remap backward-kill-word]  . vterm--self-insert)
          ([remap sp-kill-hybrid-sexp] . vterm--self-insert))
+  :demand
   :config
   (advice-add 'vterm--sentinel :override 'vterm--sentinel-advice)
   (setopt vterm-disable-bold t)
@@ -1433,17 +1417,26 @@ optionally the window if possible."
                        .tool.pyright)))))))
 
 (use-package zmq
-  :ensure `(zmq :pre-build
-                ,(let ((emacs (elpaca--emacs-path)))
-                   (list "make" "-e" (when emacs (concat "EMACS=" emacs))))
-                :post-build
-                ,(let* ((recipe (elpaca<-recipe (elpaca<-create 'zmq)))
-                        (repo-dir (elpaca-repo-dir recipe))
-                        (build-dir (elpaca-build-dir recipe))
-                        (module-file-name (format "emacs-zmq%s" module-file-suffix))
-                        (src (file-name-concat repo-dir module-file-name))
-                        (dest (file-name-concat build-dir module-file-name)))
-                   `(make-symbolic-link ,src ,dest))))
+  :ensure (zmq :build
+               (:after
+                elpaca-build-link
+                (lambda (e)
+                  (elpaca--signal e "Buildng ZMQ module" 'info)
+                  (let ((default-directory (elpaca<-build-dir e))
+                        (emacs (elpaca--emacs-path)))
+                    (elpaca--make-process e
+                      :name "build-zmq-module"
+                      :command (list "make" "-e" (when emacs (concat "EMACS=" emacs)))
+                      :sentinel (lambda (process event)
+                                  (let* ((e (process-get process :elpaca))
+                                         (finished (equal event "finished\n")))
+                                    (elpaca--propertize-subprocess process)
+                                    (elpaca--continue-build
+                                     e
+                                     (if finished
+                                         "ZMQ module compiled"
+                                       (concat "ZMQ module compilation failure: " (string-trim event))))))))))))
+
 (use-package jupyter)
 
 ;; Ruby
