@@ -717,7 +717,6 @@ Optional argument ARG same as `comment-dwim''s."
 
 ;; Much faster PDF viewing
 (use-package pdf-tools
-  :ensure (:repo "wyuenho/pdf-tools" :branch "replace-tempnam")
   :config
   (defun pdf-view-goto-page-advice (fn &rest args)
     "Ignore `pdf-view-goto-page' error when scrolling."
