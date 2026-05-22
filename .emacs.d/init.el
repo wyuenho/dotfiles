@@ -1393,6 +1393,7 @@ optionally the window if possible."
   :after (projectile))
 
 (use-package lsp-jedi
+  :ensure (lsp-jedi :repo "wyuenho/lsp-jedi" :fetcher github :branch "update-defcustoms")
   :after (lsp-mode))
 
 (use-package pet
