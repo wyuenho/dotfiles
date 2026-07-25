@@ -1669,7 +1669,6 @@ optionally the window if possible."
             'append))
 
 (use-package diff-hl
-  :ensure (:repo "wyuenho/diff-hl" :branch "customizable-ignorable-commands")
   :after (magit)
   :config
   (add-hook 'dired-mode-hook 'diff-hl-dired-mode-unless-remote)
