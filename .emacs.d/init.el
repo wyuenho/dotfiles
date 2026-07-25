@@ -1416,26 +1416,14 @@ optionally the window if possible."
                      (let-alist (pet-pyproject)
                        .tool.pyright)))))))
 
+(elpaca-defscript zmq-build-module (:type system :dir build)
+  ("make"))
+
 (use-package zmq
   :ensure (zmq :build
                (:after
                 elpaca-build-link
-                (lambda (e)
-                  (elpaca--signal e "Buildng ZMQ module" 'info)
-                  (let ((default-directory (elpaca<-build-dir e))
-                        (emacs (elpaca--emacs-path)))
-                    (elpaca--make-process e
-                      :name "build-zmq-module"
-                      :command (list "make" "-e" (when emacs (concat "EMACS=" emacs)))
-                      :sentinel (lambda (process event)
-                                  (let* ((e (process-get process :elpaca))
-                                         (finished (equal event "finished\n")))
-                                    (elpaca--propertize-subprocess process)
-                                    (elpaca--continue-build
-                                     e
-                                     (if finished
-                                         "ZMQ module compiled"
-                                       (concat "ZMQ module compilation failure: " (string-trim event))))))))))))
+                zmq-build-module)))
 
 (use-package jupyter)
 
