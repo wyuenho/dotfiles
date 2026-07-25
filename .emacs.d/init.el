@@ -1166,11 +1166,12 @@ optionally the window if possible."
          ([remap sp-kill-hybrid-sexp] . vterm--self-insert))
   :demand
   :config
+  (add-hook 'vterm-mode-hook (lambda ()
+                               (setq hl-line-mode nil)
+                               (setq-local global-hl-line-mode nil)
+                               (global-hl-line-unhighlight)))
   (advice-add 'vterm--sentinel :override 'vterm--sentinel-advice)
-  (setopt vterm-disable-bold t)
-  (add-hook 'vterm-mode-hook
-            (lambda ()
-              (buffer-face-set '(:family "Monaspace Neon" :height 120 :weight regular :width normal)))))
+  (setopt vterm-disable-bold t))
 
 ;; Markup and config languages
 (add-to-list 'auto-mode-alist '("\\.nmconnection\\'" . conf-mode))
