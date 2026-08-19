@@ -21,7 +21,7 @@ MBOX="$HOME/.mail/mbox"
 
 if [ -x "$(type -P emacs)" ]; then
     export EDITOR
-    EDITOR="emacsclient --alternate-editor=vi"
+    EDITOR="emacsclient --alternate-editor=vim"
 
     export VISUAL
     VISUAL="$EDITOR"
@@ -30,7 +30,7 @@ if [ -x "$(type -P emacs)" ]; then
     ALTERNATE_EDITOR=
 
     export SUDO_EDITOR
-    SUDO_EDITOR="vi"
+    SUDO_EDITOR="vim"
 
     export HGMERGE
     HGMERGE="$EDITOR"
