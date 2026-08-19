@@ -1,10 +1,6 @@
 # ~/.bash_profile: executed by the command interpreter for login shells
 # ~/.profile is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
 
-# adding an appropriate DISPLAY variable for use with MacPorts.
-DISPLAY=:0
-export DISPLAY
-
 if [ -z "$MANPATH" ]; then # MacOS
     # Must be set first for /usr/libexec/path_helper to modify
     MANPATH=""
@@ -15,16 +11,6 @@ if [ -z "$MANPATH" ]; then # MacOS
         eval "$(/usr/libexec/path_helper -s)"
     fi
 fi
-
-# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-XDG_CONFIG_HOME="$HOME/.config"
-export XDG_CONFIG_HOME
-
-XDG_CACHE_HOME="$HOME/.cache"
-export XDG_CACHE_HOME
-
-XDG_DATA_HOME="$HOME/.local/share"
-export XDG_DATA_HOME
 
 if [ -d "$HOME/.local/bin" ]; then
     PATH="$HOME/.local/bin:$PATH"
